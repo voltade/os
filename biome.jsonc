@@ -1,0 +1,56 @@
+{
+  "$schema": "node_modules/@biomejs/biome/configuration_schema.json",
+  // https://next.biomejs.dev/reference/configuration/#files
+  "files": {
+    "includes": ["**", "!dist/**", "!**/*.gen.ts"],
+    "ignoreUnknown": true
+  },
+  // https://next.biomejs.dev/reference/configuration/#vcs
+  "vcs": {
+    "enabled": true,
+    "clientKind": "git",
+    "useIgnoreFile": true
+  },
+  // https://next.biomejs.dev/reference/configuration/#linter
+  "linter": {
+    "enabled": true,
+    "rules": {
+      "recommended": true,
+      "correctness": {
+        "useImportExtensions": "error"
+      }
+    }
+  },
+  // https://next.biomejs.dev/reference/configuration/#formatter
+  "formatter": {
+    "enabled": true,
+    "includes": ["**", "!**/*.gen.ts"],
+    "indentStyle": "space"
+  },
+  // https://next.biomejs.dev/reference/configuration/#javascript
+  "javascript": {
+    "formatter": {
+      "quoteStyle": "single"
+    }
+  },
+  "assist": {
+    "enabled": true,
+    "actions": {
+      "source": {
+        // https://next.biomejs.dev/assist/actions/organize-imports/
+        "organizeImports": {
+          "level": "on",
+          "options": {
+            "groups": [
+              [":NODE:", ":BUN:"],
+              [":URL:", ":PACKAGE:", ":PACKAGE_WITH_PROTOCOL:"],
+              ":BLANK_LINE:",
+              ["#*", "#*/**", ":ALIAS:"],
+              [":PATH:"]
+            ]
+          }
+        }
+      }
+    }
+  }
+}
