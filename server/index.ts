@@ -11,8 +11,8 @@ Bun.serve({
               {
                 org_id: 'voltade',
                 instance_id: 'prod',
-                instance_chart_version: '0.1.3',
-                instance_fullname: 'voltade--prod',
+                instance_chart_version: '0.1.0',
+                instance_fullname: 'voltade-prod',
                 environment: 'production',
               },
             ],
