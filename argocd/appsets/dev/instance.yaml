@@ -1,0 +1,46 @@
+apiVersion: argoproj.io/v1alpha1
+kind: ApplicationSet
+metadata:
+  name: instance
+  namespace: argocd
+spec:
+  # https://argo-cd.readthedocs.io/en/stable/operator-manual/applicationset/Controlling-Resource-Modification/#allow-temporarily-toggling-auto-sync
+  ignoreApplicationDifferences:
+    - jsonPointers:
+        - /spec/syncPolicy
+  goTemplate: true
+  goTemplateOptions: ["missingkey=error"]
+  # https://argo-cd.readthedocs.io/en/stable/operator-manual/applicationset/Generators-Plugin/
+  generators:
+    - plugin:
+        configMapRef:
+          name: instance-generator-plugin
+        requeueAfterSeconds: 120
+  template:
+    metadata:
+      name: "{{ .instance_fullname }}"
+      labels:
+        org_id: "{{ .org_id }}"
+        environment: "{{ .environment }}"
+    spec:
+      project: default
+      source:
+        repoURL: oci://registry.127-0-0-1.sslip.io
+        chart: instance
+        targetRevision: 0.1.0
+        helm:
+          valueObject:
+            org_id: "{{ .org_id }}"
+            instance_id: "{{ .instance_id }}"
+            instance_fullname: "{{ .instance_fullname }}"
+            environment: "{{ .environment }}"
+      syncPolicy:
+        automated:
+          prune: true
+          selfHeal: true
+        syncOptions:
+          - CreateNamespace=true
+          - ApplyOutOfSyncOnly=true
+      destination:
+        server: https://kubernetes.default.svc
+        namespace: "{{ .instance_fullname }}"

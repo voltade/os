@@ -1,0 +1,37 @@
+apiVersion: argoproj.io/v1alpha1
+kind: ApplicationSet
+metadata:
+  name: infra
+  namespace: argocd
+spec:
+  # https://argo-cd.readthedocs.io/en/stable/operator-manual/applicationset/Controlling-Resource-Modification/#allow-temporarily-toggling-auto-sync
+  ignoreApplicationDifferences:
+    - jsonPointers:
+        - /spec/syncPolicy
+  goTemplate: true
+  goTemplateOptions: ["missingkey=error"]
+  generators:
+    - git:
+        repoURL: file:///mnt/voltade-os-infra.git
+        revision: HEAD
+        directories:
+          - path: argocd/apps/*/envs/dev
+  template:
+    metadata:
+      name: "{{ index .path.segments 2 }}"
+    spec:
+      project: default
+      source:
+        repoURL: file:///mnt/voltade-os-infra.git
+        targetRevision: HEAD
+        path: "{{ .path.path }}"
+      syncPolicy:
+        automated:
+          prune: true
+          selfHeal: true
+        syncOptions:
+          - CreateNamespace=true
+          - ApplyOutOfSyncOnly=true
+      destination:
+        server: https://kubernetes.default.svc
+        namespace: "{{ index .path.segments 2 }}"
