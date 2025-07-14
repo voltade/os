@@ -30,6 +30,8 @@ spec:
         targetRevision: "{{ .instance_chart_version}}"
         helm:
           parameters:
+            - name: nameOverride
+              value: "{{ .instance_fullname }}"
             - name: org_id
               value: "{{ .org_id }}"
             - name: instance_id
