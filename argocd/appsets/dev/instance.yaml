@@ -25,19 +25,24 @@ spec:
     spec:
       project: default
       source:
-        repoURL: oci://registry.127-0-0-1.sslip.io
+        repoURL: registry.127-0-0-1.sslip.io
         chart: instance
-        targetRevision: 0.1.0
+        targetRevision: "{{ .instance_chart_version}}"
         helm:
-          valueObject:
-            org_id: "{{ .org_id }}"
-            instance_id: "{{ .instance_id }}"
-            instance_fullname: "{{ .instance_fullname }}"
-            environment: "{{ .environment }}"
+          parameters:
+            - name: org_id
+              value: "{{ .org_id }}"
+            - name: instance_id
+              value: "{{ .instance_id }}"
+            - name: instance_fullname
+              value: "{{ .instance_fullname }}"
+            - name: environment
+              value: "{{ .environment }}"
       syncPolicy:
         automated:
           prune: true
           selfHeal: true
+          allowEmpty: true
         syncOptions:
           - CreateNamespace=true
           - ApplyOutOfSyncOnly=true
