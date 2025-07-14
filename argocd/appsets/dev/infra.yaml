@@ -12,7 +12,7 @@ spec:
   goTemplateOptions: ["missingkey=error"]
   generators:
     - git:
-        repoURL: file:///mnt/voltade-os-infra.git
+        repoURL: file:///mnt/voltade-os.git
         revision: HEAD
         directories:
           - path: argocd/apps/*/envs/dev
@@ -22,7 +22,7 @@ spec:
     spec:
       project: default
       source:
-        repoURL: file:///mnt/voltade-os-infra.git
+        repoURL: file:///mnt/voltade-os.git
         targetRevision: HEAD
         path: "{{ .path.path }}"
       syncPolicy:
