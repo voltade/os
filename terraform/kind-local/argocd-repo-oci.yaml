@@ -11,6 +11,5 @@ type: Opaque
 stringData:
   type: helm
   name: helm-oci
-  url: registry
-  insecure: "true"
+  url: registry.127-0-0-1.sslip.io
   enableOCI: "true"
