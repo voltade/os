@@ -1,0 +1,9 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: instance-generator-plugin
+  namespace: argocd
+data:
+  baseUrl: http://host.docker.internal:3000
+  token: $argocd-extra-secret.instance-generator.token
+  requestTimeout: "60"

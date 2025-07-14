@@ -1,0 +1,15 @@
+{
+  "recommendations": [
+    "oven.bun-vscode",
+    "biomejs.biome",
+    "streetsidesoftware.code-spell-checker",
+    "ms-vscode-remote.remote-containers",
+    "ms-azuretools.vscode-docker",
+    "editorconfig.editorconfig",
+    "eamodio.gitlens",
+    "yoavbls.pretty-ts-errors",
+    "renesaarsoo.sql-formatter-vsc",
+    "ast-grep.ast-grep-vscode",
+    "gamunu.opentofu"
+  ]
+}
