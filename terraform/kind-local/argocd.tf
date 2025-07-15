@@ -13,7 +13,7 @@ resource "helm_release" "argocd" {
         domain = "argocd.${var.cluster_domain_public}"
         hostAliases = [{
           hostnames = [local.registry_host]
-          ip        = var.registry_ip
+          ip        = local.registry_ip
         }]
       },
       configs = {

@@ -68,7 +68,7 @@ provider "kubernetes" {
 }
 
 provider "helm" {
-  kubernetes {
+  kubernetes = {
     host                   = local.k8s_config.host
     cluster_ca_certificate = local.k8s_config.cluster_ca_certificate
     client_certificate     = local.k8s_config.client_certificate

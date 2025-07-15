@@ -12,26 +12,24 @@
 
 ## Terraform
 
-```
+```bash
 cd terraform/kind-local
+
 tofu init
-tofu apply -var="registry_ip=<IP_ADDR_IN_voltade-os-local-control-plane>"
+tofu apply
+
+# Add the kubeconfig to your local context and open ArgoCD in your browser
+./post-apply.sh
 ```
 
-## Kubectl credentials
+## Publish Helm chart to local registry
 
-```
-bun setup:k8s
-```
-
-## Publish Helm chart
-
-```
+```bash
 bun helm instance --overwrite
 ```
 
 ## Starting the server
 
-```
+```bash
 bun run start
 ```
