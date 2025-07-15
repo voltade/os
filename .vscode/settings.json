@@ -29,7 +29,15 @@
   "[typescriptreact]": {
     "editor.defaultFormatter": "biomejs.biome"
   },
-  "cSpell.words": ["appset", "kubeconfig", "sslip"],
+  "cSpell.words": [
+    "appsets",
+    "cnpg",
+    "gitea",
+    "httproute",
+    "kubeconfig",
+    "maildev",
+    "sslip"
+  ],
   "editor.codeActionsOnSave": {
     "source.fixAll.biome": "explicit",
     "source.organizeImports.biome": "explicit"

@@ -16,6 +16,8 @@ helmCharts:
         config:
           smtp:
             incoming:
-              password: "password"
+              username: username
+              password: password
             outgoing:
-              password: "password"
+              username: username
+              password: password
