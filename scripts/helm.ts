@@ -41,4 +41,4 @@ if (overwrite) {
 
 await $`helm package --dependency-update charts/${chartName} --destination charts/${chartName}`;
 
-await $`helm push --ca-file terraform/kind-local/certs/ca.crt charts/${chartName}/${chartName}-${versionToPush}.tgz oci://registry.127-0-0-1.sslip.io`;
+await $`helm push --ca-file terraform/kind-local/certs/ca.crt charts/${chartName}/${chartName}-${versionToPush}.tgz oci://registry.127.0.0.1.nip.io`;

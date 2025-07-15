@@ -25,7 +25,7 @@ spec:
     spec:
       project: default
       source:
-        repoURL: registry.127-0-0-1.sslip.io
+        repoURL: registry.127.0.0.1.nip.io
         chart: instance
         targetRevision: "{{ .instance_chart_version}}"
         helm:

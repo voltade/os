@@ -63,7 +63,7 @@ ingress:
   enabled: false
 
 environment:
-  SUPABASE_PUBLIC_URL: http://studio.127-0-0-1.sslip.io
+  SUPABASE_PUBLIC_URL: http://studio.127.0.0.1.nip.io
 
 resources:
   {}

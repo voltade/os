@@ -7,7 +7,7 @@ spec:
     - name: http
       namespace: gateway
   hostnames:
-    - gitea.127-0-0-1.sslip.io
+    - gitea.127.0.0.1.nip.io
   rules:
     - backendRefs:
         - name: gitea-http

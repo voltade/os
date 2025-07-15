@@ -7,7 +7,7 @@ spec:
     - name: http
       namespace: gateway
   hostnames:
-    - maildev.127-0-0-1.sslip.io
+    - maildev.127.0.0.1.nip.io
   rules:
     - backendRefs:
         - name: maildev-web
