@@ -4,6 +4,8 @@
   "module": "index.ts",
   "type": "module",
   "scripts": {
+    "prepare": "lefthook install",
+    "ncu": "ncu -s --root --format group -i",
     "start": "bun run --watch server/index.ts",
     "helm": "bun run scripts/helm.ts",
     "setup:k8s": "./terraform/kind-local/post-apply.sh"
@@ -12,6 +14,8 @@
     "@biomejs/biome": "^2.1.1",
     "@types/bun": "latest",
     "@types/semver": "^7.7.0",
+    "lefthook": "^1.12.2",
+    "npm-check-updates": "^18.0.1",
     "semver": "^7.7.2",
     "yaml": "^2.8.0"
   },
