@@ -3,6 +3,10 @@
   "license": "AGPL-3.0-only",
   "module": "index.ts",
   "type": "module",
+  "scripts": {
+    "start": "bun run --watch server/index.ts",
+    "helm": "bun run scripts/helm.ts"
+  },
   "devDependencies": {
     "@biomejs/biome": "^2.1.1",
     "@types/bun": "latest",
