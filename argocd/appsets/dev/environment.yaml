@@ -1,7 +1,7 @@
 apiVersion: argoproj.io/v1alpha1
 kind: ApplicationSet
 metadata:
-  name: instance
+  name: environment
   namespace: argocd
 spec:
   # https://argo-cd.readthedocs.io/en/stable/operator-manual/applicationset/Controlling-Resource-Modification/#allow-temporarily-toggling-auto-sync
@@ -14,32 +14,28 @@ spec:
   generators:
     - plugin:
         configMapRef:
-          name: instance-generator-plugin
+          name: environment-generator-plugin
         requeueAfterSeconds: 120
   template:
     metadata:
-      name: "{{ .instance_fullname }}"
+      name: "{{ .org_id }}-{{ .environment_id }}"
       labels:
-        org_id: "{{ .org_id }}"
-        environment: "{{ .environment }}"
+        org: "{{ .org_id }}"
+        is_production: "{{ .is_production }}"
     spec:
       project: default
       source:
         repoURL: registry.127.0.0.1.nip.io
-        chart: instance
-        targetRevision: "{{ .instance_chart_version}}"
+        chart: environment
+        targetRevision: "{{ .environment_chart_version}}"
         helm:
           parameters:
-            - name: nameOverride
-              value: "{{ .instance_fullname }}"
             - name: org_id
               value: "{{ .org_id }}"
-            - name: instance_id
-              value: "{{ .instance_id }}"
-            - name: instance_fullname
-              value: "{{ .instance_fullname }}"
-            - name: environment
-              value: "{{ .environment }}"
+            - name: environment_id
+              value: "{{ .environment_id }}"
+            - name: nameOverride
+              value: "{{ .org_id }}-{{ .environment_id }}"
       syncPolicy:
         automated:
           prune: true
@@ -50,4 +46,4 @@ spec:
           - ApplyOutOfSyncOnly=true
       destination:
         server: https://kubernetes.default.svc
-        namespace: "{{ .instance_fullname }}"
+        namespace: "{{ .org_id }}-{{ .environment_id }}"

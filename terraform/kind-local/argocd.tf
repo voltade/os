@@ -27,6 +27,11 @@ resource "helm_release" "argocd" {
   ]
 }
 
+resource "random_password" "argocd_environment_generator_token" {
+  length  = 64
+  special = false
+}
+
 resource "kubernetes_secret" "argocd_extra_secret" {
   depends_on = [helm_release.argocd]
   metadata {
@@ -34,7 +39,7 @@ resource "kubernetes_secret" "argocd_extra_secret" {
     namespace = "argocd"
   }
   data = {
-    "instances-generator.token" = random_password.argocd_instance_generator_token.result
+    "environment-generator.token" = random_password.argocd_environment_generator_token.result
   }
 }
 
@@ -58,7 +63,7 @@ resource "kubectl_manifest" "argocd_appsets" {
   })
 }
 
-resource "kubectl_manifest" "argocd_instance_generator_plugin" {
+resource "kubectl_manifest" "argocd_environment_generator_plugin" {
   depends_on = [helm_release.argocd]
-  yaml_body  = file("${path.module}/argocd-instance-generator-plugin.yaml")
+  yaml_body  = file("${path.module}/argocd-environment-generator-plugin.yaml")
 }

@@ -25,7 +25,7 @@ tofu apply
 ## Publish Helm chart to local registry
 
 ```bash
-bun helm instance --overwrite
+bun helm environment --overwrite
 ```
 
 ## Starting the server

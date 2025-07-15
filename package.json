@@ -7,8 +7,7 @@
     "prepare": "lefthook install",
     "ncu": "ncu -s --root --format group -i",
     "start": "bun run --watch server/index.ts",
-    "helm": "bun run scripts/helm.ts",
-    "setup:k8s": "./terraform/kind-local/post-apply.sh"
+    "helm": "bun run scripts/helm.ts"
   },
   "devDependencies": {
     "@biomejs/biome": "^2.1.1",

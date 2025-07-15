@@ -10,10 +10,15 @@ Bun.serve({
             parameters: [
               {
                 org_id: 'voltade',
-                instance_id: 'prod',
-                instance_chart_version: '0.1.0',
-                instance_fullname: 'voltade-prod',
-                environment: 'production',
+                is_production: true,
+                environment_id: '90a8834',
+                environment_chart_version: '0.1.0',
+              },
+              {
+                org_id: 'voltade',
+                is_production: false,
+                environment_id: 'd9390b2',
+                environment_chart_version: '0.1.0',
               },
             ],
           },
