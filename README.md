@@ -21,7 +21,7 @@ tofu apply -var="registry_ip=<IP_ADDR_IN_voltade-os-local-control-plane>"
 ## Kubectl credentials
 
 ```
-./post-apply.sh
+bun setup:k8s
 ```
 
 ## Publish Helm chart
