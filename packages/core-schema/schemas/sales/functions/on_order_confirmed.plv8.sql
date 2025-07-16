@@ -5135,23 +5135,20 @@ var contactTable = resourceSchema.table("contact", {
   })
 ]).enableRLS();
 
-// schema.ts
-var internalSchema = pgSchema("internal");
+// schemas/sales/schema.ts
+var salesSchema = pgSchema("sales");
 
 // schemas/sales/enums.ts
-var orderState = internalSchema.enum("sales_order_state", [
+var orderState = salesSchema.enum("order_state", [
   "Draft",
   "Sent",
   "Sale"
 ]);
-var orderLineType = internalSchema.enum("sales_order_line_type", [
+var orderLineType = salesSchema.enum("order_line_type", [
   "Product",
   "Section",
   "Note"
 ]);
-
-// schemas/sales/schema.ts
-var salesSchema = pgSchema("sales");
 
 // schemas/sales/tables/order.ts
 var orderTable = salesSchema.table("order", {

@@ -1,12 +1,12 @@
-import { internalSchema } from '../../schema.ts';
+import { salesSchema } from './schema.ts';
 
-export const orderState = internalSchema.enum('sales_order_state', [
+export const orderState = salesSchema.enum('order_state', [
   'Draft',
   'Sent',
   'Sale',
 ]);
 
-export const orderLineType = internalSchema.enum('sales_order_line_type', [
+export const orderLineType = salesSchema.enum('order_line_type', [
   'Product',
   'Section',
   'Note',

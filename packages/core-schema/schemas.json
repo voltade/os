@@ -1,6 +1,5 @@
 {
   "schemas": [
-    "internal",
     "account",
     "purchase",
     "stock",
