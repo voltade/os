@@ -7,7 +7,7 @@ import { comboTable } from './combo.ts';
 import { productTemplateTable } from './product_template.ts';
 
 export const templateComboTable = internalSchema.table(
-  'product_template_combo',
+  'template_combo',
   {
     ...DEFAULT_COLUMNS,
     combo_id: integer().notNull(),

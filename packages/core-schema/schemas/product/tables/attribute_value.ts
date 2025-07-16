@@ -1,12 +1,12 @@
 import { relations } from 'drizzle-orm';
 import { foreignKey, integer, text } from 'drizzle-orm/pg-core';
 
-import { internalSchema } from '../../../schema.ts';
 import { DEFAULT_COLUMNS } from '../../utils.ts';
+import { productSchema } from '../schema.ts';
 import { productAttributeTable } from './attribute.ts';
 
-export const productAttributeValueTable = internalSchema.table(
-  'product_attribute_value',
+export const productAttributeValueTable = productSchema.table(
+  'attribute_value',
   {
     ...DEFAULT_COLUMNS,
     name: text().notNull(),

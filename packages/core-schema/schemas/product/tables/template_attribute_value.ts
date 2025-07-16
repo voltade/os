@@ -1,14 +1,14 @@
 import { relations } from 'drizzle-orm';
 import { foreignKey, integer } from 'drizzle-orm/pg-core';
 
-import { internalSchema } from '../../../schema.ts';
 import { DEFAULT_COLUMNS, priceCol } from '../../utils.ts';
+import { productSchema } from '../schema.ts';
 import { productAttributeTable } from './attribute.ts';
 import { productAttributeValueTable } from './attribute_value.ts';
 import { productTemplateTable } from './product_template.ts';
 
-export const productTemplateAttributeValueTable = internalSchema.table(
-  'product_template_attribute_value',
+export const productTemplateAttributeValueTable = productSchema.table(
+  'template_attribute_value',
   {
     ...DEFAULT_COLUMNS,
     product_template_id: integer().notNull(),

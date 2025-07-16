@@ -1,13 +1,13 @@
 import { relations } from 'drizzle-orm';
 import { foreignKey, integer } from 'drizzle-orm/pg-core';
 
-import { internalSchema } from '../../../schema.ts';
 import { DEFAULT_COLUMNS, priceCol } from '../../utils.ts';
+import { productSchema } from '../schema.ts';
 import { comboTable } from './combo.ts';
 import { productTable } from './product.ts';
 
-export const comboProductTable = internalSchema.table(
-  'product_combo_product',
+export const comboProductTable = productSchema.table(
+  'combo_product',
   {
     ...DEFAULT_COLUMNS,
     combo_id: integer().notNull(),

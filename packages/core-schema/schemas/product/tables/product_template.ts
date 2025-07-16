@@ -8,10 +8,10 @@ import {
   text,
 } from 'drizzle-orm/pg-core';
 
-import { internalSchema } from '../../../schema.ts';
 import { uomTable } from '../../resource/tables/uom.ts';
 import { DEFAULT_COLUMNS, priceCol } from '../../utils.ts';
 import { productCategoryEnum, productTypeEnum } from '../enums.ts';
+import { productSchema } from '../schema.ts';
 
 /**
  * This table represents the abstract definition of a product, commonly known as a "template" or "product model".
@@ -29,8 +29,8 @@ import { productCategoryEnum, productTypeEnum } from '../enums.ts';
  * Note: This table should not store variant-specific data like SKU, GTIN, or inventory quantities —
  *       those belong in the `product` table.
  */
-export const productTemplateTable = internalSchema.table(
-  'product_template',
+export const productTemplateTable = productSchema.table(
+  'template',
   {
     ...DEFAULT_COLUMNS,
 

@@ -1,13 +1,13 @@
 import { relations } from 'drizzle-orm';
-import { foreignKey, integer, text } from 'drizzle-orm/pg-core';
+import { foreignKey, integer } from 'drizzle-orm/pg-core';
 
-import { internalSchema } from '../../../schema.ts';
 import { DEFAULT_COLUMNS } from '../../utils.ts';
+import { productSchema } from '../schema.ts';
 import { productAttributeTable } from './attribute.ts';
 import { productTable } from './product.ts';
 
-export const productVariantCombinationTable = internalSchema.table(
-  'product_variant_combination',
+export const productVariantCombinationTable = productSchema.table(
+  'variant_combination',
   {
     ...DEFAULT_COLUMNS,
     product_product_id: integer().notNull(),

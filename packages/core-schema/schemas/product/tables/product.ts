@@ -7,9 +7,9 @@ import {
   uniqueIndex,
 } from 'drizzle-orm/pg-core';
 
-import { internalSchema } from '../../../schema.ts';
 import { DEFAULT_COLUMNS } from '../../utils.ts';
 import { productTrackingEnum } from '../enums.ts';
+import { productSchema } from '../schema.ts';
 import { productTemplateTable } from './product_template.ts';
 
 /**
@@ -38,8 +38,8 @@ import { productTemplateTable } from './product_template.ts';
  *
  * This table is the central reference for any inventory, purchasing, or sales operation.
  */
-export const productTable = internalSchema.table(
-  'product_product',
+export const productTable = productSchema.table(
+  'product',
   {
     ...DEFAULT_COLUMNS,
 
