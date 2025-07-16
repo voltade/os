@@ -15,7 +15,7 @@
     "helm": "bun run scripts/helm.ts",
     "setup:env": "bun run scripts/env.ts",
     "prepare": "lefthook install",
-    "db:init": "bun run --filter @voltade-os/core-schema db:init",
+    "db:start": "bun run --filter @voltade-os/core-schema db:start",
     "db:push": "bun run --filter @voltade-os/core-schema db:push",
     "db:stop": "bun run --filter @voltade-os/core-schema db:stop",
     "db:plv8ify": "bun run --filter @voltade-os/core-schema db:plv8ify",
