@@ -8,17 +8,17 @@ import {
   varchar,
 } from 'drizzle-orm/pg-core';
 
-import { internalSchema } from '../../../schema.ts';
 import { productTable } from '../../product/tables/product.ts';
 import { entityTable } from '../../resource/tables/entity.ts';
 import { partnerTable } from '../../resource/tables/partner.ts';
 import { userTable } from '../../resource/tables/user.ts';
 import { DEFAULT_COLUMNS } from '../../utils.ts';
 import { repairOrderPriorityEnum, repairOrderStatusEnum } from '../enums.ts';
+import { repairSchema } from '../schema.ts';
 
-export const repairOrderTable = internalSchema
+export const repairOrderTable = repairSchema
   .table(
-    'repair_order',
+    'order',
     {
       ...DEFAULT_COLUMNS,
       company_id: integer(),

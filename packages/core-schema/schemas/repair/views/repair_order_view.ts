@@ -6,7 +6,7 @@ import { productTemplateTable } from '../../product/tables/product_template.ts';
 import { entityTable } from '../../resource/tables/entity.ts';
 import { partnerTable } from '../../resource/tables/partner.ts';
 import { userTable } from '../../resource/tables/user.ts';
-import { repairOrderTable } from '../tables/repair_orders.ts';
+import { repairOrderTable } from '../tables/repair_order.ts';
 
 export const repairOrderView = pgView('repair_order_view').as((qb) =>
   qb
