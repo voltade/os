@@ -5,7 +5,7 @@ const appEnvVariablesSchema = z.object({
   DB_USER: z.string(),
   DB_PASSWORD: z.string(),
   DB_HOST: z.string(),
-  DB_PORT: z.string(),
+  DB_PORT: z.coerce.number(),
   DB_NAME: z.string(),
 });
 

@@ -8,7 +8,7 @@ const { DB_NAME, DB_USER, DB_HOST, DB_PORT, DB_PASSWORD } = appEnvVariables;
 export const db = drizzle({
   connection: {
     host: DB_HOST,
-    port: Number(DB_PORT),
+    port: DB_PORT,
     user: DB_USER,
     password: DB_PASSWORD,
     database: DB_NAME,

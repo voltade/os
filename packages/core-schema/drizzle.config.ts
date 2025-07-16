@@ -1,14 +1,17 @@
 import { defineConfig } from 'drizzle-kit';
 
 import schemasConfig from './schemas.json';
+import { appEnvVariables } from './utils/env.ts';
+
+const { DB_NAME, DB_USER, DB_HOST, DB_PORT, DB_PASSWORD } = appEnvVariables;
 
 export default defineConfig({
   dbCredentials: {
-    database: process.env.DB_NAME || 'postgres',
-    host: process.env.DB_HOST || 'localhost',
-    port: parseInt(process.env.DB_PORT || '54322'),
-    user: process.env.DB_USER || 'postgres',
-    password: process.env.DB_PASSWORD || 'postgres',
+    database: DB_NAME,
+    host: DB_HOST,
+    port: DB_PORT,
+    user: DB_USER,
+    password: DB_PASSWORD,
     ssl: false,
   },
   dialect: 'postgresql',
