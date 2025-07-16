@@ -29,7 +29,7 @@ resource "docker_container" "registry" {
 
   networks_advanced {
     name         = data.docker_network.kind.name
-    ipv4_address = var.registry_ip
+    ipv4_address = local.registry_ip
   }
 
   restart = "always"

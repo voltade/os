@@ -10,6 +10,8 @@
     "helm": "bun run scripts/helm.ts",
     "setup:k8s": "./terraform/kind-local/post-apply.sh",
     "setup:env": "bun run scripts/env.ts"
+    "prepare": "lefthook install",
+    "ncu": "ncu -s --root --format group -i",
   },
   "devDependencies": {
     "@biomejs/biome": "^2.1.1",
@@ -34,6 +36,8 @@
     "postcss-simple-vars": "^7.0.1",
     "react": "^19.1.0",
     "react-dom": "^19.1.0",
+    "lefthook": "^1.12.2",
+    "npm-check-updates": "^18.0.1",
     "semver": "^7.7.2",
     "tailwindcss": "^4.1.11",
     "vite": "^7.0.4",

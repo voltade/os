@@ -1,16 +1,16 @@
 apiVersion: gateway.networking.k8s.io/v1
 kind: HTTPRoute
 metadata:
-  name: studio
+  name: gitea
 spec:
   parentRefs:
     - name: http
       namespace: gateway
   hostnames:
-    - studio.127.0.0.1.nip.io
+    - gitea.127.0.0.1.nip.io
   rules:
     - backendRefs:
-        - name: studio
+        - name: gitea-http
           port: 3000
       matches:
         - path:

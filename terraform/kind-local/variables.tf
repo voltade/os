@@ -5,7 +5,7 @@ variable "cluster_name" {
 
 variable "cluster_domain_public" {
   type    = string
-  default = "127-0-0-1.sslip.io"
+  default = "127.0.0.1.nip.io"
 }
 
 variable "registry_ip" {
