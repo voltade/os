@@ -14,6 +14,7 @@
     "db:stop": "docker compose down"
   },
   "dependencies": {
-    "drizzle-kit": "^0.31.4"
+    "drizzle-kit": "^0.31.4",
+    "drizzle-orm": "^0.44.3"
   }
 }
