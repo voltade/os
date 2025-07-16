@@ -3,6 +3,9 @@
   "license": "AGPL-3.0-only",
   "module": "index.ts",
   "type": "module",
+  "workspaces": [
+    "packages/*"
+  ],
   "scripts": {
     "ncu": "ncu -s --root --format group -i",
     "dev": "bun run scripts/dev.ts",
@@ -10,7 +13,6 @@
     "dev:vite": "wait-on http://localhost:3000/healthz && vite dev",
     "build:typecheck": "tsc --project tsconfig.json",
     "helm": "bun run scripts/helm.ts",
-    "setup:k8s": "./terraform/kind-local/post-apply.sh",
     "setup:env": "bun run scripts/env.ts",
     "prepare": "lefthook install"
   },
@@ -30,16 +32,17 @@
     "@types/react-dom": "^19.1.6",
     "@types/semver": "^7.7.0",
     "@vitejs/plugin-react-swc": "^3.10.2",
+    "lefthook": "^1.12.2",
     "mantine-contextmenu": "^8.1.2",
     "mantine-datatable": "^8.1.2",
+    "npm-check-updates": "^18.0.1",
     "postcss": "^8.5.6",
     "postcss-preset-mantine": "^1.18.0",
     "postcss-simple-vars": "^7.0.1",
     "react": "^19.1.0",
     "react-dom": "^19.1.0",
-    "lefthook": "^1.12.2",
-    "npm-check-updates": "^18.0.1",
     "semver": "^7.7.2",
+    "sql-formatter": "^15.6.6",
     "tailwindcss": "^4.1.11",
     "vite": "^7.0.4",
     "vite-tsconfig-paths": "^5.1.4",
