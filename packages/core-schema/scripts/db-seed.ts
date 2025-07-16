@@ -35,7 +35,7 @@ import { uomTable } from '../schemas/resource/tables/uom.ts';
 import { userTable } from '../schemas/resource/tables/user.ts';
 import { orderTable } from '../schemas/sales/tables/order.ts';
 import { orderLineTable } from '../schemas/sales/tables/order_line.ts';
-import { appointmentTypeTable } from '../schemas/services/tables/appointment_type.ts';
+import { appointmentTypeTable } from '../schemas/service/tables/appointment_type.ts';
 import {
   StockOperationLineStatus,
   StockOperationStatus,
