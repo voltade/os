@@ -11,7 +11,7 @@ BEGIN
     
     -- Lock the row to prevent concurrent access
     SELECT * INTO seq_record 
-    FROM internal.resource_sequence 
+    FROM resource.sequence 
     WHERE type = sequence_type
     FOR UPDATE;
     
@@ -22,7 +22,7 @@ BEGIN
     -- Check if year has changed, reset counter if so
     IF seq_record.current_year != current_year THEN
         -- Reset for new year
-        UPDATE internal.resource_sequence 
+        UPDATE resource.sequence 
         SET current_year = current_year, 
             number_next = seq_record.number_increment
         WHERE type = sequence_type;
@@ -32,7 +32,7 @@ BEGIN
         -- Use current number and increment
         next_number := seq_record.number_next;
         
-        UPDATE internal.resource_sequence 
+        UPDATE resource.sequence 
         SET number_next = number_next + seq_record.number_increment
         WHERE type = sequence_type;
     END IF;

@@ -1,11 +1,11 @@
 import { sql } from 'drizzle-orm';
 import { integer, text } from 'drizzle-orm/pg-core';
 
-import { internalSchema } from '../../../schema.ts';
 import { DEFAULT_COLUMNS } from '../../utils.ts';
+import { resourceSchema } from '../schema.ts';
 
-export const sequenceTable = internalSchema
-  .table('resource_sequence', {
+export const sequenceTable = resourceSchema
+  .table('sequence', {
     ...DEFAULT_COLUMNS,
     type: text().notNull().unique(),
     prefix: text().notNull().unique(),

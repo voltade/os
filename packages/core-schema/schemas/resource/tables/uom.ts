@@ -1,14 +1,14 @@
 import { boolean, decimal, index, text } from 'drizzle-orm/pg-core';
 
-import { internalSchema } from '../../../schema.ts';
 import { DEFAULT_COLUMNS } from '../../utils.ts';
+import { resourceSchema } from '../schema.ts';
 
 /**
  * Represents a unit of measurement (UoM) for a product.
  * Handles unit conversions and rounding.
  */
-export const uomTable = internalSchema.table(
-  'resource_uom',
+export const uomTable = resourceSchema.table(
+  'uom',
   {
     ...DEFAULT_COLUMNS,
 

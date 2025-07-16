@@ -1,12 +1,12 @@
 import { foreignKey, integer, text } from 'drizzle-orm/pg-core';
 
-import { internalSchema } from '../../../schema.ts';
 import { DEFAULT_COLUMNS } from '../../utils.ts';
+import { resourceSchema } from '../schema.ts';
 import { partnerTable } from './partner.ts';
 
-export const contactTable = internalSchema
+export const contactTable = resourceSchema
   .table(
-    'resource_contact',
+    'contact',
     {
       ...DEFAULT_COLUMNS,
       name: text().notNull(),

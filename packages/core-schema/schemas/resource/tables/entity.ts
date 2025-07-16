@@ -1,15 +1,15 @@
 import { boolean, foreignKey, integer, text } from 'drizzle-orm/pg-core';
 
-import { internalSchema } from '../../../schema.ts';
 import { taxPriceIncludeEnum } from '../../accounting/enums.ts';
 import { accountTable } from '../../accounting/tables/account.ts';
 import { currencyTable } from '../../resource/tables/currency.ts';
 import { DEFAULT_COLUMNS } from '../../utils.ts';
+import { resourceSchema } from '../schema.ts';
 import { countryTable } from './country.ts';
 
-export const entityTable = internalSchema
+export const entityTable = resourceSchema
   .table(
-    'resource_entity',
+    'entity',
     {
       ...DEFAULT_COLUMNS,
       active: boolean().notNull().default(true),

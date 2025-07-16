@@ -1,10 +1,10 @@
 import { integer, text } from 'drizzle-orm/pg-core';
 
-import { internalSchema } from '../../../schema.ts';
 import { DEFAULT_COLUMNS } from '../../utils.ts';
+import { resourceSchema } from '../schema.ts';
 
-export const currencyTable = internalSchema
-  .table('resource_currency', {
+export const currencyTable = resourceSchema
+  .table('currency', {
     ...DEFAULT_COLUMNS,
     name: text().notNull().unique(),
     full_name: text().notNull(),

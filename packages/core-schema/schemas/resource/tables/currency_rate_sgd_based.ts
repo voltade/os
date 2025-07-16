@@ -1,11 +1,11 @@
 import { foreignKey, integer, numeric } from 'drizzle-orm/pg-core';
 
-import { internalSchema } from '../../../schema.ts';
+import { resourceSchema } from '../schema.ts';
 import { currencyTable } from './currency.ts';
 
-export const currencyRateSGDBasedTable = internalSchema
+export const currencyRateSGDBasedTable = resourceSchema
   .table(
-    'resource_currency_rate_sgd_based',
+    'currency_rate_sgd_based',
     {
       id: integer().primaryKey().generatedAlwaysAsIdentity(),
       currency_id: integer().notNull(),

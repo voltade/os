@@ -1,10 +1,10 @@
 import { text } from 'drizzle-orm/pg-core';
 
-import { internalSchema } from '../../../schema.ts';
 import { DEFAULT_COLUMNS } from '../../utils.ts';
+import { resourceSchema } from '../schema.ts';
 
-export const countryTable = internalSchema
-  .table('resource_country', {
+export const countryTable = resourceSchema
+  .table('country', {
     ...DEFAULT_COLUMNS,
     name: text().notNull().unique(),
     code: text().notNull().unique(),
