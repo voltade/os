@@ -1,0 +1,21 @@
+# yaml-language-server: $schema=https://raw.githubusercontent.com/ast-grep/ast-grep/main/schemas/rule.json
+id: no-non-drizzle-await-in-plv8
+language: TypeScript
+severity: error
+rule:
+  all:
+    - kind: await_expression
+    - not:
+        has:
+          kind: call_expression
+          inside:
+            has:
+              pattern: db
+              stopBy: end
+files:
+  - "**/*.plv8.ts"
+message: Only drizzle `db` calls can be awaited in PLv8 functions.
+note: |
+  PLv8 does not have a event loop, exceptions thrown by awaited promises will not stop the execution of the subsequent code. So awaiting promises in PLv8 functions is not allowed.
+
+  As for drizzle `db` calls, our custom build script converts asynchronous `await db.select().xxx()` to synchronous `db.select().xxx().execute()`, and remove all `async` and `await` keywords from the bundled code.
