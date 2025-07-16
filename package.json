@@ -21,6 +21,7 @@
     "db:plv8ify": "bun run --filter @voltade-os/core-schema db:plv8ify",
     "db:current": "bun run --filter @voltade-os/core-schema db:current",
     "db:seed": "bun run --filter @voltade-os/core-schema db:seed",
+    "db:nuke": "bun run --filter @voltade-os/core-schema db:nuke",
     "db:reset": "bun run --filter @voltade-os/core-schema db:reset"
   },
   "devDependencies": {
