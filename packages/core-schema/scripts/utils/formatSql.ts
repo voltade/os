@@ -1,7 +1,7 @@
 import { $ } from 'bun';
 import { type FormatOptionsWithDialect, format } from 'sql-formatter';
 
-import config from '../../.sql-formatter.json';
+import config from '../../../../.sql-formatter.json';
 
 export function formatSql(sql: string): string {
   return format(sql, config as unknown as FormatOptionsWithDialect);
