@@ -12,5 +12,8 @@
   "scripts": {
     "db:init": "docker compose up -d",
     "db:stop": "docker compose down"
+  },
+  "dependencies": {
+    "drizzle-kit": "^0.31.4"
   }
 }
