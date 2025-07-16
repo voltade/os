@@ -6,14 +6,14 @@ import {
   timestamp,
 } from 'drizzle-orm/pg-core';
 
-import { internalSchema } from '../../../schema.ts';
 import { userTable } from '../../resource/tables/user.ts';
 import { DEFAULT_COLUMNS } from '../../utils.ts';
+import { serviceSchema } from '../schema.ts';
 import { appointmentTypeTable } from './appointment_type.ts';
 
-export const calendarEventTable = internalSchema
+export const calendarEventTable = serviceSchema
   .table(
-    'service_calendar_event',
+    'calendar_event',
     {
       ...DEFAULT_COLUMNS,
 

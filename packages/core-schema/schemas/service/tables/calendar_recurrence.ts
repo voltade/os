@@ -7,14 +7,14 @@ import {
   timestamp,
 } from 'drizzle-orm/pg-core';
 
-import { internalSchema } from '../../../schema.ts';
 import { DEFAULT_COLUMNS } from '../../utils.ts';
+import { serviceSchema } from '../schema.ts';
 import { calendarEventTable } from './calendar_event.ts';
 
 // odoo still creates calendar events individually for recurring
 // but they track recurrence rules to group them all together
-export const calendarRecurrenceTable = internalSchema.table(
-  'service_calendar_recurrence',
+export const calendarRecurrenceTable = serviceSchema.table(
+  'calendar_recurrence',
   {
     ...DEFAULT_COLUMNS,
 

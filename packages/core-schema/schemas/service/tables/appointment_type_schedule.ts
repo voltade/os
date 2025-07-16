@@ -1,12 +1,12 @@
 import { boolean, foreignKey, integer, time } from 'drizzle-orm/pg-core';
 
-import { internalSchema } from '../../../schema.ts';
 import { DEFAULT_COLUMNS } from '../../utils.ts';
+import { serviceSchema } from '../schema.ts';
 import { appointmentTypeTable } from './appointment_type.ts';
 
-export const appointmentTypeSchedule = internalSchema
+export const appointmentTypeSchedule = serviceSchema
   .table(
-    'service_appointment_type_schedule',
+    'appointment_type_schedule',
     {
       ...DEFAULT_COLUMNS,
 

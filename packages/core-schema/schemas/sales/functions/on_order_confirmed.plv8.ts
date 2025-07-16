@@ -6,7 +6,9 @@ import { orderTable } from '../../../schemas/sales/tables/order.ts';
 
 type Order = InferSelectModel<typeof orderTable>;
 
+// TODO: @plv8_param
 /**
+ * @plv8_schema sales
  * @plv8_trigger
  * @plv8_volatility volatile
  * */

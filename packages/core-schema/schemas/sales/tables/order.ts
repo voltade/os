@@ -1,14 +1,14 @@
 import { sql } from 'drizzle-orm';
 import { check, foreignKey, integer, numeric, text } from 'drizzle-orm/pg-core';
 
-import { internalSchema } from '../../../schema.ts';
 import { contactTable } from '../../resource/tables/contact.ts';
 import { currencyTable } from '../../resource/tables/currency.ts';
 import { partnerTable } from '../../resource/tables/partner.ts';
 import { orderState } from '../enums.ts';
+import { salesSchema } from '../schema.ts';
 
-export const orderTable = internalSchema.table(
-  'sales_order',
+export const orderTable = salesSchema.table(
+  'order',
   {
     id: integer().primaryKey().generatedAlwaysAsIdentity(),
     currency_id: integer().notNull(),

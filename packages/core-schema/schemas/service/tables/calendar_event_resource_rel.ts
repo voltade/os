@@ -1,13 +1,13 @@
 import { foreignKey, integer, primaryKey } from 'drizzle-orm/pg-core';
 
-import { internalSchema } from '../../../schema.ts';
 import { created_at, updated_at } from '../../utils.ts';
+import { serviceSchema } from '../schema.ts';
 import { appointmentResourceTable } from './appointment_resource.ts';
 import { calendarEventTable } from './calendar_event.ts';
 
-export const calendarEventResourceRelTable = internalSchema
+export const calendarEventResourceRelTable = serviceSchema
   .table(
-    'service_calendar_event_resource_rel',
+    'calendar_event_resource_rel',
     {
       created_at,
       updated_at,

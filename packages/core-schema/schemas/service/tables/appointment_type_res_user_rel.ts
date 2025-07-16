@@ -1,12 +1,12 @@
 import { foreignKey, integer, primaryKey } from 'drizzle-orm/pg-core';
 
-import { internalSchema } from '../../../schema.ts';
 import { userTable } from '../../resource/tables/user.ts';
+import { serviceSchema } from '../schema.ts';
 import { appointmentTypeTable } from './appointment_type.ts';
 
-export const appointmentTypeResUserRel = internalSchema
+export const appointmentTypeResUserRel = serviceSchema
   .table(
-    'service_appointment_type_res_user_rel',
+    'appointment_type_res_user_rel',
     {
       type_id: integer().notNull(),
       user_id: integer().notNull(),

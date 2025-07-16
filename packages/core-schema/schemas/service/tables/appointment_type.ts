@@ -1,10 +1,10 @@
 import { boolean, decimal, text } from 'drizzle-orm/pg-core';
 
-import { internalSchema } from '../../../schema.ts';
 import { DEFAULT_COLUMNS } from '../../utils.ts';
+import { serviceSchema } from '../schema.ts';
 
-export const appointmentTypeTable = internalSchema
-  .table('service_appointment_type', {
+export const appointmentTypeTable = serviceSchema
+  .table('appointment_type', {
     ...DEFAULT_COLUMNS,
 
     name: text().notNull(),

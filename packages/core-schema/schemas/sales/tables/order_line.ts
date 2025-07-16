@@ -1,14 +1,14 @@
 import { foreignKey, integer, numeric, text } from 'drizzle-orm/pg-core';
 
-import { internalSchema } from '../../../schema.ts';
 import { comboProductTable } from '../../product/tables/combo_product.ts';
 import { productTable } from '../../product/tables/product.ts';
 import { id } from '../../utils.ts';
 import { orderLineType } from '../enums.ts';
+import { salesSchema } from '../schema.ts';
 import { orderTable } from './order.ts';
 
-export const orderLineTable = internalSchema.table(
-  'sales_order_line',
+export const orderLineTable = salesSchema.table(
+  'order_line',
   {
     id,
     order_id: integer().notNull(),

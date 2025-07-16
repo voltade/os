@@ -1,13 +1,13 @@
 import { foreignKey, integer, text } from 'drizzle-orm/pg-core';
 
-import { internalSchema } from '../../../schema.ts';
 import { partnerTable } from '../../resource/tables/partner.ts';
 import { DEFAULT_COLUMNS } from '../../utils.ts';
+import { serviceSchema } from '../schema.ts';
 import { calendarEventTable } from './calendar_event.ts';
 
-export const calendarAttendeeTable = internalSchema
+export const calendarAttendeeTable = serviceSchema
   .table(
-    'service_calendar_attendee',
+    'calendar_attendee',
     {
       ...DEFAULT_COLUMNS,
 
