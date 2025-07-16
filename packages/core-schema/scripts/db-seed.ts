@@ -3,18 +3,18 @@
 import { faker } from '@faker-js/faker';
 import { type InferInsertModel, sql } from 'drizzle-orm';
 
-import { accountTable } from '../src/schemas/accounting/tables/account.ts';
-import { journalTable } from '../src/schemas/accounting/tables/journal.ts';
-import { taxTable } from '../src/schemas/accounting/tables/tax.ts';
-import { taxDistributionLineTable } from '../src/schemas/accounting/tables/tax_distribution_line.ts';
-import { taxDistributionLineTaxTagRelTable } from '../src/schemas/accounting/tables/tax_distribution_line_tax_tag_rel.ts';
-import { taxGroupTable } from '../src/schemas/accounting/tables/tax_group.ts';
-import { taxTagTable } from '../src/schemas/accounting/tables/tax_tag.ts';
-import { comboTable } from '../src/schemas/product/tables/combo.ts';
-import { comboProductTable } from '../src/schemas/product/tables/combo_product.ts';
-import { productTable } from '../src/schemas/product/tables/product.ts';
-import { productTemplateTable } from '../src/schemas/product/tables/product_template.ts';
-import { templateComboTable } from '../src/schemas/product/tables/template_combo.ts';
+import { accountTable } from '../schemas/accounting/tables/account.ts';
+import { journalTable } from '../schemas/accounting/tables/journal.ts';
+import { taxTable } from '../schemas/accounting/tables/tax.ts';
+import { taxDistributionLineTable } from '../schemas/accounting/tables/tax_distribution_line.ts';
+import { taxDistributionLineTaxTagRelTable } from '../schemas/accounting/tables/tax_distribution_line_tax_tag_rel.ts';
+import { taxGroupTable } from '../schemas/accounting/tables/tax_group.ts';
+import { taxTagTable } from '../schemas/accounting/tables/tax_tag.ts';
+import { comboTable } from '../schemas/product/tables/combo.ts';
+import { comboProductTable } from '../schemas/product/tables/combo_product.ts';
+import { productTable } from '../schemas/product/tables/product.ts';
+import { productTemplateTable } from '../schemas/product/tables/product_template.ts';
+import { templateComboTable } from '../schemas/product/tables/template_combo.ts';
 import {
   purchaseOrderItemTable,
   purchaseOrderTable,
@@ -24,34 +24,32 @@ import {
   purchaseRequisitionTable,
   quotationItemTable,
   quotationTable,
-} from '../src/schemas/purchase/index.ts';
-import { repairOrderTable } from '../src/schemas/repair/tables/repair_orders.ts';
-import { countryTable } from '../src/schemas/resource/tables/country.ts';
-import { currencyTable } from '../src/schemas/resource/tables/currency.ts';
-import { entityTable } from '../src/schemas/resource/tables/entity.ts';
-import { mockPermissionsTable } from '../src/schemas/resource/tables/mock_permissions.ts';
-import { mockPermissionsUserTable } from '../src/schemas/resource/tables/mock_permissions_user.ts';
-import { partnerTable } from '../src/schemas/resource/tables/partner.ts';
-import { sequenceTable } from '../src/schemas/resource/tables/sequence.ts';
-import { uomTable } from '../src/schemas/resource/tables/uom.ts';
-import { userTable } from '../src/schemas/resource/tables/user.ts';
-import { orderTable } from '../src/schemas/sales/tables/order.ts';
-import { orderLineTable } from '../src/schemas/sales/tables/order_line.ts';
-import { appointmentTypeTable } from '../src/schemas/services/tables/appointment_type.ts';
+} from '../schemas/purchase/index.ts';
+import { repairOrderTable } from '../schemas/repair/tables/order.ts';
+import { countryTable } from '../schemas/resource/tables/country.ts';
+import { currencyTable } from '../schemas/resource/tables/currency.ts';
+import { entityTable } from '../schemas/resource/tables/entity.ts';
+import { partnerTable } from '../schemas/resource/tables/partner.ts';
+import { sequenceTable } from '../schemas/resource/tables/sequence.ts';
+import { uomTable } from '../schemas/resource/tables/uom.ts';
+import { userTable } from '../schemas/resource/tables/user.ts';
+import { orderTable } from '../schemas/sales/tables/order.ts';
+import { orderLineTable } from '../schemas/sales/tables/order_line.ts';
+import { appointmentTypeTable } from '../schemas/services/tables/appointment_type.ts';
 import {
   StockOperationLineStatus,
   StockOperationStatus,
   StockOperationType,
-} from '../src/schemas/stock/enums.ts';
-import { inventoryTable } from '../src/schemas/stock/tables/inventory.ts';
-import { stockOperationTable } from '../src/schemas/stock/tables/stock_operation.ts';
-import { stockOperationLineTable } from '../src/schemas/stock/tables/stock_operation_line.ts';
-import { stockOperationLineItemTable } from '../src/schemas/stock/tables/stock_operation_line_item.ts';
-import { stockOperationSequenceTable } from '../src/schemas/stock/tables/stock_operation_sequence.ts';
-import { stockOperationTypeTable } from '../src/schemas/stock/tables/stock_operation_type.ts';
-import { stockUnitTable } from '../src/schemas/stock/tables/stock_unit.ts';
-import { warehouseTable } from '../src/schemas/stock/tables/warehouse.ts';
-import { warehouseLocationTable } from '../src/schemas/stock/tables/warehouse_location.ts';
+} from '../schemas/stock/enums.ts';
+import { inventoryTable } from '../schemas/stock/tables/inventory.ts';
+import { stockOperationTable } from '../schemas/stock/tables/stock_operation.ts';
+import { stockOperationLineTable } from '../schemas/stock/tables/stock_operation_line.ts';
+import { stockOperationLineItemTable } from '../schemas/stock/tables/stock_operation_line_item.ts';
+import { stockOperationSequenceTable } from '../schemas/stock/tables/stock_operation_sequence.ts';
+import { stockOperationTypeTable } from '../schemas/stock/tables/stock_operation_type.ts';
+import { stockUnitTable } from '../schemas/stock/tables/stock_unit.ts';
+import { warehouseTable } from '../schemas/stock/tables/warehouse.ts';
+import { warehouseLocationTable } from '../schemas/stock/tables/warehouse_location.ts';
 import { db } from '../utils/db.ts';
 
 interface SeedContext {
@@ -121,8 +119,6 @@ async function clearAllTables(): Promise<void> {
       countryTable,
       uomTable,
       sequenceTable,
-      mockPermissionsTable,
-      mockPermissionsUserTable,
       purchaseOrderTable,
       purchaseOrderItemTable,
       quotationTable,
@@ -432,33 +428,6 @@ async function seedResourceData(context: SeedContext): Promise<void> {
 
   await db.insert(sequenceTable).values(sequenceData);
   console.log(`   Created ${sequenceData.length} sequence(s)`);
-
-  //MOCK PERMISSIONS DATA!
-  console.log('Mock Permissions:');
-  const mockPermssionsData: InferInsertModel<typeof mockPermissionsTable>[] = [
-    { name: 'view_all' },
-    { name: 'view_partial' },
-  ];
-
-  const mockPermissionsUserData: InferInsertModel<
-    typeof mockPermissionsUserTable
-  >[] = [
-    {
-      user_id: 1,
-      permission_id: 1,
-    },
-    {
-      user_id: 1,
-      permission_id: 2,
-    },
-  ];
-
-  await db.insert(mockPermissionsTable).values(mockPermssionsData);
-  await db.insert(mockPermissionsUserTable).values(mockPermissionsUserData);
-
-  console.log(
-    `   Created ${mockPermssionsData.length} mock permissions and assigned to user ID 1`,
-  );
 
   console.log('');
 }

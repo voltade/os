@@ -6,7 +6,7 @@ import { entityTable } from '../../resource/tables/entity.ts';
 import { partnerTable } from '../../resource/tables/partner.ts';
 import { userTable } from '../../resource/tables/user.ts';
 import { repairSchema } from '../schema.ts';
-import { repairOrderTable } from '../tables/repair_order.ts';
+import { repairOrderTable } from '../tables/order.ts';
 
 export const repairOrderView = repairSchema.view('order_view').as((qb) =>
   qb

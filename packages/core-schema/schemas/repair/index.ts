@@ -3,5 +3,5 @@
  */
 
 export * from './enums.ts';
-export * from './tables/repair_order.ts';
+export * from './tables/order.ts';
 export * from './views/repair_order_view.ts';

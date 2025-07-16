@@ -16,6 +16,7 @@
     "db:stop": "docker compose down"
   },
   "dependencies": {
+    "@faker-js/faker": "^9.9.0",
     "drizzle-kit": "^0.31.4",
     "drizzle-orm": "^0.44.3",
     "pg": "^8.16.3"
