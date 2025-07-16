@@ -20,7 +20,8 @@
     "db:stop": "bun run --filter @voltade-os/core-schema db:stop",
     "db:plv8ify": "bun run --filter @voltade-os/core-schema db:plv8ify",
     "db:current": "bun run --filter @voltade-os/core-schema db:current",
-    "db:seed": "bun run --filter @voltade-os/core-schema db:seed"
+    "db:seed": "bun run --filter @voltade-os/core-schema db:seed",
+    "db:reset": "bun run --filter @voltade-os/core-schema db:reset"
   },
   "devDependencies": {
     "@biomejs/biome": "^2.1.1",

@@ -17,7 +17,8 @@
     "db:plv8ify": "bun scripts/db-plv8ify.ts",
     "db:current": "bun --env-file ../../.env scripts/db-current.ts",
     "db:push": "bun --env-file ../../.env drizzle-kit push",
-    "db:seed": "bun --env-file ../../.env scripts/db-seed.ts"
+    "db:seed": "bun --env-file ../../.env scripts/db-seed.ts",
+    "db:reset": "bun --env-file ../../.env scripts/db-reset.ts"
   },
   "dependencies": {
     "@faker-js/faker": "^9.9.0",
