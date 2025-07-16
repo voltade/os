@@ -102,7 +102,7 @@ export async function update_inventory_on_line_item_status_change(
     incomingDelta: number,
   ): void => {
     plv8.execute(
-      'SELECT internal.upsert_inventory_quantities($1, $2, $3, $4, $5, $6, $7)',
+      'SELECT stock.upsert_inventory_quantities($1, $2, $3, $4, $5, $6, $7)',
       [
         operationLineRecord.product_id,
         NEW.stock_unit_id,

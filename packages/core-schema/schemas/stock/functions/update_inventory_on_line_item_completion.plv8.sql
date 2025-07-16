@@ -5420,7 +5420,7 @@ function update_inventory_on_line_item_status_change(OLD, NEW) {
   const quantityDelta = parseInt(NEW.processed_quantity ?? NEW.planned_quantity ?? "0");
   plv8.elog(NOTICE, `Quantity delta calculated: ${quantityDelta}`);
   const safeUpsertInventory = (warehouseId, locationId, onHandDelta, reservedDelta, incomingDelta) => {
-    plv8.execute("SELECT internal.upsert_inventory_quantities($1, $2, $3, $4, $5, $6, $7)", [
+    plv8.execute("SELECT stock.upsert_inventory_quantities($1, $2, $3, $4, $5, $6, $7)", [
       operationLineRecord.product_id,
       NEW.stock_unit_id,
       warehouseId,
