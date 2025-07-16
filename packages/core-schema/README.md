@@ -1,15 +1,8 @@
 # core-schema
 
-To install dependencies:
-
-```bash
-bun install
-```
-
-To run:
-
-```bash
-bun run index.ts
-```
-
-This project was created using `bun init` in bun v1.2.10. [Bun](https://bun.sh) is a fast all-in-one JavaScript runtime.
+## Getting Started
+1. `bun db:init`
+2. `bun db:push`
+3. `bun db:plv8ify`
+4. `bun db:current`
+5. `bun db:seed`
