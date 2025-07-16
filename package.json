@@ -19,7 +19,8 @@
     "db:push": "bun run --filter @voltade-os/core-schema db:push",
     "db:stop": "bun run --filter @voltade-os/core-schema db:stop",
     "db:plv8ify": "bun run --filter @voltade-os/core-schema db:plv8ify",
-    "db:current": "bun run --filter @voltade-os/core-schema db:current"
+    "db:current": "bun run --filter @voltade-os/core-schema db:current",
+    "db:seed": "bun run --filter @voltade-os/core-schema db:seed"
   },
   "devDependencies": {
     "@biomejs/biome": "^2.1.1",

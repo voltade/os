@@ -14,7 +14,7 @@ import * as purchase from './purchase/index.ts';
 import * as repair from './repair/index.ts';
 import * as resource from './resource/index.ts';
 import * as sales from './sales/index.ts';
-import * as services from './services/index.ts';
+import * as services from './service/index.ts';
 import * as stock from './stock/index.ts';
 
 const schema = {

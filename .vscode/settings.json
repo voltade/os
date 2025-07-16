@@ -37,7 +37,8 @@
     "kubeconfig",
     "lefthook",
     "maildev",
-    "sslip"
+    "sslip",
+    "voltade"
   ],
   "editor.codeActionsOnSave": {
     "source.fixAll.biome": "explicit",
