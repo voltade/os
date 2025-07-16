@@ -15,7 +15,8 @@
     "db:init": "docker compose --env-file ../../.env up -d",
     "db:stop": "docker compose down",
     "db:plv8ify": "bun scripts/db-plv8ify.ts",
-    "db:current": "bun --env-file ../../.env scripts/db-current.ts"
+    "db:current": "bun --env-file ../../.env scripts/db-current.ts",
+    "db:push": "bun --env-file ../../.env drizzle-kit push"
   },
   "dependencies": {
     "@faker-js/faker": "^9.9.0",

@@ -1,4 +1,4 @@
-create or replace function get_next_sequence_number (sequence_type text) returns text as $$
+create or replace function resource.get_next_sequence_number (sequence_type text) returns text as $$
 DECLARE
     seq_record RECORD;
     current_year INTEGER;

@@ -1,9 +1,9 @@
-drop trigger if exists on_order_confirmed on stock.sales_order;
+drop trigger if exists on_order_confirmed on sales.order;
 
 create trigger on_order_confirmed
 after
-update on stock.sales_order for each row when (
+update on sales.order for each row when (
   old.state <> 'Sale'
   and new.state = 'Sale'
 )
-execute function stock.on_order_confirmed ();
+execute function sales.on_order_confirmed ();

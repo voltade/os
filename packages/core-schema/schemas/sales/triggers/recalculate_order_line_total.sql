@@ -1,4 +1,4 @@
-create or replace function stock.recalculate_order_line_total () returns trigger as $$
+create or replace function sales.recalculate_order_line_total () returns trigger as $$
 BEGIN
   NEW.price_subtotal := COALESCE(NEW.quantity, 0) * COALESCE(NEW.unit_price, 0);
   NEW.price_total := NEW.price_subtotal + COALESCE(NEW.price_tax, 0);
