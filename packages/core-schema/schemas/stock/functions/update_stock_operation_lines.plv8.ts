@@ -23,7 +23,7 @@ type StockOperation = InferSelectModel<typeof stockOperationTable>;
  * This function is triggered when a stock operation's status changes and provides
  * templates for different operation types to create or update related lines.
  *
- * @plv8_schema internal
+ * @plv8_schema stock
  * @plv8_trigger
  * @plv8_volatility volatile
  */

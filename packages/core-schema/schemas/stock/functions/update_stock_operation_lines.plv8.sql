@@ -1,6 +1,6 @@
-drop function if exists internal.update_stock_operation_lines () cascade;
+drop function if exists stock.update_stock_operation_lines () cascade;
 
-create or replace function internal.update_stock_operation_lines () returns trigger as $plv8$
+create or replace function stock.update_stock_operation_lines () returns trigger as $plv8$
 var entityKind = Symbol.for("drizzle:entityKind");
 var hasOwnEntityKind = Symbol.for("drizzle:hasOwnEntityKind");
 function is(value, type) {
