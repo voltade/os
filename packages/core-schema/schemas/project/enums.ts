@@ -1,6 +1,6 @@
-import { internalSchema } from '../../schema.ts';
+import { projectSchema } from './schema.ts';
 
-const taskStatusEnum = internalSchema.enum('project_task_status_enum', [
+export const taskStatusEnum = projectSchema.enum('project_task_status_enum', [
   'pending',
   'in_progress',
   'completed',
@@ -8,5 +8,3 @@ const taskStatusEnum = internalSchema.enum('project_task_status_enum', [
   'approved',
   'cancelled',
 ]);
-
-export { taskStatusEnum };

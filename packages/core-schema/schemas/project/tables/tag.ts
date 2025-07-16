@@ -1,13 +1,11 @@
 import { text } from 'drizzle-orm/pg-core';
 
-import { internalSchema } from '../../../schema.ts';
 import { DEFAULT_COLUMNS } from '../../utils.ts';
+import { projectSchema } from '../schema.ts';
 
-const tagsTable = internalSchema.table('project_tags', {
+export const tagTable = projectSchema.table('tag', {
   ...DEFAULT_COLUMNS,
   name: text().notNull(),
   description: text(),
   color: text().notNull(),
 });
-
-export { tagsTable };

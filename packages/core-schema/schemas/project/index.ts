@@ -3,9 +3,9 @@
  */
 
 export * from './enums.ts';
-export * from './tables/projects.ts';
-export * from './tables/projects_task_tags.ts';
-export * from './tables/stages.ts';
-export * from './tables/tags.ts';
-export * from './tables/task_assignees.ts';
-export * from './tables/tasks.ts';
+export * from './tables/project.ts';
+export * from './tables/stage.ts';
+export * from './tables/tag.ts';
+export * from './tables/task.ts';
+export * from './tables/task_assignee.ts';
+export * from './tables/task_tag.ts';

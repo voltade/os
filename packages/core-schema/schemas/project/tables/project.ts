@@ -1,9 +1,9 @@
 import { boolean, jsonb, text, timestamp } from 'drizzle-orm/pg-core';
 
-import { internalSchema } from '../../../schema.ts';
 import { DEFAULT_COLUMNS } from '../../utils.ts';
+import { projectSchema } from '../schema.ts';
 
-const projectsTable = internalSchema.table('project_project', {
+export const projectTable = projectSchema.table('project', {
   ...DEFAULT_COLUMNS,
   name: text().notNull(),
   description: text(),
@@ -13,5 +13,3 @@ const projectsTable = internalSchema.table('project_project', {
   // stores the order of stages for this project
   stage_order: jsonb().$type<Record<string, number>>(),
 });
-
-export { projectsTable };
