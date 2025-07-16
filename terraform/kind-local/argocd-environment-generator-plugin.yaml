@@ -4,6 +4,6 @@ metadata:
   name: environment-generator-plugin
   namespace: argocd
 data:
-  baseUrl: http://host.docker.internal:3000
+  baseUrl: http://host.docker.internal:3000/api/environment
   token: $argocd-extra-secret.environment-generator.token
   requestTimeout: "60"

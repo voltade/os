@@ -1,6 +1,7 @@
-import { factory } from '#server/factory.ts';
-import { routes as argocdRoutes } from '#server/routes/argocd.ts';
 import { serveStatic } from 'hono/bun';
+
+import { factory } from '#server/factory.ts';
+import { route as environmentRoute } from '#server/routes/environment.ts';
 
 const app = factory.createApp();
 
@@ -12,10 +13,12 @@ app.get('/healthz', (c) => {
   return c.json({ message: 'Ok', time: new Date().toISOString() });
 });
 
-export const apiRoutes = app.basePath('/api').route('/v1/getparams.execute', argocdRoutes);
+export const apiRoutes = app
+  .basePath('/api')
+  .route('/environment', environmentRoute);
 
 app
   .get('/*', serveStatic({ root: './dist/static' }))
   .get('/*', serveStatic({ path: './dist/static/index.html' }));
-  
+
 export default app;
