@@ -1,0 +1,12 @@
+-- create or replace function user_has_permission (permission_name text) returns boolean as $$
+-- BEGIN
+--   RETURN EXISTS (
+--     SELECT 1 
+--     FROM resourcemock_permissions_user mpu
+--     JOIN resourcemock_permissions mp ON mp.id = mpu.permission_id
+--     JOIN resourceuser u ON u.id = mpu.user_id
+--     WHERE u.id = 1
+--     AND mp.name = permission_name
+--   );
+-- END;
+-- $$ language plpgsql security definer;
