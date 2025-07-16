@@ -1,0 +1,16 @@
+{
+  "name": "@voltade-os/core-schema",
+  "module": "index.ts",
+  "type": "module",
+  "private": true,
+  "devDependencies": {
+    "@types/bun": "latest"
+  },
+  "peerDependencies": {
+    "typescript": "^5"
+  },
+  "scripts": {
+    "db:init": "docker compose up -d",
+    "db:stop": "docker compose down"
+  }
+}
