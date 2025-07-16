@@ -1,14 +1,7 @@
 import { foreignKey, integer, varchar } from 'drizzle-orm/pg-core';
 
-// import { purchaseRequisitionSequence } from '../sequences.ts';
-
 import { userTable } from '../../resource/tables/user.ts';
-import {
-  DEFAULT_COLUMNS,
-  // defaultPaddedSequence,
-  priceCol,
-  timestampCol,
-} from '../../utils.ts';
+import { DEFAULT_COLUMNS, priceCol, timestampCol } from '../../utils.ts';
 import {
   purchaseRequisitionPriority,
   purchaseRequisitionStatus,
@@ -20,7 +13,6 @@ export const purchaseRequisitionTable = purchaseSchema.table(
   {
     ...DEFAULT_COLUMNS,
     reference_id: varchar().notNull().unique().default('PLACE_HOLDER'),
-    // .default(defaultPaddedSequence('PR-', purchaseRequisitionSequence, 5)),
     title: varchar().notNull(),
     description: varchar(),
     priority: purchaseRequisitionPriority().notNull(),

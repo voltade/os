@@ -4,7 +4,6 @@
 
 export * from './enums.ts';
 export * from './schema.ts';
-export * from './sequences.ts';
 export * from './tables/purchase_order.ts';
 export * from './tables/purchase_order_item.ts';
 export * from './tables/purchase_requisition.ts';

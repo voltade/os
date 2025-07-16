@@ -2,14 +2,9 @@ import { foreignKey, integer, varchar } from 'drizzle-orm/pg-core';
 
 import { userTable } from '../../resource/tables/user.ts';
 import { warehouseTable } from '../../stock/tables/warehouse.ts';
-import {
-  DEFAULT_COLUMNS,
-  // defaultPaddedSequence,
-  timestampCol,
-} from '../../utils.ts';
+import { DEFAULT_COLUMNS, timestampCol } from '../../utils.ts';
 import { purchaseOrderStatus } from '../enums.ts';
 import { purchaseSchema } from '../schema.ts';
-// import { purchaseOrderSequence } from '../sequences.ts';
 import { purchaseRequisitionTable } from './purchase_requisition.ts';
 import { quotationTable } from './quotation.ts';
 
@@ -18,7 +13,6 @@ export const purchaseOrderTable = purchaseSchema.table(
   {
     ...DEFAULT_COLUMNS,
     reference_id: varchar().notNull().unique().default('PLACE_HOLDER'),
-    // .default(defaultPaddedSequence('PO-', purchaseOrderSequence, 5)),
     purchase_requisition_id: integer().notNull(),
     quotation_id: integer().notNull(),
     warehouse_id: integer().notNull(),
