@@ -57,6 +57,6 @@ function updateEnvVar(content: string, key: string, value: string): string {
     return content.replace(regex, newLine);
   } else {
     // Add new variable
-    return content + (content.endsWith('\n') ? '' : '\n') + newLine + '\n';
+    return `${content + (content.endsWith('\n') ? '' : '\n') + newLine}\n`;
   }
 }
