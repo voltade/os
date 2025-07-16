@@ -9,7 +9,7 @@ const sql = new SQL({
   url: `postgresql://${DB_USER}:${DB_PASSWORD}@${DB_HOST}:${DB_PORT}/${DB_NAME}`,
 });
 
-const currentSql = await processSqlFile('src/current.sql');
+const currentSql = await processSqlFile('current.sql');
 
 await sql.transaction(async (tx) => {
   await tx.unsafe(currentSql);
