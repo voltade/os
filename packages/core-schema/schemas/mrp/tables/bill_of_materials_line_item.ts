@@ -1,13 +1,13 @@
 import { integer } from 'drizzle-orm/pg-core';
 
-import { internalSchema } from '../../../schema.ts';
 import { productTable } from '../../product/tables/product.ts';
 import { DEFAULT_COLUMNS } from '../../utils.ts';
 import { unitsEnum } from '../enums.ts';
+import { mrpSchema } from '../schema.ts';
 import { billOfMaterialsTable } from './bill_of_materials.ts';
 
-const billOfMaterialsLineItemTable = internalSchema.table(
-  'mrp_bill_of_materials_line_item',
+const billOfMaterialsLineItemTable = mrpSchema.table(
+  'bill_of_materials_line_item',
   {
     ...DEFAULT_COLUMNS,
     // reference to product table

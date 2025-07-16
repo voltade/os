@@ -1,18 +1,13 @@
-import { boolean, integer, pgEnum, text, timestamp } from 'drizzle-orm/pg-core';
+import { boolean, integer, text, timestamp } from 'drizzle-orm/pg-core';
 
-import { internalSchema } from '../../../schema.ts';
 import { DEFAULT_COLUMNS } from '../../utils.ts';
+import { mrpSchema } from '../schema.ts';
 import { productionTable } from './production.ts';
 import { workcenterTable } from './workcenter.ts';
 
-const productionWorkorderStateEnum = internalSchema.enum(
-  'production_workorder_state',
-  ['pending', 'in_progress', 'completed', 'cancelled'],
-);
-
 // copies over from the bill of materials line operation
-const productionWorkorderTable = internalSchema.table(
-  'mrp_production_workorder',
+export const productionWorkorderTable = mrpSchema.table(
+  'production_workorder',
   {
     ...DEFAULT_COLUMNS,
     sequence: integer().notNull().default(0),
@@ -33,5 +28,3 @@ const productionWorkorderTable = internalSchema.table(
     worksheet: text().notNull(),
   },
 );
-
-export { productionWorkorderTable, productionWorkorderStateEnum };

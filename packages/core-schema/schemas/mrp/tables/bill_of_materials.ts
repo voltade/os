@@ -1,11 +1,11 @@
 import { integer, jsonb, text } from 'drizzle-orm/pg-core';
 
-import { internalSchema } from '../../../schema.ts';
 import { productTable } from '../../product/tables/product.ts';
 import { DEFAULT_COLUMNS } from '../../utils.ts';
 import { unitsEnum } from '../enums.ts';
+import { mrpSchema } from '../schema.ts';
 
-const billOfMaterialsTable = internalSchema.table('mrp_bill_of_materials', {
+const billOfMaterialsTable = mrpSchema.table('bill_of_materials', {
   ...DEFAULT_COLUMNS,
   // to add in reference to product table when created
   product_id: integer().references(() => productTable.id, {

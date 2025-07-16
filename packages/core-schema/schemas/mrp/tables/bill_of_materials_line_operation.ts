@@ -1,12 +1,12 @@
 import { boolean, integer, text } from 'drizzle-orm/pg-core';
 
-import { internalSchema } from '../../../schema.ts';
 import { DEFAULT_COLUMNS } from '../../utils.ts';
+import { mrpSchema } from '../schema.ts';
 import { billOfMaterialsTable } from './bill_of_materials.ts';
 import { workcenterTable } from './workcenter.ts';
 
-const billOfMaterialsLineOperationTable = internalSchema.table(
-  'mrp_bill_of_materials_line_operation',
+const billOfMaterialsLineOperationTable = mrpSchema.table(
+  'bill_of_materials_line_operation',
   {
     ...DEFAULT_COLUMNS,
     // reference to bill of materials

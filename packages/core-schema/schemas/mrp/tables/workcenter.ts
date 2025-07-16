@@ -1,9 +1,9 @@
 import { boolean, integer, text } from 'drizzle-orm/pg-core';
 
-import { internalSchema } from '../../../schema.ts';
 import { DEFAULT_COLUMNS } from '../../utils.ts';
+import { mrpSchema } from '../schema.ts';
 
-const workcenterTable = internalSchema.table('mrp_workcenter', {
+const workcenterTable = mrpSchema.table('workcenter', {
   ...DEFAULT_COLUMNS,
   name: text().notNull(),
   description: text(),

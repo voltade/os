@@ -1,6 +1,11 @@
-import { internalSchema } from '../../schema.ts';
+import { mrpSchema } from './schema.ts';
 
-const unitsEnum = internalSchema.enum('units_enum', [
+export const productionWorkorderStateEnum = mrpSchema.enum(
+  'production_workorder_state',
+  ['pending', 'in_progress', 'completed', 'cancelled'],
+);
+
+const unitsEnum = mrpSchema.enum('units_enum', [
   'unit',
   'kg',
   'g',
@@ -24,7 +29,7 @@ const unitsEnum = internalSchema.enum('units_enum', [
   'packet',
 ]);
 
-const productionStatusEnum = internalSchema.enum('production_status', [
+const productionStatusEnum = mrpSchema.enum('production_status', [
   'draft',
   'confirmed',
   'completed',

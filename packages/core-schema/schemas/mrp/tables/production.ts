@@ -1,12 +1,12 @@
 import { integer, text, timestamp } from 'drizzle-orm/pg-core';
 
-import { internalSchema } from '../../../schema.ts';
 import { DEFAULT_COLUMNS } from '../../utils.ts';
 import { productionStatusEnum } from '../enums.ts';
+import { mrpSchema } from '../schema.ts';
 import { billOfMaterialsTable } from './bill_of_materials.ts';
 
 // a row on production table is one "manufacturing order"
-const productionTable = internalSchema.table('mrp_production', {
+const productionTable = mrpSchema.table('production', {
   ...DEFAULT_COLUMNS,
   name: text().notNull(),
   status: productionStatusEnum().notNull().default('draft'),
