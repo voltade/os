@@ -1,14 +1,14 @@
 import { eq, sql } from 'drizzle-orm';
-import { pgView } from 'drizzle-orm/pg-core';
 
 import { productTable } from '../../product/tables/product.ts';
 import { productTemplateTable } from '../../product/tables/product_template.ts';
 import { entityTable } from '../../resource/tables/entity.ts';
 import { partnerTable } from '../../resource/tables/partner.ts';
 import { userTable } from '../../resource/tables/user.ts';
+import { repairSchema } from '../schema.ts';
 import { repairOrderTable } from '../tables/repair_order.ts';
 
-export const repairOrderView = pgView('repair_order_view').as((qb) =>
+export const repairOrderView = repairSchema.view('order_view').as((qb) =>
   qb
     .select({
       id: repairOrderTable.id,
