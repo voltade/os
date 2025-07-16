@@ -8,8 +8,8 @@ import {
   uniqueIndex,
 } from 'drizzle-orm/pg-core';
 
-import { internalSchema } from '../../../schema.ts';
 import { productTable } from '../../product/tables/product.ts';
+import { stockSchema } from '../../schema.ts';
 import { DEFAULT_COLUMNS } from '../../utils.ts';
 import { warehouseTable } from './warehouse.ts';
 import { warehouseLocationTable } from './warehouse_location.ts';
@@ -38,8 +38,8 @@ import { warehouseLocationTable } from './warehouse_location.ts';
  *
  * All physical inventory operations reference this table directly.
  */
-export const stockUnitTable = internalSchema.table(
-  'stock_unit',
+export const stockUnitTable = stockSchema.table(
+  'unit',
   {
     ...DEFAULT_COLUMNS,
 

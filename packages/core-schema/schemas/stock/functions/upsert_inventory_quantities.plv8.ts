@@ -8,7 +8,7 @@ import { inventoryTable } from '../tables/inventory.ts';
  * This function updates the on-hand, reserved, and incoming quantities based on the deltas provided.
  * If no existing record is found, it inserts a new inventory record.
  *
- * @plv8_schema internal
+ * @plv8_schema stock
  * @plv8_disable_strict
  * @plv8_volatility volatile
  * @plv8_param {integer} p_product_id

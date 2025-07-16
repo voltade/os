@@ -1,5 +1,7 @@
 import { defineConfig } from 'drizzle-kit';
 
+import schemasConfig from './schemas.json';
+
 export default defineConfig({
   dbCredentials: {
     database: process.env.DB_NAME || 'postgres',
@@ -11,13 +13,13 @@ export default defineConfig({
   },
   dialect: 'postgresql',
   schema: [
-    './src/schema.ts',
-    './src/schemas/**/schema.ts',
-    './src/schemas/**/enums.ts',
-    './src/schemas/**/{tables,views}/*.ts',
+    './schema.ts',
+    './schemas/**/schema.ts',
+    './schemas/**/enums.ts',
+    './schemas/**/{tables,views}/*.ts',
   ],
   out: './drizzle',
-  schemaFilter: ['public', 'internal', 'account', 'purchase'],
+  schemaFilter: schemasConfig.schemas,
   tablesFilter: '*',
   entities: {
     roles: {

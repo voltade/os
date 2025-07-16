@@ -1,7 +1,7 @@
 import { relations } from 'drizzle-orm';
 import { foreignKey, integer, uniqueIndex } from 'drizzle-orm/pg-core';
 
-import { internalSchema } from '../../../schema.ts';
+import { stockSchema } from '../../schema.ts';
 import { DEFAULT_COLUMNS } from '../../utils.ts';
 import { stockOperationTypeTable } from './stock_operation_type.ts';
 import { warehouseTable } from './warehouse.ts';
@@ -12,8 +12,8 @@ import { warehouseTable } from './warehouse.ts';
  * A separate trigger is used to generate the sequence numbers
  * based on the `warehouseId` and `moveType`.
  */
-export const stockOperationSequenceTable = internalSchema.table(
-  'stock_operation_sequence',
+export const stockOperationSequenceTable = stockSchema.table(
+  'operation_sequence',
   {
     ...DEFAULT_COLUMNS,
     warehouse_id: integer().notNull(),

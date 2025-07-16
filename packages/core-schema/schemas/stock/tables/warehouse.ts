@@ -1,7 +1,7 @@
 import { index, text } from 'drizzle-orm/pg-core';
 
-import { internalSchema } from '../../../schema.ts';
 import type { productTable } from '../../product/tables/product.ts';
+import { stockSchema } from '../../schema.ts';
 import { DEFAULT_COLUMNS } from '../../utils.ts';
 import type { inventoryTable } from './inventory.ts';
 /**
@@ -10,8 +10,8 @@ import type { inventoryTable } from './inventory.ts';
  * - Warehouses may be used to track availability of {@link productTable items} and item groups.
  * - Warehouses facilitate the movement (transfer) of items.
  */
-export const warehouseTable = internalSchema.table(
-  'stock_warehouse',
+export const warehouseTable = stockSchema.table(
+  'warehouse',
   {
     ...DEFAULT_COLUMNS,
     name: text().unique().notNull(),

@@ -1,4 +1,4 @@
-import { internalSchema } from '../../schema.ts';
+import { stockSchema } from '../schema.ts';
 import { enumToPgEnum } from '../utils.ts';
 
 /**
@@ -33,7 +33,7 @@ export enum StockOperationType {
  * - Export: Products going out.
  * - Sale: Products sold.
  */
-export const stockOperationTypeEnum = internalSchema.enum(
+export const stockOperationTypeEnum = stockSchema.enum(
   'stock_operation_type_enum',
   enumToPgEnum(StockOperationType),
 );
@@ -85,8 +85,8 @@ export enum StockOperationStatus {
  * - Completed: Operation has been completed successfully.
  * - Done: Final state, all operations are done.
  */
-export const stockOperationStatusEnum = internalSchema.enum(
-  'stock_operation_status_enum',
+export const stockOperationStatusEnum = stockSchema.enum(
+  'operation_status_enum',
   enumToPgEnum(StockOperationStatus),
 );
 
@@ -113,7 +113,7 @@ export enum StockOperationLineStatus {
  * - Completed: Line has been completed.
  * - Cancelled: Line has been cancelled.
  */
-export const stockOperationLineStatusEnum = internalSchema.enum(
-  'stock_operation_line_status_enum',
+export const stockOperationLineStatusEnum = stockSchema.enum(
+  'operation_line_status_enum',
   enumToPgEnum(StockOperationLineStatus),
 );

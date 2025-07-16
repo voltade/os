@@ -14,7 +14,7 @@ type Warehouse = InferSelectModel<typeof warehouseTable>;
  * Function to set the reference ID for a stock operation.
  * Generates a unique reference ID based on warehouse code, operation type code, and sequence number.
  *
- * @plv8_schema internal
+ * @plv8_schema stock
  * @plv8_trigger
  * @plv8_volatility volatile
  */

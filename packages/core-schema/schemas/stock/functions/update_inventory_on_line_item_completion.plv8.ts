@@ -16,7 +16,7 @@ type StockOperationLineItem = InferSelectModel<
  * This function is triggered when a stock operation line item's status changes.
  * It adjusts the inventory quantities for specific stock units in the relevant warehouses and locations.
  *
- * @plv8_schema internal
+ * @plv8_schema stock
  * @plv8_disable_strict
  * @plv8_trigger
  * @plv8_volatility volatile

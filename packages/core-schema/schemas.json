@@ -1,0 +1,15 @@
+{
+  "schemas": [
+    "internal",
+    "account",
+    "purchase",
+    "stock",
+    "approval",
+    "mrp",
+    "repair",
+    "product",
+    "project",
+    "service",
+    "hr"
+  ]
+}

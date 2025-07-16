@@ -8,8 +8,8 @@ import {
   uniqueIndex,
 } from 'drizzle-orm/pg-core';
 
-import { internalSchema } from '../../../schema.ts';
 import { uomTable } from '../../resource/tables/uom.ts';
+import { stockSchema } from '../../schema.ts';
 import { DEFAULT_COLUMNS } from '../../utils.ts';
 import {
   StockOperationLineStatus,
@@ -39,8 +39,8 @@ import { stockUnitTable } from './stock_unit.ts';
  * - Supports unit-specific cost overrides and handling notes.
  * - Maintains source and destination location tracking at the unit level.
  */
-export const stockOperationLineItemTable = internalSchema.table(
-  'stock_operation_line_item',
+export const stockOperationLineItemTable = stockSchema.table(
+  'operation_line_item',
   {
     ...DEFAULT_COLUMNS,
     stock_operation_line_id: integer().notNull(),

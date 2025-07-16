@@ -1,4 +1,4 @@
-drop trigger if exists trg_set_stock_operation_reference_id on internal.stock_operation;
+drop trigger if exists trg_set_stock_operation_reference_id on stock.operation;
 
-create trigger trg_set_stock_operation_reference_id before insert on internal.stock_operation for each row
-execute function internal.set_stock_operation_reference_id ();
+create trigger trg_set_stock_operation_reference_id before insert on stock.operation for each row
+execute function stock.set_stock_operation_reference_id ();

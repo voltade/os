@@ -9,8 +9,8 @@ import {
 } from 'drizzle-orm/pg-core';
 import { relations } from 'drizzle-orm/relations';
 
-import { internalSchema } from '../../../schema.ts';
 import { productTable } from '../../product/tables/product.ts';
+import { stockSchema } from '../../schema.ts';
 import { DEFAULT_COLUMNS } from '../../utils.ts';
 import { stockUnitTable } from './stock_unit.ts';
 import { warehouseTable } from './warehouse.ts';
@@ -26,8 +26,8 @@ import { warehouseLocationTable } from './warehouse_location.ts';
  * - **Incoming**: Stock expected to arrive from pending operations
  * - **Total**: Computed sum of all quantity types
  */
-export const inventoryTable = internalSchema.table(
-  'stock_inventory',
+export const inventoryTable = stockSchema.table(
+  'inventory',
   {
     ...DEFAULT_COLUMNS,
 

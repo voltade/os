@@ -8,9 +8,9 @@ import {
   uniqueIndex,
 } from 'drizzle-orm/pg-core';
 
-import { internalSchema } from '../../../schema.ts';
 import { productTable } from '../../product/tables/product.ts';
 import { uomTable } from '../../resource/tables/uom.ts';
+import { stockSchema } from '../../schema.ts';
 import { DEFAULT_COLUMNS, priceCol } from '../../utils.ts';
 import {
   StockOperationLineStatus,
@@ -37,8 +37,8 @@ import { stockOperationTable } from './stock_operation.ts';
  * - Allows line-level override of cost price for financial accuracy.
  * - Enables per-line remarks for special handling or audit trails.
  */
-export const stockOperationLineTable = internalSchema.table(
-  'stock_operation_line',
+export const stockOperationLineTable = stockSchema.table(
+  'operation_line',
   {
     ...DEFAULT_COLUMNS,
     stock_operation_id: integer().notNull(),

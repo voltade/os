@@ -8,7 +8,7 @@ import {
 } from 'drizzle-orm/pg-core';
 import { relations } from 'drizzle-orm/relations';
 
-import { internalSchema } from '../../../schema.ts';
+import { stockSchema } from '../../schema.ts';
 import { DEFAULT_COLUMNS } from '../../utils.ts';
 import { warehouseTable } from './warehouse.ts';
 
@@ -16,8 +16,8 @@ import { warehouseTable } from './warehouse.ts';
  * A warehouse location represents a specific area within a {@link warehouseTable warehouse}.
  * It can be used to track the storage of items in different sections or shelves.
  */
-export const warehouseLocationTable = internalSchema.table(
-  'stock_warehouse_location',
+export const warehouseLocationTable = stockSchema.table(
+  'warehouse_location',
   {
     ...DEFAULT_COLUMNS,
     warehouse_id: integer().notNull(),

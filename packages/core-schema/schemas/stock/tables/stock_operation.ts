@@ -8,7 +8,7 @@ import {
   uniqueIndex,
 } from 'drizzle-orm/pg-core';
 
-import { internalSchema } from '../../../schema.ts';
+import { stockSchema } from '../../schema.ts';
 import { DEFAULT_COLUMNS, priceCol, timestampCol } from '../../utils.ts';
 import { StockOperationStatus, stockOperationStatusEnum } from '../enums.ts';
 import { stockOperationTypeTable } from './stock_operation_type.ts';
@@ -36,8 +36,8 @@ import { warehouseLocationTable } from './warehouse_location.ts';
  *
  * Each type of operation has a pre-defined set of statuses to manage its lifecycle.
  */
-export const stockOperationTable = internalSchema.table(
-  'stock_operation',
+export const stockOperationTable = stockSchema.table(
+  'operation',
   {
     ...DEFAULT_COLUMNS,
 

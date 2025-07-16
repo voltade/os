@@ -13,7 +13,7 @@ type StockOperationLine = InferSelectModel<typeof stockOperationLineTable>;
  * This function is triggered when a stock operation line's status changes.
  * It adjusts the inventory quantities in the relevant warehouses and locations.
  *
- * @plv8_schema internal
+ * @plv8_schema stock
  * @plv8_disable_strict
  * @plv8_trigger
  * @plv8_volatility volatile
