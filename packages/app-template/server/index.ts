@@ -3,6 +3,7 @@ import { serveStatic } from 'hono/bun';
 import { logger } from 'hono/logger';
 
 import runtimeRoute from '#server/routes/runtime.ts';
+import { route as productsRoute } from './routes/product/index.ts';
 
 const API_BASE_ROUTE = '/api';
 
@@ -16,19 +17,8 @@ app.get('/healthz', (c) => {
 export const apiRoutes = app
   .basePath(API_BASE_ROUTE)
   .route('/runtime.js', runtimeRoute)
-  // TODO: Add more API routes here
-
-  // TODO: test API routes; remove in production
-  .get('/hello', (c) => {
-    return c.json({ message: 'Hello, world!' });
-  })
-  .put('/hello', (c) => {
-    return c.json({ message: 'Hello, world!', method: 'PUT' });
-  })
-  .get('/hello/:name', (c) => {
-    const name = c.req.param('name');
-    return c.json({ message: `Hello, ${name}!` });
-  });
+  .route('/product', productsRoute);
+// TODO: Add more API routes here
 
 export type ApiRoutes = typeof apiRoutes;
 

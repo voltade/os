@@ -20,6 +20,7 @@
     "db:typegen": "source .env && curl -s http://localhost:4000/generators/typescript?included_schemas=public > src/database.gen.ts"
   },
   "dependencies": {
+    "@hono/zod-validator": "^0.7.1",
     "@mantine/core": "^8.1.1",
     "@mantine/dates": "^8.1.1",
     "@mantine/notifications": "^8.1.1",
