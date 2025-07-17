@@ -1,15 +1,15 @@
 import { zValidator } from '@hono/zod-validator';
+import {
+  calculateOffset,
+  createPaginationMeta,
+  db,
+  paginationValidator,
+  totalCount,
+} from '@voltade-os/core-schema/common-api';
 import { productTable } from '@voltade-os/core-schema/schemas/product';
 import { getTableColumns } from 'drizzle-orm';
 
 import { factory } from '#server/factory.ts';
-import { db } from '#server/lib/db.ts';
-import {
-  calculateOffset,
-  createPaginationMeta,
-  paginationValidator,
-  totalCount,
-} from '#server/utils/pagination.ts';
 
 export const route = factory.createApp();
 

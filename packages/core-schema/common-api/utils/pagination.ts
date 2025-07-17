@@ -160,7 +160,7 @@ export const createPaginationMeta = (
   limit: number,
   result: { totalCount: number }[],
 ): PaginationMeta => {
-  const total_count = result.length > 0 ? result[0].totalCount : 0;
+  const total_count = result.length > 0 ? (result[0]?.totalCount ?? 0) : 0;
   const totalPages = Math.ceil(total_count / limit);
 
   return {

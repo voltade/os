@@ -1,9 +1,10 @@
+import { createCommonRouter, db } from '@voltade-os/core-schema/common-api';
 import { Hono } from 'hono';
 import { serveStatic } from 'hono/bun';
 import { logger } from 'hono/logger';
 
 import runtimeRoute from '#server/routes/runtime.ts';
-import { route as productsRoute } from './routes/product/index.ts';
+import { route as productRoute } from './routes/product/index.ts';
 
 const API_BASE_ROUTE = '/api';
 
@@ -17,7 +18,8 @@ app.get('/healthz', (c) => {
 export const apiRoutes = app
   .basePath(API_BASE_ROUTE)
   .route('/runtime.js', runtimeRoute)
-  .route('/product', productsRoute);
+  .route('/product', productRoute) //DEMO purposes, should be using common one
+  .route('/common', createCommonRouter(db));
 // TODO: Add more API routes here
 
 export type ApiRoutes = typeof apiRoutes;
