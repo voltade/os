@@ -4,7 +4,7 @@ metadata:
   name: gitea
 spec:
   parentRefs:
-    - name: http
+    - name: cilium-gateway
       namespace: gateway
   hostnames:
     - gitea.127.0.0.1.nip.io

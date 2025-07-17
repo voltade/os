@@ -8,8 +8,8 @@ resource "kubectl_manifest" "argocd_http_route" {
       namespace: argocd
     spec:
       parentRefs:
-        - name: ${kubectl_manifest.gateway.name}
-          namespace: ${kubectl_manifest.gateway.namespace}
+        - name: ${kubectl_manifest.cilium_gateway.name}
+          namespace: gateway
       hostnames:
         - "argocd.${var.cluster_domain_public}"
       rules:

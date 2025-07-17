@@ -4,7 +4,7 @@ metadata:
   name: maildev-http
 spec:
   parentRefs:
-    - name: http
+    - name: cilium-gateway
       namespace: gateway
   hostnames:
     - maildev.127.0.0.1.nip.io

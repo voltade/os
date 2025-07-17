@@ -29,18 +29,18 @@ resource "kubernetes_namespace" "gateway" {
   }
 }
 
-resource "kubectl_manifest" "gateway" {
+resource "kubectl_manifest" "cilium_gateway" {
   depends_on = [kubectl_manifest.gateway_api, helm_release.cilium]
   yaml_body  = <<-YAML
     apiVersion: gateway.networking.k8s.io/v1
     kind: Gateway
     metadata:
-      name: http
+      name: cilium-gateway
       namespace: ${kubernetes_namespace.gateway.metadata[0].name}
     spec:
       gatewayClassName: cilium
       listeners:
-        - name: http-wildcard
+        - name: http-80
           protocol: HTTP
           port: 80
           hostname: "*.${var.cluster_domain_public}"
