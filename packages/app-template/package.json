@@ -1,6 +1,6 @@
 {
   "private": true,
-  "name": "bun-fullstack-app",
+  "name": "@voltade-os/app-template",
   "version": "0.1.0",
   "type": "module",
   "scripts": {
