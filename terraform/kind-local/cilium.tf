@@ -9,5 +9,12 @@ resource "helm_release" "cilium" {
   values = [
     file("${path.module}/cilium.values.yaml"),
   ]
+  set = [{
+    name  = "k8sServiceHost"
+    value = local.kind_cluster_ip
+    }, {
+    name  = "k8sServicePort"
+    value = "6443"
+  }]
   wait_for_jobs = true
 }

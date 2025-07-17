@@ -51,7 +51,7 @@ terraform {
 
 locals {
   k8s_config = {
-    host                   = kind_cluster.this.endpoint
+    host                   = "https://127.0.0.1:6443"
     cluster_ca_certificate = kind_cluster.this.cluster_ca_certificate
     client_certificate     = kind_cluster.this.client_certificate
     client_key             = kind_cluster.this.client_key
