@@ -1,8 +1,9 @@
-import { createCommonRouter, db } from '@voltade-os/core-schema/common-api';
+import { createCommonRouter } from '@voltade-os/core-schema/common-api';
 import { Hono } from 'hono';
 import { serveStatic } from 'hono/bun';
 import { logger } from 'hono/logger';
 
+import { db } from '#server/lib/db.ts';
 import runtimeRoute from '#server/routes/runtime.ts';
 import { route as productRoute } from './routes/product/index.ts';
 
