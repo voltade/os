@@ -23,8 +23,8 @@ resource "docker_container" "registry" {
 
   env = [
     "REGISTRY_HTTP_ADDR=0.0.0.0:443",
-    "REGISTRY_HTTP_TLS_CERTIFICATE=/certs/server.crt",
-    "REGISTRY_HTTP_TLS_KEY=/certs/server.key"
+    "REGISTRY_HTTP_TLS_CERTIFICATE=/certs/tls.crt",
+    "REGISTRY_HTTP_TLS_KEY=/certs/tls.key"
   ]
 
   networks_advanced {
