@@ -52,7 +52,6 @@ jobs:
         uses: docker/build-push-action@v6
         with:
           context: ./docker/postgres
-          file: Dockerfile
           push: true
           platforms: ${{ matrix.os.platform }}
           tags: ${{ steps.meta.outputs.tags }}
