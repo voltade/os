@@ -27,13 +27,37 @@ type PaginationMeta = {
  *
  * @example
  * ```typescript
- * // In a route handler
- * const { page, limit } = paginationValidator.parse(req.query);
+ * import { zValidator } from '@hono/zod-validator';
+ * import { factory } from '#server/factory.ts';
  *
- * // Valid inputs:
- * paginationValidator.parse({ page: "2", limit: "20" });
- * paginationValidator.parse({ page: 1, limit: 10 });
- * paginationValidator.parse({}); // Uses defaults: page=1, limit=10
+ * const route = factory.createApp();
+ *
+ * // Use with Hono route handler
+ * route.get('/', zValidator('query', paginationValidator), async (c) => {
+ *   const { page, limit } = c.req.valid('query');
+ *
+ *   // Query database with pagination
+ *   const result = await db
+ *     .select({
+ *       ...getTableColumns(productTable),
+ *       totalCount,
+ *     })
+ *     .from(productTable)
+ *     .limit(limit)
+ *     .offset(calculateOffset(page, limit));
+ *
+ *   const data = result.map(({ totalCount, ...product }) => product);
+ *
+ *   return c.json({
+ *     data,
+ *     pagination: createPaginationMeta(page, limit, result),
+ *   });
+ * });
+ *
+ * // Valid URL examples:
+ * // GET /products?page=2&limit=20
+ * // GET /products?page=1 (uses default limit=10)
+ * // GET /products (uses defaults: page=1, limit=10)
  * ```
  */
 export const paginationValidator = z.object({
