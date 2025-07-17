@@ -13,7 +13,7 @@ import {
 
 export const route = factory.createApp();
 
-route.get(',', zValidator('json', paginationValidator), async (c) => {
+route.get('/', zValidator('json', paginationValidator), async (c) => {
   const { page, limit } = c.req.valid('json');
 
   const result = await db
