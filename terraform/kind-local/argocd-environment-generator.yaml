@@ -1,7 +1,7 @@
 apiVersion: v1
 kind: ConfigMap
 metadata:
-  name: environment-generator-plugin
+  name: environment-generator
   namespace: argocd
 data:
   baseUrl: http://host.docker.internal:3000/api/environment

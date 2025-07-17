@@ -11,3 +11,7 @@ spec:
 
   storage:
     size: 4Gi
+
+  certificates:
+    serverCASecret: tls-ca
+    serverTLSSecret: tls-certificate

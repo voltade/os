@@ -38,6 +38,7 @@
     "lefthook",
     "maildev",
     "sslip",
+    "traefik",
     "voltade"
   ],
   "editor.codeActionsOnSave": {

@@ -8,11 +8,6 @@ variable "cluster_domain_public" {
   default = "127.0.0.1.nip.io"
 }
 
-variable "registry_ip" {
-  type    = string
-  default = "172.19.0.3"
-}
-
 # https://hub.docker.com/r/kindest/node/tags
 variable "kubernetes_version" {
   type    = string
@@ -22,13 +17,19 @@ variable "kubernetes_version" {
 # https://artifacthub.io/packages/helm/cilium/cilium
 variable "cilium_version" {
   type    = string
-  default = "1.17.5"
+  default = "1.17.6"
 }
 
 # https://docs.cilium.io/en/stable/network/servicemesh/gateway-api/gateway-api/#prerequisites
 variable "gateway_api_version" {
   type    = string
   default = "v1.2.0"
+}
+
+# https://artifacthub.io/packages/helm/traefik/traefik
+variable "traefik_helm_version" {
+  type    = string
+  default = "36.3.0"
 }
 
 # https://artifacthub.io/packages/helm/argo/argo-cd

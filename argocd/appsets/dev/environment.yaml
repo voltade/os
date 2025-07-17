@@ -30,6 +30,8 @@ spec:
         targetRevision: "{{ .environment_chart_version}}"
         helm:
           parameters:
+            - name: domain
+              value: 127.0.0.1.nip.io
             - name: org_id
               value: "{{ .org_id }}"
             - name: environment_id
