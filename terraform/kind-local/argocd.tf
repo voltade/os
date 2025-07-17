@@ -63,7 +63,7 @@ resource "kubectl_manifest" "argocd_appsets" {
   })
 }
 
-resource "kubectl_manifest" "argocd_environment_generator_plugin" {
+resource "kubectl_manifest" "argocd_environment_generator" {
   depends_on = [helm_release.argocd]
-  yaml_body  = file("${path.module}/argocd-environment-generator-plugin.yaml")
+  yaml_body  = file("${path.module}/argocd-environment-generator.yaml")
 }
