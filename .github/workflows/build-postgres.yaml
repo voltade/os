@@ -92,8 +92,7 @@ jobs:
 
       - name: Create and push manifest
         run: |
-          IMAGE=${{ steps.meta.outputs.tags[0] }}
-          docker manifest create $IMAGE \
-            --amend $IMAGE-amd64 \
-            --amend $IMAGE-arm64
-          docker manifest push $IMAGE
+          docker manifest create $DOCKER_METADATA_OUTPUT_TAGS \
+            --amend $DOCKER_METADATA_OUTPUT_TAGS-amd64 \
+            --amend $DOCKER_METADATA_OUTPUT_TAGS-arm64
+          docker manifest push $DOCKER_METADATA_OUTPUT_TAGS
