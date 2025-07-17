@@ -3,7 +3,9 @@
 ## Required
 
 Bun: `curl -fsSL https://bun.com/install | bash`
+
 Docker: `brew install --cask docker-desktop`
+
 Other tools: `brew install kubectl kubecm helm opentofu`
 
 ## Terraform
@@ -32,8 +34,8 @@ tofu state rm helm_release.cilium && tofu destroy
 bun helm environment --overwrite
 ```
 
-## Starting the server
+## Start the server
 
 ```bash
-bun run start
+bun run dev
 ```
