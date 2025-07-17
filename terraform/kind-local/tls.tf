@@ -58,8 +58,11 @@ resource "kubernetes_secret" "tls_ca" {
       "reflector.v1.k8s.emberstack.com/reflection-allowed" = "true"
     }
   }
+  type = "kubernetes.io/tls"
   data = {
-    "ca.crt" = tls_self_signed_cert.ca.cert_pem
+    "ca.crt"  = tls_self_signed_cert.ca.cert_pem
+    "tls.crt" = tls_self_signed_cert.ca.cert_pem
+    "tls.key" = tls_private_key.ca.private_key_pem
   }
 }
 
