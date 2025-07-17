@@ -1,7 +1,8 @@
 ARG debian_version=bookworm
 # https://www.postgresql.org/docs/release/
 ARG postgresql_major=17
-ARG postgresql_release=${postgresql_major}.5
+ARG postgresql_minor=5
+ARG postgresql_release=${postgresql_major}.${postgresql_minor}
 
 # https://github.com/jedisct1/libsodium/releases
 ARG libsodium_release=1.0.20
