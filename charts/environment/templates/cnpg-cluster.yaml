@@ -7,7 +7,15 @@ metadata:
   annotations:
     argocd.argoproj.io/sync-options: SkipDryRunOnMissingResource=true
 spec:
+  imageName: ghcr.io/voltade/postgres:17.5-20250717-a2c5abf
+
   instances: 1
+
+  bootstrap:
+    initdb:
+      # install extensions that require the superuser role
+      postInitApplicationSQL:
+        - create extension if not exists plv8
 
   storage:
     size: 4Gi
