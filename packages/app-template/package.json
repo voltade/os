@@ -4,7 +4,7 @@
   "version": "0.1.0",
   "type": "module",
   "scripts": {
-    "dev:server": "bun run --hot server/index.ts",
+    "dev:server": "bun run --hot --env-file ../../.env server/index.ts",
     "dev:vite": "wait-on http://localhost:30000/healthz && vite dev",
     "dev": "bun run scripts/dev.ts",
     "start": "VITE_NODE_ENV=production bun server/index.ts",
