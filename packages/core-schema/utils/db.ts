@@ -1,3 +1,5 @@
+import { readFileSync } from 'fs';
+import { join } from 'path';
 import { drizzle } from 'drizzle-orm/bun-sql';
 
 import schema from '../schemas/index.ts';
@@ -7,11 +9,14 @@ const { DB_NAME, DB_USER, DB_HOST, DB_PORT, DB_PASSWORD } = appEnvVariables;
 
 export const db = drizzle({
   connection: {
-    host: DB_HOST,
-    port: DB_PORT,
-    user: DB_USER,
-    password: DB_PASSWORD,
-    database: DB_NAME,
+    url: `postgresql://${DB_USER}:${DB_PASSWORD}@${DB_HOST}:${DB_PORT}/${DB_NAME}?sslmode=require`,
+    ssl: {
+      rejectUnauthorized: false,
+      ca: readFileSync(
+        join(process.cwd(), '../../terraform/kind-local/certs/ca.crt'),
+        'utf8',
+      ),
+    },
   },
   schema: schema,
 });
