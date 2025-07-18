@@ -1,0 +1,13 @@
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+
+resources:
+  - cluster-generator.yaml
+
+helmCharts:
+  - repo: https://charts.external-secrets.io
+    name: external-secrets
+    # https://artifacthub.io/packages/helm/external-secrets-operator/external-secrets
+    version: 0.18.2
+    releaseName: external-secrets
+    namespace: external-secrets
