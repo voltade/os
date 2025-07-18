@@ -12,7 +12,9 @@ function RouteComponent() {
   const { data, isLoading, error } = useQuery({
     queryKey: ['products'],
     queryFn: async () => {
-      const response = await api.product.$get({ json: {} });
+      const response = await api.product.$get({
+        query: { page: '1', limit: '10' },
+      });
       if (!response.ok) {
         throw new Error('Failed to fetch products');
       }

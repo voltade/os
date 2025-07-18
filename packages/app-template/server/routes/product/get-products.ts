@@ -13,8 +13,8 @@ import { factory } from '#server/factory.ts';
 
 export const route = factory
   .createApp()
-  .get('/', zValidator('json', paginationValidator), async (c) => {
-    const { page, limit } = c.req.valid('json');
+  .get('/', zValidator('query', paginationValidator), async (c) => {
+    const { page, limit } = c.req.valid('query');
 
     const result = await db
       .select({
