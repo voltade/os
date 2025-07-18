@@ -1,0 +1,22 @@
+{{- if .Values.httproute.enabled }}
+apiVersion: gateway.networking.k8s.io/v1
+kind: HTTPRoute
+metadata:
+  name: {{ include "kong.fullname" . }}
+  labels:
+    {{- include "kong.labels" . | nindent 4 }}
+spec:
+  parentRefs:
+    - name: http
+      namespace: voltade-os
+  hostnames:
+    {{- toYaml .Values.httproute.hostnames | nindent 4 }}
+  rules:
+    - backendRefs:
+        - name: {{ include "kong.fullname" . }}
+          port: {{ .Values.service.port }}
+      matches:
+        - path:
+            type: PathPrefix
+            value: /
+{{- end }}

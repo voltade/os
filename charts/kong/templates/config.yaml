@@ -1,0 +1,233 @@
+{{- if .Values.enabled -}}
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ include "kong.fullname" . }}
+  labels:
+    {{- include "kong.labels" . | nindent 4 }}
+data:
+  wrapper.sh: |
+    #!/bin/bash
+
+    set -euo pipefail
+
+    echo "Replacing env placeholders of /usr/local/kong/kong.yml"
+
+    sed \
+    -e "s#\${SUPABASE_ANON_KEY}#${SUPABASE_ANON_KEY}#g" \
+    -e "s#\${SUPABASE_SERVICE_KEY}#${SUPABASE_SERVICE_KEY}#g" \
+    -e "s#\${STUDIO_USERNAME}#${STUDIO_USERNAME}#g" \
+    -e "s#\${STUDIO_PASSWORD}#${STUDIO_PASSWORD}#g" \
+    /usr/local/kong/template.yml \
+    > /usr/local/kong/kong.yml
+
+    exec /docker-entrypoint.sh kong docker-start
+  template.yml: |
+    _format_version: '2.1'
+    _transform: true
+
+    consumers:
+      - username: STUDIO
+      - username: anon
+        keyauth_credentials:
+            - key: ${SUPABASE_ANON_KEY}
+      - username: service_role
+        keyauth_credentials:
+            - key: ${SUPABASE_SERVICE_KEY}
+    acls:
+      - consumer: anon
+        group: anon
+      - consumer: service_role
+        group: admin
+    basicauth_credentials:
+      - consumer: STUDIO
+        username: ${STUDIO_USERNAME}
+        password: ${STUDIO_PASSWORD}
+    services:
+    {{- if .Values.auth.enabled }}
+      - name: auth-v1-open
+        url: http://{{ include "kong.auth.fullname" . }}:{{ .Values.auth.service.port }}/verify
+        routes:
+          - name: auth-v1-open
+            strip_path: true
+            paths:
+              - /auth/v1/verify
+        plugins:
+          - name: cors
+      - name: auth-v1-open-callback
+        url: http://{{ include "kong.auth.fullname" . }}:{{ .Values.auth.service.port }}/callback
+        routes:
+          - name: auth-v1-open-callback
+            strip_path: true
+            paths:
+              - /auth/v1/callback
+        plugins:
+          - name: cors
+      - name: auth-v1-open-authorize
+        url: http://{{ include "kong.auth.fullname" . }}:{{ .Values.auth.service.port }}/authorize
+        routes:
+          - name: auth-v1-open-authorize
+            strip_path: true
+            paths:
+              - /auth/v1/authorize
+        plugins:
+          - name: cors
+      - name: auth-v1
+        _comment: "GoTrue: /auth/v1/* -> http://{{ include "kong.auth.fullname" . }}:{{ .Values.auth.service.port }}/*"
+        url: http://{{ include "kong.auth.fullname" . }}:{{ .Values.auth.service.port }}
+        routes:
+          - name: auth-v1-all
+            strip_path: true
+            paths:
+              - /auth/v1/
+        plugins:
+          - name: cors
+          - name: key-auth
+            config:
+              hide_credentials: false
+          - name: acl
+            config:
+              hide_groups_header: true
+              allow:
+                - admin
+                - anon
+    {{- end }}
+    {{- if .Values.rest.enabled }}
+      - name: rest-v1
+        _comment: "PostgREST: /rest/v1/* -> http://{{ include "kong.rest.fullname" . }}:{{ .Values.rest.service.port }}/*"
+        url: http://{{ include "kong.rest.fullname" . }}:{{ .Values.rest.service.port }}/
+        routes:
+          - name: rest-v1-all
+            strip_path: true
+            paths:
+              - /rest/v1/
+        plugins:
+          - name: cors
+          - name: key-auth
+            config:
+              hide_credentials: true
+          - name: acl
+            config:
+              hide_groups_header: true
+              allow:
+                - admin
+                - anon
+      - name: graphql-v1
+        _comment: 'PostgREST: /graphql/v1/* -> http://{{ include "kong.rest.fullname" . }}:{{ .Values.rest.service.port }}/rpc/graphql'
+        url: http://{{ include "kong.rest.fullname" . }}:{{ .Values.rest.service.port }}/rpc/graphql
+        routes:
+          - name: graphql-v1-all
+            strip_path: true
+            paths:
+              - /graphql/v1
+        plugins:
+          - name: cors
+          - name: key-auth
+            config:
+              hide_credentials: true
+          - name: request-transformer
+            config:
+              add:
+                headers:
+                  - Content-Profile:graphql_public
+          - name: acl
+            config:
+              hide_groups_header: true
+              allow:
+                - admin
+                - anon
+    {{- end }}
+    {{- if .Values.realtime.enabled }}
+      - name: realtime-v1
+        _comment: "Realtime: /realtime/v1/* -> ws://{{ include "kong.realtime.fullname" . }}:{{ .Values.realtime.service.port }}/socket/*"
+        url: http://{{ include "kong.realtime.fullname" . }}:{{ .Values.realtime.service.port }}/socket
+        routes:
+          - name: realtime-v1-all
+            strip_path: true
+            paths:
+              - /realtime/v1/
+        plugins:
+          - name: cors
+          - name: key-auth
+            config:
+              hide_credentials: false
+          - name: acl
+            config:
+              hide_groups_header: true
+              allow:
+                - admin
+                - anon
+    {{- end }}
+    {{- if .Values.storage.enabled }}
+      - name: storage-v1
+        _comment: "Storage: /storage/v1/* -> http://{{ include "kong.storage.fullname" . }}:{{ .Values.storage.service.port }}/*"
+        url: http://{{ include "kong.storage.fullname" . }}:{{ .Values.storage.service.port }}/
+        routes:
+          - name: storage-v1-all
+            strip_path: true
+            paths:
+              - /storage/v1/
+        plugins:
+          - name: cors
+          - name: request-transformer
+            config:
+              add:
+                headers:
+                  # https://github.com/supabase/storage/issues/331#issuecomment-2715238807
+                  - forwarded:host=$(headers.host)/storage/v1;proto=https
+    {{- end }}
+    {{- if .Values.functions.enabled }}
+      - name: functions-v1
+        _comment: 'Edge Functions: /functions/v1/* -> http://{{ include "kong.functions.fullname" . }}:{{ .Values.functions.service.port }}/*'
+        url: http://functions:{{ .Values.functions.service.port }}/
+        routes:
+          - name: functions-v1-all
+            strip_path: true
+            paths:
+              - /functions/v1/
+        plugins:
+          - name: cors
+    {{- end }}
+    {{- if .Values.analytics.enabled }}
+      - name: analytics-v1
+        _comment: 'Analytics: /analytics/v1/* -> http://{{ include "kong.analytics.fullname" . }}:{{ .Values.analytics.service.port }}/*'
+        url: http://{{ include "kong.analytics.fullname" . }}:{{ .Values.analytics.service.port }}/
+        routes:
+          - name: analytics-v1-all
+            strip_path: true
+            paths:
+              - /analytics/v1/
+    {{- end }}
+    {{- if .Values.meta.enabled }}
+      - name: meta
+        _comment: "pg-meta: /pg/* -> http://{{ include "kong.meta.fullname" . }}:{{ .Values.meta.service.port }}/*"
+        url: http://{{ include "kong.meta.fullname" . }}:{{ .Values.meta.service.port }}/
+        routes:
+          - name: meta-all
+            strip_path: true
+            paths:
+              - /pg/
+        plugins:
+          - name: key-auth
+            config:
+              hide_credentials: false
+          - name: acl
+            config:
+              hide_groups_header: true
+              allow:
+                - admin
+    {{- end }}
+      - name: studio
+        _comment: 'Studio: /* -> http://{{ include "kong.studio.fullname" . }}:{{ .Values.studio.service.port }}/*'
+        url: http://{{ include "kong.studio.fullname" . }}:{{ .Values.studio.service.port }}/
+        routes:
+          - name: studio-all
+            strip_path: true
+            paths:
+              - /
+        plugins:
+          - name: cors
+          - name: basic-auth
+            config:
+              hide_credentials: true
+{{- end }} 

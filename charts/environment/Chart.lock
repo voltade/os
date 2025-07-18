@@ -1,0 +1,18 @@
+dependencies:
+- name: auth
+  repository: file://../auth
+  version: 0.1.0
+- name: meta
+  repository: file://../meta
+  version: 0.1.0
+- name: rest
+  repository: file://../rest
+  version: 0.1.0
+- name: storage
+  repository: file://../storage
+  version: 0.1.0
+- name: studio
+  repository: file://../studio
+  version: 0.1.0
+digest: sha256:c2abfc4c75482643a42341b60bd4e6d54334ff45fd014cc5a762e975de123b2e
+generated: "2025-07-18T15:21:35.248506+08:00"

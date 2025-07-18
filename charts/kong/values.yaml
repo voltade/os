@@ -1,27 +1,22 @@
-# Default values for studio.
+# Default values for kong.
 # This is a YAML-formatted file.
 # Declare variables to be passed into your templates.
+# Enable/disable kong service deployment
+enabled: true
 
 # This will set the replicaset count more information can be found here: https://kubernetes.io/docs/concepts/workloads/controllers/replicaset/
 replicaCount: 1
 
 # This sets the container image more information can be found here: https://kubernetes.io/docs/concepts/containers/images/
 image:
-  repository: supabase/studio
+  repository: kong
   # This sets the pull policy for images.
   pullPolicy: IfNotPresent
   # Overrides the image tag whose default is the chart appVersion.
-  tag: "2025.07.14-sha-80b9b6f"
-
-global:
-  baseDomain: 127.0.0.1.nip.io
-  nameOverride: ""
+  tag: "2.8.1"
 
 # This is for the secrets for pulling an image from a private repository more information can be found here: https://kubernetes.io/docs/tasks/configure-pod-container/pull-image-private-registry/
 imagePullSecrets: []
-# This is to override the chart name.
-nameOverride: ""
-fullnameOverride: ""
 
 # This section builds out the service account more information can be found here: https://kubernetes.io/docs/concepts/security/service-accounts/
 serviceAccount:
@@ -58,35 +53,36 @@ service:
   # This sets the service type more information can be found here: https://kubernetes.io/docs/concepts/services-networking/service/#publishing-services-service-types
   type: ClusterIP
   # This sets the ports more information can be found here: https://kubernetes.io/docs/concepts/services-networking/service/#field-spec-ports
-  port: 3000
+  port: 80
 
 # This block is for setting up the ingress for more information can be found here: https://kubernetes.io/docs/concepts/services-networking/ingress/
 ingress:
   enabled: false
+  className: ""
+  annotations: {}
+    # kubernetes.io/ingress.class: nginx
+    # kubernetes.io/tls-acme: "true"
+  hosts:
+    - host: chart-example.local
+      paths:
+        - path: /
+          pathType: ImplementationSpecific
+  tls: []
+  #  - secretName: chart-example-tls
+  #    hosts:
+  #      - chart-example.local
 
-environment: {}
-
-resources: {}
+resources:
   # We usually recommend not to specify default resources and to leave this as a conscious
   # choice for the user. This also increases chances charts run on environments with little
   # resources, such as Minikube. If you do want to specify resources, uncomment the following
   # lines, adjust them as necessary, and remove the curly braces after 'resources:'.
-  # limits:
-  #   cpu: 100m
-  #   memory: 128Mi
-  # requests:
-  #   cpu: 100m
-  #   memory: 128Mi
-
-# This is to setup the liveness and readiness probes more information can be found here: https://kubernetes.io/docs/tasks/configure-pod-container/configure-liveness-readiness-startup-probes/
-livenessProbe:
-  httpGet:
-    path: /
-    port: http
-readinessProbe:
-  httpGet:
-    path: /
-    port: http
+  limits:
+    cpu: 500m
+    memory: 512Mi
+  requests:
+    cpu: 250m
+    memory: 256Mi
 
 # This section is for setting up autoscaling more information can be found here: https://kubernetes.io/docs/concepts/workloads/autoscaling/
 autoscaling:
@@ -94,7 +90,7 @@ autoscaling:
   minReplicas: 1
   maxReplicas: 100
   targetCPUUtilizationPercentage: 80
-  # targetMemoryUtilizationPercentage: 80
+  targetMemoryUtilizationPercentage: 80
 
 # Additional volumes on the output Deployment definition.
 volumes: []
@@ -114,3 +110,67 @@ nodeSelector: {}
 tolerations: []
 
 affinity: {}
+
+# Environment variables for the kong container
+environment:
+  KONG_DATABASE: "off"
+  KONG_DECLARATIVE_CONFIG: "/usr/local/kong/kong.yml"
+  KONG_PROXY_ACCESS_LOG: "/dev/stdout"
+  KONG_ADMIN_ACCESS_LOG: "/dev/stdout"
+  KONG_PROXY_ERROR_LOG: "/dev/stderr"
+  KONG_ADMIN_ERROR_LOG: "/dev/stderr"
+  KONG_ADMIN_LISTEN: "0.0.0.0:8001"
+  SUPABASE_ANON_KEY: ""
+  SUPABASE_SERVICE_KEY: ""
+  STUDIO_USERNAME: ""
+  STUDIO_PASSWORD: ""
+
+# Reference configurations for other services
+auth:
+  enabled: false
+  service:
+    port: 9999
+
+rest:
+  enabled: false
+  service:
+    port: 3000
+
+realtime:
+  enabled: false
+  service:
+    port: 4000
+
+storage:
+  enabled: false
+  service:
+    port: 5000
+
+functions:
+  enabled: false
+  service:
+    port: 9000
+
+analytics:
+  enabled: false
+  service:
+    port: 4000
+
+meta:
+  enabled: false
+  service:
+    port: 8080
+
+studio:
+  enabled: true
+  service:
+    port: 3000
+
+# Legacy top-level values for backward compatibility
+nameOverride: ""
+fullnameOverride: ""
+
+httproute:
+  enabled: true
+  hostnames:
+    - supabase.127.0.0.1.nip.io

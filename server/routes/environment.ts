@@ -11,14 +11,12 @@ export const route = factory
           {
             org_id: 'voltade',
             is_production: true,
-            environment_id: '90a8834',
+            environment_id: '90a8837',
             environment_chart_version: '0.1.1',
-          },
-          {
-            org_id: 'voltade',
-            is_production: false,
-            environment_id: 'd9390b2',
-            environment_chart_version: '0.1.1',
+            service_key:
+              'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImxvY2FsaG9zdCIsInJvbGUiOiJzZXJ2aWNlX3JvbGUiLCJpYXQiOjE3NTI4MDUyMTcsImV4cCI6MjA2ODE2NTIxN30.eZnX2_UmqGoxQfAzTesxrYQJmUgmwgwCR7roySZDcHI',
+            anon_key:
+              'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImxvY2FsaG9zdCIsInJvbGUiOiJhbm9uIiwiaWF0IjoxNzUyODA1MjE3LCJleHAiOjIwNjgxNjUyMTd9.z8Ot0a3-jNuzN9BMz6_kiC9OYmsynENPQowcykY75mk',
           },
         ],
       },

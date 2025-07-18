@@ -1,25 +1,154 @@
+{{/* CNPG PostgreSQL Cluster - only create if enabled */}}
+{{- if .Values.cnpg.enabled }}
 apiVersion: postgresql.cnpg.io/v1
 kind: Cluster
 metadata:
-  name: cnpg-cluster
+  name: {{ .Values.cnpg.clusterId }}
+  namespace: {{ .Release.Namespace }}
   labels:
     {{- include "environment.labels" . | nindent 4 }}
+    app.kubernetes.io/component: database
   annotations:
     argocd.argoproj.io/sync-options: SkipDryRunOnMissingResource=true
+    argocd.argoproj.io/sync-wave: "2"
+    cnpg.io/environment: {{ .Values.global.environment | default "development" | quote }}
+    {{- if eq .Values.global.environment "production" }}
+    cnpg.io/backup-retention: "30d"
+    {{- end }}
 spec:
-  imageName: ghcr.io/voltade/postgres:17.5-20250717-a2c5abf
-
-  instances: 1
-
-  bootstrap:
-    initdb:
-      # install extensions that require the superuser role
-      postInitApplicationSQL:
-        - create extension if not exists plv8
-
+  instances: {{ .Values.cnpg.instances }}
+  imageName: {{ .Values.cnpg.image }}
+  
+  {{/* Affinity configuration for production environments */}}
+  {{- if and .Values.cnpg.affinity.enabled (ne .Values.global.environment "development") }}
+  affinity:
+    enablePodAntiAffinity: true
+    topologyKey: kubernetes.io/hostname
+    podAntiAffinityType: required
+    {{- with .Values.cnpg.affinity.nodeSelector }}
+    nodeSelector:
+      {{- toYaml . | nindent 6 }}
+    {{- end }}
+    {{- with .Values.cnpg.affinity.tolerations }}
+    tolerations:
+      {{- toYaml . | nindent 6 }}
+    {{- end }}
+  {{- end }}
+  
+  {{/* PostgreSQL configuration */}}
+  postgresql:
+    parameters:
+      {{- range $key, $value := .Values.cnpg.postgresql.parameters }}
+      {{ $key }}: {{ $value | quote }}
+      {{- end }}
+    shared_preload_libraries:
+      {{- range .Values.cnpg.postgresql.shared_preload_libraries }}
+      - {{ . }}
+      {{- end }}
+  
+  {{/* Storage configuration */}}
   storage:
-    size: 4Gi
-
+    storageClass: {{ .Values.cnpg.storage.storageClass }}
+    size: {{ .Values.cnpg.storage.size }}
+  
+  {{/* Enable superuser access for Supabase */}}
+  enableSuperuserAccess: true
+  
+  {{/* Managed database roles for Supabase */}}
+  managed:
+    roles:
+      - name: supabase_admin
+        ensure: present
+        superuser: true
+        createdb: true
+        createrole: true
+        login: true
+        replication: true
+        bypassrls: true
+      - name: anon
+        ensure: present
+        inherit: false
+      - name: authenticated
+        ensure: present
+        inherit: false
+      - name: pgsodium_keyiduser
+        ensure: present
+      - name: pgsodium_keyholder
+        ensure: present
+        inRoles:
+          - pgsodium_keyiduser
+      - name: service_role
+        ensure: present
+        inRoles:
+          - pgsodium_keyholder
+        inherit: true
+        bypassrls: true
+      - name: authenticator
+        ensure: present
+        inRoles:
+          - anon
+          - authenticated
+          - service_role
+          - supabase_admin
+        inherit: false
+        login: true
+      - name: pgbouncer
+        ensure: present
+        login: true
+      - name: supabase_auth_admin
+        ensure: present
+        login: true
+      - name: supabase_storage_admin
+        ensure: present
+        inRoles:
+          - authenticator
+        inherit: false
+        createrole: true
+        login: true
+  
+  {{/* Bootstrap configuration */}}
+  bootstrap:
+    {{- if .Values.cnpg.backup.enabled }}
+    recovery:
+      source: clusterBackup
+    {{- else }}
+    initdb:
+      postInitSQL:
+        - CREATE EXTENSION IF NOT EXISTS supabase_vault;
+        - CREATE SCHEMA IF NOT EXISTS storage;
+        - CREATE SCHEMA IF NOT EXISTS auth;
+      {{- if .Values.cnpg.migrations.enabled }}
+      postInitSQLRefs:
+        configMapRefs:
+          {{- range .Values.cnpg.migrations.scripts }}
+          - name: {{ $.Values.cnpg.migrations.configMapName }}
+            key: {{ . }}
+          {{- end }}
+      {{- end }}
+    {{- end }}
+  
+  {{/* Projected volume template */}}
+  projectedVolumeTemplate:
+    sources: []
+  
+  {{/* External clusters for backup recovery */}}
+  {{- if .Values.cnpg.backup.enabled }}
+  externalClusters:
+    - name: clusterBackup
+      plugin:
+        name: barman-cloud.cloudnative-pg.io
+        serverName: {{ .Values.cnpg.backup.serverName | default (printf "%s-a" .Values.cnpg.clusterId) }}
+  
+  {{/* Backup plugins */}}
+  plugins:
+    - name: barman-cloud.cloudnative-pg.io
+      isWALArchiver: true
+      parameters:
+        barmanObjectName: {{ .Values.cnpg.backup.objectStoreName }}
+        serverName: {{ .Values.cnpg.backup.serverName | default (printf "%s-a" .Values.cnpg.clusterId) }}
+  
   certificates:
     serverCASecret: tls-ca
     serverTLSSecret: tls-certificate
+  {{- end }}
+{{- end }} 

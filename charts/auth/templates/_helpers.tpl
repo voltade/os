@@ -1,7 +1,7 @@
 {{/*
 Expand the name of the chart.
 */}}
-{{- define "environment.name" -}}
+{{- define "auth.name" -}}
 {{- default .Chart.Name .Values.nameOverride | trunc 63 | trimSuffix "-" }}
 {{- end }}
 
@@ -10,7 +10,7 @@ Create a default fully qualified app name.
 We truncate at 63 chars because some Kubernetes name fields are limited to this (by the DNS naming spec).
 If release name contains chart name it will be used as a full name.
 */}}
-{{- define "environment.fullname" -}}
+{{- define "auth.fullname" -}}
 {{- if .Values.fullnameOverride }}
 {{- .Values.fullnameOverride | trunc 63 | trimSuffix "-" }}
 {{- else }}
@@ -26,16 +26,16 @@ If release name contains chart name it will be used as a full name.
 {{/*
 Create chart name and version as used by the chart label.
 */}}
-{{- define "environment.chart" -}}
+{{- define "auth.chart" -}}
 {{- printf "%s-%s" .Chart.Name .Chart.Version | replace "+" "_" | trunc 63 | trimSuffix "-" }}
 {{- end }}
 
 {{/*
 Common labels
 */}}
-{{- define "environment.labels" -}}
-helm.sh/chart: {{ include "environment.chart" . }}
-{{ include "environment.selectorLabels" . }}
+{{- define "auth.labels" -}}
+helm.sh/chart: {{ include "auth.chart" . }}
+{{ include "auth.selectorLabels" . }}
 {{- if .Chart.AppVersion }}
 app.kubernetes.io/version: {{ .Chart.AppVersion | quote }}
 {{- end }}
@@ -45,18 +45,25 @@ app.kubernetes.io/managed-by: {{ .Release.Service }}
 {{/*
 Selector labels
 */}}
-{{- define "environment.selectorLabels" -}}
-app.kubernetes.io/name: {{ include "environment.name" . }}
+{{- define "auth.selectorLabels" -}}
+app.kubernetes.io/name: {{ include "auth.name" . }}
 app.kubernetes.io/instance: {{ .Release.Name }}
 {{- end }}
 
 {{/*
 Create the name of the service account to use
 */}}
-{{- define "environment.serviceAccountName" -}}
-{{- if .Values.deployment.serviceAccount.create }}
-{{- default (include "environment.fullname" .) .Values.deployment.serviceAccount.name }}
+{{- define "auth.serviceAccountName" -}}
+{{- if .Values.serviceAccount.create }}
+{{- default (include "auth.fullname" .) .Values.serviceAccount.name }}
 {{- else }}
-{{- default "default" .Values.deployment.serviceAccount.name }}
+{{- default "default" .Values.serviceAccount.name }}
 {{- end }}
+{{- end }}
+
+{{/*
+Create database service name
+*/}}
+{{- define "auth.db.fullname" -}}
+{{- printf "%s-db" (include "auth.fullname" .) | trunc 63 | trimSuffix "-" }}
 {{- end }}
