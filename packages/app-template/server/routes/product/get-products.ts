@@ -11,24 +11,24 @@ import { getTableColumns } from 'drizzle-orm';
 
 import { factory } from '#server/factory.ts';
 
-export const route = factory.createApp();
+export const route = factory
+  .createApp()
+  .get('/', zValidator('json', paginationValidator), async (c) => {
+    const { page, limit } = c.req.valid('json');
 
-route.get('/', zValidator('json', paginationValidator), async (c) => {
-  const { page, limit } = c.req.valid('json');
+    const result = await db
+      .select({
+        ...getTableColumns(productTable),
+        totalCount,
+      })
+      .from(productTable)
+      .limit(limit)
+      .offset(calculateOffset(page, limit));
 
-  const result = await db
-    .select({
-      ...getTableColumns(productTable),
-      totalCount,
-    })
-    .from(productTable)
-    .limit(limit)
-    .offset(calculateOffset(page, limit));
+    const data = result.map(({ totalCount, ...product }) => product);
 
-  const data = result.map(({ totalCount, ...product }) => product);
-
-  return c.json({
-    data,
-    pagination: createPaginationMeta(page, limit, result),
+    return c.json({
+      data,
+      pagination: createPaginationMeta(page, limit, result),
+    });
   });
-});
