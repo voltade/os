@@ -15,7 +15,7 @@ parameters:
 cnpg:
   enabled: true
   clusterId: cnpg-cluster
-  image: ghcr.io/voltade/cnpg-supabase:17.5-system-1
+  image: ghcr.io/voltade/postgres:17.5-20250717-a2c5abf
   instances: 1
   storage:
     storageClass: standard
