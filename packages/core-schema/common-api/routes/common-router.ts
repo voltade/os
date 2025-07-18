@@ -5,10 +5,10 @@ import { createProductRoute } from './product/index.ts';
 import { createUserRoute } from './user/index.ts';
 
 export const createCommonRouter = (db: Db) => {
-  //TODO: Check if this hono implementation is what we want
-  const router = new Hono();
-  router.route('/product', createProductRoute(db));
-  router.route('/user', createUserRoute(db));
+  const app = new Hono();
 
-  return router;
+  const productRoutes = createProductRoute(db);
+  const userRoutes = createUserRoute(db);
+
+  return app.route('/product', productRoutes).route('/user', userRoutes);
 };

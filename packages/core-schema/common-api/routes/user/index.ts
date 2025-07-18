@@ -1,8 +1,12 @@
+import { Hono } from 'hono';
+
 import type { Db } from '../../../utils/db.ts';
-import { createGetUsersRoute } from './get-users.ts';
 
-export const createUserRoute = (db: Db) => {
-  const getUsersRoute = createGetUsersRoute(db);
-
-  return getUsersRoute;
+export const createUserRoute = (_db: Db) => {
+  return new Hono().get('/', async (c) => {
+    // Example user route
+    return c.json({ message: 'Users endpoint' });
+  });
 };
+
+export type UserRouteType = ReturnType<typeof createUserRoute>;
