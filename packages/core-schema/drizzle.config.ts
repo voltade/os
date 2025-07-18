@@ -1,3 +1,5 @@
+import { readFileSync } from 'node:fs';
+import { join } from 'node:path';
 import { defineConfig } from 'drizzle-kit';
 
 import schemasConfig from './schemas.json';
@@ -7,12 +9,13 @@ const { DB_NAME, DB_USER, DB_HOST, DB_PORT, DB_PASSWORD } = appEnvVariables;
 
 export default defineConfig({
   dbCredentials: {
-    database: DB_NAME,
-    host: DB_HOST,
-    port: DB_PORT,
-    user: DB_USER,
-    password: DB_PASSWORD,
-    ssl: false,
+    url: `postgresql://${DB_USER}:${DB_PASSWORD}@${DB_HOST}:${DB_PORT}/${DB_NAME}?sslmode=require`,
+    ssl: {
+      ca: readFileSync(
+        join(process.cwd(), '../../terraform/kind-local/certs/ca.crt'),
+        'utf8',
+      ),
+    },
   },
   dialect: 'postgresql',
   schema: [

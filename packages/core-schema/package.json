@@ -16,7 +16,7 @@
     "db:stop": "docker compose --env-file ../../.env down",
     "db:plv8ify": "bun scripts/db-plv8ify.ts",
     "db:current": "bun --env-file ../../.env scripts/db-current.ts",
-    "db:push": "bun --env-file ../../.env drizzle-kit push",
+    "db:push": "NODE_TLS_REJECT_UNAUTHORIZED=0 bun --env-file ../../.env drizzle-kit push",
     "db:seed": "bun --env-file ../../.env scripts/db-seed.ts",
     "db:nuke": "bun --env-file ../../.env scripts/db-nuke.ts",
     "db:reset": "bun db:nuke && bun db:push && bun db:plv8ify && bun db:current && bun db:seed"
