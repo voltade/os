@@ -1,0 +1,26 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: socat
+  labels:
+    app: socat
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: socat
+  template:
+    metadata:
+      labels:
+        app: socat
+    spec:
+      containers:
+        - name: socat
+          image: alpine/socat:1.8.0.3
+          args:
+            - "-d"
+            - "TCP-LISTEN:8080,fork,reuseaddr"
+            - "TCP:host.docker.internal:5173"
+          ports:
+            - name: proxy
+              containerPort: 8080
