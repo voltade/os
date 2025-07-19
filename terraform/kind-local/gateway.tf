@@ -40,7 +40,14 @@ resource "kubectl_manifest" "cilium_gateway" {
     spec:
       gatewayClassName: cilium
       listeners:
-        - name: http-80
+        - name: http
+          protocol: HTTP
+          port: 80
+          hostname: "${var.cluster_domain_public}"
+          allowedRoutes:
+            namespaces:
+              from: All
+        - name: http-wildcard
           protocol: HTTP
           port: 80
           hostname: "*.${var.cluster_domain_public}"
