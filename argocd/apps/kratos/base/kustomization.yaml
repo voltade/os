@@ -1,0 +1,192 @@
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+
+resources:
+  - cnpg-cluster.yaml
+  - httproute-public.yaml
+  - httproute-admin.yaml
+
+helmCharts:
+  - repo: https://k8s.ory.sh/helm/charts
+    name: kratos
+    # https://artifacthub.io/packages/helm/ory/kratos
+    version: 0.56.0
+    releaseName: kratos
+    namespace: kratos
+    # https://artifacthub.io/packages/helm/ory/kratos?modal=values
+    valuesInline:
+      image:
+        tag: v1.3.1-distroless
+
+      # https://k8s.ory.sh/helm/kratos.html#installation
+      kratos:
+        development: true
+
+        # https://www.ory.sh/docs/kratos/quickstart#quickstart-configuration
+        # https://www.ory.sh/docs/kratos/reference/configuration
+        config:
+          serve:
+            public:
+              base_url: http://kratos.127.0.0.1.nip.io
+
+              # https://www.ory.sh/docs/kratos/guides/setting-up-cors
+              cors:
+                enabled: true
+                allowed_origins:
+                  - http://127.0.0.1.nip.io
+                  - http://*.127.0.0.1.nip.io
+                allowed_methods:
+                  - POST
+                  - GET
+                  - PUT
+                  - PATCH
+                  - DELETE
+                allowed_headers:
+                  - Authorization
+                  - Cookie
+                  - Content-Type
+                exposed_headers:
+                  - Content-Type
+                  - Set-Cookie
+
+            admin:
+              base_url: http://kratos-admin
+
+          session:
+            whoami:
+              required_aal: aal1
+
+          selfservice:
+            default_browser_return_url: http://127.0.0.1.nip.io/welcome
+            allowed_return_urls:
+              - http://127.0.0.1.nip.io
+
+            methods:
+              password:
+                enabled: false
+              code:
+                passwordless_enabled: true
+              totp:
+                config:
+                  issuer: Kratos
+                enabled: true
+              lookup_secret:
+                enabled: true
+              link:
+                enabled: true
+
+            flows:
+              error:
+                ui_url: http://127.0.0.1.nip.io/error
+              settings:
+                ui_url: http://127.0.0.1.nip.io/settings
+                privileged_session_max_age: 15m
+                # https://www.ory.sh/docs/kratos/self-hosted/mfa#enforce-mfa
+                required_aal: highest_available
+              recovery:
+                enabled: true
+                ui_url: http://127.0.0.1.nip.io/recovery
+                use: code
+              verification:
+                enabled: true
+                ui_url: http://127.0.0.1.nip.io/verification
+                use: code
+                after:
+                  default_browser_return_url: http://127.0.0.1.nip.io/welcome
+              logout:
+                after:
+                  default_browser_return_url: http://127.0.0.1.nip.io/login
+              login:
+                ui_url: http://127.0.0.1.nip.io/login
+                lifespan: 10m
+              registration:
+                lifespan: 10m
+                ui_url: http://127.0.0.1.nip.io/registration
+                after:
+                  password:
+                    hooks:
+                      - hook: session
+                      - hook: show_verification_ui
+
+          identity:
+            default_schema_id: default
+            schemas:
+              - id: default
+                url: file:///etc/config/identity.default.schema.json
+          courier:
+            smtp:
+              connection_uri: smtp://username:password@maildev-smtp.maildev.svc.cluster.local:1025
+
+        automigration:
+          enabled: true
+          type: initContainer
+
+        identitySchemas:
+          "identity.default.schema.json": |
+            {
+              "$id": "https://schemas.ory.sh/presets/kratos/identity.email.schema.json",
+              "$schema": "http://json-schema.org/draft-07/schema#",
+              "title": "Person",
+              "type": "object",
+              "properties": {
+                "traits": {
+                  "type": "object",
+                  "properties": {
+                    "email": {
+                      "type": "string",
+                      "format": "email",
+                      "title": "E-Mail",
+                      "ory.sh/kratos": {
+                        "credentials": {
+                          "code": {
+                            "identifier": true,
+                            "via": "email"
+                          }
+                        },
+                        "recovery": {
+                          "via": "email"
+                        },
+                        "verification": {
+                          "via": "email"
+                        }
+                      }
+                    }
+                  },
+                  "required": [
+                    "email"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            }
+
+      # https://k8s.ory.sh/helm/kratos.html#set-up-dsn-variable-on-runtime
+      deployment:
+        extraEnv:
+          - name: DSN
+            valueFrom:
+              secretKeyRef:
+                name: cnpg-cluster-app
+                key: uri
+      statefulSet:
+        extraEnv:
+          - name: DSN
+            valueFrom:
+              secretKeyRef:
+                name: cnpg-cluster-app
+                key: uri
+      job:
+        extraEnv:
+          - name: DSN
+            valueFrom:
+              secretKeyRef:
+                name: cnpg-cluster-app
+                key: uri
+      cronjob:
+        cleanup:
+          extraEnv:
+            - name: DSN
+              valueFrom:
+                secretKeyRef:
+                  name: cnpg-cluster-app
+                  key: uri

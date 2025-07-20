@@ -35,6 +35,7 @@
     "cnpg",
     "gitea",
     "httproute",
+    "kratos",
     "kubeconfig",
     "lefthook",
     "maildev",
