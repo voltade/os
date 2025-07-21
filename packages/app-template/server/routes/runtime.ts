@@ -6,7 +6,7 @@ const route = factory.createApp().get('/', (c) => {
     `
 window.__env = window.__env ?? {};
 window.__env["${packageJson.name}"] = {
-  VITE_APP_URL: '${c.get('VITE_APP_URL')}',
+  VITE_APP_URL: '${c.env.VITE_APP_URL}',
 };
 `.trim(),
     200,

@@ -18,8 +18,4 @@ export const env = appEnvVariablesSchema.parse({
   DB_NAME: process.env.DB_NAME,
 });
 
-type AppEnvVariables = z.infer<typeof appEnvVariablesSchema>;
-
 export const appEnvVariables = appEnvVariablesSchema.parse(process.env);
-
-export type Variables = Record<string, unknown> & AppEnvVariables;

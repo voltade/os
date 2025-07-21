@@ -19,7 +19,7 @@ export const routes = factory.createApp().all(
   async (c) => {
     const { appId, releaseId } = c.req.valid('param');
     const truncatedReleaseId = releaseId.slice(0, 8);
-    const workerPath = `${c.get('NODE_ENV') === 'development' ? process.cwd() : '/tmp'}/data/${appId}-${truncatedReleaseId}`;
+    const workerPath = `${c.env.NODE_ENV === 'development' ? process.cwd() : '/tmp'}/data/${appId}-${truncatedReleaseId}`;
 
     let worker = getWorker(appId, truncatedReleaseId);
 
@@ -28,10 +28,10 @@ export const routes = factory.createApp().all(
         existsSync(workerPath) && readdirSync(workerPath).length > 0;
 
       if (!folderExists) {
-        await downloadPackage(c.get('ORG_ID'), appId, releaseId, workerPath);
+        await downloadPackage(c.env.ORG_ID, appId, releaseId, workerPath);
       }
 
-      const envs = await getAppEnvs(c.get('ORG_ID'), appId, c.get('OS_URL'));
+      const envs = await getAppEnvs(c.env.ORG_ID, appId, c.env.OS_URL);
       worker = await createWorker(appId, truncatedReleaseId, workerPath, envs);
     }
 
