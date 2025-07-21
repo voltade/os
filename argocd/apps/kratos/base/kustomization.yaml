@@ -59,15 +59,26 @@ helmCharts:
               required_aal: aal1
 
           selfservice:
-            default_browser_return_url: http://127.0.0.1.nip.io/welcome
+            default_browser_return_url: http://127.0.0.1.nip.io/settings
             allowed_return_urls:
               - http://127.0.0.1.nip.io
 
             methods:
               password:
                 enabled: false
+              passkey:
+                enabled: false
               code:
                 passwordless_enabled: true
+              # https://www.ory.sh/docs/kratos/passwordless/passkeys#passkeys-with-the-dedicated-passkey-strategy
+              webauthn:
+                enabled: true
+                config:
+                  passwordless: false
+                  rp:
+                    display_name: Voltade
+                    id: voltade.com
+                    origin: http://127.0.1.nip.io
               totp:
                 config:
                   issuer: Kratos
@@ -94,21 +105,14 @@ helmCharts:
                 ui_url: http://127.0.0.1.nip.io/verification
                 use: code
                 after:
-                  default_browser_return_url: http://127.0.0.1.nip.io/welcome
-              logout:
-                after:
-                  default_browser_return_url: http://127.0.0.1.nip.io/login
+                  default_browser_return_url: http://127.0.0.1.nip.io/settings
               login:
                 ui_url: http://127.0.0.1.nip.io/login
-                lifespan: 10m
+                lifespan: 1h
+                style: unified
               registration:
-                lifespan: 10m
+                lifespan: 1h
                 ui_url: http://127.0.0.1.nip.io/registration
-                after:
-                  code:
-                    hooks:
-                      - hook: session
-                      - hook: show_verification_ui
 
           identity:
             default_schema_id: default
@@ -119,6 +123,20 @@ helmCharts:
             # https://www.ory.sh/docs/kratos/emails-sms/sending-emails-smtp#smtp-security-mechanisms
             smtp:
               connection_uri: smtp://inbucket.inbucket.svc.cluster.local:2500/?disable_starttls=true
+            sms:
+              enabled: true
+              from: "Voltade"
+              request_config:
+                url: https://api.twillio.com/sms/send
+                method: ""
+                headers: {}
+                body: file:///path/to/body.jsonnet
+                auth:
+                  type: api_key
+                  config:
+                    name: ""
+                    value: ""
+                    in: header
 
         automigration:
           enabled: true
@@ -153,10 +171,24 @@ helmCharts:
                           "via": "email"
                         }
                       }
+                    },
+                    "phone_number": {
+                      "type": "string",
+                      "format": "tel",
+                      "title": "Your phone number",
+                      "ory.sh/kratos": {
+                        "credentials": {
+                          "code": {
+                            "identifier": true,
+                            "via": "sms"
+                          }
+                        }
+                      }
                     }
                   },
-                  "required": [
-                    "email"
+                  "anyOf": [
+                    { "required": ["email"] },
+                    { "required": ["phone_number"] }
                   ],
                   "additionalProperties": false
                 }

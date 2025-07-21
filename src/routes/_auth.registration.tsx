@@ -1,19 +1,13 @@
-import { Configuration, FrontendApi } from '@ory/client-fetch';
 import { Registration } from '@ory/elements-react/theme';
 import { createFileRoute } from '@tanstack/react-router';
 import { zodValidator } from '@tanstack/zod-adapter';
 import { z } from 'zod';
 
+import { ory } from '#src/lib/ory.ts';
+
 const authSearchSchema = z.object({
   flow: z.string().optional(),
 });
-
-const ory = new FrontendApi(
-  new Configuration({
-    basePath: import.meta.env.VITE_KRATOS_HOST,
-    credentials: 'include',
-  }),
-);
 
 export const Route = createFileRoute('/_auth/registration')({
   validateSearch: zodValidator(authSearchSchema),

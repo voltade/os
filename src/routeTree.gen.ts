@@ -9,11 +9,25 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
+import { Route as ProfileRouteImport } from './routes/_profile'
+import { Route as MainRouteImport } from './routes/_main'
 import { Route as AuthRouteImport } from './routes/_auth'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as ProfileSettingsRouteImport } from './routes/_profile.settings'
+import { Route as MainWelcomeRouteImport } from './routes/_main.welcome'
+import { Route as AuthVerificationRouteImport } from './routes/_auth.verification'
 import { Route as AuthRegistrationRouteImport } from './routes/_auth.registration'
+import { Route as AuthRecoveryRouteImport } from './routes/_auth.recovery'
 import { Route as AuthLoginRouteImport } from './routes/_auth.login'
 
+const ProfileRoute = ProfileRouteImport.update({
+  id: '/_profile',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const MainRoute = MainRouteImport.update({
+  id: '/_main',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const AuthRoute = AuthRouteImport.update({
   id: '/_auth',
   getParentRoute: () => rootRouteImport,
@@ -23,9 +37,29 @@ const IndexRoute = IndexRouteImport.update({
   path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ProfileSettingsRoute = ProfileSettingsRouteImport.update({
+  id: '/settings',
+  path: '/settings',
+  getParentRoute: () => ProfileRoute,
+} as any)
+const MainWelcomeRoute = MainWelcomeRouteImport.update({
+  id: '/welcome',
+  path: '/welcome',
+  getParentRoute: () => MainRoute,
+} as any)
+const AuthVerificationRoute = AuthVerificationRouteImport.update({
+  id: '/verification',
+  path: '/verification',
+  getParentRoute: () => AuthRoute,
+} as any)
 const AuthRegistrationRoute = AuthRegistrationRouteImport.update({
   id: '/registration',
   path: '/registration',
+  getParentRoute: () => AuthRoute,
+} as any)
+const AuthRecoveryRoute = AuthRecoveryRouteImport.update({
+  id: '/recovery',
+  path: '/recovery',
   getParentRoute: () => AuthRoute,
 } as any)
 const AuthLoginRoute = AuthLoginRouteImport.update({
@@ -37,35 +71,90 @@ const AuthLoginRoute = AuthLoginRouteImport.update({
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/login': typeof AuthLoginRoute
+  '/recovery': typeof AuthRecoveryRoute
   '/registration': typeof AuthRegistrationRoute
+  '/verification': typeof AuthVerificationRoute
+  '/welcome': typeof MainWelcomeRoute
+  '/settings': typeof ProfileSettingsRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/login': typeof AuthLoginRoute
+  '/recovery': typeof AuthRecoveryRoute
   '/registration': typeof AuthRegistrationRoute
+  '/verification': typeof AuthVerificationRoute
+  '/welcome': typeof MainWelcomeRoute
+  '/settings': typeof ProfileSettingsRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
   '/_auth': typeof AuthRouteWithChildren
+  '/_main': typeof MainRouteWithChildren
+  '/_profile': typeof ProfileRouteWithChildren
   '/_auth/login': typeof AuthLoginRoute
+  '/_auth/recovery': typeof AuthRecoveryRoute
   '/_auth/registration': typeof AuthRegistrationRoute
+  '/_auth/verification': typeof AuthVerificationRoute
+  '/_main/welcome': typeof MainWelcomeRoute
+  '/_profile/settings': typeof ProfileSettingsRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/login' | '/registration'
+  fullPaths:
+    | '/'
+    | '/login'
+    | '/recovery'
+    | '/registration'
+    | '/verification'
+    | '/welcome'
+    | '/settings'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/login' | '/registration'
-  id: '__root__' | '/' | '/_auth' | '/_auth/login' | '/_auth/registration'
+  to:
+    | '/'
+    | '/login'
+    | '/recovery'
+    | '/registration'
+    | '/verification'
+    | '/welcome'
+    | '/settings'
+  id:
+    | '__root__'
+    | '/'
+    | '/_auth'
+    | '/_main'
+    | '/_profile'
+    | '/_auth/login'
+    | '/_auth/recovery'
+    | '/_auth/registration'
+    | '/_auth/verification'
+    | '/_main/welcome'
+    | '/_profile/settings'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   AuthRoute: typeof AuthRouteWithChildren
+  MainRoute: typeof MainRouteWithChildren
+  ProfileRoute: typeof ProfileRouteWithChildren
 }
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
+    '/_profile': {
+      id: '/_profile'
+      path: ''
+      fullPath: ''
+      preLoaderRoute: typeof ProfileRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/_main': {
+      id: '/_main'
+      path: ''
+      fullPath: ''
+      preLoaderRoute: typeof MainRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/_auth': {
       id: '/_auth'
       path: ''
@@ -80,11 +169,39 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/_profile/settings': {
+      id: '/_profile/settings'
+      path: '/settings'
+      fullPath: '/settings'
+      preLoaderRoute: typeof ProfileSettingsRouteImport
+      parentRoute: typeof ProfileRoute
+    }
+    '/_main/welcome': {
+      id: '/_main/welcome'
+      path: '/welcome'
+      fullPath: '/welcome'
+      preLoaderRoute: typeof MainWelcomeRouteImport
+      parentRoute: typeof MainRoute
+    }
+    '/_auth/verification': {
+      id: '/_auth/verification'
+      path: '/verification'
+      fullPath: '/verification'
+      preLoaderRoute: typeof AuthVerificationRouteImport
+      parentRoute: typeof AuthRoute
+    }
     '/_auth/registration': {
       id: '/_auth/registration'
       path: '/registration'
       fullPath: '/registration'
       preLoaderRoute: typeof AuthRegistrationRouteImport
+      parentRoute: typeof AuthRoute
+    }
+    '/_auth/recovery': {
+      id: '/_auth/recovery'
+      path: '/recovery'
+      fullPath: '/recovery'
+      preLoaderRoute: typeof AuthRecoveryRouteImport
       parentRoute: typeof AuthRoute
     }
     '/_auth/login': {
@@ -99,19 +216,46 @@ declare module '@tanstack/react-router' {
 
 interface AuthRouteChildren {
   AuthLoginRoute: typeof AuthLoginRoute
+  AuthRecoveryRoute: typeof AuthRecoveryRoute
   AuthRegistrationRoute: typeof AuthRegistrationRoute
+  AuthVerificationRoute: typeof AuthVerificationRoute
 }
 
 const AuthRouteChildren: AuthRouteChildren = {
   AuthLoginRoute: AuthLoginRoute,
+  AuthRecoveryRoute: AuthRecoveryRoute,
   AuthRegistrationRoute: AuthRegistrationRoute,
+  AuthVerificationRoute: AuthVerificationRoute,
 }
 
 const AuthRouteWithChildren = AuthRoute._addFileChildren(AuthRouteChildren)
 
+interface MainRouteChildren {
+  MainWelcomeRoute: typeof MainWelcomeRoute
+}
+
+const MainRouteChildren: MainRouteChildren = {
+  MainWelcomeRoute: MainWelcomeRoute,
+}
+
+const MainRouteWithChildren = MainRoute._addFileChildren(MainRouteChildren)
+
+interface ProfileRouteChildren {
+  ProfileSettingsRoute: typeof ProfileSettingsRoute
+}
+
+const ProfileRouteChildren: ProfileRouteChildren = {
+  ProfileSettingsRoute: ProfileSettingsRoute,
+}
+
+const ProfileRouteWithChildren =
+  ProfileRoute._addFileChildren(ProfileRouteChildren)
+
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   AuthRoute: AuthRouteWithChildren,
+  MainRoute: MainRouteWithChildren,
+  ProfileRoute: ProfileRouteWithChildren,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
