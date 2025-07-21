@@ -146,9 +146,9 @@ spec:
       parameters:
         barmanObjectName: {{ .Values.cnpg.backup.objectStoreName }}
         serverName: {{ .Values.cnpg.backup.serverName | default (printf "%s-a" .Values.cnpg.clusterId) }}
+  {{- end }}
   
   certificates:
     serverCASecret: tls-ca
     serverTLSSecret: tls-certificate
-  {{- end }}
 {{- end }} 
