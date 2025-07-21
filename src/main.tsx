@@ -3,6 +3,7 @@ import '@mantine/notifications/styles.css';
 import '@mantine/dates/styles.css';
 import 'mantine-datatable/styles.layer.css';
 import 'mantine-contextmenu/styles.css';
+import '@ory/elements-react/theme/styles.css';
 
 import './main.css';
 
