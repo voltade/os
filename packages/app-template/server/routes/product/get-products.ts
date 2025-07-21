@@ -4,8 +4,8 @@ import {
   createPaginationMeta,
   paginationValidator,
   totalCount,
-} from '@voltade-os/core-schema/common-api';
-import { productTable } from '@voltade-os/core-schema/schemas';
+} from '@voltade/core-schema/common-api';
+import { productTable } from '@voltade/core-schema/schemas';
 import { getTableColumns } from 'drizzle-orm';
 
 import { factory } from '#server/factory.ts';

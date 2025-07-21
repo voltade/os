@@ -1,4 +1,4 @@
-import schema from '@voltade-os/core-schema/schemas';
+import schema from '@voltade/core-schema/schemas';
 import { drizzle } from 'drizzle-orm/bun-sql';
 
 import { appEnvVariables } from '#server/env.ts';

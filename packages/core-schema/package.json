@@ -1,5 +1,5 @@
 {
-  "name": "@voltade-os/core-schema",
+  "name": "@voltade/core-schema",
   "module": "index.ts",
   "type": "module",
   "private": false,

@@ -1,4 +1,4 @@
-import { createCommonRouter } from '@voltade-os/core-schema/common-api';
+import { createCommonRouter } from '@voltade/core-schema/common-api';
 import { Hono } from 'hono';
 import { serveStatic } from 'hono/bun';
 import { logger } from 'hono/logger';
