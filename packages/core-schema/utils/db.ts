@@ -12,6 +12,7 @@ export const db = drizzle({
     database: DB_NAME,
     username: DB_USER,
     password: DB_PASSWORD,
+    //TODO: reference ca.crt in the future
     tls: true,
   },
   schema: schema,
