@@ -3,7 +3,7 @@ kind: IngressRouteTCP
 metadata:
   name: cnpg-cluster-rw
   labels:
-    {{- include "voltade-os.labels" . | nindent 4 }}
+    {{- include "platform.labels" . | nindent 4 }}
   annotations:
     kubernetes.io/ingress.class: traefik
 spec:

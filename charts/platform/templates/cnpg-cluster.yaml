@@ -6,7 +6,7 @@ metadata:
   name: {{ .Values.cnpg.clusterId }}
   namespace: {{ .Release.Namespace }}
   labels:
-    {{- include "voltade-os.labels" . | nindent 4 }}
+    {{- include "platform.labels" . | nindent 4 }}
     app.kubernetes.io/component: database
   annotations:
     argocd.argoproj.io/sync-options: SkipDryRunOnMissingResource=true
@@ -52,7 +52,7 @@ spec:
 
   {{- if .Values.secret.enabled }}
   superuserSecret:
-    name: voltade-os-cluster-admin
+    name: platform-cluster-admin
   {{- end }}
   
   {{/* Managed database roles for Supabase */}}

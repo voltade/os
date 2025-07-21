@@ -1,9 +1,9 @@
 apiVersion: v1
 kind: Service
 metadata:
-  name: {{ include "voltade-os.fullname" . }}
+  name: {{ include "platform.fullname" . }}
   labels:
-    {{- include "voltade-os.labels" . | nindent 4 }}
+    {{- include "platform.labels" . | nindent 4 }}
 spec:
   type: {{ .Values.service.type }}
   ports:
@@ -12,4 +12,4 @@ spec:
       protocol: TCP
       name: http
   selector:
-    {{- include "voltade-os.selectorLabels" . | nindent 4 }}
+    {{- include "platform.selectorLabels" . | nindent 4 }}

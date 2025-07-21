@@ -2,9 +2,9 @@
 apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
-  name: {{ include "voltade-os.fullname" . }}
+  name: {{ include "platform.fullname" . }}
   labels:
-    {{- include "voltade-os.labels" . | nindent 4 }}
+    {{- include "platform.labels" . | nindent 4 }}
   {{- with .Values.ingress.annotations }}
   annotations:
     {{- toYaml . | nindent 4 }}
@@ -35,7 +35,7 @@ spec:
             {{- end }}
             backend:
               service:
-                name: {{ include "voltade-os.fullname" $ }}
+                name: {{ include "platform.fullname" $ }}
                 port:
                   number: {{ $.Values.service.port }}
           {{- end }}
