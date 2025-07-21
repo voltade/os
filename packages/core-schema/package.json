@@ -9,7 +9,6 @@
   "version": "0.1.0",
   "description": "Voltade OS database schema and API definitions",
   "author": "Voltade Team",
-  "license": "MIT",
   "repository": {
     "type": "git",
     "url": "git+https://github.com/voltade/voltade-os.git",
