@@ -25,6 +25,8 @@ helmCharts:
         # https://www.ory.sh/docs/kratos/quickstart#quickstart-configuration
         # https://www.ory.sh/docs/kratos/reference/configuration
         config:
+          dev: true
+
           serve:
             public:
               base_url: http://kratos.127.0.0.1.nip.io
@@ -103,7 +105,7 @@ helmCharts:
                 lifespan: 10m
                 ui_url: http://127.0.0.1.nip.io/registration
                 after:
-                  password:
+                  code:
                     hooks:
                       - hook: session
                       - hook: show_verification_ui
@@ -114,8 +116,9 @@ helmCharts:
               - id: default
                 url: file:///etc/config/identity.default.schema.json
           courier:
+            # https://www.ory.sh/docs/kratos/emails-sms/sending-emails-smtp#smtp-security-mechanisms
             smtp:
-              connection_uri: smtp://username:password@maildev-smtp.maildev.svc.cluster.local:1025
+              connection_uri: smtp://inbucket.inbucket.svc.cluster.local:2500/?disable_starttls=true
 
         automigration:
           enabled: true
