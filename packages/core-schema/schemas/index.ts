@@ -37,3 +37,19 @@ const schema = {
 export default schema;
 
 export type Schema = typeof schema;
+
+// Re-export all individual tables and types for direct imports
+export * from './accounting/index.ts';
+export * from './approval/index.ts';
+export * from './hr/index.ts';
+export * from './manufacturing/index.ts';
+export * from './mrp/index.ts';
+export * from './payment/index.ts';
+export * from './product/index.ts';
+export * from './project/index.ts';
+export * from './purchase/index.ts';
+export * from './repair/index.ts';
+export * from './resource/index.ts';
+export * from './sales/index.ts';
+export * from './service/index.ts';
+export * from './stock/index.ts';

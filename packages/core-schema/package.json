@@ -2,7 +2,50 @@
   "name": "@voltade-os/core-schema",
   "module": "index.ts",
   "type": "module",
-  "private": true,
+  "private": false,
+  "version": "0.1.0",
+  "description": "Voltade OS database schema and API definitions",
+  "author": "Voltade Team",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/voltade/voltade-os.git",
+    "directory": "packages/core-schema"
+  },
+  "keywords": [
+    "database",
+    "schema",
+    "drizzle",
+    "postgresql",
+    "api"
+  ],
+  "main": "index.ts",
+  "types": "index.ts",
+  "exports": {
+    ".": {
+      "import": "./index.ts",
+      "types": "./index.ts"
+    },
+    "./schemas": {
+      "import": "./schemas/index.ts",
+      "types": "./schemas/index.ts"
+    },
+    "./common-api": {
+      "import": "./common-api/index.ts",
+      "types": "./common-api/index.ts"
+    }
+  },
+  "files": [
+    "index.ts",
+    "schemas/",
+    "common-api/",
+    "utils/",
+    "lib/",
+    "extensions/",
+    "scripts/",
+    "rules/",
+    "README.md"
+  ],
   "devDependencies": {
     "@types/bun": "latest",
     "@types/plv8-internal": "^3.1.2",
@@ -19,7 +62,9 @@
     "db:push": "NODE_TLS_REJECT_UNAUTHORIZED=0 bun --env-file ../../.env drizzle-kit push",
     "db:seed": "bun --env-file ../../.env scripts/db-seed.ts",
     "db:nuke": "bun --env-file ../../.env scripts/db-nuke.ts",
-    "db:reset": "bun db:nuke && bun db:push && bun db:plv8ify && bun db:current && bun db:seed"
+    "db:reset": "bun db:nuke && bun db:push && bun db:plv8ify && bun db:current && bun db:seed",
+    "build": "tsc --noEmit",
+    "prepublishOnly": "bun run build"
   },
   "dependencies": {
     "@faker-js/faker": "^9.9.0",
