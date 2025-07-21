@@ -32,6 +32,7 @@ tofu state rm helm_release.cilium && tofu destroy
 
 ```bash
 bun helm environment --overwrite
+bun helm platform --overwrite
 ```
 
 ## Start the server

@@ -39,7 +39,6 @@ cnpg:
       - plpgsql_check
       - pg_cron
       - pg_net
-      - timescaledb
       - auto_explain
       - pg_tle
       - plan_filter
@@ -64,7 +63,7 @@ rest:
     pullPolicy: IfNotPresent
   service:
     type: ClusterIP
-    port: 80
+    port: 3000
   resources:
     requests:
       memory: 64Mi
@@ -114,7 +113,7 @@ meta:
     pullPolicy: IfNotPresent
   service:
     type: ClusterIP
-    port: 80
+    port: 8080
   resources:
     requests:
       memory: 64Mi
@@ -138,7 +137,7 @@ meta:
           key: password
     PG_META_DB_NAME: postgres
     PG_META_DB_SSL_MODE: disable
-    PG_META_PORT: "8080"
+    PG_META_PORT: "80"
 
 studio:
   enabled: true
@@ -151,7 +150,7 @@ studio:
     pullPolicy: IfNotPresent
   service:
     type: ClusterIP
-    port: 80
+    port: 3000
   resources:
     requests:
       memory: 128Mi

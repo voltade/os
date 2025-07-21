@@ -3,16 +3,14 @@ kind: IngressRouteTCP
 metadata:
   name: cnpg-cluster-rw
   labels:
-    {{- include "environment.labels" . | nindent 4 }}
+    {{- include "voltade-os.labels" . | nindent 4 }}
   annotations:
-    argocd.argoproj.io/sync-options: SkipDryRunOnMissingResource=true
-    argocd.argoproj.io/sync-wave: "0"
     kubernetes.io/ingress.class: traefik
 spec:
   entryPoints:
     - postgres
   routes:
-    - match: HostSNI(`{{ include "environment.fullname" . }}.{{ .Values.parameters.domain }}`)
+    - match: HostSNI(`{{ .Values.cnpg.hostname }}`)
       services:
         - name: cnpg-cluster-rw
           port: 5432

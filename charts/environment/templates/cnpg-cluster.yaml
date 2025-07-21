@@ -10,7 +10,7 @@ metadata:
     app.kubernetes.io/component: database
   annotations:
     argocd.argoproj.io/sync-options: SkipDryRunOnMissingResource=true
-    argocd.argoproj.io/sync-wave: "2"
+    argocd.argoproj.io/sync-wave: "0"
     cnpg.io/environment: {{ .Values.global.environment | default "development" | quote }}
     {{- if eq .Values.global.environment "production" }}
     cnpg.io/backup-retention: "30d"

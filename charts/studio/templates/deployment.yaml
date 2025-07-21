@@ -4,6 +4,9 @@ metadata:
   name: {{ include "studio.fullname" . }}
   labels:
     {{- include "studio.labels" . | nindent 4 }}
+  annotations:
+    argocd.argoproj.io/sync-options: SkipDryRunOnMissingResource=true
+    argocd.argoproj.io/sync-wave: "1"
 spec:
   {{- if not .Values.autoscaling.enabled }}
   replicas: {{ .Values.replicaCount }}
@@ -32,28 +35,6 @@ spec:
       securityContext:
         {{- toYaml . | nindent 8 }}
       {{- end }}
-      initContainers:
-        - name: wait-for-db
-          image: postgres:15-alpine
-          command: ["/bin/sh", "-c"]
-          env:
-            {{- range $key, $value := .Values.environment }}
-            {{- if and (kindIs "map" $value) (hasKey $value "valueFrom") }}
-            - name: {{ $key }}
-              valueFrom:
-                {{- toYaml $value.valueFrom | nindent 16 }}
-            {{- else if not (kindIs "map" $value) }}
-            - name: {{ $key }}
-              value: {{ $value | quote }}
-            {{- end }}
-            {{- end }}
-          args:
-            - |
-              until pg_isready -h $(DB_HOST) -p $(DB_PORT) -U $(DB_USER); do
-                echo "Waiting for database to start..."
-                sleep 2
-              done
-              echo "Database is ready"
       containers:
         - name: {{ .Chart.Name }}
           {{- with .Values.securityContext }}

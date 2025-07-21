@@ -4,16 +4,40 @@
 
 secret:
   enabled: true
-  clusterAdminPassword:
+  clusterAdmin:
     username: admin
     password: admin
   jwt:
     secret: super-secret-jwt-token-with-at-least-32-characters-long
 
+# RBAC configuration for cluster-wide permissions
+rbac:
+  # Specifies whether RBAC resources should be created
+  create: true
+  # ClusterRole rules can be customized here
+  rules:
+    # Enable management of CNPG PostgreSQL clusters
+    manageClusters: true
+    # Enable management of secrets across all namespaces
+    manageSecrets: true
+    # Enable management of pods and services
+    managePods: true
+    # Enable management of RBAC resources
+    manageClusterRoleBindings: true
+    # Enable management of service accounts
+    manageServiceAccounts: true
+    # Enable dev container remote access (exec, logs, port-forward)
+    devContainerAccess: true
+    # Enable management of ingresses
+    manageIngresses: true
+    # Enable management of namespaces
+    manageNamespaces: true
+
 cnpg:
+  hostname: postgres.127.0.0.1.nip.io
   enabled: true
   clusterId: cnpg-cluster
-  image: ghcr.io/voltade/cnpg-supabase:17.4-17
+  image: ghcr.io/voltade/postgres:17.5-20250717-a2c5abf
   instances: 1
   storage:
     storageClass: standard
@@ -37,7 +61,6 @@ cnpg:
       - plpgsql_check
       - pg_cron
       - pg_net
-      - timescaledb
       - auto_explain
       - pg_tle
       - plan_filter

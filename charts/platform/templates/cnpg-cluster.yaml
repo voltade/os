@@ -10,7 +10,7 @@ metadata:
     app.kubernetes.io/component: database
   annotations:
     argocd.argoproj.io/sync-options: SkipDryRunOnMissingResource=true
-    argocd.argoproj.io/sync-wave: "2"
+    argocd.argoproj.io/sync-wave: "1"
 spec:
   instances: {{ .Values.cnpg.instances }}
   imageName: {{ .Values.cnpg.image }}
@@ -49,6 +49,11 @@ spec:
   
   {{/* Enable superuser access for Supabase */}}
   enableSuperuserAccess: true
+
+  {{- if .Values.secret.enabled }}
+  superuserSecret:
+    name: voltade-os-cluster-admin
+  {{- end }}
   
   {{/* Managed database roles for Supabase */}}
   managed:
@@ -143,4 +148,7 @@ spec:
         barmanObjectName: {{ .Values.cnpg.backup.objectStoreName }}
         serverName: {{ .Values.cnpg.backup.serverName | default (printf "%s-a" .Values.cnpg.clusterId) }}
   {{- end }}
+  certificates:
+    serverCASecret: tls-ca
+    serverTLSSecret: tls-certificate
 {{- end }} 

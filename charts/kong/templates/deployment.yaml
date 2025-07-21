@@ -5,6 +5,9 @@ metadata:
   name: {{ include "kong.fullname" . }}
   labels:
     {{- include "kong.labels" . | nindent 4 }}
+  annotations:
+    argocd.argoproj.io/sync-options: SkipDryRunOnMissingResource=true
+    argocd.argoproj.io/sync-wave: "1"
 spec:
   replicas: {{ .Values.replicaCount | default 1 }}
   selector:
@@ -48,14 +51,6 @@ spec:
               value: {{ $value | quote }}
               {{- end }}
             {{- end }}
-          {{- with .Values.livenessProbe }}
-          livenessProbe:
-            {{- toYaml . | nindent 12 }}
-          {{- end }}
-          {{- with .Values.readinessProbe }}
-          readinessProbe:
-            {{- toYaml . | nindent 12 }}
-          {{- end }}
           ports:
             - name: http
               containerPort: 8000

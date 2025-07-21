@@ -151,3 +151,6 @@ initContainerEnvironment: {}
 # Environment variables from configmaps/secrets
 envFrom: []
 
+global:
+  baseDomain: 127.0.0.1.nip.io
+  nameOverride: environment
