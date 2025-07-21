@@ -76,3 +76,5 @@ terraform.rc
 
 certs
 kubeconfig
+
+.npmrc

@@ -1,0 +1,5 @@
+# Default to npm registry
+registry=https://registry.npmjs.org/
+
+@voltade:registry=https://npm.pkg.github.com
+//npm.pkg.github.com/:_authToken={YOURTOKEN}

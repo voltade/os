@@ -1,5 +1,8 @@
 {
   "name": "@voltade/core-schema",
+  "publishConfig": {
+    "registry": "https://npm.pkg.github.com"
+  },
   "module": "index.ts",
   "type": "module",
   "private": false,
