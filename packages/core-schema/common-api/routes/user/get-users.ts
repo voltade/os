@@ -1,8 +1,8 @@
 import { zValidator } from '@hono/zod-validator';
-import { userTable } from '@voltade-os/core-schema/schemas/resource/tables/user';
 import { getTableColumns } from 'drizzle-orm';
 import { Hono } from 'hono';
 
+import { userTable } from '../../../schemas/resource/index.ts';
 import type { Db } from '../../../utils/db.ts';
 import {
   calculateOffset,

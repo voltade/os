@@ -1,8 +1,8 @@
 import { zValidator } from '@hono/zod-validator';
-import { productTable } from '@voltade-os/core-schema/schemas/product';
 import { getTableColumns } from 'drizzle-orm';
 import { Hono } from 'hono';
 
+import { productTable } from '../../../schemas/product/index.ts';
 import type { Db } from '../../../utils/db.ts';
 import {
   calculateOffset,
