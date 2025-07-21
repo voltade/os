@@ -37,7 +37,6 @@
     "@mantine/hooks": "^8.1.2",
     "@mantine/modals": "^8.1.2",
     "@tailwindcss/postcss": "^4.1.10",
-    "@tailwindcss/vite": "^4.1.10",
     "@tanstack/react-query-devtools": "^5.81.5",
     "@tanstack/react-router": "^1.121.12",
     "@tanstack/react-router-devtools": "^1.125.4",
@@ -45,7 +44,6 @@
     "@types/bun": "latest",
     "@types/react": "^19",
     "@types/react-dom": "^19",
-    "@vitejs/plugin-react-swc": "^3.10.2",
     "drizzle-kit": "^0.31.4",
     "drizzle-orm": "^0.44.2",
     "postcss-preset-mantine": "^1.17.0",
@@ -53,9 +51,6 @@
     "react-dom": "^19.1.0",
     "tailwindcss": "^4.1.10",
     "tar": "^7.4.3",
-    "vite": "^6.3.5",
-    "vite-plugin-qiankun-lite": "^1.2.0",
-    "vite-tsconfig-paths": "^5.1.4",
     "wait-on": "^8.0.3"
   }
 }
