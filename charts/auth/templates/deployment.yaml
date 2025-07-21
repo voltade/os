@@ -36,14 +36,6 @@ spec:
           image: "{{ .Values.db.initContainerImage.repository }}:{{ .Values.db.initContainerImage.tag | default "15-alpine" }}"
           imagePullPolicy: {{ .Values.db.initContainerImage.pullPolicy }}
           env:
-            - name: API_EXTERNAL_URL
-              value: http://{{ .Values.global.nameOverride }}.{{ .Values.global.baseDomain }}
-            - name: GOTRUE_SITE_URL
-              value: http://{{ .Values.global.nameOverride }}.{{ .Values.global.baseDomain }}
-            - name: GOTRUE_SMTP_ADMIN_EMAIL
-              value: "{{ .Values.global.nameOverride }}@{{ .Values.global.baseDomain }}"
-            - name: GOTRUE_SMTP_SENDER_NAME
-              value: "{{ .Values.global.nameOverride }}"
             {{- range $key, $value := .Values.environment }}
             - name: {{ $key }}
               {{- if kindIs "map" $value }}
@@ -72,6 +64,14 @@ spec:
           image: "{{ .Values.image.repository }}:{{ .Values.image.tag | default .Chart.AppVersion }}"
           imagePullPolicy: {{ .Values.image.pullPolicy }}
           env:
+            - name: API_EXTERNAL_URL
+              value: http://{{ .Values.global.nameOverride }}.{{ .Values.global.baseDomain }}
+            - name: GOTRUE_SITE_URL
+              value: http://{{ .Values.global.nameOverride }}.{{ .Values.global.baseDomain }}
+            - name: GOTRUE_SMTP_ADMIN_EMAIL
+              value: "{{ .Values.global.nameOverride }}@{{ .Values.global.baseDomain }}"
+            - name: GOTRUE_SMTP_SENDER_NAME
+              value: "{{ .Values.global.nameOverride }}"
             {{- range $key, $value := .Values.environment }}
             - name: {{ $key }}
               {{- if kindIs "map" $value }}

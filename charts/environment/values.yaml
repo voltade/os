@@ -95,12 +95,12 @@ rest:
     PGRST_JWT_SECRET:
       valueFrom:
         secretKeyRef:
-          name: voltade-os-envs
+          name: platform-envs
           key: jwt-secret
     PGRST_APP_SETTINGS_JWT_SECRET:
       valueFrom:
         secretKeyRef:
-          name: voltade-os-envs
+          name: platform-envs
           key: jwt-secret
     PGRST_JWT_AUD: *jwt_aud
 
@@ -167,7 +167,7 @@ studio:
     AUTH_JWT_SECRET:
       valueFrom:
         secretKeyRef:
-          name: voltade-os-envs
+          name: platform-envs
           key: jwt-secret
     SUPABASE_ANON_KEY: *anon_key
     SUPABASE_SERVICE_KEY: *service_key
@@ -197,7 +197,7 @@ storage:
     AUTH_JWT_SECRET:
       valueFrom:
         secretKeyRef:
-          name: voltade-os-envs
+          name: platform-envs
           key: jwt-secret
     DB_DRIVER: postgres
     DB_HOST: cnpg-cluster-rw
@@ -251,7 +251,7 @@ auth:
     GOTRUE_JWT_SECRET:
       valueFrom:
         secretKeyRef:
-          name: voltade-os-envs
+          name: platform-envs
           key: jwt-secret
     DB_DRIVER: postgres
     DB_HOST: cnpg-cluster-rw
