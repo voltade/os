@@ -1,7 +1,7 @@
 import { Hono } from 'hono';
 
 import type { Db } from '../../utils/db.ts';
-import { createProductRoute } from './product/index.ts';
+import { createProductRoute } from './products/index.ts';
 import { createUserRoute } from './user/index.ts';
 
 export const createCommonRouter = (db: Db) => {
