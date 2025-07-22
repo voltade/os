@@ -6,6 +6,7 @@ import { paginationValidator } from '../utils/pagination.ts';
 
 function preprocessQueryParams(
   params: Record<string, unknown>,
+  // biome-ignore lint/suspicious/noExplicitAny: Generic Zod schema type required for runtime type inspection. The function needs to access schema.shape and perform instanceof checks on field types, which requires the flexible typing that ZodObject<any> provides. Using more specific types would break the dynamic schema introspection needed for automatic type conversion.
   schema: z.ZodObject<any>,
 ) {
   const processed = { ...params };
