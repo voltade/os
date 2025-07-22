@@ -1,38 +1,56 @@
-import { zValidator } from '@hono/zod-validator';
 import { getTableColumns } from 'drizzle-orm';
 import { Hono } from 'hono';
 
 import { productTable } from '../../../schemas/product/index.ts';
 import type { Db } from '../../../utils/db.ts';
+import { buildWhereClause } from '../../builders/where-clause.ts';
 import {
   calculateOffset,
   createPaginationMeta,
-  paginationValidator,
   totalCount,
 } from '../../utils/pagination.ts';
+import { createQueryHandler } from '../../validators/query-params.ts';
+
+const queryHandler = createQueryHandler(productTable, {
+  omit: {
+    created_at: true,
+    updated_at: true,
+  },
+});
 
 export const createGetProductsRoute = (db: Db) => {
-  return new Hono().get(
-    '/',
-    zValidator('query', paginationValidator),
-    async (c) => {
-      const { page, limit } = c.req.valid('query');
+  return new Hono().get('/', async (c) => {
+    const parseResult = queryHandler.safeParse(c.req.query());
+    if (!parseResult.success) {
+      return c.json(
+        { error: 'Invalid query parameters', details: parseResult.error },
+        400,
+      );
+    }
 
-      const result = await db
-        .select({
-          ...getTableColumns(productTable),
-          totalCount,
-        })
-        .from(productTable)
-        .limit(limit)
-        .offset(calculateOffset(page, limit));
+    const { page, limit, ...filters } = parseResult.data;
 
-      const data = result.map(({ totalCount, ...product }) => product);
+    const whereClause = buildWhereClause(
+      productTable,
+      queryHandler.schema,
+      filters,
+    );
 
-      return c.json({
-        data,
-        pagination: createPaginationMeta(page, limit, result),
-      });
-    },
-  );
+    const result = await db
+      .select({
+        ...getTableColumns(productTable),
+        totalCount,
+      })
+      .from(productTable)
+      .where(whereClause)
+      .limit(limit)
+      .offset(calculateOffset(page, limit));
+
+    const data = result.map(({ totalCount, ...product }) => product);
+
+    return c.json({
+      data,
+      pagination: createPaginationMeta(page, limit, result),
+    });
+  });
 };
