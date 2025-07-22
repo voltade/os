@@ -1,15 +1,15 @@
 import { and, eq, ilike, type SQL } from 'drizzle-orm';
 import type { PgTable } from 'drizzle-orm/pg-core';
-import type z from 'zod';
 
 export function buildWhereClause<T extends PgTable>(
   table: T,
-  validator: z.ZodObject<z.ZodRawShape>,
+  // biome-ignore lint/suspicious/noExplicitAny: Validator parameter accepts multiple Zod schema types (ZodObject, ZodIntersection, extended schemas) from different table configurations. Using specific Zod typing would require complex generic constraints that would break compatibility with the createQueryHandler utility and other schema builders. The function safely accesses validator.shape with runtime checks.
+  validator: any,
   filters: Record<string, unknown>,
 ): SQL | undefined {
   const conditions: SQL[] = [];
 
-  const validatorShape = validator.shape;
+  const validatorShape = validator.shape || {};
 
   Object.entries(filters).forEach(([key, value]) => {
     if (

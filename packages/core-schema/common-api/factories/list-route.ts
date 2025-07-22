@@ -1,3 +1,4 @@
+import { zValidator } from '@hono/zod-validator';
 import { getTableColumns } from 'drizzle-orm';
 import type { PgTable } from 'drizzle-orm/pg-core';
 import { createSelectSchema } from 'drizzle-zod';
@@ -34,35 +35,19 @@ export function createListRoute<T extends PgTable>(
       },
     );
 
+  // Create the validator without complex type assertion
   const validator = tableSchema.extend(paginationValidator.shape);
 
-  return new Hono().get('/', async (c) => {
+  return new Hono().get('/', zValidator('query', validator), async (c) => {
     const rawQuery = c.req.query();
 
-    // Parse pagination separately to ensure proper types
-    const paginationResult = paginationValidator.safeParse(rawQuery);
-    if (!paginationResult.success) {
-      return c.json(
-        {
-          error: 'Invalid pagination parameters',
-          details: paginationResult.error,
-        },
-        400,
-      );
-    }
-
-    const { page, limit } = paginationResult.data;
+    // Parse pagination with proper types
+    const paginationResult = paginationValidator.parse(rawQuery);
+    const { page, limit } = paginationResult;
 
     // Parse table filters
-    const tableResult = tableSchema.safeParse(rawQuery);
-    if (!tableResult.success) {
-      return c.json(
-        { error: 'Invalid filter parameters', details: tableResult.error },
-        400,
-      );
-    }
-
-    const filters = tableResult.data;
+    const tableResult = tableSchema.parse(rawQuery);
+    const filters = tableResult;
 
     const whereClause = buildWhereClause(table, validator, filters);
 

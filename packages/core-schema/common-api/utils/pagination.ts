@@ -1,5 +1,5 @@
 import { sql } from 'drizzle-orm';
-import z from 'zod';
+import { z } from 'zod';
 
 /**
  * Pagination metadata structure returned by API endpoints
