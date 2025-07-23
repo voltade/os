@@ -2,8 +2,10 @@ apiVersion: kustomize.config.k8s.io/v1beta1
 kind: Kustomization
 
 resources:
+  - cnpg-database.yaml
   - httproute-public.yaml
   - httproute-admin.yaml
+  - secret-dsn.yaml
 
 helmCharts:
   - repo: https://k8s.ory.sh/helm/charts
@@ -200,27 +202,27 @@ helmCharts:
           - name: DSN
             valueFrom:
               secretKeyRef:
-                name: cnpg-cluster-app
-                key: uri
+                name: kratos-dsn
+                key: dsn
       statefulSet:
         extraEnv:
           - name: DSN
             valueFrom:
               secretKeyRef:
-                name: cnpg-cluster-app
-                key: uri
+                name: kratos-dsn
+                key: dsn
       job:
         extraEnv:
           - name: DSN
             valueFrom:
               secretKeyRef:
-                name: cnpg-cluster-app
-                key: uri
+                name: kratos-dsn
+                key: dsn
       cronjob:
         cleanup:
           extraEnv:
             - name: DSN
               valueFrom:
                 secretKeyRef:
-                  name: cnpg-cluster-app
-                  key: uri
+                  name: kratos-dsn
+                  key: dsn
