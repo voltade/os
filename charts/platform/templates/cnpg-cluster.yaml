@@ -49,15 +49,18 @@ spec:
   
   {{/* Enable superuser access for Supabase */}}
   enableSuperuserAccess: true
-
-  {{- if .Values.secret.enabled }}
-  superuserSecret:
-    name: platform-cluster-admin
-  {{- end }}
   
   {{/* Managed database roles for Supabase */}}
   managed:
     roles:
+      - name: app
+        ensure: present
+        superuser: true
+        createdb: true
+        createrole: true
+        login: true
+        replication: true
+        bypassrls: true
       - name: supabase_admin
         ensure: present
         superuser: true
@@ -114,12 +117,18 @@ spec:
       source: clusterBackup
     {{- else }}
     initdb:
-      postInitSQL:
+      database: app
+      owner: {{ .Values.secret.clusterAdmin.username }}
+      localeCollate: C.UTF-8
+      localeCType: C.UTF-8
+      secret:
+        name: platform-cluster-admin
+      {{- if .Values.cnpg.migrations.enabled }}
+      postInitApplicationSQL:
         - CREATE EXTENSION IF NOT EXISTS supabase_vault;
         - CREATE SCHEMA IF NOT EXISTS storage;
         - CREATE SCHEMA IF NOT EXISTS auth;
-      {{- if .Values.cnpg.migrations.enabled }}
-      postInitSQLRefs:
+      postInitApplicationSQLRefs:
         configMapRefs:
           {{- range .Values.cnpg.migrations.scripts }}
           - name: {{ $.Values.cnpg.migrations.configMapName }}

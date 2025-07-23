@@ -56,5 +56,14 @@
   "SQL-Formatter-VSCode.identifierCase": "lower",
   "SQL-Formatter-VSCode.keywordCase": "lower",
   "typescript.preferences.importModuleSpecifierEnding": "js",
-  "typescript.tsdk": "node_modules/typescript/lib"
+  "typescript.tsdk": "node_modules/typescript/lib",
+
+  "terminal.integrated.profiles.osx": {
+    "terraform": {
+      "path": "zsh",
+      "args": ["-l", "-c", "cd terraform/kind-local && exec zsh"],
+      "icon": "cloud",
+      "color": "terminal.ansiMagenta"
+    }
+  }
 }

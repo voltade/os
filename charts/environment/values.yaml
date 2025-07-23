@@ -137,11 +137,12 @@ meta:
           key: password
     PG_META_DB_NAME: postgres
     PG_META_DB_SSL_MODE: disable
-    PG_META_PORT: "80"
+    PG_META_PORT: "8080"
 
 studio:
   enabled: true
   global:
+    enabled: true
     baseDomain: *domain
     nameOverride: *nameOverride
   replicaCount: 1
@@ -226,6 +227,7 @@ auth:
   enabled: true
   replicaCount: 1
   global:
+    enabled: true
     baseDomain: *domain
     nameOverride: *nameOverride
   image:

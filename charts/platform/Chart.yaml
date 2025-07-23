@@ -22,3 +22,29 @@ version: 0.1.0
 # follow Semantic Versioning. They should reflect the version the application is using.
 # It is recommended to use it with quotes.
 appVersion: "1.16.0"
+
+dependencies:
+  - name: auth
+    version: 0.1.0
+    repository: "file://../auth"
+    condition: auth.enabled
+  - name: meta
+    version: 0.1.0
+    repository: "file://../meta"
+    condition: meta.enabled
+  - name: rest
+    version: 0.1.0
+    repository: "file://../rest"
+    condition: rest.enabled
+  - name: storage
+    version: 0.1.0
+    repository: "file://../storage"
+    condition: storage.enabled
+  - name: studio
+    version: 0.1.0
+    repository: "file://../studio"
+    condition: studio.enabled
+  - name: kong
+    version: 0.1.0
+    repository: "file://../kong"
+    condition: kong.enabled

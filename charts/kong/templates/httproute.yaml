@@ -7,8 +7,8 @@ metadata:
     {{- include "kong.labels" . | nindent 4 }}
 spec:
   parentRefs:
-    - name: http
-      namespace: voltade-os
+    - name: cilium-gateway
+      namespace: gateway
   hostnames:
     {{- toYaml .Values.httproute.hostnames | nindent 4 }}
   rules:

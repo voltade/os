@@ -12,7 +12,7 @@ export const appEnvVariablesSchema = z.object({
   DB_USER: z.string(),
   DB_PASSWORD: z.string(),
   DB_HOST: z.string(),
-  DB_PORT: z.string(),
+  DB_PORT: z.preprocess((v) => Number(v), z.number()),
   DB_NAME: z.string(),
 
   CLUSTER_NAME: temp,

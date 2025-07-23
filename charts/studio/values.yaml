@@ -14,6 +14,7 @@ image:
   tag: "2025.07.14-sha-80b9b6f"
 
 global:
+  enabled: false
   baseDomain: 127.0.0.1.nip.io
   nameOverride: ""
 

@@ -49,6 +49,7 @@ spec:
               protocol: TCP
           {{- if .Values.environment }}
           env:
+            {{- if .Values.global.enabled }}
             - name: SUPABASE_PUBLIC_URL
               value: http://{{ include "studio.fullname" . }}.{{ .Values.global.baseDomain }}
             - name: NEXT_PUBLIC_STUDIO_URL
@@ -56,9 +57,10 @@ spec:
             - name: SUPABASE_URL
               value: http://{{ .Values.global.nameOverride }}:80
             - name: STUDIO_PG_META_URL
-              value: http://{{ .Values.global.nameOverride }}-meta:80
+              value: http://{{ .Values.global.nameOverride }}-meta:8080
             - name: POSTGREST_URL
-              value: http://{{ .Values.global.nameOverride }}-rest:80
+              value: http://{{ .Values.global.nameOverride }}-rest:3000
+            {{- end }}
             {{- range $key, $value := .Values.environment }}
             {{- if kindIs "map" $value }}
             - name: {{ $key }}
