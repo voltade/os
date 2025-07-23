@@ -1,7 +1,4 @@
 dependencies:
-- name: auth
-  repository: file://../auth
-  version: 0.1.0
 - name: meta
   repository: file://../meta
   version: 0.1.0
@@ -14,8 +11,5 @@ dependencies:
 - name: studio
   repository: file://../studio
   version: 0.1.0
-- name: kong
-  repository: file://../kong
-  version: 0.1.0
-digest: sha256:48f359b461c5ae336ae490bc120bfbae46693b6bd09151c4064a677165b82452
-generated: "2025-07-22T17:49:16.46451+08:00"
+digest: sha256:197be9a2c382bcc12241368a936f45bc423ea5e4c50122765aa263baa63ddae9
+generated: "2025-07-23T15:13:06.446575+08:00"

@@ -36,7 +36,7 @@ rbac:
     manageNamespaces: true
 
 cnpg:
-  hostname: postgres.127.0.0.1.nip.io
+  hostname: platform.127.0.0.1.nip.io
   enabled: true
   clusterId: cnpg-cluster
   image: ghcr.io/voltade/postgres:17.5-20250717-a2c5abf
@@ -249,133 +249,6 @@ storage:
     STORAGE_FILE_BACKEND_PATH: ./data
     STORAGE_FILE_ETAG_ALGORITHM: md5
 
-auth:
-  enabled: true
-  replicaCount: 1
-  global:
-    enabled: false
-  image:
-    repository: supabase/gotrue
-    tag: v2.158.1
-    pullPolicy: IfNotPresent
-  service:
-    type: ClusterIP
-    port: 9999
-  resources:
-    requests:
-      memory: 64Mi
-      cpu: 25m
-    limits:
-      memory: 128Mi
-      cpu: 50m
-  db:
-    initContainerImage:
-      repository: postgres
-      tag: 15-alpine
-      pullPolicy: IfNotPresent
-  environment:
-    API_EXTERNAL_URL: http://supabase.127.0.0.1.nip.io
-    GOTRUE_SITE_URL: http://supabase.127.0.0.1.nip.io
-    GOTRUE_SMTP_ADMIN_EMAIL: platform@supabase.127.0.0.1.nip.io
-    GOTRUE_SMTP_SENDER_NAME: platform
-    GOTRUE_JWT_SECRET:
-      valueFrom:
-        secretKeyRef:
-          name: platform-envs
-          key: jwt-secret
-    DB_DRIVER: postgres
-    DB_HOST: cnpg-cluster-rw
-    DB_PORT: 5432
-    DB_USER:
-      valueFrom:
-        secretKeyRef:
-          name: platform-cluster-admin
-          key: username
-    DB_PASSWORD:
-      valueFrom:
-        secretKeyRef:
-          name: platform-cluster-admin
-          key: password
-    DB_NAME: app
-    DB_SSL: disable
-    GOTRUE_DB_DRIVER: $(DB_DRIVER)
-    GOTRUE_DB_DATABASE_URL: $(DB_DRIVER)://$(DB_USER):$(DB_PASSWORD)@$(DB_HOST):$(DB_PORT)/$(DB_NAME)?search_path=auth&sslmode=$(DB_SSL)
-    GOTRUE_API_HOST: 0.0.0.0
-    GOTRUE_API_PORT: 9999
-    GOTRUE_DISABLE_SIGNUP: false
-    GOTRUE_EXTERNAL_ANONYMOUS_USERS_ENABLED: true
-    GOTRUE_EXTERNAL_EMAIL_ENABLED: true
-    GOTRUE_EXTERNAL_PHONE_ENABLED: true
-    GOTRUE_HOOK_CUSTOM_ACCESS_TOKEN_ENABLED: true
-    GOTRUE_HOOK_CUSTOM_ACCESS_TOKEN_URI: pg-functions://postgres/public/custom_access_token_hook
-    GOTRUE_JWT_ADMIN_ROLES: service_role
-    GOTRUE_JWT_EXP: 3600
-    GOTRUE_MAILER_AUTOCONFIRM: false
-    GOTRUE_MAILER_EXTERNAL_HOSTS: supabase.127.0.0.1.nip.io
-    GOTRUE_MAILER_URLPATHS_CONFIRMATION: /auth/v1/verify
-    GOTRUE_MAILER_URLPATHS_EMAIL_CHANGE: /auth/v1/verify
-    GOTRUE_MAILER_URLPATHS_INVITE: /auth/v1/verify
-    GOTRUE_MAILER_URLPATHS_RECOVERY: /auth/v1/verify
-    GOTRUE_RATE_LIMIT_EMAIL_SENT: 10000
-    GOTRUE_SMTP_HOST: email-smtp.ap-southeast-1.amazonaws.com
-    GOTRUE_SMTP_PORT: 465
-    GOTRUE_URI_ALLOW_LIST: http://127.0.0.1:5173,https://127.0.0.1:5173,http://localhost:5173,https://localhost:5173
-
-kong:
-  enabled: true
-  replicaCount: 1
-  image:
-    repository: kong
-    tag: 2.8.1
-    pullPolicy: IfNotPresent
-  service:
-    type: ClusterIP
-    port: 8000
-  resources:
-    limits:
-      cpu: 500m
-      memory: 1024Mi
-    requests:
-      cpu: 250m
-      memory: 512Mi
-  environment:
-    KONG_DATABASE: "off"
-    KONG_DECLARATIVE_CONFIG: /usr/local/kong/kong.yml
-    KONG_DNS_ORDER: LAST,A,CNAME
-    KONG_LOG_LEVEL: info
-    KONG_NGINX_PROXY_PROXY_BUFFERS: 64 160k
-    KONG_NGINX_PROXY_PROXY_BUFFER_SIZE: 160k
-    KONG_PLUGINS: request-transformer,cors,key-auth,acl,basic-auth
-    SUPABASE_ANON_KEY: *anon_key
-    SUPABASE_SERVICE_KEY: *service_key
-    STUDIO_USERNAME: *cluster_admin_username
-    STUDIO_PASSWORD: *cluster_admin_password
-  # Reference other services for Kong routing
-  auth:
-    enabled: true
-    service:
-      port: 9999
-  rest:
-    enabled: true
-    service:
-      port: 3000
-  meta:
-    enabled: true
-    service:
-      port: 8080
-  studio:
-    enabled: true
-    service:
-      port: 3000
-  storage:
-    enabled: true
-    service:
-      port: 5000
-  httproute:
-    enabled: true
-    hostnames:
-      - supabase.127.0.0.1.nip.io
-
 # This will set the replicaset count more information can be found here: https://kubernetes.io/docs/concepts/workloads/controllers/replicaset/
 replicaCount: 1
 
@@ -412,10 +285,12 @@ podAnnotations: {}
 # For more information checkout: https://kubernetes.io/docs/concepts/overview/working-with-objects/labels/
 podLabels: {}
 
-podSecurityContext: {}
+podSecurityContext:
+  {}
   # fsGroup: 2000
 
-securityContext: {}
+securityContext:
+  {}
   # capabilities:
   #   drop:
   #   - ALL
@@ -430,7 +305,8 @@ service:
   # This sets the ports more information can be found here: https://kubernetes.io/docs/concepts/services-networking/service/#field-spec-ports
   port: 80
 
-resources: {}
+resources:
+  {}
   # We usually recommend not to specify default resources and to leave this as a conscious
   # choice for the user. This also increases chances charts run on environments with little
   # resources, such as Minikube. If you do want to specify resources, uncomment the following

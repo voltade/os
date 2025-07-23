@@ -1,7 +1,4 @@
 dependencies:
-- name: auth
-  repository: file://../auth
-  version: 0.1.0
 - name: meta
   repository: file://../meta
   version: 0.1.0
@@ -14,5 +11,5 @@ dependencies:
 - name: studio
   repository: file://../studio
   version: 0.1.0
-digest: sha256:c2abfc4c75482643a42341b60bd4e6d54334ff45fd014cc5a762e975de123b2e
-generated: "2025-07-18T15:21:35.248506+08:00"
+digest: sha256:197be9a2c382bcc12241368a936f45bc423ea5e4c50122765aa263baa63ddae9
+generated: "2025-07-23T15:13:01.648237+08:00"
