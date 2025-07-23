@@ -4,8 +4,6 @@ metadata:
   name: cnpg-migration-config
   annotations:
     reflector.v1.k8s.emberstack.com/reflection-allowed: "true"
-    reflector.v1.k8s.emberstack.com/reflection-auto-enabled: "true"
-    reflector.v1.k8s.emberstack.com/reflection-auto-enabled-namespaces: "*"
 data:
   0000_extensions-schema.sql: |
     create schema if not exists extensions;

@@ -12,29 +12,6 @@ secret:
     service_key: &service_key eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsImlhdCI6MTc1MzE3NzYyMSwiZXhwIjoyMDY4NTM3NjIxLCJhdWQiOiJhdXRoZW50aWNhdGVkIiwicm9sZSI6InNlcnZpY2Vfcm9sZSJ9.1fOo-4HVWxITiSvS1hYa5Hnz3UTYLVyWhsYCh_BlUmE
     anon_key: &anon_key eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsImlhdCI6MTc1MzE3NzYyMSwiZXhwIjoyMDY4NTM3NjIxLCJhdWQiOiJhdXRoZW50aWNhdGVkIiwicm9sZSI6ImFub24ifQ.ET6EM66WagMXqibKlMJPF0tsXtKatIpTgA8R2S6sSOo
 
-# RBAC configuration for cluster-wide permissions
-rbac:
-  # Specifies whether RBAC resources should be created
-  create: true
-  # ClusterRole rules can be customized here
-  rules:
-    # Enable management of CNPG PostgreSQL clusters
-    manageClusters: true
-    # Enable management of secrets across all namespaces
-    manageSecrets: true
-    # Enable management of pods and services
-    managePods: true
-    # Enable management of RBAC resources
-    manageClusterRoleBindings: true
-    # Enable management of service accounts
-    manageServiceAccounts: true
-    # Enable dev container remote access (exec, logs, port-forward)
-    devContainerAccess: true
-    # Enable management of ingresses
-    manageIngresses: true
-    # Enable management of namespaces
-    manageNamespaces: true
-
 cnpg:
   hostname: platform.127.0.0.1.nip.io
   enabled: true
