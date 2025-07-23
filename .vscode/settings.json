@@ -39,7 +39,9 @@
     "kubeconfig",
     "lefthook",
     "maildev",
+    "postgrest",
     "sslip",
+    "supabase",
     "traefik",
     "voltade"
   ],
