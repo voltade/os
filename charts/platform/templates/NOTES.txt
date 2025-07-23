@@ -11,8 +11,3 @@ To view logs for the platform services:
 To access the platform service:
   kubectl --namespace {{ .Release.Namespace }} port-forward svc/{{ include "platform.fullname" . }} 8080:{{ .Values.service.port }}
   Then visit http://127.0.0.1:8080
-
-{{- if .Values.cnpg.enabled }}
-PostgreSQL cluster is available at:
-  kubectl --namespace {{ .Release.Namespace }} get cluster {{ .Values.cnpg.clusterId }}
-{{- end }}

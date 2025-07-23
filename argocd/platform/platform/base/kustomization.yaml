@@ -1,9 +1,13 @@
 apiVersion: kustomize.config.k8s.io/v1beta1
 kind: Kustomization
 
+resources:
+  - ./cnpg-cluster.yaml
+  - ./cnpg-route.yaml
+
 helmCharts:
   - repo: oci://registry.127.0.0.1.nip.io
     name: platform
-    version: 0.1.5
+    version: 0.1.6
     releaseName: platform
     namespace: platform
