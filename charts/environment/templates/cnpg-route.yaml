@@ -18,13 +18,3 @@ spec:
           port: 5432
   tls:
     secretName: tls-certificate
-    options:
-      name: no-alpn
-
----
-apiVersion: traefik.io/v1alpha1
-kind: TLSOption
-metadata:
-  name: no-alpn
-spec:
-  alpnProtocols: []
