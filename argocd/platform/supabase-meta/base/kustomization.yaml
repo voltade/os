@@ -29,12 +29,12 @@ helmCharts:
         PG_META_DB_USER:
           valueFrom:
             secretKeyRef:
-              name: platform-cluster-admin
+              name: cnpg-cluster-app
               key: username
         PG_META_DB_PASSWORD:
           valueFrom:
             secretKeyRef:
-              name: platform-cluster-admin
+              name: cnpg-cluster-app
               key: password
         PG_META_DB_NAME: app
         PG_META_DB_SSL_MODE: disable

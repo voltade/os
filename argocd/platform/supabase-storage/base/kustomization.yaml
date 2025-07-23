@@ -35,12 +35,12 @@ helmCharts:
         DB_USER:
           valueFrom:
             secretKeyRef:
-              name: platform-cluster-admin
+              name: cnpg-cluster-app
               key: username
         DB_PASSWORD:
           valueFrom:
             secretKeyRef:
-              name: platform-cluster-admin
+              name: cnpg-cluster-app
               key: password
         DB_NAME: app
         DB_SSL: disable
