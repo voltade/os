@@ -15,7 +15,7 @@ export const route = factory
           org_id: env.orgId,
           is_production: env.production,
           environment_id: env.id,
-          environment_chart_version: '0.1.3',
+          environment_chart_version: '0.1.4',
           service_key: env.serviceKey,
           anon_key: env.anonKey,
         })),
