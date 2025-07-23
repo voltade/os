@@ -12,7 +12,7 @@ helmCharts:
     # https://artifacthub.io/packages/helm/ory/kratos
     version: 0.56.0
     releaseName: kratos
-    namespace: kratos
+    namespace: platform
     # https://artifacthub.io/packages/helm/ory/kratos?modal=values
     valuesInline:
       image:

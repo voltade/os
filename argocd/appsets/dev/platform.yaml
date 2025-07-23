@@ -1,7 +1,7 @@
 apiVersion: argoproj.io/v1alpha1
 kind: ApplicationSet
 metadata:
-  name: infra
+  name: platform
   namespace: argocd
 spec:
   # https://argo-cd.readthedocs.io/en/stable/operator-manual/applicationset/Controlling-Resource-Modification/#allow-temporarily-toggling-auto-sync
@@ -15,7 +15,7 @@ spec:
         repoURL: file:///mnt/voltade-os.git
         revision: HEAD
         directories:
-          - path: argocd/infra/*/envs/dev
+          - path: argocd/platform/*/envs/dev
   template:
     metadata:
       name: "{{ index .path.segments 2 }}"
@@ -34,4 +34,4 @@ spec:
           - ApplyOutOfSyncOnly=true
       destination:
         server: https://kubernetes.default.svc
-        namespace: "{{ index .path.segments 2 }}"
+        namespace: platform
