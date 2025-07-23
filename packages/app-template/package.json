@@ -6,7 +6,7 @@
   "scripts": {
     "dev:server": "bun run --hot --env-file ../../.env server/index.ts",
     "dev:vite": "wait-on http://localhost:30000/healthz && vite dev",
-    "dev": "bun run scripts/dev.ts",
+    "dev": "conc bun:dev:*",
     "start": "VITE_NODE_ENV=production bun server/index.ts",
     "build:server": "bun build --minify --sourcemap --target=bun --outdir=dist server/index.ts",
     "build": "rm -rf dist && bun build:server && vite build && bun run scripts/post-build.ts",
@@ -44,6 +44,7 @@
     "@types/bun": "latest",
     "@types/react": "^19",
     "@types/react-dom": "^19",
+    "concurrently": "^9.2.0",
     "drizzle-kit": "^0.31.4",
     "drizzle-orm": "^0.44.2",
     "postcss-preset-mantine": "^1.17.0",

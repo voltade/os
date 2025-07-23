@@ -1,5 +1,5 @@
 {
-  "name": "voltade",
+  "name": "voltade-os",
   "license": "AGPL-3.0-only",
   "module": "index.ts",
   "type": "module",
@@ -8,9 +8,9 @@
   ],
   "scripts": {
     "ncu": "ncu -s --root --format group -i",
-    "dev": "bun run scripts/dev.ts",
     "dev:server": "bun run --env-file=.env --hot server/index.ts",
     "dev:vite": "wait-on http://localhost:3000/healthz && vite dev",
+    "dev": "conc bun:dev:*",
     "build:typecheck": "tsc --project tsconfig.json",
     "helm": "bun run scripts/helm.ts",
     "setup:env": "bun run scripts/env.ts",
@@ -48,6 +48,7 @@
     "@types/react-dom": "^19.1.6",
     "@types/semver": "^7.7.0",
     "@vitejs/plugin-react-swc": "^3.11.0",
+    "concurrently": "^9.2.0",
     "jose": "^6.0.12",
     "lefthook": "^1.12.2",
     "mantine-contextmenu": "^8.1.2",
