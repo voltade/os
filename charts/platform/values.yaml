@@ -12,50 +12,6 @@ secret:
     service_key: &service_key eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsImlhdCI6MTc1MzE3NzYyMSwiZXhwIjoyMDY4NTM3NjIxLCJhdWQiOiJhdXRoZW50aWNhdGVkIiwicm9sZSI6InNlcnZpY2Vfcm9sZSJ9.1fOo-4HVWxITiSvS1hYa5Hnz3UTYLVyWhsYCh_BlUmE
     anon_key: &anon_key eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsImlhdCI6MTc1MzE3NzYyMSwiZXhwIjoyMDY4NTM3NjIxLCJhdWQiOiJhdXRoZW50aWNhdGVkIiwicm9sZSI6ImFub24ifQ.ET6EM66WagMXqibKlMJPF0tsXtKatIpTgA8R2S6sSOo
 
-cnpg:
-  hostname: platform.127.0.0.1.nip.io
-  enabled: true
-  clusterId: cnpg-cluster
-  image: ghcr.io/voltade/postgres:17.5-20250717-a2c5abf
-  instances: 1
-  storage:
-    storageClass: standard
-    size: 4Gi
-  affinity:
-    enabled: false
-    nodeSelector: {}
-    tolerations: []
-  backup:
-    enabled: false
-    serverName: ""
-    objectStoreName: cnpg-object-store
-  postgresql:
-    parameters:
-      "pgsodium.enable_event_trigger": "off"
-      "pgsodium.getkey_script": "/usr/share/postgresql/17/extension/pgsodium_getkey"
-    shared_preload_libraries:
-      - pg_stat_statements
-      - pgaudit
-      - plpgsql
-      - plpgsql_check
-      - pg_cron
-      - pg_net
-      - auto_explain
-      - pg_tle
-      - plan_filter
-      - supabase_vault
-  migrations:
-    enabled: true
-    configMapName: cnpg-migration-config
-    scripts:
-      - 0000_extensions-schema.sql
-      - 0001_nanoid.sql
-      - 0001_supabase_roles.sql
-      - 0002_supabase_public_permissions.sql
-      - 0003_supabase_storage_permissions.sql
-      - 99-logs.sql
-      - 99-realtime.sql
-
 # This will set the replicaset count more information can be found here: https://kubernetes.io/docs/concepts/workloads/controllers/replicaset/
 replicaCount: 1
 

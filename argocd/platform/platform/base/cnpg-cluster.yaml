@@ -1,0 +1,15 @@
+apiVersion: postgresql.cnpg.io/v1
+kind: Cluster
+metadata:
+  name: cnpg-cluster
+  annotations:
+    argocd.argoproj.io/sync-options: SkipDryRunOnMissingResource=true
+    argocd.argoproj.io/sync-wave: "-1"
+spec:
+  # https://github.com/voltade/voltade-os/pkgs/container/postgres
+  imageName: ghcr.io/voltade/postgres:17.5-20250717-a2c5abf
+
+  instances: 1
+
+  storage:
+    size: 4Gi
