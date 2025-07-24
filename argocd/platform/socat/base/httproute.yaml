@@ -11,7 +11,7 @@ spec:
   rules:
     - backendRefs:
         - name: socat
-          port: 8080
+          port: 5173
       matches:
         - path:
             type: PathPrefix

@@ -19,8 +19,15 @@ spec:
           image: alpine/socat:1.8.0.3
           args:
             - "-d"
-            - "TCP-LISTEN:8080,fork,reuseaddr"
+            - "TCP-LISTEN:5173,fork,reuseaddr"
             - "TCP:host.docker.internal:5173"
           ports:
-            - name: proxy
-              containerPort: 8080
+            - name: socat
+              containerPort: 5173
+          resources:
+            requests:
+              memory: 64Mi
+              cpu: 50m
+            limits:
+              memory: 128Mi
+              cpu: 100m
