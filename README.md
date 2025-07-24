@@ -33,6 +33,8 @@ tofu state rm helm_release.cilium && tofu destroy
 ### Publish new charts
 
 ```bash
+# Still in terraform/kind-local
+cd ../..
 bun charts
 ```
 
@@ -45,5 +47,6 @@ bun charts:patch
 ## Start the platform web app
 
 ```bash
+cp packages/platform/.env.example packages/platform.env
 bun -F @voltade/platform dev
 ```
