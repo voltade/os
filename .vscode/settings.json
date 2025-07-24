@@ -43,6 +43,7 @@
     "sslip",
     "supabase",
     "traefik",
+    "vite",
     "voltade"
   ],
   "editor.codeActionsOnSave": {

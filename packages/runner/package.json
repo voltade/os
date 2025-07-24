@@ -1,8 +1,9 @@
 {
-  "name": "runner",
-  "module": "index.ts",
-  "type": "module",
   "private": true,
+  "name": "@voltade/runner",
+  "license": "AGPL-3.0-only",
+  "version": "0.1.0",
+  "type": "module",
   "devDependencies": {
     "@hono/zod-validator": "^0.7.1",
     "@types/bun": "latest"

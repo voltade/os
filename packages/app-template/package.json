@@ -1,6 +1,7 @@
 {
   "private": true,
   "name": "@voltade/app-template",
+  "license": "AGPL-3.0-only",
   "version": "0.1.0",
   "type": "module",
   "scripts": {
