@@ -10,11 +10,23 @@ resource "kind_cluster" "this" {
       disable_default_cni = true
       kube_proxy_mode     = "none"
     }
+    containerd_config_patches = [
+      <<-TOML
+      [plugins."io.containerd.grpc.v1.cri".registry.mirrors."docker.io"]
+        endpoint = ["https://mirror.gcr.io"]
+      TOML
+    ]
+
     node {
       role = "control-plane"
 
       kubeadm_config_patches = [
-        "kind: InitConfiguration\nnodeRegistration:\n  kubeletExtraArgs:\n    node-labels: \"ingress-ready=true\"\n"
+        <<-YAML
+        kind: InitConfiguration
+        nodeRegistration:
+          kubeletExtraArgs:
+            node-labels: "ingress-ready=true"
+        YAML
       ]
 
       extra_port_mappings {
