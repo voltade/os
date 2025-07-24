@@ -17,6 +17,8 @@ export const db = drizzle({
     ...schema.orgs,
     ...schema.environments,
     ...schema.envVars,
+    ...schema.apps,
+    ...schema.appInstallations,
     ...vaultSecrets,
   },
 });
