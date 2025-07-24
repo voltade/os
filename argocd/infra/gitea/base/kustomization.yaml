@@ -9,7 +9,7 @@ helmCharts:
   - repo: https://dl.gitea.com/charts
     name: gitea
     # https://artifacthub.io/packages/helm/gitea/gitea
-    version: 12.1.1
+    version: 12.1.2
     releaseName: gitea
     namespace: gitea
     # https://gitea.com/gitea/helm-gitea#parameters
