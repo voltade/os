@@ -40,8 +40,6 @@ helmCharts:
             secretKeyRef:
               name: platform-envs
               key: jwt-secret
-        SUPABASE_ANON_KEY: *anon_key
-        SUPABASE_SERVICE_KEY: *service_key
         STUDIO_PORT: 3000
         NEXT_PUBLIC_ENABLE_LOGS: "false"
         NEXT_PUBLIC_ENABLE_TELEMETRY: "false"
