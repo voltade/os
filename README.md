@@ -48,5 +48,5 @@ bun charts:patch
 
 ```bash
 cp packages/platform/.env.example packages/platform.env
-bun -F @voltade/platform dev
+bun --cwd packages/platform dev
 ```
