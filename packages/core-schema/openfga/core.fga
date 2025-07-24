@@ -1,0 +1,27 @@
+module core
+
+# user = users from the organization
+type user
+
+# team = teams in the organization; for assigning permissions
+# there are three types of team members:
+# - head: has all permissions in the team
+# - manager: has more permissions than a member; e.g., can approve tasks, manage team members, etc.
+# - member: has the most limited permissions in the team
+type team
+  relations
+    define head: [user]
+    define manager: [user] or head
+    define member: [user] or manager
+
+# organization = the organization currently being modelled
+# we model single-tenant databases, so there is only one organization per store
+type organization
+  relations
+    define system_admin: [user with non_expired_time_grant] # system admin with all permissions
+    define admin: [user] or system_admin
+    define member: [user, team#member] or admin
+
+condition non_expired_time_grant(current_time: timestamp, grant_time: timestamp, grant_duration: duration) {
+  current_time < grant_time + grant_duration
+} 

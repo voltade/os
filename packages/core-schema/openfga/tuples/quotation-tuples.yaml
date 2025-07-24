@@ -1,0 +1,32 @@
+# Stores all quotation tuples for the OpenFGA model
+# This file is used in the quotation.fga.yaml test file.
+
+# Create quotations collection for sales (cRFQ) with team permissions
+- user: team:sales
+  relation: owner_team
+  object: quotations_collection:crfq
+
+- user: team:finance
+  relation: viewer_team
+  object: quotations_collection:crfq
+
+# Link all quotations to the main collection
+- user: quotations_collection:crfq
+  relation: collection
+  object: quotation:q001
+
+- user: quotations_collection:crfq
+  relation: collection
+  object: quotation:q002
+
+- user: quotations_collection:crfq
+  relation: collection
+  object: quotation:q003
+
+- user: quotations_collection:crfq
+  relation: collection
+  object: quotation:q004
+
+- user: quotations_collection:crfq
+  relation: collection
+  object: quotation:q005

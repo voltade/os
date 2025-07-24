@@ -1,0 +1,26 @@
+module order
+
+# orders_collection = container for all orders to manage team-level access
+type orders_collection
+  relations
+    define owner_team: [team]  # team with read-write access to all orders in collection
+    define viewer_team: [team]  # teams with read-only access to all orders in collection
+    
+    # Collection-level permissions
+    define assignee: member from owner_team
+    define viewer: member from viewer_team or member from owner_team
+
+# order = the orders in the organization
+# orders are managed by a specific team, and can be viewed or edited by other teams
+# there are at least two types of orders: purchase orders and sales orders
+# this type serves as an abstraction for the various order types
+type order
+  relations
+    define quotation: [quotation] # the quotation(s) associated with the order
+    define collection: [orders_collection]
+
+    # Permissions derived from collection
+    define can_view_order: viewer from collection or can_edit_order
+    define can_create_order: assignee from collection or can_edit_order
+    define can_edit_order: assignee from collection
+    define can_delete_order: assignee from collection or can_edit_order

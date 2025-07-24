@@ -1,0 +1,25 @@
+module invoice
+
+# invoices_collection = container for all invoices to manage team-level access
+type invoices_collection
+  relations
+    define owner_team: [team]  # team with read-write access to all invoices in collection
+    
+    # Collection-level permissions
+    define assignee: member from owner_team
+    define viewer: member from owner_team
+
+# invoice = billing document generated from completed orders
+# invoices are managed by a specific team (typically finance), and can be viewed by other teams
+# there are different types of invoices: sales invoices, purchase invoices, etc.
+type invoice
+  relations
+    define order: [order] # the order(s) associated with the invoice
+    define collection: [invoices_collection]
+
+    # Permissions derived from collection
+    define can_view_invoice: viewer from collection or can_edit_invoice
+    define can_create_invoice: assignee from collection or can_edit_invoice
+    define can_edit_invoice: assignee from collection
+    define can_delete_invoice: assignee from collection or can_edit_invoice
+    define can_approve_invoice: assignee from collection

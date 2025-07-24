@@ -1,0 +1,145 @@
+# Stores all core tuples for the OpenFGA model
+# This file is used in the core.fga.yaml test file.
+
+# =============================================================================
+# SINGLE ORGANIZATION
+# =============================================================================
+
+# Organization admin
+- user: user:org_admin
+  relation: admin
+  object: organization:acme-corp
+
+# Direct organization members (not in teams)
+- user: user:org_member1
+  relation: member
+  object: organization:acme-corp
+
+- user: user:org_member2
+  relation: member
+  object: organization:acme-corp
+
+# =============================================================================
+# PRODUCT TEAM STRUCTURE
+# =============================================================================
+
+# Product team members with different roles
+- user: user:product_head
+  relation: head
+  object: team:product
+
+- user: user:product_manager1
+  relation: manager
+  object: team:product
+
+- user: user:product_manager2
+  relation: manager
+  object: team:product
+
+- user: user:product_member1
+  relation: member
+  object: team:product
+
+- user: user:product_member2
+  relation: member
+  object: team:product
+
+- user: user:product_member3
+  relation: member
+  object: team:product
+
+# =============================================================================
+# SALES TEAM STRUCTURE
+# =============================================================================
+
+# Sales team members with different roles
+- user: user:sales_head
+  relation: head
+  object: team:sales
+
+- user: user:sales_manager1
+  relation: manager
+  object: team:sales
+
+- user: user:sales_manager2
+  relation: manager
+  object: team:sales
+
+- user: user:sales_member1
+  relation: member
+  object: team:sales
+
+- user: user:sales_member2
+  relation: member
+  object: team:sales
+
+# =============================================================================
+# FINANCE TEAM STRUCTURE
+# =============================================================================
+
+# Finance team members with different roles
+- user: user:finance_head
+  relation: head
+  object: team:finance
+
+- user: user:finance_manager
+  relation: manager
+  object: team:finance
+
+- user: user:finance_member1
+  relation: member
+  object: team:finance
+
+- user: user:finance_member2
+  relation: member
+  object: team:finance
+
+# =============================================================================
+# PURCHASE TEAM STRUCTURE
+# =============================================================================
+
+# Purchase team members with different roles
+- user: user:purchase_head
+  relation: head
+  object: team:purchase
+
+- user: user:purchase_manager1
+  relation: manager
+  object: team:purchase
+
+- user: user:purchase_manager2
+  relation: manager
+  object: team:purchase
+
+- user: user:purchase_member1
+  relation: member
+  object: team:purchase
+
+- user: user:purchase_member2
+  relation: member
+  object: team:purchase
+
+- user: user:purchase_member3
+  relation: member
+  object: team:purchase
+
+# =============================================================================
+# TEAM-ORGANIZATION RELATIONSHIPS
+# =============================================================================
+
+# All teams are members of the single organization
+- user: team:product#member
+  relation: member
+  object: organization:acme-corp
+
+- user: team:sales#member
+  relation: member
+  object: organization:acme-corp
+
+- user: team:finance#member
+  relation: member
+  object: organization:acme-corp
+
+- user: team:purchase#member
+  relation: member
+  object: organization:acme-corp

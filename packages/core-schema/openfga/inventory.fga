@@ -1,0 +1,19 @@
+module inventory
+
+# inventory = the inventory of products in the organization
+type inventory
+  relations
+    define product_team: [team] # the team that manages the inventory
+
+    # product = the products in the inventory
+    # only inventory team members can update / delete product definitions
+    # other teams' members can view / create product definitions
+    define can_view_products: [team#member] or can_edit_products
+    define can_create_products: [team#member] or can_edit_products
+    define can_edit_products: member from product_team
+    define can_delete_products: member from product_team or can_edit_products
+
+    # stock = the stock of products in the inventory
+    # only inventory team members can view / edit stock
+    define can_view_stock: member from product_team or can_edit_stock
+    define can_edit_stock: member from product_team

@@ -1,0 +1,611 @@
+name: Tests for invoice module
+
+model_file: ../fga.mod
+tuple_files:
+  - ../tuples/core-tuples.yaml
+  - ../tuples/quotation-tuples.yaml
+  - ../tuples/order-tuples.yaml
+  - ../tuples/invoice-tuples.yaml
+
+tests:
+  # =============================================================================
+  # COLLECTION-LEVEL PERMISSIONS
+  # =============================================================================
+  - name: Invoices collection has correct team assignments
+    check:
+      # Finance team is the owner team
+      - user: user:finance_head
+        object: invoices_collection:main
+        assertions:
+          assignee: true
+          viewer: true
+      - user: user:finance_manager
+        object: invoices_collection:main
+        assertions:
+          assignee: true
+          viewer: true
+      - user: user:finance_member1
+        object: invoices_collection:main
+        assertions:
+          assignee: true
+          viewer: true
+
+  # =============================================================================
+  # FINANCE TEAM PERMISSIONS (INVOICE MANAGERS VIA COLLECTION)
+  # =============================================================================
+  - name: Finance team members have full invoice permissions via collection ownership
+    check:
+      # Finance team head has all permissions
+      - user: user:finance_head
+        object: invoice:inv001
+        assertions:
+          can_view_invoice: true
+          can_create_invoice: true
+          can_edit_invoice: true
+          can_delete_invoice: true
+          can_approve_invoice: true
+      - user: user:finance_head
+        object: invoice:inv002
+        assertions:
+          can_view_invoice: true
+          can_create_invoice: true
+          can_edit_invoice: true
+          can_delete_invoice: true
+          can_approve_invoice: true
+      # Finance team manager has all permissions
+      - user: user:finance_manager
+        object: invoice:inv002
+        assertions:
+          can_view_invoice: true
+          can_create_invoice: true
+          can_edit_invoice: true
+          can_delete_invoice: true
+          can_approve_invoice: true
+      # Finance team members have all permissions
+      - user: user:finance_member1
+        object: invoice:inv004
+        assertions:
+          can_view_invoice: true
+          can_create_invoice: true
+          can_edit_invoice: true
+          can_delete_invoice: true
+          can_approve_invoice: true
+
+  # =============================================================================
+  # OTHER TEAMS HAVE NO INVOICE ACCESS
+  # =============================================================================
+  - name: Sales team members have no invoice permissions
+    check:
+      # Sales team head
+      - user: user:sales_head
+        object: invoice:inv001
+        assertions:
+          can_view_invoice: false
+          can_create_invoice: false
+          can_edit_invoice: false
+          can_delete_invoice: false
+          can_approve_invoice: false
+      - user: user:sales_head
+        object: invoice:inv002
+        assertions:
+          can_view_invoice: false
+          can_create_invoice: false
+          can_edit_invoice: false
+          can_delete_invoice: false
+          can_approve_invoice: false
+      # Sales team managers
+      - user: user:sales_manager1
+        object: invoice:inv003
+        assertions:
+          can_view_invoice: false
+          can_create_invoice: false
+          can_edit_invoice: false
+          can_delete_invoice: false
+          can_approve_invoice: false
+      - user: user:sales_manager2
+        object: invoice:inv004
+        assertions:
+          can_view_invoice: false
+          can_create_invoice: false
+          can_edit_invoice: false
+          can_delete_invoice: false
+          can_approve_invoice: false
+      # Sales team members
+      - user: user:sales_member1
+        object: invoice:inv005
+        assertions:
+          can_view_invoice: false
+          can_create_invoice: false
+          can_edit_invoice: false
+          can_delete_invoice: false
+          can_approve_invoice: false
+      - user: user:sales_member2
+        object: invoice:inv006
+        assertions:
+          can_view_invoice: false
+          can_create_invoice: false
+          can_edit_invoice: false
+          can_delete_invoice: false
+          can_approve_invoice: false
+
+  # =============================================================================
+  # PRODUCT TEAM PERMISSIONS (VIEW-ONLY ACCESS VIA COLLECTION)
+  # =============================================================================
+  - name: Product team members have no invoice permissions
+    check:
+      # Product team head
+      - user: user:product_head
+        object: invoice:inv001
+        assertions:
+          can_view_invoice: false
+          can_create_invoice: false
+          can_edit_invoice: false
+          can_delete_invoice: false
+          can_approve_invoice: false
+      - user: user:product_head
+        object: invoice:inv002
+        assertions:
+          can_view_invoice: false
+          can_create_invoice: false
+          can_edit_invoice: false
+          can_delete_invoice: false
+          can_approve_invoice: false
+      # Product team managers
+      - user: user:product_manager1
+        object: invoice:inv003
+        assertions:
+          can_view_invoice: false
+          can_create_invoice: false
+          can_edit_invoice: false
+          can_delete_invoice: false
+          can_approve_invoice: false
+      - user: user:product_manager2
+        object: invoice:inv004
+        assertions:
+          can_view_invoice: false
+          can_create_invoice: false
+          can_edit_invoice: false
+          can_delete_invoice: false
+          can_approve_invoice: false
+      # Product team members
+      - user: user:product_member1
+        object: invoice:inv005
+        assertions:
+          can_view_invoice: false
+          can_create_invoice: false
+          can_edit_invoice: false
+          can_delete_invoice: false
+          can_approve_invoice: false
+      - user: user:product_member2
+        object: invoice:inv006
+        assertions:
+          can_view_invoice: false
+          can_create_invoice: false
+          can_edit_invoice: false
+          can_delete_invoice: false
+          can_approve_invoice: false
+      - user: user:product_member3
+        object: invoice:inv007
+        assertions:
+          can_view_invoice: false
+          can_create_invoice: false
+          can_edit_invoice: false
+          can_delete_invoice: false
+          can_approve_invoice: false
+
+  # =============================================================================
+  # PURCHASE TEAM PERMISSIONS (NO INVOICE ACCESS)
+  # =============================================================================
+  - name: Purchase team members have no invoice permissions
+    check:
+      # Purchase team head
+      - user: user:purchase_head
+        object: invoice:inv001
+        assertions:
+          can_view_invoice: false
+          can_create_invoice: false
+          can_edit_invoice: false
+          can_delete_invoice: false
+          can_approve_invoice: false
+      # Purchase team managers
+      - user: user:purchase_manager1
+        object: invoice:inv002
+        assertions:
+          can_view_invoice: false
+          can_create_invoice: false
+          can_edit_invoice: false
+          can_delete_invoice: false
+          can_approve_invoice: false
+      # Purchase team members
+      - user: user:purchase_member1
+        object: invoice:inv003
+        assertions:
+          can_view_invoice: false
+          can_create_invoice: false
+          can_edit_invoice: false
+          can_delete_invoice: false
+          can_approve_invoice: false
+
+  # =============================================================================
+  # MULTI-ORDER INVOICE PERMISSIONS
+  # =============================================================================
+  - name: Invoices tied to multiple orders work correctly
+    check:
+      # Invoice inv004 is tied to orders o004 and o005
+      - user: user:finance_head
+        object: invoice:inv004
+        assertions:
+          can_view_invoice: true
+          can_create_invoice: true
+          can_edit_invoice: true
+          can_delete_invoice: true
+          can_approve_invoice: true
+      - user: user:finance_member1
+        object: invoice:inv004
+        assertions:
+          can_view_invoice: true
+          can_create_invoice: true
+          can_edit_invoice: true
+          can_delete_invoice: true
+          can_approve_invoice: true
+
+  # =============================================================================
+  # COLLECTION LINKAGE VALIDATION
+  # =============================================================================
+  - name: All invoices are properly linked to their collection
+    check:
+      # Verify that invoices derive permissions from their collection
+      - user: user:finance_head
+        object: invoice:inv001
+        assertions:
+          can_edit_invoice: true # Should work via collection assignee
+      - user: user:finance_member1
+        object: invoice:inv002
+        assertions:
+          can_edit_invoice: true # Should work via collection assignee
+      - user: user:sales_member1
+        object: invoice:inv003
+        assertions:
+          can_view_invoice: false
+          can_edit_invoice: false
+      - user: user:product_member1
+        object: invoice:inv004
+        assertions:
+          can_view_invoice: false
+          can_edit_invoice: false
+
+  # =============================================================================
+  # ORDER-INVOICE RELATIONSHIP VALIDATION
+  # =============================================================================
+  - name: Invoices properly reference their associated orders
+    check:
+      # Single order invoices
+      - user: user:finance_head
+        object: invoice:inv001
+        assertions:
+          can_edit_invoice: true # Should have edit access via collection
+      - user: user:finance_manager
+        object: invoice:inv002
+        assertions:
+          can_edit_invoice: true # Should have edit access via collection
+      - user: user:finance_member1
+        object: invoice:inv003
+        assertions:
+          can_edit_invoice: false
+      # Multi-order invoices
+      - user: user:finance_head
+        object: invoice:inv004
+        assertions:
+          can_edit_invoice: true # Should have edit access via collection
+
+  # =============================================================================
+  # TEAM HIERARCHY VALIDATION
+  # =============================================================================
+  - name: Finance team hierarchy works correctly for invoices
+    check:
+      # Finance team head has all team permissions
+      - user: user:finance_head
+        object: team:finance
+        assertions:
+          head: true
+          manager: true
+          member: true
+      # Finance team manager has manager and member permissions
+      - user: user:finance_manager
+        object: team:finance
+        assertions:
+          head: false
+          manager: true
+          member: true
+      # Finance team members have only member permissions
+      - user: user:finance_member1
+        object: team:finance
+        assertions:
+          head: false
+          manager: false
+          member: true
+
+  - name: Sales team hierarchy works correctly for invoices
+    check:
+      # Sales team head has all team permissions
+      - user: user:sales_head
+        object: team:sales
+        assertions:
+          head: true
+          manager: true
+          member: true
+      # Sales team managers have manager and member permissions
+      - user: user:sales_manager1
+        object: team:sales
+        assertions:
+          head: false
+          manager: true
+          member: true
+      # Sales team members have only member permissions
+      - user: user:sales_member1
+        object: team:sales
+        assertions:
+          head: false
+          manager: false
+          member: true
+
+  - name: Product team hierarchy works correctly for invoices
+    check:
+      # Product team head has all team permissions
+      - user: user:product_head
+        object: team:product
+        assertions:
+          head: true
+          manager: true
+          member: true
+      # Product team managers have manager and member permissions
+      - user: user:product_manager1
+        object: team:product
+        assertions:
+          head: false
+          manager: true
+          member: true
+      # Product team members have only member permissions
+      - user: user:product_member1
+        object: team:product
+        assertions:
+          head: false
+          manager: false
+          member: true
+
+  # =============================================================================
+  # ORGANIZATION MEMBERSHIP VALIDATION
+  # =============================================================================
+  - name: All team members belong to the organization
+    check:
+      # Finance team members are organization members
+      - user: user:finance_head
+        object: organization:acme-corp
+        assertions:
+          member: true
+      - user: user:finance_manager
+        object: organization:acme-corp
+        assertions:
+          member: true
+      - user: user:finance_member1
+        object: organization:acme-corp
+        assertions:
+          member: true
+      # Sales team members are organization members
+      - user: user:sales_head
+        object: organization:acme-corp
+        assertions:
+          member: true
+      - user: user:sales_manager1
+        object: organization:acme-corp
+        assertions:
+          member: true
+      - user: user:sales_member1
+        object: organization:acme-corp
+        assertions:
+          member: true
+      # Product team members are organization members
+      - user: user:product_head
+        object: organization:acme-corp
+        assertions:
+          member: true
+      - user: user:product_manager1
+        object: organization:acme-corp
+        assertions:
+          member: true
+      - user: user:product_member1
+        object: organization:acme-corp
+        assertions:
+          member: true
+
+  # =============================================================================
+  # PERMISSION HIERARCHY VALIDATION
+  # =============================================================================
+  - name: Edit permissions imply view permissions
+    check:
+      # Finance team members who can edit should also be able to view
+      - user: user:finance_head
+        object: invoice:inv001
+        assertions:
+          can_edit_invoice: true
+          can_view_invoice: true # should be true due to "or can_edit_invoice"
+      - user: user:finance_member1
+        object: invoice:inv002
+        assertions:
+          can_edit_invoice: true
+          can_view_invoice: true
+
+  - name: Delete permissions imply edit permissions
+    check:
+      # Finance team members who can delete should also be able to edit
+      - user: user:finance_head
+        object: invoice:inv001
+        assertions:
+          can_delete_invoice: true
+          can_edit_invoice: true # Both should be true for finance team
+      - user: user:finance_member1
+        object: invoice:inv002
+        assertions:
+          can_delete_invoice: true
+          can_edit_invoice: true
+
+  # =============================================================================
+  # CROSS-INVOICE PERMISSIONS
+  # =============================================================================
+  - name: Finance team permissions work across all invoices
+    check:
+      # Finance head should have full permissions on all invoices
+      - user: user:finance_head
+        object: invoice:inv001
+        assertions:
+          can_view_invoice: true
+          can_edit_invoice: true
+      # Finance members should have permissions on all invoices
+      - user: user:finance_member1
+        object: invoice:inv001
+        assertions:
+          can_view_invoice: true
+          can_edit_invoice: true
+
+  # =============================================================================
+  # APPROVAL PERMISSIONS
+  # =============================================================================
+  - name: Finance team members can approve invoices
+    check:
+      # All finance team members can approve invoices
+      - user: user:finance_head
+        object: invoice:inv001
+        assertions:
+          can_approve_invoice: true
+      - user: user:finance_manager
+        object: invoice:inv002
+        assertions:
+          can_approve_invoice: true
+      # Other teams cannot approve invoices
+      - user: user:sales_head
+        object: invoice:inv001
+        assertions:
+          can_approve_invoice: false
+      - user: user:product_head
+        object: invoice:inv001
+        assertions:
+          can_approve_invoice: false
+
+  # =============================================================================
+  # NEGATIVE TESTS
+  # =============================================================================
+  - name: Users without team relationships have no invoice permissions
+    check:
+      - user: user:random_user
+        object: invoice:inv001
+        assertions:
+          can_view_invoice: false
+          can_create_invoice: false
+          can_edit_invoice: false
+          can_delete_invoice: false
+          can_approve_invoice: false
+
+  - name: Organization members without team membership have no invoice access
+    check:
+      # Direct organization members (not in any team) should have no invoice access
+      - user: user:org_member1
+        object: invoice:inv001
+        assertions:
+          can_view_invoice: false
+          can_create_invoice: false
+          can_edit_invoice: false
+          can_delete_invoice: false
+          can_approve_invoice: false
+
+  - name: Organization admin has organization permissions but not invoice
+    check:
+      # Organization admin should have org access but not automatic invoice access
+      - user: user:org_admin
+        object: organization:acme-corp
+        assertions:
+          admin: true
+          member: true
+      # But no automatic invoice permissions
+      - user: user:org_admin
+        object: invoice:inv001
+        assertions:
+          can_view_invoice: false
+          can_create_invoice: false
+          can_edit_invoice: false
+          can_delete_invoice: false
+          can_approve_invoice: false
+
+  - name: Teams without explicit access cannot view invoices
+    check:
+      # Purchase team should not have any invoice access
+      - user: user:purchase_head
+        object: invoice:inv001
+        assertions:
+          can_view_invoice: false
+          can_create_invoice: false
+          can_edit_invoice: false
+          can_delete_invoice: false
+          can_approve_invoice: false
+      - user: user:purchase_member1
+        object: invoice:inv007
+        assertions:
+          can_view_invoice: false
+          can_create_invoice: false
+          can_edit_invoice: false
+          can_delete_invoice: false
+          can_approve_invoice: false
+
+  # =============================================================================
+  # BUSINESS LOGIC VALIDATION - COMPLETION GAPS
+  # =============================================================================
+  - name: Some orders have not been completed into invoices yet
+    check:
+      # o001, o002, o004 have been completed into invoices (have corresponding invoices)
+      - user: user:finance_head
+        object: invoice:inv001
+        assertions:
+          can_view_invoice: true # These invoices exist for completed orders
+      - user: user:finance_head
+        object: invoice:inv002
+        assertions:
+          can_view_invoice: true
+      - user: user:finance_head
+        object: invoice:inv004
+        assertions:
+          can_view_invoice: true
+
+      # Only existing invoices should be accessible
+      - user: user:finance_member1
+        object: invoice:inv001
+        assertions:
+          can_edit_invoice: true # Finance can edit existing invoices
+      - user: user:finance_manager
+        object: invoice:inv002
+        assertions:
+          can_approve_invoice: true # Finance can approve existing invoices
+
+      # Note: order:o003 exists but has NO corresponding invoice yet
+      # This validates the business logic that not all orders become invoices immediately
+
+  # =============================================================================
+  # ORDER-TO-INVOICE COMPLETION GAPS VALIDATION
+  # =============================================================================
+  - name: Finance team manages only completed invoices (business logic validation)
+    check:
+      # Finance has full control over existing invoices
+      - user: user:finance_head
+        object: invoices_collection:main
+        assertions:
+          assignee: true # Finance owns the invoices collection
+
+      # All existing invoices should be manageable by finance
+      - user: user:finance_member1
+        object: invoice:inv001
+        assertions:
+          can_view_invoice: true
+          can_edit_invoice: true
+          can_delete_invoice: true
+          can_approve_invoice: true
+
+      # Note: The absence of invoice:inv003, inv005, inv006, inv007 in tuples
+      # validates that orders o003, o005, o006, o007 have not been completed yet

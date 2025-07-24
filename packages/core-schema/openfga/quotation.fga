@@ -1,0 +1,26 @@
+module quotation
+
+# quotations_collection = container for all quotations to manage team-level access
+type quotations_collection
+  relations
+    define owner_team: [team]  # team with read-write access to all quotations in collection
+    define viewer_team: [team]  # teams with read-only access to all quotations in collection
+    
+    # Collection-level permissions
+    define assignee: member from owner_team
+    define approver: manager from owner_team
+    define viewer: member from viewer_team or member from owner_team
+
+# quotation = pre-order price quotation
+# there are two types of quotations: purchase quotation (RFQ) and sales quotation (cRFQ)
+# this type serves as an abstraction for both types of quotations
+type quotation
+  relations
+    define collection: [quotations_collection]
+
+    # Permissions derived from collection
+    define can_view_quotation: viewer from collection or can_edit_quotation
+    define can_create_quotation: assignee from collection or can_edit_quotation
+    define can_approve_quotation: approver from collection
+    define can_edit_quotation: assignee from collection
+    define can_delete_quotation: assignee from collection or can_edit_quotation

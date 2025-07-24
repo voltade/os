@@ -1,0 +1,25 @@
+# Stores all inventory tuples for the OpenFGA model
+# This file is used in the inventory.fga.yaml test file.
+
+# Single inventory managed by the product team
+- user: team:product
+  relation: product_team
+  object: inventory:main-warehouse
+
+# Grant other teams view-only access to the inventory
+- user: team:purchase#member
+  relation: can_view_products
+  object: inventory:main-warehouse
+
+- user: team:sales#member
+  relation: can_view_products
+  object: inventory:main-warehouse
+
+- user: team:finance#member
+  relation: can_view_products
+  object: inventory:main-warehouse
+
+# Grant purchase team members create permissions for products
+- user: team:purchase#member
+  relation: can_create_products
+  object: inventory:main-warehouse

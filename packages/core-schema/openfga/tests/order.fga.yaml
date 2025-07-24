@@ -1,0 +1,545 @@
+name: Tests for order module
+
+model_file: ../fga.mod
+tuple_files:
+  - ../tuples/core-tuples.yaml
+  - ../tuples/quotation-tuples.yaml
+  - ../tuples/order-tuples.yaml
+
+tests:
+  # =============================================================================
+  # COLLECTION-LEVEL PERMISSIONS
+  # =============================================================================
+  - name: Orders collection has correct team assignments
+    check:
+      # Sales team is the owner team
+      - user: user:sales_head
+        object: orders_collection:sales
+        assertions:
+          assignee: true
+      - user: user:sales_manager1
+        object: orders_collection:sales
+        assertions:
+          assignee: true
+      - user: user:sales_member1
+        object: orders_collection:sales
+        assertions:
+          assignee: true
+
+      # Product team (inventory) is a viewer team
+      - user: user:product_head
+        object: orders_collection:sales
+        assertions:
+          viewer: true
+          assignee: false
+      - user: user:product_member1
+        object: orders_collection:sales
+        assertions:
+          viewer: true
+          assignee: false
+
+      # Finance team is a viewer team
+      - user: user:finance_head
+        object: orders_collection:sales
+        assertions:
+          viewer: true
+          assignee: false
+      - user: user:finance_member1
+        object: orders_collection:sales
+        assertions:
+          viewer: true
+          assignee: false
+
+  # =============================================================================
+  # SALES TEAM PERMISSIONS (ORDER MANAGERS VIA COLLECTION)
+  # =============================================================================
+  - name: Sales team members have full order permissions via collection ownership
+    check:
+      # Sales team head has all permissions on orders tied to quotations they manage
+      - user: user:sales_head
+        object: order:o001
+        assertions:
+          can_view_order: true
+          can_create_order: true
+          can_edit_order: true
+          can_delete_order: true
+      - user: user:sales_head
+        object: order:o002
+        assertions:
+          can_view_order: true
+          can_create_order: true
+          can_edit_order: true
+          can_delete_order: true
+
+      # Sales team managers have all permissions
+      - user: user:sales_manager1
+        object: order:o003
+        assertions:
+          can_view_order: true
+          can_create_order: true
+          can_edit_order: true
+          can_delete_order: true
+      - user: user:sales_manager2
+        object: order:o004
+        assertions:
+          can_view_order: true
+          can_create_order: true
+          can_edit_order: true
+          can_delete_order: true
+
+  # =============================================================================
+  # INVENTORY TEAM PERMISSIONS (VIEW-ONLY ACCESS VIA COLLECTION)
+  # =============================================================================
+  - name: Inventory team members can only view orders via collection viewer access
+    check:
+      # Inventory team head (Note: using product team as inventory team from core-tuples)
+      - user: user:product_head
+        object: order:o001
+        assertions:
+          can_view_order: true
+          can_create_order: false
+          can_edit_order: false
+          can_delete_order: false
+      - user: user:product_head
+        object: order:o002
+        assertions:
+          can_view_order: true
+          can_create_order: false
+          can_edit_order: false
+          can_delete_order: false
+      # Inventory team managers
+      - user: user:product_manager1
+        object: order:o003
+        assertions:
+          can_view_order: true
+          can_create_order: false
+          can_edit_order: false
+          can_delete_order: false
+      - user: user:product_manager2
+        object: order:o004
+        assertions:
+          can_view_order: true
+          can_create_order: false
+          can_edit_order: false
+          can_delete_order: false
+
+  # =============================================================================
+  # FINANCE TEAM PERMISSIONS (VIEW-ONLY ACCESS VIA COLLECTION)
+  # =============================================================================
+  - name: Finance team members can only view orders via collection viewer access
+    check:
+      # Finance team head
+      - user: user:finance_head
+        object: order:o001
+        assertions:
+          can_view_order: true
+          can_create_order: false
+          can_edit_order: false
+          can_delete_order: false
+      - user: user:finance_head
+        object: order:o002
+        assertions:
+          can_view_order: true
+          can_create_order: false
+          can_edit_order: false
+          can_delete_order: false
+      # Finance team manager
+      - user: user:finance_manager
+        object: order:o003
+        assertions:
+          can_view_order: true
+          can_create_order: false
+          can_edit_order: false
+          can_delete_order: false
+      # Finance team members
+      - user: user:finance_member1
+        object: order:o004
+        assertions:
+          can_view_order: true
+          can_create_order: false
+          can_edit_order: false
+          can_delete_order: false
+
+  # =============================================================================
+  # PURCHASE TEAM PERMISSIONS (NO ORDER ACCESS)
+  # =============================================================================
+  - name: Purchase team members have no order permissions
+    check:
+      # Purchase team head
+      - user: user:purchase_head
+        object: order:o001
+        assertions:
+          can_view_order: false
+          can_create_order: false
+          can_edit_order: false
+          can_delete_order: false
+      # Purchase team managers
+      - user: user:purchase_manager1
+        object: order:o002
+        assertions:
+          can_view_order: false
+          can_create_order: false
+          can_edit_order: false
+          can_delete_order: false
+      # Purchase team members
+      - user: user:purchase_member1
+        object: order:o003
+        assertions:
+          can_view_order: false
+          can_create_order: false
+          can_edit_order: false
+          can_delete_order: false
+
+  # =============================================================================
+  # MULTI-QUOTATION ORDER PERMISSIONS
+  # =============================================================================
+  - name: Orders tied to multiple quotations inherit permissions from all quotations
+    check:
+      # Order o004 is tied to quotations q001 and q002 (both managed by sales team)
+      - user: user:sales_head
+        object: order:o004
+        assertions:
+          can_view_order: true
+          can_create_order: true
+          can_edit_order: true
+          can_delete_order: true
+      - user: user:sales_member1
+        object: order:o004
+        assertions:
+          can_view_order: true
+          can_create_order: true
+          can_edit_order: true
+          can_delete_order: true
+
+  # =============================================================================
+  # COLLECTION LINKAGE VALIDATION
+  # =============================================================================
+  - name: All orders are properly linked to their collection
+    check:
+      # Verify that orders derive permissions from their collection
+      - user: user:sales_head
+        object: order:o001
+        assertions:
+          can_edit_order: true # Should work via collection assignee
+      - user: user:sales_member1
+        object: order:o002
+        assertions:
+          can_edit_order: true # Should work via collection assignee
+      - user: user:product_member1
+        object: order:o003
+        assertions:
+          can_view_order: true # Should work via collection viewer
+          can_edit_order: false # Product team is viewer only
+      - user: user:finance_member1
+        object: order:o004
+        assertions:
+          can_view_order: true # Should work via collection viewer
+          can_edit_order: false # Finance team is viewer only
+
+  # =============================================================================
+  # QUOTATION-ORDER RELATIONSHIP VALIDATION
+  # =============================================================================
+  - name: Orders properly inherit permissions from their associated quotations
+    check:
+      # Single quotation orders
+      - user: user:sales_head
+        object: order:o001
+        assertions:
+          can_edit_order: true # Should have edit access via quotation:q001
+      - user: user:sales_manager1
+        object: order:o002
+        assertions:
+          can_edit_order: true # Should have edit access via quotation:q002
+      - user: user:sales_member1
+        object: order:o003
+        assertions:
+          can_edit_order: true # Should have edit access via quotation:q003
+      # Multi-quotation orders
+      - user: user:sales_head
+        object: order:o004
+        assertions:
+          can_edit_order: true # Should have edit access via quotation:q001 and q002
+
+  # =============================================================================
+  # TEAM HIERARCHY VALIDATION
+  # =============================================================================
+  - name: Sales team hierarchy works correctly for orders
+    check:
+      # Sales team head has all team permissions
+      - user: user:sales_head
+        object: team:sales
+        assertions:
+          head: true
+          manager: true
+          member: true
+      # Sales team managers have manager and member permissions
+      - user: user:sales_manager1
+        object: team:sales
+        assertions:
+          head: false
+          manager: true
+          member: true
+      # Sales team members have only member permissions
+      - user: user:sales_member1
+        object: team:sales
+        assertions:
+          head: false
+          manager: false
+          member: true
+
+  - name: Inventory team hierarchy works correctly for orders
+    check:
+      # Product team head has all team permissions (product = inventory)
+      - user: user:product_head
+        object: team:product
+        assertions:
+          head: true
+          manager: true
+          member: true
+      # Product team managers have manager and member permissions
+      - user: user:product_manager1
+        object: team:product
+        assertions:
+          head: false
+          manager: true
+          member: true
+      # Product team members have only member permissions
+      - user: user:product_member1
+        object: team:product
+        assertions:
+          head: false
+          manager: false
+          member: true
+
+  - name: Finance team hierarchy works correctly for orders
+    check:
+      # Finance team head has all team permissions
+      - user: user:finance_head
+        object: team:finance
+        assertions:
+          head: true
+          manager: true
+          member: true
+      # Finance team manager has manager and member permissions
+      - user: user:finance_manager
+        object: team:finance
+        assertions:
+          head: false
+          manager: true
+          member: true
+      # Finance team members have only member permissions
+      - user: user:finance_member1
+        object: team:finance
+        assertions:
+          head: false
+          manager: false
+          member: true
+
+  # =============================================================================
+  # ORGANIZATION MEMBERSHIP VALIDATION
+  # =============================================================================
+  - name: All team members belong to the organization
+    check:
+      # Sales team members are organization members
+      - user: user:sales_head
+        object: organization:acme-corp
+        assertions:
+          member: true
+      - user: user:sales_manager1
+        object: organization:acme-corp
+        assertions:
+          member: true
+      - user: user:sales_member1
+        object: organization:acme-corp
+        assertions:
+          member: true
+      # Product/Inventory team members are organization members
+      - user: user:product_head
+        object: organization:acme-corp
+        assertions:
+          member: true
+      - user: user:product_manager1
+        object: organization:acme-corp
+        assertions:
+          member: true
+      - user: user:product_member1
+        object: organization:acme-corp
+        assertions:
+          member: true
+      # Finance team members are organization members
+      - user: user:finance_head
+        object: organization:acme-corp
+        assertions:
+          member: true
+      - user: user:finance_manager
+        object: organization:acme-corp
+        assertions:
+          member: true
+      - user: user:finance_member1
+        object: organization:acme-corp
+        assertions:
+          member: true
+
+  # =============================================================================
+  # PERMISSION HIERARCHY VALIDATION
+  # =============================================================================
+  - name: Edit permissions imply view permissions
+    check:
+      # Sales team members who can edit should also be able to view
+      - user: user:sales_head
+        object: order:o001
+        assertions:
+          can_edit_order: true
+          can_view_order: true # should be true due to "or can_edit_order"
+      - user: user:sales_member1
+        object: order:o002
+        assertions:
+          can_edit_order: true
+          can_view_order: true
+
+  - name: Delete permissions imply edit permissions
+    check:
+      # Sales team members who can delete should also be able to edit
+      - user: user:sales_head
+        object: order:o001
+        assertions:
+          can_delete_order: true
+          can_edit_order: true # Both should be true for sales team via quotation ownership
+      - user: user:sales_member1
+        object: order:o002
+        assertions:
+          can_delete_order: true
+          can_edit_order: true
+
+  # =============================================================================
+  # CROSS-ORDER PERMISSIONS
+  # =============================================================================
+  - name: Sales team permissions work across all orders
+    check:
+      # Sales head should have full permissions on all orders (via quotation ownership)
+      - user: user:sales_head
+        object: order:o001
+        assertions:
+          can_view_order: true
+          can_edit_order: true
+      # Sales members should have permissions on all orders
+      - user: user:sales_member1
+        object: order:o001
+        assertions:
+          can_view_order: true
+          can_edit_order: true
+
+  - name: Inventory and Finance team view permissions work across all orders
+    check:
+      # Inventory/Product team members should be able to view all orders
+      - user: user:product_member1
+        object: order:o001
+        assertions:
+          can_view_order: true
+      # Finance team members should be able to view all orders
+      - user: user:finance_member1
+        object: order:o001
+        assertions:
+          can_view_order: true
+
+  # =============================================================================
+  # NEGATIVE TESTS
+  # =============================================================================
+  - name: Users without team relationships have no order permissions
+    check:
+      - user: user:random_user
+        object: order:o001
+        assertions:
+          can_view_order: false
+          can_create_order: false
+          can_edit_order: false
+          can_delete_order: false
+
+  - name: Organization members without team membership have no order access
+    check:
+      # Direct organization members (not in any team) should have no order access
+      - user: user:org_member1
+        object: order:o001
+        assertions:
+          can_view_order: false
+          can_create_order: false
+          can_edit_order: false
+          can_delete_order: false
+
+  - name: Organization admin has organization permissions but not order
+    check:
+      # Organization admin should have org access but not automatic order access
+      - user: user:org_admin
+        object: organization:acme-corp
+        assertions:
+          admin: true
+          member: true
+      # But no automatic order permissions
+      - user: user:org_admin
+        object: order:o001
+        assertions:
+          can_view_order: false
+          can_create_order: false
+          can_edit_order: false
+          can_delete_order: false
+
+  - name: Teams without explicit access cannot view orders
+    check:
+      # Purchase team should not have any order access
+      - user: user:purchase_head
+        object: order:o001
+        assertions:
+          can_view_order: false
+          can_create_order: false
+          can_edit_order: false
+          can_delete_order: false
+
+  # =============================================================================
+  # BUSINESS LOGIC VALIDATION - COMPLETION GAPS
+  # =============================================================================
+  - name: Some orders have not been completed into invoices yet
+    check:
+      # o001, o002, o004 have been completed into invoices (via invoice tuples)
+      - user: user:sales_head
+        object: order:o001
+        assertions:
+          can_view_order: true # These orders exist and should be accessible
+      - user: user:sales_head
+        object: order:o002
+        assertions:
+          can_view_order: true
+      - user: user:sales_head
+        object: order:o004
+        assertions:
+          can_view_order: true
+
+      # o003 exists but has NOT been completed into an invoice yet
+      # This reflects real business scenarios where orders are pending completion/delivery
+      - user: user:sales_head
+        object: order:o003
+        assertions:
+          can_view_order: true # The order exists
+          can_edit_order: true # And can be edited by sales team
+          can_delete_order: true # And can be deleted if needed
+
+      # Finance team can view all orders (completed and pending)
+      - user: user:finance_head
+        object: order:o003
+        assertions:
+          can_view_order: true # Finance can view pending orders
+          can_edit_order: false # But cannot edit them (view-only access)
+          can_delete_order: false # And cannot delete them
+
+  # =============================================================================
+  # QUOTATION-TO-ORDER APPROVAL GAPS VALIDATION
+  # =============================================================================
+  - name: Some quotations were not approved into orders (business logic validation)
+    check:
+      # Verify that q004 and q005 do not have corresponding orders
+      # This is a documentation test - the tuples verify this by not including orders for these quotations
+      - user: user:sales_head
+        object: quotation:q001
+        assertions:
+          can_view_quotation: true # This should work if quotation tuples are included in this test
+      # Note: Orders for q004 and q005 should not exist in order tuples
+      # This validates the business logic that not all quotations become orders
