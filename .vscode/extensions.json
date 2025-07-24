@@ -10,6 +10,7 @@
     "yoavbls.pretty-ts-errors",
     "renesaarsoo.sql-formatter-vsc",
     "ast-grep.ast-grep-vscode",
-    "opentofu.vscode-opentofu"
+    "opentofu.vscode-opentofu",
+    "qufiwefefwoyn.inline-sql-syntax"
   ]
 }

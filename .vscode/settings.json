@@ -61,7 +61,6 @@
   "SQL-Formatter-VSCode.keywordCase": "lower",
   "typescript.preferences.importModuleSpecifierEnding": "js",
   "typescript.tsdk": "node_modules/typescript/lib",
-
   "terminal.integrated.profiles.osx": {
     "terraform": {
       "path": "zsh",
