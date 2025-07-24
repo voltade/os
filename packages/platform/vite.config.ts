@@ -13,7 +13,7 @@ export default defineConfig({
   },
   server: {
     host: '0.0.0.0',
-    allowedHosts: ['127.0.0.1.nip.io'],
+    allowedHosts: ['127.0.0.1.nip.io', 'socat'],
     open: true,
     proxy: {
       '/api': {

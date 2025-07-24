@@ -19,8 +19,8 @@ spec:
           image: alpine/socat:1.8.0.3
           args:
             - "-d"
-            - "TCP-LISTEN:5173,fork,reuseaddr"
-            - "TCP:host.docker.internal:5173"
+            - "TCP4-LISTEN:5173,fork,reuseaddr"
+            - "TCP4:host.docker.internal:5173"
           ports:
             - name: socat
               containerPort: 5173
