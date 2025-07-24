@@ -1,5 +1,5 @@
 import { and, isNotNull, sql } from 'drizzle-orm';
-import { check, pgTable, text, uniqueIndex, uuid } from 'drizzle-orm/pg-core';
+import { check, pgTable, text, uniqueIndex } from 'drizzle-orm/pg-core';
 
 import { DEFAULT_COLUMNS } from './_helpers.ts';
 import { environments } from './environments.ts';
@@ -11,9 +11,9 @@ export const envVars = pgTable(
   {
     ...DEFAULT_COLUMNS,
     name: text('name').notNull(),
-    secretId: uuid('secret_id').references(() => vaultSecrets.id),
-    orgId: uuid('org_id').references(() => orgs.id),
-    environmentId: uuid('environment_id').references(() => environments.id),
+    secretId: text('secret_id').references(() => vaultSecrets.id),
+    orgId: text('org_id').references(() => orgs.id),
+    environmentId: text('environment_id').references(() => environments.id),
     description: text('description'),
   },
   (table) => [

@@ -1,10 +1,10 @@
 import { sql } from 'drizzle-orm';
-import { text, timestamp, uuid } from 'drizzle-orm/pg-core';
+import { text, timestamp } from 'drizzle-orm/pg-core';
 
-export const id = uuid('id')
+export const id = text('id')
   .primaryKey()
   .notNull()
-  .default(sql`gen_random_uuid()`);
+  .default(sql`gen_random_uuid()::text`);
 export const createdAt = timestamp('created_at', {
   precision: 3,
   withTimezone: true,

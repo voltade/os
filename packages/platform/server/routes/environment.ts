@@ -7,18 +7,35 @@ export const route = factory
   .post('/api/v1/getparams.execute', async (c) => {
     const reqBody = await c.req.json();
     console.log(c.req.method, c.req.url, reqBody);
-    const envs = await db.select().from(environments);
+    // const envs = await db.select().from(environments);
 
     return c.json({
       output: {
-        parameters: envs.map((env) => ({
-          org_id: env.orgId,
-          is_production: env.production,
-          environment_id: env.id,
-          environment_chart_version: '0.1.4',
-          service_key: env.serviceKey,
-          anon_key: env.anonKey,
-        })),
+        parameters: [
+          {
+            org_id: 'voltade',
+            is_production: true,
+            environment_id: 'voltade-nanoid',
+            environment_chart_version: '0.1.4',
+            service_key:
+              'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZS1kZW1vIiwicm9sZSI6ImFub24iLCJleHAiOjE5ODM4MTI5OTZ9.CRXP1A7WOeoJeXxjNni43kdQwgnWNReilDMblYTn_I0',
+            anon_key:
+              'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZS1kZW1vIiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImV4cCI6MTk4MzgxMjk5Nn0.EGIM96RAZx35lJzdJsyH-qQwv8Hdp7fsn3W0YpN81IU',
+          },
+        ],
       },
     });
+
+    // return c.json({
+    //   output: {
+    //     parameters: envs.map((env) => ({
+    //       org_id: env.orgId,
+    //       is_production: env.production,
+    //       environment_id: env.id,
+    //       environment_chart_version: '0.1.4',
+    //       service_key: env.serviceKey,
+    //       anon_key: env.anonKey,
+    //     })),
+    //   },
+    // });
   });

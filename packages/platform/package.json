@@ -5,6 +5,9 @@
   "version": "0.1.0",
   "type": "module",
   "scripts": {
+    "db:current": "bun scripts/db-current.ts",
+    "db:pre-push": "bun scripts/db-pre-push.ts",
+    "db:push": "bun drizzle-kit push",
     "dev:server": "bun run --hot server/index.ts",
     "dev:vite": "wait-on http://localhost:3000/healthz && vite dev",
     "dev": "conc bun:dev:*",

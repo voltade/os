@@ -1,12 +1,12 @@
 import { isNotNull, sql } from 'drizzle-orm';
-import { pgSchema, text, uniqueIndex, uuid } from 'drizzle-orm/pg-core';
+import { pgSchema, text, uniqueIndex } from 'drizzle-orm/pg-core';
 
 export const vaultSchema = pgSchema('vault');
 
 export const vaultSecrets = vaultSchema.table(
   'secrets',
   {
-    id: uuid('id').primaryKey().notNull().default(sql`gen_random_uuid()`),
+    id: text('id').primaryKey().notNull().default(sql`extensions.nanoid()`),
     name: text('name'),
     secret: text('secret'),
   },
