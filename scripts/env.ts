@@ -3,8 +3,10 @@ import { join } from 'node:path';
 import { $ } from 'bun';
 
 (async () => {
+  const user_name = process.env.USER_NAME;
+
   const user_token =
-    await $`kubectl create token os-service-account -n voltade-os`.text();
+    await $`kubectl create token ${user_name ?? 'platform-default'} -n platform`.text();
   console.log('Generated USER_TOKEN');
 
   const cluster_server =

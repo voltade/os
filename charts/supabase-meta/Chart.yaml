@@ -1,6 +1,7 @@
 apiVersion: v2
 name: supabase-meta
-description: A RESTful API for managing your Postgres. Fetch tables, add roles, and run queries
+description: A RESTful API for managing your Postgres. Fetch tables, add roles,
+  and run queries
 
 # A chart can be either an 'application' or a 'library' chart.
 #

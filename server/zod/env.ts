@@ -25,7 +25,6 @@ export const appEnvVariablesSchema = z.object({
 
   USER_NAME: z.string().optional().default(''),
   USER_TOKEN: z.string().optional().default(''),
-  USER_EMAIL: z.string().optional().default(''),
 
   // ArgoCD
   ARGOCD_ENVIRONMENT_GENERATOR_TOKEN: z.string(),

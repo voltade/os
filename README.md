@@ -30,9 +30,16 @@ tofu state rm helm_release.cilium && tofu destroy
 
 ## Publish Helm chart to local registry
 
+### Publish new charts
+
 ```bash
-bun helm environment --overwrite
-bun helm platform --overwrite
+bun charts
+```
+
+### Patch existing charts
+
+```bash
+bun charts:patch
 ```
 
 ## Start the server
