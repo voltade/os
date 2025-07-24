@@ -3,4 +3,6 @@
  * Run `bun db:current` to execute linked SQL statements in the current database.
  * Run `bun db:commit` to add the linked SQL statements to the drizzle migrations.
  */
+create schema if not exists extensions;
+
 --!include extensions/nanoid.sql

@@ -17,7 +17,9 @@ export const environments = pgTable(
     ...DEFAULT_COLUMNS,
     name: text('name').notNull(),
     slug: text('slug').notNull(),
-    orgId: text('org_id').references(() => orgs.id),
+    orgId: text('org_id')
+      .references(() => orgs.id)
+      .notNull(),
     description: text('description'),
     production: boolean('production').notNull().default(false),
     serviceKey: text('service_key').notNull(),

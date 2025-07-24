@@ -11,7 +11,7 @@ export default defineConfig({
     user: DB_USER,
     password: DB_PASSWORD,
     database: DB_NAME,
-    //TODO: reference ca.crt in the future
+    //TODO: use `tls: true` when drizzle-kit supports Bun.sql as the driver: https://github.com/drizzle-team/drizzle-orm/issues/4122
     ssl: {
       rejectUnauthorized: false,
     },
