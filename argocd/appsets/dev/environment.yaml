@@ -15,7 +15,7 @@ spec:
     - plugin:
         configMapRef:
           name: environment-generator
-        requeueAfterSeconds: 120
+        requeueAfterSeconds: 15
   template:
     metadata:
       name: "{{ .org_id }}-{{ .environment_id }}"
@@ -30,14 +30,12 @@ spec:
         targetRevision: "{{ .environment_chart_version}}"
         helm:
           parameters:
+            - name: fullnameOverride
+              value: "{{ .org_id }}-{{ .environment_id }}"
             - name: global.environment_id
               value: "{{ .environment_id }}"
             - name: global.environment
               value: "development"
-            - name: global.nameOverride
-              value: "{{ .org_id }}-{{ .environment_id }}"
-            - name: nameOverride
-              value: "{{ .org_id }}-{{ .environment_id }}"
             - name: parameters.domain
               value: 127.0.0.1.nip.io
             - name: parameters.jwt.aud
