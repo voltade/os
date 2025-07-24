@@ -42,8 +42,8 @@ bun charts
 bun charts:patch
 ```
 
-## Start the server
+## Start the platform web app
 
 ```bash
-bun run dev
+bun -F @voltade/platform dev
 ```
