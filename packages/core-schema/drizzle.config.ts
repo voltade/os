@@ -1,5 +1,3 @@
-import { readFileSync } from 'node:fs';
-import { join } from 'node:path';
 import { defineConfig } from 'drizzle-kit';
 
 import schemasConfig from './schemas.json';
@@ -15,9 +13,10 @@ export default defineConfig({
     password: DB_PASSWORD,
     database: DB_NAME,
     //TODO: reference ca.crt in the future
-    ssl: {
-      rejectUnauthorized: false,
-    },
+    // ssl: {
+    //   rejectUnauthorized: false,
+    // },
+    ssl: false,
   },
   dialect: 'postgresql',
   schema: [

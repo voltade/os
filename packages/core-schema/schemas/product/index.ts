@@ -8,3 +8,4 @@ export * from './tables/combo_product.ts';
 export * from './tables/product.ts';
 export * from './tables/product_template.ts';
 export * from './tables/template_combo.ts';
+export * from './views/product_template_view.ts';

@@ -25,9 +25,9 @@
   "main": "index.ts",
   "types": "index.ts",
   "exports": {
-    ".": {
-      "import": "./index.ts",
-      "types": "./index.ts"
+    "./supabase": {
+      "import": "./supabase/index.ts",
+      "types": "./supabase/index.ts"
     },
     "./schemas": {
       "import": "./schemas/index.ts",
@@ -65,7 +65,8 @@
     "db:push": "bun --env-file ../../.env drizzle-kit push",
     "db:seed": "bun --env-file ../../.env scripts/db-seed.ts",
     "db:nuke": "bun --env-file ../../.env scripts/db-nuke.ts",
-    "db:reset": "bun db:nuke && bun db:push && bun db:plv8ify && bun db:current && bun db:seed",
+    "db:disable-rls": "bun --env-file ../../.env scripts/db-disable-rls.ts",
+    "db:reset": "bun db:push && bun db:plv8ify && bun db:current && bun db:seed",
     "build": "tsc --noEmit",
     "prepublishOnly": "bun run build"
   },

@@ -78,3 +78,7 @@ certs
 kubeconfig
 
 .npmrc
+
+#supabase
+supabase/.branches
+supabase/.temp
