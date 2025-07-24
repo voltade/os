@@ -11,5 +11,5 @@ dependencies:
 - name: supabase-studio
   repository: file://../supabase-studio
   version: 0.1.0
-digest: sha256:dcc4aed13f48276932ee2f97281fbdf925bd6364f77f6d069f9f4661e53ea1fc
-generated: "2025-07-23T17:26:30.034+08:00"
+digest: sha256:356f570a8ee6cab5e5d8190541945f1d1b7f8e5dc940bda1352695cfcaf645e2
+generated: "2025-07-25T02:07:20.588067+08:00"

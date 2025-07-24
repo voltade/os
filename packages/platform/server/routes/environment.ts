@@ -25,7 +25,7 @@ export const route = factory
             org_id: env.orgId,
             is_production: env.production,
             environment_id: env.id,
-            environment_chart_version: '0.1.4',
+            environment_chart_version: '0.1.5',
             service_key: env.serviceKey,
             anon_key: env.anonKey,
           })) satisfies Environment[],
@@ -40,7 +40,7 @@ export const route = factory
               org_id: 'voltade',
               is_production: true,
               environment_id: '90a8834',
-              environment_chart_version: '0.1.4',
+              environment_chart_version: '0.1.5',
               service_key:
                 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZS1kZW1vIiwicm9sZSI6ImFub24iLCJleHAiOjE5ODM4MTI5OTZ9.CRXP1A7WOeoJeXxjNni43kdQwgnWNReilDMblYTn_I0',
               anon_key:

@@ -1,9 +1,6 @@
 # Default values for environment.
 # This is a YAML-formatted file.
 # Declare variables to be passed into your templates.
-global:
-  nameOverride: &nameOverride ""
-  environment: "development"
 
 parameters:
   domain: &domain 127.0.0.1.nip.io
@@ -12,51 +9,9 @@ parameters:
     service_key: &service_key service_key
     anon_key: &anon_key anon_key
 
-cnpg:
+postgrest:
   enabled: true
-  clusterId: cnpg-cluster
-  image: ghcr.io/voltade/postgres:17.5-20250717-a2c5abf
-  instances: 1
-  storage:
-    storageClass: standard
-    size: 4Gi
-  affinity:
-    enabled: false
-    nodeSelector: {}
-    tolerations: []
-  backup:
-    enabled: false
-    serverName: ""
-    objectStoreName: cnpg-object-store
-  postgresql:
-    parameters:
-      "pgsodium.enable_event_trigger": "off"
-      "pgsodium.getkey_script": "/usr/share/postgresql/17/extension/pgsodium_getkey"
-    shared_preload_libraries:
-      - pg_stat_statements
-      - pgaudit
-      - plpgsql
-      - plpgsql_check
-      - pg_cron
-      - pg_net
-      - auto_explain
-      - pg_tle
-      - plan_filter
-      - supabase_vault
-  migrations:
-    enabled: true
-    configMapName: cnpg-migration-config
-    scripts:
-      - 0000_extensions-schema.sql
-      - 0001_nanoid.sql
-      - 0001_supabase_roles.sql
-      - 0002_supabase_public_permissions.sql
-      - 0003_supabase_storage_permissions.sql
-      - 99-logs.sql
-      - 99-realtime.sql
-
-rest:
-  enabled: true
+  fullnameOverride: postgrest
   replicaCount: 1
   image:
     repository: postgrest/postgrest
@@ -105,8 +60,9 @@ rest:
     PGRST_JWT_AUD: *jwt_aud
 
 # Metadata API configuration
-meta:
+supabase-meta:
   enabled: true
+  fullnameOverride: supabase-meta
   replicaCount: 1
   image:
     repository: supabase/postgres-meta
@@ -139,12 +95,12 @@ meta:
     PG_META_DB_SSL_MODE: disable
     PG_META_PORT: "8080"
 
-studio:
+supabase-studio:
   enabled: true
+  fullnameOverride: supabase-studio
   global:
     enabled: true
     baseDomain: *domain
-    nameOverride: *nameOverride
   replicaCount: 1
   image:
     repository: supabase/studio
@@ -177,8 +133,9 @@ studio:
     NEXT_PUBLIC_ENABLE_TELEMETRY: "false"
     NODE_ENV: "production"
 
-storage:
+supabase-storage:
   enabled: true
+  fullnameOverride: supabase-storage
   replicaCount: 1
   image:
     repository: supabase/storage-api
