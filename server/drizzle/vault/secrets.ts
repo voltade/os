@@ -1,7 +1,7 @@
 import { isNotNull, sql } from 'drizzle-orm';
 import { pgSchema, text, uniqueIndex, uuid } from 'drizzle-orm/pg-core';
 
-const vaultSchema = pgSchema('vault');
+export const vaultSchema = pgSchema('vault');
 
 export const vaultSecrets = vaultSchema.table(
   'secrets',

@@ -18,7 +18,7 @@ export default defineConfig({
   },
   dialect: 'postgresql',
   schema: ['./server/drizzle/**/*.ts'],
-  schemaFilter: ['public'],
+  schemaFilter: ['public', 'vault'],
   out: './drizzle',
   breakpoints: true,
 });

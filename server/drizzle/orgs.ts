@@ -1,12 +1,12 @@
 import { sql } from 'drizzle-orm';
-import { check, pgTable, text } from 'drizzle-orm/pg-core';
+import { check, pgTable, text, uuid } from 'drizzle-orm/pg-core';
 
 import { DEFAULT_COLUMNS } from './_helpers.ts';
 
 export const orgs = pgTable(
   'orgs',
   {
-    id: text('id').primaryKey(),
+    id: uuid('id').primaryKey().default(sql`gen_random_uuid()`).notNull(),
     name: text('name').notNull(),
     updatedAt: DEFAULT_COLUMNS.updatedAt,
     createdAt: DEFAULT_COLUMNS.createdAt,
@@ -14,7 +14,7 @@ export const orgs = pgTable(
   (table) => [
     check(
       'orgs_id_check',
-      sql`${table.id} ~ '^(?![0-9]+$)(?!-)[a-z0-9-]{0,63}(?<!-)$'`,
+      sql`${table.id}::text ~ '^(?![0-9]+$)(?!-)[a-z0-9-]{0,63}(?<!-)$'`,
     ),
   ],
 );

@@ -12,8 +12,8 @@ export const envVars = pgTable(
     ...DEFAULT_COLUMNS,
     name: text('name').notNull(),
     secretId: uuid('secret_id').references(() => vaultSecrets.id),
-    orgId: text('org_id').references(() => orgs.id),
-    environmentId: text('environment_id').references(() => environments.id),
+    orgId: uuid('org_id').references(() => orgs.id),
+    environmentId: uuid('environment_id').references(() => environments.id),
     description: text('description'),
   },
   (table) => [

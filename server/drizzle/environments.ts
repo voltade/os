@@ -6,6 +6,7 @@ import {
   pgTable,
   text,
   uniqueIndex,
+  uuid,
 } from 'drizzle-orm/pg-core';
 
 import { DEFAULT_COLUMNS } from './_helpers.ts';
@@ -17,7 +18,7 @@ export const environments = pgTable(
     ...DEFAULT_COLUMNS,
     name: text('name').notNull(),
     slug: text('slug').notNull(),
-    orgId: text('org_id').references(() => orgs.id),
+    orgId: uuid('org_id').references(() => orgs.id),
     description: text('description'),
     production: boolean('production').notNull().default(false),
     serviceKey: text('service_key').notNull(),
