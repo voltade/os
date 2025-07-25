@@ -4,11 +4,11 @@ import '@mantine/dates/styles.css';
 import '@mantine/notifications/styles.css';
 import 'mantine-datatable/styles.css';
 import './main.css';
-
 import { MantineProvider } from '@mantine/core';
 import { ModalsProvider } from '@mantine/modals';
 import { Notifications } from '@mantine/notifications';
 import type { SupabaseClient } from '@supabase/supabase-js';
+import { ReactQueryDevtools } from '@tanstack/react-query-devtools';
 import {
   createHashHistory,
   createRouter,
@@ -79,6 +79,8 @@ const render = (props?: Props) => {
         <TanstackQuery.Provider>
           <ModalsProvider>
             <RouterProvider router={router} />
+            <ReactQueryDevtools initialIsOpen={false} />
+
             <Notifications position="top-right" limit={5} />
           </ModalsProvider>
         </TanstackQuery.Provider>
