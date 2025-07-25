@@ -22,7 +22,7 @@ export function useProductTemplates({
   supabase,
 }: UseProductTemplatesOptions) {
   return useQuery({
-    queryKey: ['products', { page, limit: pageSize }],
+    queryKey: ['product_template', { page, limit: pageSize }],
     queryFn: async (): Promise<UseProductTemplatesResult> => {
       const from = (page - 1) * pageSize;
       const to = from + pageSize - 1;
