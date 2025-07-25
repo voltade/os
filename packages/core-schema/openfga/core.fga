@@ -24,4 +24,4 @@ type organization
 
 condition non_expired_time_grant(current_time: timestamp, grant_time: timestamp, grant_duration: duration) {
   current_time < grant_time + grant_duration
-} 
+}
