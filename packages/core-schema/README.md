@@ -6,12 +6,11 @@ Navigate to the current working directory (`packages/core-schema`) and run the f
 
 ```bash
 cp .env.example .env
-bun install
-docker compose up -d
+bun supabase start
 bun db:reset
 ```
 
-If you need to reset your local database instance at any point, run `bun db:nuke`.
+If you need to reset your local database instance at any point, run `supabase db reset`.
 
 ## Naming Conventions
 
