@@ -44,9 +44,18 @@ bun charts
 bun charts:patch
 ```
 
+## Prepare the platform database
+```bash
+# (In root of the project)
+
+cp packages/platform/.env.example packages/platform/.env
+# Update the created .env file by running the included commands.
+
+bun -cwd packages/platform db:reset
+```
+
 ## Start the platform web app
 
 ```bash
-cp packages/platform/.env.example packages/platform.env
 bun --cwd packages/platform dev
 ```
