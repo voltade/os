@@ -33,7 +33,7 @@ export const route = factory
                 },
               },
             },
-            phone_number: {
+            /* phone_number: {
               type: 'string',
               format: 'tel',
               title: 'Your phone number',
@@ -45,11 +45,26 @@ export const route = factory
                   },
                 },
               },
-            },
+            }, */
           },
-          anyOf: [{ required: ['email'] }, { required: ['phone_number'] }],
+          // anyOf: [{ required: ['email'] }, { required: ['phone_number'] }],
+          required: ['email'],
           additionalProperties: false,
         },
       },
     });
+  })
+  .post('/hooks/login', async (c) => {
+    console.log(c.req.method, c.req.url);
+    const body = await c.req.json();
+    console.log('Login hook body:', body);
+    // Here you can handle the login logic, e.g., log the user in or send a notification
+    return c.json({ message: 'Login hook executed successfully' });
+  })
+  .post('/hooks/registration', async (c) => {
+    console.log(c.req.method, c.req.url);
+    const body = await c.req.json();
+    console.log('Registration hook body:', body);
+    // Here you can handle the registration logic, e.g., send a welcome email
+    return c.json({ message: 'Registration hook executed successfully' });
   });
