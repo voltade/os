@@ -1,5 +1,4 @@
 import { Group, Pagination, Select, Stack, Table } from '@mantine/core';
-import { useQuery } from '@tanstack/react-query';
 import {
   type ColumnDef,
   flexRender,
@@ -7,6 +6,7 @@ import {
   useReactTable,
 } from '@tanstack/react-table';
 import type { Database } from '@voltade/core-schema/supabase';
+import { useProductTemplates } from '@voltade/core-schema/supabase';
 import { useEffect, useMemo, useState } from 'react';
 
 import { supabase } from '#lib/supabase.ts';
@@ -69,28 +69,7 @@ export default function ProductsTable() {
     data: products,
     isLoading,
     error,
-  } = useQuery({
-    queryKey: ['products', { page, limit: pageSize }],
-    queryFn: async () => {
-      const from = (page - 1) * pageSize;
-      const to = from + pageSize - 1;
-
-      // Get the data with pagination
-      const { data, error, count } = await supabase
-        .from('product_template_view')
-        .select('*', { count: 'exact' })
-        .range(from, to);
-
-      if (error) {
-        throw new Error(`Failed to fetch products: ${error.message}`);
-      }
-
-      return {
-        data: data || [],
-        count: count || 0,
-      };
-    },
-  });
+  } = useProductTemplates({ page, pageSize, supabase });
 
   useEffect(() => {
     if (products?.count !== undefined) {
