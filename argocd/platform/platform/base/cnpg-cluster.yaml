@@ -12,3 +12,6 @@ spec:
   storage:
     size: 4Gi
   enableSuperuserAccess: true
+  extensions:
+    - name: supabase_vault
+      ensure: present
