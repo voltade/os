@@ -1,16 +1,24 @@
 # core-schema
 
 ## Getting Started
-In `packages/core-schema`,
-1. `cp .env.example .env`
-2. `bun install`
-3. `bun db:start`
-4. `bun db:reset`
+
+Navigate to the current working directory (`packages/core-schema`) and run the following commands:
+
+```bash
+cp .env.example .env
+bun install
+docker compose up -d
+bun db:reset
+```
+
+If you need to reset your local database instance at any point, run `bun db:nuke`.
 
 ## Naming Conventions
+
 ⚠️ NOTE: The schema does not strictly enforce these conventions yet. These naming conventions are a draft.
 
 ### Table Names
+
 - **Snake case**: All PostgreSQL table names are in lower snake case.
 - **Singular form**: Tables are named in singular, not plural.
 - **Schema-prefixed**: Tables are organized by schema. The TypeScript name should be prefixed with the schema name, but the PostgreSQL table name itself should not include the schema prefix.
@@ -18,6 +26,7 @@ In `packages/core-schema`,
   // ✅ Good
   export const productProductTable = productSchema.table('product', { ... });
   export const salesOrderLineTable = salesSchema.table('order_line', { ... });
+  ```
 - **Many-to-many relationships**: Use junction table names of the form `{table_A}_join_{table_B}`
   ```typescript
   export const productJoinCategoryTable = productSchema.table(
@@ -28,6 +37,7 @@ In `packages/core-schema`,
   TODO: Enforce this.
 
 ### Column Names
+
 - **Snake case**: All column names are in lower snake case.
 - **Descriptive suffixes**: Use consistent suffixes for foreign keys and special columns.
   - `_id` for foreign key references: `product_id`, `currency_id`
@@ -43,27 +53,31 @@ In `packages/core-schema`,
   ```
 
 ### Primary Keys
+
 - **Always `id`**: All tables use `id` as the primary key column name.
 - **Identity generation**: Use `generatedAlwaysAsIdentity()` for auto-incrementing IDs
   ```typescript
   // Standard pattern from utils.ts
-  export const id = integer('id').primaryKey().generatedAlwaysAsIdentity();
+  export const id = integer("id").primaryKey().generatedAlwaysAsIdentity();
   ```
 
 ### Foreign Key Constraints
+
 - **Descriptive naming**: Foreign key constraint names follow the pattern `{table}_{column}_fk`
   ```typescript
   foreignKey({
-    name: 'order_currency_id_fk',
+    name: "order_currency_id_fk",
     columns: [table.currency_id],
     foreignColumns: [currencyTable.id],
-  })
+  });
   ```
 
 ### Enum Naming
+
 - TODO.
 
 ### View Naming
+
 - **Descriptive suffixes**: Views end with `_view`
 - **Domain context**: Include the primary entity name
   ```typescript
@@ -71,6 +85,7 @@ In `packages/core-schema`,
   ```
 
 ### Common Patterns
+
 - **Audit fields**: Standard audit columns in `DEFAULT_COLUMNS`
   ```typescript
   export const DEFAULT_COLUMNS = {
@@ -84,6 +99,7 @@ In `packages/core-schema`,
 - **Timestamp columns**: Use `timestampCol()` utility for consistent timezone handling
 
 ### File Organization
+
 - **Table files**: `{schema}/tables/{table_name}.ts`
 - **Enum files**: `{schema}/enums.ts`
 - **View files**: `{schema}/views/{view_name}.ts`

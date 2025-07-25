@@ -58,15 +58,13 @@
     "typescript": "^5"
   },
   "scripts": {
-    "db:start": "docker compose --env-file ../../.env up -d",
-    "db:stop": "docker compose --env-file ../../.env down",
     "db:plv8ify": "bun scripts/db-plv8ify.ts",
-    "db:current": "bun --env-file ../../.env scripts/db-current.ts",
-    "db:push": "bun --env-file ../../.env drizzle-kit push",
-    "db:seed": "bun --env-file ../../.env scripts/db-seed.ts",
-    "db:nuke": "bun --env-file ../../.env scripts/db-nuke.ts",
-    "db:disable-rls": "bun --env-file ../../.env scripts/db-disable-rls.ts",
-    "db:reset": "bun db:push && bun db:plv8ify && bun db:current && bun db:seed",
+    "db:current": "bun run --env-file=./.env scripts/db-current.ts",
+    "db:push": "source ./.env && drizzle-kit push",
+    "db:seed": "bun run --env-file=./.env scripts/db-seed.ts",
+    "db:nuke": "bun run --env-fil=./.env scripts/db-nuke.ts",
+    "db:disable-rls": "bun run --env-file=./.env scripts/db-disable-rls.ts",
+    "db:reset": "bun run db:push && bun run db:plv8ify && bun run db:current && bun run db:seed",
     "build": "tsc --noEmit",
     "prepublishOnly": "bun run build"
   },
