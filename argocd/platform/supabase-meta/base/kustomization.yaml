@@ -29,13 +29,13 @@ helmCharts:
         PG_META_DB_USER:
           valueFrom:
             secretKeyRef:
-              name: cnpg-cluster-app
+              name: cnpg-platform-admin
               key: username
         PG_META_DB_PASSWORD:
           valueFrom:
             secretKeyRef:
-              name: cnpg-cluster-app
+              name: cnpg-platform-admin
               key: password
-        PG_META_DB_NAME: app
+        PG_META_DB_NAME: platform
         PG_META_DB_SSL_MODE: disable
         PG_META_PORT: "8080"

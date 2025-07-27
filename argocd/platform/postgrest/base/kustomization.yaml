@@ -30,18 +30,18 @@ helmCharts:
         DB_USER:
           valueFrom:
             secretKeyRef:
-              name: cnpg-cluster-app
+              name: cnpg-platform-admin
               key: username
         DB_PASSWORD:
           valueFrom:
             secretKeyRef:
-              name: cnpg-cluster-app
+              name: cnpg-platform-admin
               key: password
-        DB_NAME: app
+        DB_NAME: platform
         DB_SSL: disable
         PGRST_APP_SETTINGS_JWT_EXP: 3600
         PGRST_DB_ANON_ROLE: anon
-        PGRST_DB_SCHEMAS: public,storage
+        PGRST_DB_SCHEMAS: public
         PGRST_OPENAPI_MODE: disabled
         PGRST_JWT_SECRET:
           valueFrom:
