@@ -1,0 +1,19 @@
+apiVersion: postgresql.cnpg.io/v1
+kind: Database
+metadata:
+  name: platform
+  annotations:
+    argocd.argoproj.io/sync-wave: "0"
+spec:
+  cluster:
+    name: cnpg-cluster
+  name: platform
+  owner: platform_admin
+  ensure: present
+  schemas:
+    - name: extensions
+      owner: platform_admin
+  extensions:
+    - name: plv8
+    - name: pgcrypto
+      schema: extensions

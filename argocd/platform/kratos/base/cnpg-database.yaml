@@ -5,7 +5,8 @@ metadata:
   annotations:
     argocd.argoproj.io/sync-wave: "0"
 spec:
-  name: kratos
-  owner: app
   cluster:
     name: cnpg-cluster
+  name: kratos
+  owner: kratos_admin
+  ensure: present
