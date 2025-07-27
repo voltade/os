@@ -22,6 +22,8 @@ tofu apply
 ./post-apply.sh
 ```
 
+Login to ArgoCD with username `admin` and password `admin`.
+
 To destroy the cluster, run:
 
 ```bash
@@ -45,6 +47,7 @@ bun charts:patch
 ```
 
 ## Prepare the platform database
+
 ```bash
 # (In root of the project)
 
