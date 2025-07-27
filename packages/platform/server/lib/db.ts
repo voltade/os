@@ -1,7 +1,6 @@
+import * as schema from 'drizzle';
 import { drizzle } from 'drizzle-orm/bun-sql';
 
-import * as schema from '#server/drizzle';
-import { vaultSecrets } from '#server/drizzle/vault/secrets';
 import { appEnvVariables } from '#server/env.ts';
 
 const { DB_NAME, DB_USER, DB_HOST, DB_PORT, DB_PASSWORD } = appEnvVariables;
@@ -13,14 +12,14 @@ export const db = drizzle({
     user: DB_USER,
     password: DB_PASSWORD,
     database: DB_NAME,
+    tls: true,
   },
   schema: {
-    ...schema.orgs,
-    ...schema.environments,
-    ...schema.envVars,
-    ...schema.apps,
-    ...schema.appInstallations,
-    ...vaultSecrets,
+    ...schema.orgTable,
+    ...schema.environmentTable,
+    ...schema.environmentVariableTable,
+    ...schema.appTable,
+    ...schema.appInstallationTable,
   },
 });
 

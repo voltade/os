@@ -6,7 +6,7 @@ Bun: `curl -fsSL https://bun.com/install | bash`
 
 Docker: `brew install --cask docker-desktop`
 
-Other tools: `brew install kubectl kubecm helm opentofu`
+Other tools: `brew install opentofu kubectl kubectl-cnpg kubecm helm k9s`
 
 ## Terraform
 
@@ -39,3 +39,15 @@ bun -cwd packages/platform db:reset
 ```bash
 bun --cwd packages/platform dev
 ```
+
+## Installation of PostgreSQL extensions
+
+- Add source compiling to `docker/postgres/Dockerfile`: For most extensions that is not shipped with Postgres.
+
+- Add to `shared_preload_libraries` in the [cnpg-cluster.yaml](argocd/platform/common/base/cnpg-cluster.yaml): If it requires being loaded at startup, such as _pg_stat_statements_, _supabase_vault_.
+
+- Add to the `postInitApplicationSQL` in the [cnpg-cluster.yaml](argocd/platform/common/base/cnpg-cluster.yaml): If the installation requires superuser privileges, **AND** it introduces new objects (functions, tables, etc.) that need to be granted access to the `platform_admin` user. such as _supabase_vault_.
+
+- Add to the `extensions` section in the [cnpg-database.yaml](argocd/platform/platform/base/cnpg-database.yaml): If it requires superuser to be installed, such as _plv8_, _pgcrypto_.
+
+- Add it to [packages/platform/extensions](packages/platform/extensions) directory and link it to the `current.sql`: If it's pure SQL that doesn't require superuser privileges, such as _nanoid_.

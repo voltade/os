@@ -3,7 +3,7 @@ import { pgSchema, text, uniqueIndex } from 'drizzle-orm/pg-core';
 
 export const vaultSchema = pgSchema('vault');
 
-export const vaultSecrets = vaultSchema.table(
+export const secretsTable = vaultSchema.table(
   'secrets',
   {
     id: text('id').primaryKey().notNull().default(sql`extensions.nanoid()`),

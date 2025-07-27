@@ -18,8 +18,6 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-create extension if not exists pgcrypto;
-
 -- The `nanoid()` function generates a compact, URL-friendly unique identifier.
 -- Based on the given size and alphabet, it creates a randomized string that's ideal for
 -- use-cases requiring small, unpredictable IDs (e.g., URL shorteners, generated file names, etc.).
@@ -28,9 +26,9 @@ create extension if not exists pgcrypto;
 drop function if exists extensions.nanoid (int, text, float);
 
 create or replace function extensions.nanoid (
-    size int default 15, -- The number of symbols in the NanoId String. Must be greater than 0.
-    alphabet text default '0123456789abcdefghijklmnopqrstuvwxyz', -- The symbols used in the NanoId String. Must contain between 1 and 255 symbols.
-    additionalbytesfactor float default 1.6 -- The additional bytes factor used for calculating the step size. Must be equal or greater then 1.
+  size int default 15, -- The number of symbols in the NanoId String. Must be greater than 0.
+  alphabet text default '0123456789abcdefghijklmnopqrstuvwxyz', -- The symbols used in the NanoId String. Must contain between 1 and 255 symbols.
+  additionalbytesfactor float default 1.6 -- The additional bytes factor used for calculating the step size. Must be equal or greater then 1.
 ) returns text -- A randomly generated NanoId String
 language plpgsql volatile parallel safe
 -- Uncomment the following line if you have superuser privileges
@@ -73,10 +71,10 @@ $$;
 drop function if exists extensions.nanoid_optimized (int, text, int, int);
 
 create or replace function extensions.nanoid_optimized (
-    size int, -- The desired length of the generated string.
-    alphabet text, -- The set of characters to choose from for generating the string.
-    mask int, -- The mask used for mapping random bytes to alphabet indices. Should be `(2^n) - 1` where `n` is a power of 2 less than or equal to the alphabet size.
-    step int -- The number of random bytes to generate in each iteration. A larger value may speed up the function but increase memory usage.
+  size int, -- The desired length of the generated string.
+  alphabet text, -- The set of characters to choose from for generating the string.
+  mask int, -- The mask used for mapping random bytes to alphabet indices. Should be `(2^n) - 1` where `n` is a power of 2 less than or equal to the alphabet size.
+  step int -- The number of random bytes to generate in each iteration. A larger value may speed up the function but increase memory usage.
 ) returns text -- A randomly generated NanoId String
 language plpgsql volatile parallel safe
 -- Uncomment the following line if you have superuser privileges

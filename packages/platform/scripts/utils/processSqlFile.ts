@@ -1,5 +1,4 @@
-import { readFile } from 'node:fs/promises';
-import { dirname, join } from 'node:path';
+import { dirname, join, resolve } from 'node:path';
 import { Glob } from 'bun';
 
 import { formatSql } from './formatSql.ts';
@@ -14,8 +13,7 @@ const INCLUDE_REGEX = /^--!include\s+(.*)$/gm;
  * @returns The processed SQL content as a string.
  */
 export async function processSqlFile(filePath: string): Promise<string> {
-  const fileContent = await readFile(filePath, 'utf-8');
-  const fileDir = dirname(filePath);
+  const fileContent = await Bun.file(filePath).text();
 
   const parts = fileContent.split(INCLUDE_REGEX);
   const resultParts: string[] = [parts[0]!];
@@ -29,8 +27,8 @@ export async function processSqlFile(filePath: string): Promise<string> {
     const includedContents: string[] = [];
 
     // The glob scan is relative to the current file's directory
-    for await (const file of glob.scan(fileDir)) {
-      const includedFilePath = join(fileDir, file);
+    for await (const file of glob.scan(process.cwd())) {
+      const includedFilePath = join(process.cwd(), file);
       // Recursively process the included file
       const includedContent = await processSqlFile(includedFilePath);
       includedContents.push(includedContent);

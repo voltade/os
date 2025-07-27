@@ -2,7 +2,7 @@ import { serveStatic } from 'hono/bun';
 
 import { factory } from '#server/factory.ts';
 import { route as environmentRoute } from '#server/routes/environment.ts';
-import { route as envVarsRoute } from '#server/routes/envVars.ts';
+import { route as environmentVariableRoute } from '#server/routes/environment_variable.ts';
 import { route as kratosRoute } from '#server/routes/kratos.ts';
 
 const app = factory.createApp();
@@ -18,7 +18,7 @@ app.get('/healthz', (c) => {
 export const apiRoutes = app
   .basePath('/api')
   .route('/environment', environmentRoute)
-  .route('/envVars', envVarsRoute)
+  .route('/environment_variable', environmentVariableRoute)
   .route('/kratos', kratosRoute);
 
 app

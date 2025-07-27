@@ -9,6 +9,7 @@
     "moduleResolution": "bundler",
     "noEmit": true,
     "paths": {
+      "#drizzle/*": ["./drizzle/*"],
       "#server/*": ["./server/*"],
       "#shared/*": ["./shared/*"],
       "#src/*": ["./src/*"]

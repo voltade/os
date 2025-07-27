@@ -1,9 +1,9 @@
 import { processSqlFile } from './utils/processSqlFile.ts';
-import { appSql } from './utils/sql.ts';
+import { sql } from './utils/sql.ts';
 
-const currentSql = await processSqlFile('current.sql');
+const currentSql = await processSqlFile('migrations/current.sql');
 
-appSql.transaction(async (sql) => {
+sql.transaction(async (sql) => {
   await sql.unsafe(currentSql);
 });
-console.log('src/current.sql executed successfully');
+console.log('migrations/current.sql executed successfully');

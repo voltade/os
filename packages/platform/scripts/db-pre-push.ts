@@ -1,9 +1,9 @@
 import { processSqlFile } from './utils/processSqlFile.ts';
-import { appSql } from './utils/sql.ts';
+import { sql } from './utils/sql.ts';
 
-const prePushSql = await processSqlFile('pre-push.sql');
+const prePushSql = await processSqlFile('migrations/pre-push.sql');
 
-appSql.transaction(async (sql) => {
+sql.transaction(async (sql) => {
   await sql.unsafe(prePushSql);
 });
-console.log('src/pre-push.sql executed successfully');
+console.log('migrations/pre-push.sql executed successfully');
