@@ -50,51 +50,38 @@ resource "tls_locally_signed_cert" "this" {
   ]
 }
 
-resource "kubernetes_secret" "tls_ca" {
+resource "kubernetes_namespace" "cert_manager" {
   metadata {
-    name      = "tls-ca"
-    namespace = kubernetes_namespace.gateway.metadata[0].name
-    annotations = {
-      "reflector.v1.k8s.emberstack.com/reflection-allowed" = "true"
-    }
+    name = "cert-manager"
+  }
+}
+
+resource "kubernetes_secret" "selfsigned_ca" {
+  metadata {
+    name      = "selfsigned-ca"
+    namespace = kubernetes_namespace.cert_manager.metadata[0].name
   }
   type = "kubernetes.io/tls"
   data = {
-    "ca.crt"  = tls_self_signed_cert.ca.cert_pem
     "tls.crt" = tls_self_signed_cert.ca.cert_pem
     "tls.key" = tls_private_key.ca.private_key_pem
   }
 }
 
-resource "kubernetes_secret" "tls_certificate" {
-  metadata {
-    name      = "tls-certificate"
-    namespace = kubernetes_namespace.gateway.metadata[0].name
-    annotations = {
-      "reflector.v1.k8s.emberstack.com/reflection-allowed" = "true"
-    }
-  }
-  type = "kubernetes.io/tls"
-  data = {
-    "tls.key" = tls_private_key.this.private_key_pem
-    "tls.crt" = tls_locally_signed_cert.this.cert_pem
-  }
-}
-
-resource "local_file" "ca_crt" {
+resource "local_file" "selfsigned_ca" {
   content         = tls_self_signed_cert.ca.cert_pem
   filename        = "${path.root}/certs/ca.crt"
   file_permission = "0644"
 }
 
-resource "local_file" "tls_key" {
+resource "local_file" "registry_tls_key" {
   content         = tls_private_key.this.private_key_pem
-  filename        = "${path.root}/certs/tls.key"
+  filename        = "${path.root}/certs/registry.key"
   file_permission = "0600"
 }
 
-resource "local_file" "tls_crt" {
+resource "local_file" "registry_tls_crt" {
   content         = tls_locally_signed_cert.this.cert_pem
-  filename        = "${path.root}/certs/tls.crt"
+  filename        = "${path.root}/certs/registry.crt"
   file_permission = "0644"
 }
