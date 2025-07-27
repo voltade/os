@@ -15,4 +15,4 @@ spec:
         - name: cnpg-cluster-rw
           port: 5432
   tls:
-    secretName: tls-certificate
+    passthrough: true

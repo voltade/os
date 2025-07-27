@@ -1,0 +1,18 @@
+apiVersion: cert-manager.io/v1
+kind: Certificate
+metadata:
+  name: platform-server-tls
+  annotations:
+    argocd.argoproj.io/sync-wave: "-2"
+spec:
+  issuerRef:
+    kind: ClusterIssuer
+    name: selfsigned-cluster-issuer
+  secretName: platform-server-tls
+  secretTemplate:
+    annotations:
+      cnpg.io/reload: "true"
+  usages:
+    - server auth
+  dnsNames:
+    - platform.127.0.0.1.nip.io

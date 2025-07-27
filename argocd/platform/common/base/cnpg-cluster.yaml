@@ -9,6 +9,9 @@ spec:
   # https://github.com/voltade/voltade-os/pkgs/container/postgres
   imageName: ghcr.io/voltade/postgres:17.5-20250717-a2c5abf
   instances: 1
+  certificates:
+    serverCASecret: platform-server-tls
+    serverTLSSecret: platform-server-tls
   storage:
     size: 4Gi
   postgresql:
@@ -17,8 +20,6 @@ spec:
       pgsodium.getkey_script: /usr/share/postgresql/17/extension/pgsodium_getkey
     shared_preload_libraries:
       - supabase_vault
-  # TODO: disable superuser access for non-dev environments
-  enableSuperuserAccess: true
   managed:
     roles:
       - name: platform_admin
