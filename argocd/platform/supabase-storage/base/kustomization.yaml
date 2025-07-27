@@ -42,7 +42,7 @@ helmCharts:
             secretKeyRef:
               name: cnpg-platform-admin
               key: password
-        DB_NAME: DB_NAME
+        DB_NAME: platform
         DB_SSL: disable
         DATABASE_URL:
           value: "postgres://$(DB_USER):$(DB_PASSWORD)@$(DB_HOST):$(DB_PORT)/$(DB_NAME)?sslmode=$(DB_SSL)"
