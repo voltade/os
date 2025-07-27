@@ -1,6 +1,6 @@
 # Setup
 
-## Required
+## Required tools
 
 Bun: `curl -fsSL https://bun.com/install | bash`
 
@@ -50,4 +50,4 @@ bun --cwd packages/platform dev
 
 - Add to the `extensions` section in the [cnpg-database.yaml](argocd/platform/platform/base/cnpg-database.yaml): If it requires superuser to be installed, such as _plv8_, _pgcrypto_.
 
-- Add it to [packages/platform/extensions](packages/platform/extensions) directory and link it to the `current.sql`: If it's pure SQL that doesn't require superuser privileges, such as _nanoid_.
+- Add it to [extensions](packages/platform/extensions) directory and link it to the [current.sql](packages/platform/migrations/current.sql): If it's pure SQL that doesn't require superuser privileges, such as _nanoid_.
