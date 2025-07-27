@@ -10,6 +10,9 @@
   ],
   "scripts": {
     "ncu": "ncu -s --root --format group -i",
+    "tofu:init": "cd terraform/kind-local && tofu init -upgrade",
+    "tofu:apply": "cd terraform/kind-local && tofu apply && ./post-apply.sh",
+    "tofu:destroy": "cd terraform/kind-local && tofu state rm helm_release.cilium && tofu destroy",
     "charts": "bun run scripts/charts.ts",
     "charts:patch": "bun run scripts/charts.ts --patch",
     "setup:env": "bun run scripts/env.ts",

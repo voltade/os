@@ -11,7 +11,7 @@ variable "cluster_domain_public" {
 # https://hub.docker.com/r/kindest/node/tags
 variable "kubernetes_version" {
   type    = string
-  default = "v1.33.1"
+  default = "v1.33.2"
 }
 
 # https://artifacthub.io/packages/helm/cilium/cilium
@@ -35,7 +35,7 @@ variable "traefik_helm_version" {
 # https://artifacthub.io/packages/helm/argo/argo-cd
 variable "argocd_helm_version" {
   type    = string
-  default = "8.2.0"
+  default = "8.2.2"
 }
 
 # https://argo-cd.readthedocs.io/en/stable/user-guide/directory/#including-only-certain-file

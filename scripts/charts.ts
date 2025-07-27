@@ -7,6 +7,7 @@ import yaml from 'yaml';
 
 const args = process.argv.slice(2);
 const patch = args.includes('--patch');
+const yes = args.includes('--yes') || args.includes('-y');
 
 const chartsGlob = new Glob('charts/*/Chart.yaml');
 const chartMap = new Map<
@@ -41,26 +42,31 @@ for await (const file of chartsGlob.scan({
   });
 }
 
-const answer = await checkbox({
-  message: 'Select charts',
-  choices: [...chartMap.entries()].map(
-    ([name, { chartVersion, newVersion }]) => ({
-      checked: true,
-      value: name,
-      name:
-        chartVersion === newVersion
-          ? `${name} (${chartVersion})`
-          : `${name} (${chartVersion} -> ${newVersion})`,
-    }),
-  ),
-});
+let selectedCharts: string[] = [];
+if (yes) {
+  selectedCharts = [...chartMap.keys()];
+} else {
+  selectedCharts = await checkbox({
+    message: 'Select charts',
+    choices: [...chartMap.entries()].map(
+      ([name, { chartVersion, newVersion }]) => ({
+        checked: true,
+        value: name,
+        name:
+          chartVersion === newVersion
+            ? `${name} (${chartVersion})`
+            : `${name} (${chartVersion} -> ${newVersion})`,
+      }),
+    ),
+  });
+}
 
-if (answer.length === 0) {
+if (selectedCharts.length === 0) {
   console.error('No charts selected');
   process.exit(1);
 }
 
-for (const chartName of answer) {
+for (const chartName of selectedCharts) {
   // biome-ignore lint/style/noNonNullAssertion: map has the chartName
   const { yaml, newVersion } = chartMap.get(chartName)!;
   yaml.set('version', newVersion);
