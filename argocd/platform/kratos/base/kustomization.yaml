@@ -71,7 +71,7 @@ helmCharts:
                     # https://www.ory.sh/docs/identities/session-to-jwt-cors#json-web-token-claim-mapper
                     # See: jwt-claim-mapper.jsonnet
                     # The `identity.metadata_public.orgs` is set to the identity by the after registration hook (/api/kratos/hooks/registration), and the `aud` claim can be used by PostgREST: https://docs.postgrest.org/en/v13/references/auth.html#jwt-aud-validation
-                    claims_mapper_url: base64://bG9jYWwgY2xhaW1zID0gc3RkLmV4dFZhcignY2xhaW1zJyk7CmxvY2FsIHNlc3Npb24gPSBzdGQuZXh0VmFyKCdzZXNzaW9uJyk7Cgp7CiAgY2xhaW1zOiBjbGFpbXMgewogICAgYXVkOiBzZXNzaW9uLmlkZW50aXR5Lm1ldGFkYXRhX3B1YmxpYy5vcmdzCiAgfQp9Cg==
+                    claims_mapper_url: base64://bG9jYWwgY2xhaW1zID0gc3RkLmV4dFZhcignY2xhaW1zJyk7CmxvY2FsIHNlc3Npb24gPSBzdGQuZXh0VmFyKCdzZXNzaW9uJyk7Cgp7CiAgY2xhaW1zOiBjbGFpbXMgewogICAgcm9sZTogImF1dGhlbnRpY2F0ZWQiLAogICAgYXVkOiBzZXNzaW9uLmlkZW50aXR5Lm1ldGFkYXRhX3B1YmxpYy5vcmdzCiAgfQp9Cg==
 
           selfservice:
             default_browser_return_url: http://127.0.0.1.nip.io/settings
