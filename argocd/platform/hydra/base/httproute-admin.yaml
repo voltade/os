@@ -1,0 +1,18 @@
+apiVersion: gateway.networking.k8s.io/v1
+kind: HTTPRoute
+metadata:
+  name: hydra-admin
+spec:
+  parentRefs:
+    - name: cilium-gateway
+      namespace: gateway
+  hostnames:
+    - hydra-admin.127.0.0.1.nip.io
+  rules:
+    - backendRefs:
+        - name: hydra-admin
+          port: 4445
+      matches:
+        - path:
+            type: PathPrefix
+            value: /

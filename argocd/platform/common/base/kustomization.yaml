@@ -7,5 +7,6 @@ resources:
   - ./cnpg-platform-admin.yaml
   - ./cnpg-platform-migrator.yaml
   - ./cnpg-kratos-admin.yaml
+  - ./cnpg-hydra-admin.yaml
   - ./cnpg-cluster.yaml
   - ./cnpg-route.yaml

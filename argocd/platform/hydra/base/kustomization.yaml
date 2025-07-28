@@ -1,0 +1,62 @@
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+
+resources:
+  - cnpg-database.yaml
+  - httproute-public.yaml
+  - httproute-admin.yaml
+  - secret-dsn.yaml
+
+helmCharts:
+  - repo: https://k8s.ory.sh/helm/charts
+    name: hydra
+    # https://artifacthub.io/packages/helm/ory/hydra
+    version: 0.57.2
+    releaseName: hydra
+    namespace: platform
+    # https://artifacthub.io/packages/helm/ory/hydra?modal=values
+    valuesInline:
+      image:
+        # https://hub.docker.com/r/oryd/hydra/tags
+        tag: v2.3.0-distroless
+
+      # https://k8s.ory.sh/helm/hydra.html
+      hydra:
+        dev: true
+
+        # https://www.ory.sh/docs/hydra/self-hosted/quickstart#quickstart-configuration
+        # https://www.ory.sh/docs/hydra/reference/configuration
+        config:
+          dev: true
+
+          serve:
+            cookies:
+              same_site_mode: Lax
+
+          urls:
+            self:
+              issuer: http://hydra.127.0.0.1.nip.io
+            consent: http://127.0.0.1.nip.io/consent
+            login: http://127.0.0.1.nip.io/login
+            logout: http://127.0.0.1.nip.io/logout
+
+          oidc:
+            subject_identifiers:
+              supported_types:
+                - pairwise
+                - public
+              pairwise:
+                salt: youReallyNeedToChangeThis
+
+        automigration:
+          enabled: true
+          type: initContainer
+
+      # https://k8s.ory.sh/helm/hydra.html#set-up-dsn-variable-on-runtime
+      deployment:
+        extraEnv:
+          - name: DSN
+            valueFrom:
+              secretKeyRef:
+                name: hydra-dsn
+                key: dsn
