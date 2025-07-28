@@ -30,13 +30,13 @@
     "core:db:typegen": "supabase gen types typescript --local > packages/core-schema/supabase/database.gen.ts"
   },
   "devDependencies": {
-    "@biomejs/biome": "^2.1.1",
+    "@biomejs/biome": "^2.1.2",
     "@inquirer/prompts": "^7.7.1",
     "@types/bun": "latest",
     "@types/semver": "^7.7.0",
     "concurrently": "^9.2.0",
     "lefthook": "^1.12.2",
-    "npm-check-updates": "^18.0.1",
+    "npm-check-updates": "^18.0.2",
     "semver": "^7.7.2",
     "sql-formatter": "^15.6.6",
     "yaml": "^2.8.0"
@@ -46,7 +46,7 @@
   },
   "dependencies": {
     "@supabase/supabase-js": "^2.52.1",
-    "hono": "^4.8.5",
-    "zod": "^4.0.5"
+    "hono": "^4.8.9",
+    "zod": "^4.0.10"
   }
 }
