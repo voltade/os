@@ -90,6 +90,7 @@
       "name": "@voltade/platform",
       "version": "0.1.0",
       "dependencies": {
+        "drizzle-zod": "^0.8.2",
         "hono": "^4.8.5",
         "zod": "^4.0.5",
       },
@@ -100,6 +101,7 @@
         "@mantine/notifications": "^8.1.3",
         "@ory/client-fetch": "^1.20.22",
         "@ory/elements-react": "^1.0.0",
+        "@supabase/postgrest-js": "^1.21.1",
         "@tabler/icons-react": "^3.34.0",
         "@tailwindcss/postcss": "^4.1.11",
         "@tailwindcss/vite": "^4.1.11",
