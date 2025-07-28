@@ -1,7 +1,7 @@
 import { sql } from 'drizzle-orm';
 import { check, pgTable, text, unique, uuid } from 'drizzle-orm/pg-core';
 
-import { DEFAULT_COLUMNS } from './_helpers.ts';
+import { DEFAULT_COLUMNS, zodSchemaFactory } from './_helpers.ts';
 import { environmentTable } from './environment.ts';
 import { orgTable } from './org.ts';
 import { secretsTable } from './vault/secrets.ts';
@@ -35,4 +35,8 @@ export const environmentVariableTable = pgTable(
       table.name,
     ),
   ],
+);
+
+export const environmentVariableSchema = zodSchemaFactory(
+  environmentVariableTable,
 );

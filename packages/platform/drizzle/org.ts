@@ -1,7 +1,7 @@
 import { sql } from 'drizzle-orm';
 import { check, pgTable, text } from 'drizzle-orm/pg-core';
 
-import { DEFAULT_COLUMNS } from './_helpers.ts';
+import { DEFAULT_COLUMNS, zodSchemaFactory } from './_helpers.ts';
 
 export const orgTable = pgTable(
   'org',
@@ -19,3 +19,5 @@ export const orgTable = pgTable(
     ),
   ],
 );
+
+export const orgSchema = zodSchemaFactory(orgTable);

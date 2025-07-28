@@ -8,7 +8,7 @@ import {
   uniqueIndex,
 } from 'drizzle-orm/pg-core';
 
-import { DEFAULT_COLUMNS } from './_helpers.ts';
+import { DEFAULT_COLUMNS, zodSchemaFactory } from './_helpers.ts';
 import { orgTable } from './org.ts';
 
 export const environmentTable = pgTable(
@@ -42,3 +42,5 @@ export const environmentTable = pgTable(
       .where(sql`${table.is_production} is true`),
   ],
 );
+
+export const environmentSchema = zodSchemaFactory(environmentTable);

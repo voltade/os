@@ -1,7 +1,7 @@
 import { sql } from 'drizzle-orm';
 import { check, pgTable, text, unique } from 'drizzle-orm/pg-core';
 
-import { DEFAULT_COLUMNS } from './_helpers.ts';
+import { DEFAULT_COLUMNS, zodSchemaFactory } from './_helpers.ts';
 import { orgTable } from './org.ts';
 
 export const appTable = pgTable(
@@ -27,3 +27,5 @@ export const appTable = pgTable(
     unique('app_slug_unq').on(table.org_id, table.slug),
   ],
 );
+
+export const appSchema = zodSchemaFactory(appTable);

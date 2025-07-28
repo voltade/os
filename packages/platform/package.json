@@ -8,6 +8,7 @@
     "db:pre-push": "bun scripts/db-pre-push.ts",
     "db:current": "bun scripts/db-current.ts",
     "db:push": "bun drizzle-kit push",
+    "db:studio": "bun drizzle-kit studio",
     "db:reset": "scripts/db-reset.sh && bun db:pre-push && bun db:push && bun db:current",
     "dev:server": "bun run --hot server/index.ts",
     "dev:vite": "wait-on http://localhost:3000/healthz && vite dev",
@@ -52,6 +53,7 @@
     "typescript": "^5"
   },
   "dependencies": {
+    "drizzle-zod": "^0.8.2",
     "hono": "^4.8.5",
     "zod": "^4.0.5"
   }
