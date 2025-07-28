@@ -1,0 +1,19 @@
+module shared
+
+# folder = container to manage team-level CRUD permissions for a certain type of resource
+# this is an abstraction for different types of folders, such as a quotation folder, task folder, etc.
+type folder
+  relations
+    define owner_team: [team]  # team with read-write access to all resources in the folder
+    define viewer_team: [team]  # teams with read-only access to all resources in the folder
+
+    # folder-level roles
+    # we auto-assign the roles to users based on their team membership
+    define owner: member from owner_team
+    define viewer: member from viewer_team or owner
+
+    # folder-level CRUD permissions
+    define can_view: viewer or can_edit
+    define can_create: owner or can_edit
+    define can_edit: owner
+    define can_delete: owner or can_edit

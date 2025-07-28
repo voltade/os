@@ -52,7 +52,8 @@ This example showcases how to use [modular models](https://openfga.dev/docs/mode
 
 Based on the requirements as stated above, we can model the authorization model as follows:
 
-- A `core` [module](./core.fga) defines the entity types that are shared across components.
+- A `core` [module](./core.fga) defines the core entity types that are shared across components.
+- A `shared` [module](./shared.fga) defines the entity types related to team-based permissions (e.g., folders).
 - An `inventory` [module](./inventory.fga) defines the entity types related to the Inventory team.
 - A `quotation` [module](./quotation.fga) defines the entity types related to quotations (e.g. cRFQ). Multiple teams (e.g., Sales, Purchase) could use this module.
 - An `order` [module](./order.fga) defines the entity types related to orders (e.g. sales orders). Multiple teams (e.g., Sales, Purchase, Repair) could use this module.

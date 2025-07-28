@@ -7,45 +7,43 @@ tuple_files:
 
 tests:
   # =============================================================================
-  # COLLECTION-LEVEL PERMISSIONS
+  # FOLDER-LEVEL PERMISSIONS
   # =============================================================================
-  - name: Quotations collection has correct team assignments
+  - name: Quotations folder has correct team assignments
     check:
       # Sales team is the owner team
       - user: user:sales_head
-        object: quotations_collection:crfq
+        object: folder:quotations
         assertions:
-          assignee: true
-          approver: true
+          owner: true
+          viewer: true
       - user: user:sales_manager1
-        object: quotations_collection:crfq
+        object: folder:quotations
         assertions:
-          assignee: true
-          approver: true
+          owner: true
+          viewer: true
       - user: user:sales_member1
-        object: quotations_collection:crfq
+        object: folder:quotations
         assertions:
-          assignee: true
-          approver: false # Only managers can approve
+          owner: true
+          viewer: true
 
       # Finance team is the viewer team
       - user: user:finance_head
-        object: quotations_collection:crfq
+        object: folder:quotations
         assertions:
           viewer: true
-          assignee: false
-          approver: false
+          owner: false
       - user: user:finance_member1
-        object: quotations_collection:crfq
+        object: folder:quotations
         assertions:
           viewer: true
-          assignee: false
-          approver: false
+          owner: false
 
   # =============================================================================
-  # SALES TEAM PERMISSIONS (QUOTATION MANAGERS VIA COLLECTION)
+  # SALES TEAM PERMISSIONS (QUOTATION MANAGERS VIA FOLDER)
   # =============================================================================
-  - name: Sales team members have full quotation permissions via collection ownership
+  - name: Sales team members have full quotation permissions via folder ownership
     check:
       # Sales team head has all permissions
       - user: user:sales_head
@@ -55,7 +53,6 @@ tests:
           can_create_quotation: true
           can_edit_quotation: true
           can_delete_quotation: true
-          can_approve_quotation: true
       - user: user:sales_head
         object: quotation:q002
         assertions:
@@ -63,7 +60,6 @@ tests:
           can_create_quotation: true
           can_edit_quotation: true
           can_delete_quotation: true
-          can_approve_quotation: true
       # Sales team managers have all permissions
       - user: user:sales_manager1
         object: quotation:q003
@@ -72,7 +68,6 @@ tests:
           can_create_quotation: true
           can_edit_quotation: true
           can_delete_quotation: true
-          can_approve_quotation: true
       - user: user:sales_manager2
         object: quotation:q004
         assertions:
@@ -80,7 +75,6 @@ tests:
           can_create_quotation: true
           can_edit_quotation: true
           can_delete_quotation: true
-          can_approve_quotation: true
       # Sales team members have all permissions
       - user: user:sales_member1
         object: quotation:q005
@@ -89,7 +83,6 @@ tests:
           can_create_quotation: true
           can_edit_quotation: true
           can_delete_quotation: true
-          can_approve_quotation: false # Only managers can approve
       - user: user:sales_member2
         object: quotation:q001
         assertions:
@@ -97,12 +90,11 @@ tests:
           can_create_quotation: true
           can_edit_quotation: true
           can_delete_quotation: true
-          can_approve_quotation: false # Only managers can approve
 
   # =============================================================================
-  # FINANCE TEAM PERMISSIONS (VIEW-ONLY ACCESS VIA COLLECTION)
+  # FINANCE TEAM PERMISSIONS (VIEW-ONLY ACCESS VIA FOLDER)
   # =============================================================================
-  - name: Finance team members can only view quotations via collection viewer access
+  - name: Finance team members can only view quotations via folder viewer access
     check:
       # Finance team head
       - user: user:finance_head
@@ -112,7 +104,6 @@ tests:
           can_create_quotation: false
           can_edit_quotation: false
           can_delete_quotation: false
-          can_approve_quotation: false
       - user: user:finance_head
         object: quotation:q002
         assertions:
@@ -120,7 +111,6 @@ tests:
           can_create_quotation: false
           can_edit_quotation: false
           can_delete_quotation: false
-          can_approve_quotation: false
       # Finance team manager
       - user: user:finance_manager
         object: quotation:q003
@@ -129,7 +119,6 @@ tests:
           can_create_quotation: false
           can_edit_quotation: false
           can_delete_quotation: false
-          can_approve_quotation: false
       # Finance team members
       - user: user:finance_member1
         object: quotation:q004
@@ -138,7 +127,6 @@ tests:
           can_create_quotation: false
           can_edit_quotation: false
           can_delete_quotation: false
-          can_approve_quotation: false
       - user: user:finance_member2
         object: quotation:q005
         assertions:
@@ -146,7 +134,6 @@ tests:
           can_create_quotation: false
           can_edit_quotation: false
           can_delete_quotation: false
-          can_approve_quotation: false
 
   # =============================================================================
   # OTHER TEAMS HAVE NO QUOTATION ACCESS
@@ -161,7 +148,6 @@ tests:
           can_create_quotation: false
           can_edit_quotation: false
           can_delete_quotation: false
-          can_approve_quotation: false
       # Product team managers
       - user: user:product_manager1
         object: quotation:q002
@@ -170,7 +156,6 @@ tests:
           can_create_quotation: false
           can_edit_quotation: false
           can_delete_quotation: false
-          can_approve_quotation: false
       # Product team members
       - user: user:product_member1
         object: quotation:q003
@@ -179,7 +164,6 @@ tests:
           can_create_quotation: false
           can_edit_quotation: false
           can_delete_quotation: false
-          can_approve_quotation: false
 
   - name: Purchase team members have no quotation permissions
     check:
@@ -191,7 +175,6 @@ tests:
           can_create_quotation: false
           can_edit_quotation: false
           can_delete_quotation: false
-          can_approve_quotation: false
       # Purchase team managers
       - user: user:purchase_manager1
         object: quotation:q002
@@ -200,7 +183,6 @@ tests:
           can_create_quotation: false
           can_edit_quotation: false
           can_delete_quotation: false
-          can_approve_quotation: false
       # Purchase team members
       - user: user:purchase_member1
         object: quotation:q003
@@ -209,54 +191,96 @@ tests:
           can_create_quotation: false
           can_edit_quotation: false
           can_delete_quotation: false
-          can_approve_quotation: false
 
   # =============================================================================
-  # APPROVAL PERMISSIONS - ONLY MANAGERS CAN APPROVE
+  # IS_COMPLETED FLAG TESTS
   # =============================================================================
-  - name: Only sales team managers can approve quotations
+  - name: Cannot edit when completed
+    tuples:
+      - user: quotation:q001
+        relation: is_completed
+        object: quotation:q001
     check:
-      # Sales managers can approve
       - user: user:sales_head
         object: quotation:q001
         assertions:
-          can_approve_quotation: true
+          can_view_quotation: true
+          can_edit_quotation: false # Should be false when completed
+          can_delete_quotation: true
+      - user: user:sales_manager1
+        object: quotation:q001
+        assertions:
+          can_view_quotation: true
+          can_edit_quotation: false # Should be false when completed
+          can_delete_quotation: true
+
+  - name: Can edit when not completed
+    check:
+      # Test quotation without is_completed flag
+      - user: user:sales_head
+        object: quotation:q002
+        assertions:
+          can_view_quotation: true
+          can_edit_quotation: true # Should be true when not completed
+          can_delete_quotation: true # Should be true when not completed
       - user: user:sales_manager1
         object: quotation:q002
         assertions:
-          can_approve_quotation: true
-      - user: user:sales_manager2
+          can_view_quotation: true
+          can_edit_quotation: true # Should be true when not completed
+          can_delete_quotation: true # Should be true when not completed
+
+  - name: Multiple completed quotations
+    tuples:
+      - user: quotation:q003
+        relation: is_completed
+        object: quotation:q003
+      - user: quotation:q004
+        relation: is_completed
+        object: quotation:q004
+    check:
+      # Both should be read-only
+      - user: user:sales_head
         object: quotation:q003
         assertions:
-          can_approve_quotation: true
-      # Sales members cannot approve
-      - user: user:sales_member1
+          can_view_quotation: true
+          can_edit_quotation: false
+          can_delete_quotation: true
+      - user: user:sales_manager1
         object: quotation:q004
         assertions:
-          can_approve_quotation: false
-      - user: user:sales_member2
-        object: quotation:q005
+          can_view_quotation: true
+          can_edit_quotation: false
+          can_delete_quotation: true
+
+  - name: Finance team cannot edit even uncompleted quotations
+    check:
+      # Finance team should only have view access regardless of completion status
+      - user: user:finance_head
+        object: quotation:q002
         assertions:
-          can_approve_quotation: false
+          can_view_quotation: true
+          can_edit_quotation: false # Finance never has edit access
+          can_delete_quotation: false # Finance never has delete access
 
   # =============================================================================
-  # COLLECTION LINKAGE VALIDATION
+  # FOLDER LINKAGE VALIDATION
   # =============================================================================
-  - name: All quotations are properly linked to their collection
+  - name: All quotations are properly linked to their folder
     check:
-      # Verify that quotations derive permissions from their collection
+      # Verify that quotations derive permissions from their folder
       - user: user:sales_head
         object: quotation:q001
         assertions:
-          can_edit_quotation: true # Should work via collection assignee
+          can_edit_quotation: true # Should work via folder owner
       - user: user:sales_member1
         object: quotation:q001
         assertions:
-          can_edit_quotation: true # Should work via collection assignee
+          can_edit_quotation: true # Should work via folder owner
       - user: user:finance_member1
         object: quotation:q001
         assertions:
-          can_view_quotation: true # Should work via collection viewer
+          can_view_quotation: true # Should work via folder viewer
           can_edit_quotation: false # Finance team is viewer only
       # Test across multiple quotations
       - user: user:sales_head
@@ -439,7 +463,6 @@ tests:
           can_create_quotation: false
           can_edit_quotation: false
           can_delete_quotation: false
-          can_approve_quotation: false
 
   - name: Organization members without team membership have no quotation access
     check:
@@ -451,7 +474,6 @@ tests:
           can_create_quotation: false
           can_edit_quotation: false
           can_delete_quotation: false
-          can_approve_quotation: false
 
   - name: Organization admin has organization permissions but not quotation
     check:
@@ -469,10 +491,9 @@ tests:
           can_create_quotation: false
           can_edit_quotation: false
           can_delete_quotation: false
-          can_approve_quotation: false
 
   # =============================================================================
-  # BUSINESS LOGIC VALIDATION - APPROVAL GAPS
+  # BUSINESS LOGIC VALIDATION - COMPLETION STATUS
   # =============================================================================
   - name: Some quotations have not been approved into orders yet
     check:
@@ -496,21 +517,21 @@ tests:
         object: quotation:q004
         assertions:
           can_view_quotation: true # The quotation exists
-          can_approve_quotation: true # And can be approved by sales head
+          can_edit_quotation: true # And can be edited by sales head
       - user: user:sales_head
         object: quotation:q005
         assertions:
           can_view_quotation: true # The quotation exists
-          can_approve_quotation: true # And can be approved by sales head
+          can_edit_quotation: true # And can be edited by sales head
 
       # Finance team can view all quotations (approved and pending)
       - user: user:finance_head
         object: quotation:q004
         assertions:
           can_view_quotation: true # Finance can view pending quotations
-          can_approve_quotation: false # But cannot approve them
+          can_edit_quotation: false # But cannot edit them
       - user: user:finance_member1
         object: quotation:q005
         assertions:
           can_view_quotation: true # Finance can view pending quotations
-          can_approve_quotation: false # But cannot approve them
+          can_edit_quotation: false # But cannot edit them

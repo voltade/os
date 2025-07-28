@@ -1,26 +1,21 @@
 module quotation
 
-# quotations_collection = container for all quotations to manage team-level access
-type quotations_collection
-  relations
-    define owner_team: [team]  # team with read-write access to all quotations in collection
-    define viewer_team: [team]  # teams with read-only access to all quotations in collection
-    
-    # Collection-level permissions
-    define assignee: member from owner_team
-    define approver: manager from owner_team
-    define viewer: member from viewer_team or member from owner_team
-
 # quotation = pre-order price quotation
 # there are two types of quotations: purchase quotation (RFQ) and sales quotation (cRFQ)
 # this type serves as an abstraction for both types of quotations
 type quotation
   relations
-    define collection: [quotations_collection]
+    # CRUD permissions
+    define crud_folder: [folder]
+    define owner: owner from crud_folder
+    define viewer: viewer from crud_folder
 
-    # Permissions derived from collection
-    define can_view_quotation: viewer from collection or can_edit_quotation
-    define can_create_quotation: assignee from collection or can_edit_quotation
-    define can_approve_quotation: approver from collection
-    define can_edit_quotation: assignee from collection
-    define can_delete_quotation: assignee from collection or can_edit_quotation
+    # status as ABAC-based ReBAC
+    # see: https://github.com/openfga/sample-stores/blob/main/stores/abac-with-rebac/README.md
+    define is_completed: [quotation]
+
+    # permissions derived from folder
+    define can_view_quotation: viewer or can_edit_quotation
+    define can_create_quotation: owner or can_edit_quotation
+    define can_edit_quotation: owner but not owner from is_completed
+    define can_delete_quotation: owner or can_edit_quotation

@@ -5,3 +5,4 @@ contents:
   - invoice.fga
   - order.fga
   - quotation.fga
+  - shared.fga
