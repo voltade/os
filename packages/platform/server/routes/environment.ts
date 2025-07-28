@@ -13,7 +13,7 @@ interface Environment {
 
 export const route = factory
   .createApp()
-  .all('/api/v1/getparams.execute', async (c) => {
+  .post('/api/v1/getparams.execute', async (c) => {
     // const reqBody = await c.req.json();
     console.log(c.req.method, c.req.url);
     const environments = await db.select().from(environmentTable);
