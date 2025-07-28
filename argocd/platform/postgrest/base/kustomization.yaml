@@ -30,17 +30,16 @@ helmCharts:
         DB_USER:
           valueFrom:
             secretKeyRef:
-              name: cnpg-platform-admin
+              name: cnpg-authenticator
               key: username
         DB_PASSWORD:
           valueFrom:
             secretKeyRef:
-              name: cnpg-platform-admin
+              name: cnpg-authenticator
               key: password
         DB_NAME: platform
         DB_SSL: disable
         PGRST_APP_SETTINGS_JWT_EXP: 3600
-        PGRST_DB_ANON_ROLE: anon
         PGRST_DB_SCHEMAS: public
         PGRST_OPENAPI_MODE: disabled
         # https://docs.postgrest.org/en/v13/references/configuration.html#jwt-secret

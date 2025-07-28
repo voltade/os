@@ -24,37 +24,41 @@ spec:
     roles:
       - name: platform_admin
         login: true
-        superuser: false
         passwordSecret:
           name: cnpg-platform-admin
+
       - name: platform_migrator
         login: true
-        superuser: false
         connectionLimit: 1
         inRoles:
           - platform_admin
         passwordSecret:
           name: cnpg-platform-migrator
+
       - name: kratos_admin
         login: true
-        superuser: false
         passwordSecret:
           name: cnpg-kratos-admin
+
       - name: hydra_admin
         login: true
-        superuser: false
         passwordSecret:
           name: cnpg-hydra-admin
-      - name: anon
-        ensure: present
+
+      - name: authenticator
+        login: true
         inherit: false
+        inRoles:
+          - authenticated
+        passwordSecret:
+          name: cnpg-authenticator
+
       - name: authenticated
-        ensure: present
         inherit: false
+
       - name: service_role
-        ensure: present
-        inherit: true
         bypassrls: true
+
   bootstrap:
     initdb:
       database: platform
