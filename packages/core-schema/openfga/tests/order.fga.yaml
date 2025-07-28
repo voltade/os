@@ -8,52 +8,55 @@ tuple_files:
 
 tests:
   # =============================================================================
-  # COLLECTION-LEVEL PERMISSIONS
+  # FOLDER-LEVEL PERMISSIONS
   # =============================================================================
-  - name: Orders collection has correct team assignments
+  - name: Orders folder has correct team assignments
     check:
       # Sales team is the owner team
       - user: user:sales_head
-        object: orders_collection:sales
+        object: folder:orders
         assertions:
-          assignee: true
+          owner: true
+          viewer: true
       - user: user:sales_manager1
-        object: orders_collection:sales
+        object: folder:orders
         assertions:
-          assignee: true
+          owner: true
+          viewer: true
       - user: user:sales_member1
-        object: orders_collection:sales
+        object: folder:orders
         assertions:
-          assignee: true
+          owner: true
+          viewer: true
 
       # Product team (inventory) is a viewer team
       - user: user:product_head
-        object: orders_collection:sales
+        object: folder:orders
         assertions:
           viewer: true
-          assignee: false
+          owner: false
       - user: user:product_member1
-        object: orders_collection:sales
+        object: folder:orders
         assertions:
           viewer: true
-          assignee: false
+          owner: false
 
       # Finance team is a viewer team
       - user: user:finance_head
-        object: orders_collection:sales
+        object: folder:orders
         assertions:
           viewer: true
-          assignee: false
+          owner: false
       - user: user:finance_member1
-        object: orders_collection:sales
+        object: folder:orders
         assertions:
           viewer: true
-          assignee: false
+          owner: false
 
   # =============================================================================
-  # SALES TEAM PERMISSIONS (ORDER MANAGERS VIA COLLECTION)
+  # SALES TEAM PERMISSIONS (ORDER MANAGERS VIA FOLDER)
   # =============================================================================
-  - name: Sales team members have full order permissions via collection ownership
+  - name: Sales team members have full order permissions via folder ownership
     check:
       # Sales team head has all permissions on orders tied to quotations they manage
       - user: user:sales_head
@@ -88,9 +91,9 @@ tests:
           can_delete_order: true
 
   # =============================================================================
-  # INVENTORY TEAM PERMISSIONS (VIEW-ONLY ACCESS VIA COLLECTION)
+  # INVENTORY TEAM PERMISSIONS (VIEW-ONLY ACCESS VIA FOLDER)
   # =============================================================================
-  - name: Inventory team members can only view orders via collection viewer access
+  - name: Inventory team members can only view orders via folder viewer access
     check:
       # Inventory team head (Note: using product team as inventory team from core-tuples)
       - user: user:product_head
@@ -124,9 +127,9 @@ tests:
           can_delete_order: false
 
   # =============================================================================
-  # FINANCE TEAM PERMISSIONS (VIEW-ONLY ACCESS VIA COLLECTION)
+  # FINANCE TEAM PERMISSIONS (VIEW-ONLY ACCESS VIA FOLDER)
   # =============================================================================
-  - name: Finance team members can only view orders via collection viewer access
+  - name: Finance team members can only view orders via folder viewer access
     check:
       # Finance team head
       - user: user:finance_head
@@ -191,6 +194,84 @@ tests:
           can_delete_order: false
 
   # =============================================================================
+  # IS_COMPLETED FLAG TESTS (ORDER EDITING RESTRICTIONS)
+  # =============================================================================
+  - name: Completed orders cannot be edited or deleted
+    tuples:
+      # Mark order o001 as completed
+      - user: order:o001
+        relation: is_completed
+        object: order:o001
+      # Mark order o002 as completed
+      - user: order:o002
+        relation: is_completed
+        object: order:o002
+    check:
+      # Sales team can still view completed orders
+      - user: user:sales_head
+        object: order:o001
+        assertions:
+          can_view_order: true
+          can_create_order: true # This is not restricted by completion
+          can_edit_order: false # Blocked by is_completed
+          can_delete_order: true # This is not restricted by completion
+      - user: user:sales_manager1
+        object: order:o002
+        assertions:
+          can_view_order: true
+          can_create_order: true
+          can_edit_order: false
+          can_delete_order: true
+
+      # Other teams also cannot edit completed orders (and couldn't edit anyway)
+      - user: user:product_head
+        object: order:o001
+        assertions:
+          can_view_order: true # Still can view
+          can_edit_order: false # Still cannot edit (viewer only + completed)
+          can_delete_order: false
+      - user: user:finance_head
+        object: order:o002
+        assertions:
+          can_view_order: true
+          can_edit_order: false
+          can_delete_order: false
+
+  - name: Non-completed orders can still be edited by authorized teams
+    check:
+      # o003 and o004 are NOT marked as completed (no is_completed tuples)
+      # This tests the normal flow where orders can be edited
+      # Sales team can edit non-completed orders
+      - user: user:sales_head
+        object: order:o003
+        assertions:
+          can_view_order: true
+          can_create_order: true
+          can_edit_order: true # Not blocked by is_completed
+          can_delete_order: true
+      - user: user:sales_member1
+        object: order:o004
+        assertions:
+          can_view_order: true
+          can_create_order: true
+          can_edit_order: true
+          can_delete_order: true
+
+      # Other teams still have view-only access (not affected by completion status)
+      - user: user:product_member1
+        object: order:o003
+        assertions:
+          can_view_order: true
+          can_edit_order: false # Cannot edit (viewer only)
+          can_delete_order: false
+      - user: user:finance_member1
+        object: order:o004
+        assertions:
+          can_view_order: true
+          can_edit_order: false
+          can_delete_order: false
+
+  # =============================================================================
   # MULTI-QUOTATION ORDER PERMISSIONS
   # =============================================================================
   - name: Orders tied to multiple quotations inherit permissions from all quotations
@@ -212,53 +293,53 @@ tests:
           can_delete_order: true
 
   # =============================================================================
-  # COLLECTION LINKAGE VALIDATION
+  # FOLDER LINKAGE VALIDATION
   # =============================================================================
-  - name: All orders are properly linked to their collection
+  - name: All orders are properly linked to their folder
     check:
-      # Verify that orders derive permissions from their collection
+      # Verify that orders derive permissions from their folder
       - user: user:sales_head
         object: order:o001
         assertions:
-          can_edit_order: true # Should work via collection assignee
+          can_edit_order: true # Should work via folder ownership
       - user: user:sales_member1
         object: order:o002
         assertions:
-          can_edit_order: true # Should work via collection assignee
+          can_edit_order: true # Should work via folder ownership
       - user: user:product_member1
         object: order:o003
         assertions:
-          can_view_order: true # Should work via collection viewer
+          can_view_order: true # Should work via folder viewer access
           can_edit_order: false # Product team is viewer only
       - user: user:finance_member1
         object: order:o004
         assertions:
-          can_view_order: true # Should work via collection viewer
+          can_view_order: true # Should work via folder viewer access
           can_edit_order: false # Finance team is viewer only
 
   # =============================================================================
   # QUOTATION-ORDER RELATIONSHIP VALIDATION
   # =============================================================================
-  - name: Orders properly inherit permissions from their associated quotations
+  - name: Orders maintain relationships with their associated quotations
     check:
-      # Single quotation orders
+      # Single quotation orders - permissions come from folder, not quotations
       - user: user:sales_head
         object: order:o001
         assertions:
-          can_edit_order: true # Should have edit access via quotation:q001
+          can_edit_order: true # Should have edit access via folder ownership
       - user: user:sales_manager1
         object: order:o002
         assertions:
-          can_edit_order: true # Should have edit access via quotation:q002
+          can_edit_order: true # Should have edit access via folder ownership
       - user: user:sales_member1
         object: order:o003
         assertions:
-          can_edit_order: true # Should have edit access via quotation:q003
+          can_edit_order: true # Should have edit access via folder ownership
       # Multi-quotation orders
       - user: user:sales_head
         object: order:o004
         assertions:
-          can_edit_order: true # Should have edit access via quotation:q001 and q002
+          can_edit_order: true # Should have edit access via folder ownership
 
   # =============================================================================
   # TEAM HIERARCHY VALIDATION
@@ -543,3 +624,32 @@ tests:
           can_view_quotation: true # This should work if quotation tuples are included in this test
       # Note: Orders for q004 and q005 should not exist in order tuples
       # This validates the business logic that not all quotations become orders
+
+  # =============================================================================
+  # FOLDER PERMISSIONS VALIDATION
+  # =============================================================================
+  - name: Orders folder correctly manages team-based access control
+    check:
+      # Sales team owns the folder and gets full access
+      - user: user:sales_head
+        object: folder:orders
+        assertions:
+          owner: true
+          viewer: true
+      # Product and Finance teams are viewers
+      - user: user:product_head
+        object: folder:orders
+        assertions:
+          owner: false
+          viewer: true
+      - user: user:finance_head
+        object: folder:orders
+        assertions:
+          owner: false
+          viewer: true
+      # Purchase team has no access to the folder
+      - user: user:purchase_head
+        object: folder:orders
+        assertions:
+          owner: false
+          viewer: false

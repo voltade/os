@@ -1,18 +1,18 @@
 # Stores all order tuples for the OpenFGA model
 # This file is used in the order.fga.yaml test file.
 
-# Create sales orders collection with team permissions
+# Create orders folder with team permissions
 - user: team:sales
   relation: owner_team
-  object: orders_collection:sales
+  object: folder:orders
 
 - user: team:product
   relation: viewer_team
-  object: orders_collection:sales
+  object: folder:orders
 
 - user: team:finance
   relation: viewer_team
-  object: orders_collection:sales
+  object: folder:orders
 
 # Multiple orders with different quotation associations
 # q001, q002, q003 have been approved into orders
@@ -40,19 +40,19 @@
 # Note: quotation:q004 and quotation:q005 have NOT been approved into orders yet
 # This reflects real business scenarios where quotations are pending approval
 
-# Link orders to the main collection (only existing orders)
-- user: orders_collection:sales
-  relation: collection
+# Link all orders to the orders folder
+- user: folder:orders
+  relation: crud_folder
   object: order:o001
 
-- user: orders_collection:sales
-  relation: collection
+- user: folder:orders
+  relation: crud_folder
   object: order:o002
 
-- user: orders_collection:sales
-  relation: collection
+- user: folder:orders
+  relation: crud_folder
   object: order:o003
 
-- user: orders_collection:sales
-  relation: collection
+- user: folder:orders
+  relation: crud_folder
   object: order:o004
