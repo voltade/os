@@ -1,3 +1,4 @@
+import { AppShell } from '@mantine/core';
 import { createFileRoute, Outlet, redirect } from '@tanstack/react-router';
 
 import { ory } from '#src/lib/ory.ts';
@@ -20,5 +21,11 @@ export const Route = createFileRoute('/_main')({
 });
 
 function RouteComponent() {
-  return <Outlet />;
+  return (
+    <AppShell padding="md">
+      <AppShell.Main>
+        <Outlet />
+      </AppShell.Main>
+    </AppShell>
+  );
 }

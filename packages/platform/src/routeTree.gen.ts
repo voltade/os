@@ -12,7 +12,7 @@ import { Route as rootRouteImport } from './routes/__root'
 import { Route as ProfileRouteImport } from './routes/_profile'
 import { Route as MainRouteImport } from './routes/_main'
 import { Route as AuthRouteImport } from './routes/_auth'
-import { Route as IndexRouteImport } from './routes/index'
+import { Route as MainIndexRouteImport } from './routes/_main.index'
 import { Route as ProfileSettingsRouteImport } from './routes/_profile.settings'
 import { Route as MainWelcomeRouteImport } from './routes/_main.welcome'
 import { Route as AuthVerificationRouteImport } from './routes/_auth.verification'
@@ -32,10 +32,10 @@ const AuthRoute = AuthRouteImport.update({
   id: '/_auth',
   getParentRoute: () => rootRouteImport,
 } as any)
-const IndexRoute = IndexRouteImport.update({
+const MainIndexRoute = MainIndexRouteImport.update({
   id: '/',
   path: '/',
-  getParentRoute: () => rootRouteImport,
+  getParentRoute: () => MainRoute,
 } as any)
 const ProfileSettingsRoute = ProfileSettingsRouteImport.update({
   id: '/settings',
@@ -69,26 +69,25 @@ const AuthLoginRoute = AuthLoginRouteImport.update({
 } as any)
 
 export interface FileRoutesByFullPath {
-  '/': typeof IndexRoute
   '/login': typeof AuthLoginRoute
   '/recovery': typeof AuthRecoveryRoute
   '/registration': typeof AuthRegistrationRoute
   '/verification': typeof AuthVerificationRoute
   '/welcome': typeof MainWelcomeRoute
   '/settings': typeof ProfileSettingsRoute
+  '/': typeof MainIndexRoute
 }
 export interface FileRoutesByTo {
-  '/': typeof IndexRoute
   '/login': typeof AuthLoginRoute
   '/recovery': typeof AuthRecoveryRoute
   '/registration': typeof AuthRegistrationRoute
   '/verification': typeof AuthVerificationRoute
   '/welcome': typeof MainWelcomeRoute
   '/settings': typeof ProfileSettingsRoute
+  '/': typeof MainIndexRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
-  '/': typeof IndexRoute
   '/_auth': typeof AuthRouteWithChildren
   '/_main': typeof MainRouteWithChildren
   '/_profile': typeof ProfileRouteWithChildren
@@ -98,29 +97,29 @@ export interface FileRoutesById {
   '/_auth/verification': typeof AuthVerificationRoute
   '/_main/welcome': typeof MainWelcomeRoute
   '/_profile/settings': typeof ProfileSettingsRoute
+  '/_main/': typeof MainIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
   fullPaths:
-    | '/'
     | '/login'
     | '/recovery'
     | '/registration'
     | '/verification'
     | '/welcome'
     | '/settings'
+    | '/'
   fileRoutesByTo: FileRoutesByTo
   to:
-    | '/'
     | '/login'
     | '/recovery'
     | '/registration'
     | '/verification'
     | '/welcome'
     | '/settings'
+    | '/'
   id:
     | '__root__'
-    | '/'
     | '/_auth'
     | '/_main'
     | '/_profile'
@@ -130,10 +129,10 @@ export interface FileRouteTypes {
     | '/_auth/verification'
     | '/_main/welcome'
     | '/_profile/settings'
+    | '/_main/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
-  IndexRoute: typeof IndexRoute
   AuthRoute: typeof AuthRouteWithChildren
   MainRoute: typeof MainRouteWithChildren
   ProfileRoute: typeof ProfileRouteWithChildren
@@ -162,12 +161,12 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/': {
-      id: '/'
+    '/_main/': {
+      id: '/_main/'
       path: '/'
       fullPath: '/'
-      preLoaderRoute: typeof IndexRouteImport
-      parentRoute: typeof rootRouteImport
+      preLoaderRoute: typeof MainIndexRouteImport
+      parentRoute: typeof MainRoute
     }
     '/_profile/settings': {
       id: '/_profile/settings'
@@ -232,10 +231,12 @@ const AuthRouteWithChildren = AuthRoute._addFileChildren(AuthRouteChildren)
 
 interface MainRouteChildren {
   MainWelcomeRoute: typeof MainWelcomeRoute
+  MainIndexRoute: typeof MainIndexRoute
 }
 
 const MainRouteChildren: MainRouteChildren = {
   MainWelcomeRoute: MainWelcomeRoute,
+  MainIndexRoute: MainIndexRoute,
 }
 
 const MainRouteWithChildren = MainRoute._addFileChildren(MainRouteChildren)
@@ -252,7 +253,6 @@ const ProfileRouteWithChildren =
   ProfileRoute._addFileChildren(ProfileRouteChildren)
 
 const rootRouteChildren: RootRouteChildren = {
-  IndexRoute: IndexRoute,
   AuthRoute: AuthRouteWithChildren,
   MainRoute: MainRouteWithChildren,
   ProfileRoute: ProfileRouteWithChildren,

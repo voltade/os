@@ -3,7 +3,7 @@ import { createFileRoute } from '@tanstack/react-router';
 import { zodValidator } from '@tanstack/zod-adapter';
 import { z } from 'zod';
 
-import { ory } from '#src/lib/ory.ts';
+import { config, ory } from '#src/lib/ory.ts';
 
 const authSearchSchema = z.object({
   flow: z.string().optional(),
@@ -37,15 +37,5 @@ function RouteComponent() {
     return null;
   }
 
-  return (
-    <Login
-      flow={flow}
-      config={{
-        sdk: {
-          url: import.meta.env.VITE_KRATOS_HOST,
-        },
-        project: { name: 'Voltade OS' },
-      }}
-    />
-  );
+  return <Login flow={flow} config={config} />;
 }

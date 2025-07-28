@@ -4,7 +4,7 @@ import { Settings } from '@ory/elements-react/theme';
 import { createFileRoute } from '@tanstack/react-router';
 import { useEffect, useState } from 'react';
 
-import { ory } from '#src/lib/ory.ts';
+import { config, ory } from '#src/lib/ory.ts';
 
 export const Route = createFileRoute('/_profile/settings')({
   component: RouteComponent,
@@ -24,15 +24,7 @@ function RouteComponent() {
 
   return (
     <Stack gap="lg">
-      <Settings
-        flow={flow}
-        config={{
-          sdk: {
-            url: import.meta.env.VITE_KRATOS_HOST,
-          },
-          project: { name: 'Voltade OS' },
-        }}
-      />
+      <Settings flow={flow} config={config} />
     </Stack>
   );
 }
