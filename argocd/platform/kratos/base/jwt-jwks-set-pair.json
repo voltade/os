@@ -1,0 +1,14 @@
+{
+  "keys": [
+    {
+      "kty": "EC",
+      "d": "6AHIxUwGjUx9P8TcLN3Ve2qDRJiqsQDVwOx5L6Tr9Nu5WfimBkVR9rk8OVe98ERP",
+      "use": "sig",
+      "crv": "P-384",
+      "kid": "1vyXzew67U3SqlurcufEQDR9j-uiTNech1ozQ0NHot4",
+      "x": "v2Iaw7X6xNR5RV9i7xe54prBN_ZjXocbH141n88UqHijA0liQ8UitBUE1IrTeaww",
+      "y": "2a6P0YimyPER7jpPsOQnLKXbfekVogi9bi7EzMs4-NMXm0ASar7xx8lQNfnalc3m",
+      "alg": "ES256"
+    }
+  ]
+}

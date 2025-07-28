@@ -57,7 +57,21 @@ helmCharts:
 
           session:
             whoami:
-              required_aal: aal1
+              # https://www.ory.sh/docs/kratos/self-hosted/mfa#enforce-mfa
+              # required_aal: aal1
+              tokenizer:
+                # https://www.ory.sh/docs/identities/session-to-jwt-cors#json-web-token-templates
+                templates:
+                  postgrest:
+                    # https://www.ory.sh/docs/identities/session-to-jwt-cors#json-web-token-signing-keys
+                    # Example JWK. TODO: replace to generated JWK for production.
+                    # See: jwt-jwks-set-pair.json
+                    jwks_url: base64://ewogICJrZXlzIjogWwogICAgewogICAgICAia3R5IjogIkVDIiwKICAgICAgImQiOiAiNkFISXhVd0dqVXg5UDhUY0xOM1ZlMnFEUkppcXNRRFZ3T3g1TDZUcjlOdTVXZmltQmtWUjlyazhPVmU5OEVSUCIsCiAgICAgICJ1c2UiOiAic2lnIiwKICAgICAgImNydiI6ICJQLTM4NCIsCiAgICAgICJraWQiOiAiMXZ5WHpldzY3VTNTcWx1cmN1ZkVRRFI5ai11aVROZWNoMW96UTBOSG90NCIsCiAgICAgICJ4IjogInYySWF3N1g2eE5SNVJWOWk3eGU1NHByQk5fWmpYb2NiSDE0MW44OFVxSGlqQTBsaVE4VWl0QlVFMUlyVGVhd3ciLAogICAgICAieSI6ICIyYTZQMFlpbXlQRVI3anBQc09RbkxLWGJmZWtWb2dpOWJpN0V6TXM0LU5NWG0wQVNhcjd4eDhsUU5mbmFsYzNtIiwKICAgICAgImFsZyI6ICJFUzI1NiIKICAgIH0KICBdCn0K
+
+                    # https://www.ory.sh/docs/identities/session-to-jwt-cors#json-web-token-claim-mapper
+                    # See: jwt-claim-mapper.jsonnet
+                    # The `identity.metadata_public.orgs` is set to the identity by the after registration hook (/api/kratos/hooks/registration), and the `aud` claim can be used by PostgREST: https://docs.postgrest.org/en/v13/references/auth.html#jwt-aud-validation
+                    claims_mapper_url: base64://bG9jYWwgY2xhaW1zID0gc3RkLmV4dFZhcignY2xhaW1zJyk7CmxvY2FsIHNlc3Npb24gPSBzdGQuZXh0VmFyKCdzZXNzaW9uJyk7Cgp7CiAgY2xhaW1zOiBjbGFpbXMgewogICAgYXVkOiBzZXNzaW9uLmlkZW50aXR5Lm1ldGFkYXRhX3B1YmxpYy5vcmdzCiAgfQp9Cg==
 
           selfservice:
             default_browser_return_url: http://127.0.0.1.nip.io/settings
@@ -114,17 +128,17 @@ helmCharts:
                 ui_url: http://127.0.0.1.nip.io/login
                 lifespan: 1h
                 style: unified
-                after:
-                  hooks:
-                    - hook: web_hook
-                      config:
-                        url: http://socat:5173/api/kratos/hooks/login
-                        method: POST
-                        # https://www.ory.sh/docs/guides/integrate-with-ory-cloud-through-webhooks#jsonnet-templating
-                        # function(ctx) { flow: ctx.flow, identity: ctx.identity }
-                        body: base64://ZnVuY3Rpb24oY3R4KSB7IGZsb3c6IGN0eC5mbG93LCBpZGVudGl0eTogY3R4LmlkZW50aXR5IH0=
-                        response:
-                          parse: true
+                # after:
+                #   hooks:
+                #     - hook: web_hook
+                #       config:
+                #         url: http://socat:5173/api/kratos/hooks/login
+                #         method: POST
+                #         # https://www.ory.sh/docs/guides/integrate-with-ory-cloud-through-webhooks#jsonnet-templating
+                #         # function(ctx) { flow: ctx.flow, identity: ctx.identity }
+                #         body: base64://ZnVuY3Rpb24oY3R4KSB7IGZsb3c6IGN0eC5mbG93LCBpZGVudGl0eTogY3R4LmlkZW50aXR5IH0=
+                #         response:
+                #           parse: true
               registration:
                 ui_url: http://127.0.0.1.nip.io/registration
                 lifespan: 1h
@@ -135,13 +149,23 @@ helmCharts:
                       - hook: session
                       - hook: web_hook
                         config:
-                          url: http://socat:5173/api/kratos/hooks/registration
+                          url: http://socat:5173/api/kratos/hooks/pre-registration
                           method: POST
                           # https://www.ory.sh/docs/guides/integrate-with-ory-cloud-through-webhooks#jsonnet-templating
                           # function(ctx) { flow: ctx.flow, identity: ctx.identity }
                           body: base64://ZnVuY3Rpb24oY3R4KSB7IGZsb3c6IGN0eC5mbG93LCBpZGVudGl0eTogY3R4LmlkZW50aXR5IH0=
                           response:
                             parse: true
+                      - hook: web_hook
+                        config:
+                          url: http://socat:5173/api/kratos/hooks/post-registration
+                          method: POST
+                          # https://www.ory.sh/docs/guides/integrate-with-ory-cloud-through-webhooks#jsonnet-templating
+                          # function(ctx) { flow: ctx.flow, identity: ctx.identity }
+                          body: base64://ZnVuY3Rpb24oY3R4KSB7IGZsb3c6IGN0eC5mbG93LCBpZGVudGl0eTogY3R4LmlkZW50aXR5IH0=
+                          response:
+                            parse: false
+
                   oidc:
                     hooks:
                       - hook: session
