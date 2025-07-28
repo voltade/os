@@ -1,7 +1,22 @@
 import { Center, Container } from '@mantine/core';
-import { createFileRoute, Outlet } from '@tanstack/react-router';
+import { createFileRoute, Outlet, redirect } from '@tanstack/react-router';
+
+import { ory } from '#src/lib/ory.ts';
 
 export const Route = createFileRoute('/_profile')({
+  beforeLoad: async ({ location }) => {
+    try {
+      await ory.toSession();
+    } catch (error) {
+      console.error(error);
+      throw redirect({
+        to: '/login',
+        search: {
+          redirect: location.href,
+        },
+      });
+    }
+  },
   component: RouteComponent,
 });
 

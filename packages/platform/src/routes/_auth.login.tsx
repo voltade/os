@@ -7,11 +7,15 @@ import { config, ory } from '#src/lib/ory.ts';
 
 const authSearchSchema = z.object({
   flow: z.string().optional(),
+  redirect: z.string().optional(),
 });
 
 export const Route = createFileRoute('/_auth/login')({
   validateSearch: zodValidator(authSearchSchema),
-  loaderDeps: ({ search: { flow } }) => ({ flowId: flow }),
+  loaderDeps: ({ search: { flow, redirect } }) => ({
+    flowId: flow,
+    returnTo: redirect,
+  }),
   loader: async ({ deps: { flowId } }) => {
     const browserUrl = `${import.meta.env.VITE_KRATOS_HOST}/self-service/login/browser`;
     if (!flowId) {
