@@ -40,6 +40,16 @@ spec:
         superuser: false
         passwordSecret:
           name: cnpg-kratos-admin
+      - name: anon
+        ensure: present
+        inherit: false
+      - name: authenticated
+        ensure: present
+        inherit: false
+      - name: service_role
+        ensure: present
+        inherit: true
+        bypassrls: true
   bootstrap:
     initdb:
       database: platform
