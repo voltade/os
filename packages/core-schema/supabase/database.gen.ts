@@ -74,6 +74,10 @@ export type Database = {
       }
     }
     Functions: {
+      allow: {
+        Args: { p_relation: string; p_object: string }
+        Returns: boolean
+      }
       dummy: {
         Args: Record<PropertyKey, never>
         Returns: string
