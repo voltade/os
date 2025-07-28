@@ -47,16 +47,8 @@ postgrest:
     PGRST_DB_ANON_ROLE: anon
     PGRST_DB_SCHEMAS: public,storage
     PGRST_OPENAPI_MODE: disabled
-    PGRST_JWT_SECRET:
-      valueFrom:
-        secretKeyRef:
-          name: platform-envs
-          key: jwt-secret
-    PGRST_APP_SETTINGS_JWT_SECRET:
-      valueFrom:
-        secretKeyRef:
-          name: platform-envs
-          key: jwt-secret
+    PGRST_JWT_SECRET: super-secret-jwt-token-with-at-least-32-characters-long
+    PGRST_APP_SETTINGS_JWT_SECRET: super-secret-jwt-token-with-at-least-32-characters-long
     PGRST_JWT_AUD: *jwt_aud
 
 # Metadata API configuration
@@ -121,11 +113,7 @@ supabase-studio:
       port: 3000
     initialDelaySeconds: 30
   environment:
-    AUTH_JWT_SECRET:
-      valueFrom:
-        secretKeyRef:
-          name: platform-envs
-          key: jwt-secret
+    AUTH_JWT_SECRET: super-secret-jwt-token-with-at-least-32-characters-long
     SUPABASE_ANON_KEY: *anon_key
     SUPABASE_SERVICE_KEY: *service_key
     STUDIO_PORT: 3000
@@ -152,11 +140,7 @@ supabase-storage:
       cpu: 100m
   environment:
     NODE_ENV: "production"
-    AUTH_JWT_SECRET:
-      valueFrom:
-        secretKeyRef:
-          name: platform-envs
-          key: jwt-secret
+    AUTH_JWT_SECRET: super-secret-jwt-token-with-at-least-32-characters-long
     DB_DRIVER: postgres
     DB_HOST: cnpg-cluster-rw
     DB_PORT: 5432
@@ -214,12 +198,10 @@ deployment:
   # For more information checkout: https://kubernetes.io/docs/concepts/overview/working-with-objects/labels/
   podLabels: {}
 
-  podSecurityContext:
-    {}
+  podSecurityContext: {}
     # fsGroup: 2000
 
-  securityContext:
-    {}
+  securityContext: {}
     # capabilities:
     #   drop:
     #   - ALL
@@ -234,8 +216,7 @@ deployment:
     # This sets the ports more information can be found here: https://kubernetes.io/docs/concepts/services-networking/service/#field-spec-ports
     port: 80
 
-  resources:
-    {}
+  resources: {}
     # We usually recommend not to specify default resources and to leave this as a conscious
     # choice for the user. This also increases chances charts run on environments with little
     # resources, such as Minikube. If you do want to specify resources, uncomment the following
