@@ -60,11 +60,12 @@
   "scripts": {
     "db:plv8ify": "bun scripts/db-plv8ify.ts",
     "db:current": "bun run --env-file=./.env scripts/db-current.ts",
+    "db:generate": "source ./.env && drizzle-kit generate",
+    "db:migrate": "source ./.env && drizzle-kit migrate",
     "db:push": "source ./.env && drizzle-kit push",
     "db:seed": "bun run --env-file=./.env scripts/db-seed.ts",
-    "db:nuke": "bun run --env-fil=./.env scripts/db-nuke.ts",
     "db:disable-rls": "bun run --env-file=./.env scripts/db-disable-rls.ts",
-    "db:reset": "bun run db:push && bun run db:plv8ify && bun run db:current && bun run db:seed",
+    "db:reset": "bun run --env-file=./.env scripts/db-openfga.ts && bun db:generate && bun db:migrate && bun db:plv8ify && bun db:current && bun db:seed && rm -r ./drizzle",
     "build": "tsc --noEmit",
     "prepublishOnly": "bun run build"
   },

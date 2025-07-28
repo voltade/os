@@ -1,9 +1,17 @@
-import { foreignKey, integer } from 'drizzle-orm/pg-core';
+import { type SQL, sql } from 'drizzle-orm';
+import { foreignKey, integer, pgPolicy } from 'drizzle-orm/pg-core';
 
 import { productTable } from '../../product/tables/product.ts';
 import { DEFAULT_COLUMNS, priceCol } from '../../utils.ts';
 import { purchaseSchema } from '../schema.ts';
 import { purchaseRequisitionTable } from './purchase_requisition.ts';
+
+/**
+ * Check expression for RLS policies.
+ */
+function checkExpression(relation: string): SQL<boolean> {
+  return sql<boolean>`exists(select 1 from ${purchaseRequisitionTable} req where purchase_requisition_id = req.id and allow('${sql.raw(relation)}', 'quotation:' || req.reference_id))`;
+}
 
 export const purchaseRequisitionItemTable = purchaseSchema.table(
   'requisition_item',
@@ -24,6 +32,31 @@ export const purchaseRequisitionItemTable = purchaseSchema.table(
       columns: [table.product_id],
       foreignColumns: [productTable.id],
       name: 'fk_purchase_requisition_item_item',
+    }),
+
+    /**
+     * RLS policies for the purchase requisition item table.
+     * @see {@link openfga/quotation.fga}
+     */
+    pgPolicy('purchase_requisition_item_select_policy', {
+      as: 'permissive',
+      for: 'select',
+      using: checkExpression('can_view_quotation'),
+    }),
+    pgPolicy('purchase_requisition_item_insert_policy', {
+      as: 'permissive',
+      for: 'insert',
+      withCheck: checkExpression('can_create_quotation'),
+    }),
+    pgPolicy('purchase_requisition_item_update_policy', {
+      as: 'permissive',
+      for: 'update',
+      using: checkExpression('can_edit_quotation'),
+    }),
+    pgPolicy('purchase_requisition_item_delete_policy', {
+      as: 'permissive',
+      for: 'delete',
+      using: checkExpression('can_delete_quotation'),
     }),
   ],
 );

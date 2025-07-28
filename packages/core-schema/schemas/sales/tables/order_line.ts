@@ -1,16 +1,30 @@
-import { foreignKey, integer, numeric, text } from 'drizzle-orm/pg-core';
+import { relations, type SQL, sql } from 'drizzle-orm';
+import {
+  foreignKey,
+  integer,
+  numeric,
+  pgPolicy,
+  text,
+} from 'drizzle-orm/pg-core';
 
 import { comboProductTable } from '../../product/tables/combo_product.ts';
 import { productTable } from '../../product/tables/product.ts';
-import { id } from '../../utils.ts';
+import { DEFAULT_COLUMNS } from '../../utils.ts';
 import { orderLineType } from '../enums.ts';
 import { salesSchema } from '../schema.ts';
 import { orderTable } from './order.ts';
 
+/**
+ * Check expression for RLS policies.
+ */
+function checkExpression(relation: string): SQL<boolean> {
+  return sql<boolean>`exists(select 1 from ${orderTable} so where order_id = so.id and allow('${sql.raw(relation)}', 'order:' || so.reference_id))`;
+}
+
 export const orderLineTable = salesSchema.table(
   'order_line',
   {
-    id,
+    ...DEFAULT_COLUMNS,
     order_id: integer().notNull(),
     parent_order_line_id: integer(), // For nested lines, such as for products in a Configurable Bundle.
     sequence: integer().notNull(),
@@ -50,5 +64,37 @@ export const orderLineTable = salesSchema.table(
       columns: [table.combo_product_id],
       foreignColumns: [comboProductTable.id],
     }),
+
+    /**
+     * RLS policies for the order line table.
+     * @see {@link openfga/order.fga}
+     */
+    pgPolicy('order_line_select_policy', {
+      as: 'permissive',
+      for: 'select',
+      using: checkExpression('can_view_order'),
+    }),
+    pgPolicy('order_line_insert_policy', {
+      as: 'permissive',
+      for: 'insert',
+      withCheck: checkExpression('can_create_order'),
+    }),
+    pgPolicy('order_line_update_policy', {
+      as: 'permissive',
+      for: 'update',
+      using: checkExpression('can_edit_order'),
+    }),
+    pgPolicy('order_line_delete_policy', {
+      as: 'permissive',
+      for: 'delete',
+      using: checkExpression('can_delete_order'),
+    }),
   ],
 );
+
+export const orderLineRelations = relations(orderLineTable, ({ one }) => ({
+  order: one(orderTable, {
+    fields: [orderLineTable.order_id],
+    references: [orderTable.id],
+  }),
+}));

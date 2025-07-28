@@ -1,10 +1,11 @@
-import { relations, sql } from 'drizzle-orm';
+import { isNotNull, relations, type SQL, sql } from 'drizzle-orm';
 import {
   foreignKey,
   index,
   integer,
   jsonb,
   numeric,
+  pgPolicy,
   uniqueIndex,
 } from 'drizzle-orm/pg-core';
 
@@ -15,8 +16,18 @@ import {
   StockOperationLineStatus,
   stockOperationLineStatusEnum,
 } from '../enums.ts';
-import { stockOperationLineTable } from './stock_operation_line.ts';
-import { stockUnitTable } from './stock_unit.ts';
+import {
+  stockOperationLineTable,
+  stockOperationTable,
+  stockUnitTable,
+} from '../index.ts';
+
+/**
+ * Check expression for RLS policies.
+ */
+function checkExpression(relation: string): SQL<boolean> {
+  return sql<boolean>`exists(select 1 from ${stockOperationLineTable} sol left join ${stockOperationTable} so on sol.stock_operation_id = so.id where stock_operation_line_id = sol.id and allow('${sql.raw(relation)}', 'order:' || so.reference_id))`;
+}
 
 /**
  * This table represents an **individual stock unit** within a stock operation line,
@@ -112,6 +123,7 @@ export const stockOperationLineItemTable = stockSchema.table(
       .onUpdate('cascade')
       .onDelete('restrict'),
 
+    // Stock operation line item indexes
     index('stock_operation_line_item_line_idx').on(
       table.stock_operation_line_id,
     ),
@@ -122,7 +134,32 @@ export const stockOperationLineItemTable = stockSchema.table(
     ),
     uniqueIndex('stock_operation_line_item_reference_idx')
       .on(table.reference_id)
-      .where(sql`reference_id IS NOT NULL`),
+      .where(isNotNull(table.reference_id)),
+
+    /**
+     * RLS policies for the stock operation line item table.
+     * @see {@link openfga/order.fga}
+     */
+    pgPolicy('stock_operation_line_item_select_policy', {
+      as: 'permissive',
+      for: 'select',
+      using: checkExpression('can_view_order'),
+    }),
+    pgPolicy('stock_operation_line_item_insert_policy', {
+      as: 'permissive',
+      for: 'insert',
+      withCheck: checkExpression('can_create_order'),
+    }),
+    pgPolicy('stock_operation_line_item_update_policy', {
+      as: 'permissive',
+      for: 'update',
+      using: checkExpression('can_edit_order'),
+    }),
+    pgPolicy('stock_operation_line_item_delete_policy', {
+      as: 'permissive',
+      for: 'delete',
+      using: checkExpression('can_delete_order'),
+    }),
   ],
 );
 

@@ -1,10 +1,11 @@
-import { relations, sql } from 'drizzle-orm';
+import { relations, type SQL, sql } from 'drizzle-orm';
 import {
   foreignKey,
   index,
   integer,
   jsonb,
   numeric,
+  pgPolicy,
   uniqueIndex,
 } from 'drizzle-orm/pg-core';
 
@@ -17,6 +18,13 @@ import {
   stockOperationLineStatusEnum,
 } from '../enums.ts';
 import { stockOperationTable } from './stock_operation.ts';
+
+/**
+ * Check expression for RLS policies.
+ */
+function checkExpression(relation: string): SQL<boolean> {
+  return sql<boolean>`exists(select 1 from ${stockOperationTable} so where stock_operation_id = so.id and allow('${sql.raw(relation)}', 'order:' || so.reference_id))`;
+}
 
 /**
  * This table represents a **single line** within a stock operation, tracking the movement
@@ -112,6 +120,7 @@ export const stockOperationLineTable = stockSchema.table(
       .onUpdate('cascade')
       .onDelete('restrict'),
 
+    // Stock operation line indexes
     index('stock_operation_line_stock_operation_idx').on(
       table.stock_operation_id,
     ),
@@ -123,6 +132,31 @@ export const stockOperationLineTable = stockSchema.table(
     uniqueIndex('stock_operation_line_reference_idx')
       .on(table.reference_id)
       .where(sql`reference_id IS NOT NULL`),
+
+    /**
+     * RLS policies for the stock operation line table.
+     * @see {@link openfga/order.fga}
+     */
+    pgPolicy('stock_operation_line_select_policy', {
+      as: 'permissive',
+      for: 'select',
+      using: checkExpression('can_view_order'),
+    }),
+    pgPolicy('stock_operation_line_insert_policy', {
+      as: 'permissive',
+      for: 'insert',
+      withCheck: checkExpression('can_create_order'),
+    }),
+    pgPolicy('stock_operation_line_update_policy', {
+      as: 'permissive',
+      for: 'update',
+      using: checkExpression('can_edit_order'),
+    }),
+    pgPolicy('stock_operation_line_delete_policy', {
+      as: 'permissive',
+      for: 'delete',
+      using: checkExpression('can_delete_order'),
+    }),
   ],
 );
 

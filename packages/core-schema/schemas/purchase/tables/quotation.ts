@@ -1,4 +1,11 @@
-import { foreignKey, integer, text, varchar } from 'drizzle-orm/pg-core';
+import { type SQL, sql } from 'drizzle-orm';
+import {
+  foreignKey,
+  integer,
+  pgPolicy,
+  text,
+  varchar,
+} from 'drizzle-orm/pg-core';
 
 import { partnerTable } from '../../resource/tables/partner.ts';
 import { userTable } from '../../resource/tables/user.ts';
@@ -6,12 +13,20 @@ import { DEFAULT_COLUMNS, priceCol, timestampCol } from '../../utils.ts';
 import { purchaseQuotationType } from '../enums.ts';
 import { purchaseSchema } from '../schema.ts';
 
+/**
+ * Check expression for RLS policies.
+ */
+function checkExpression(relation: string): SQL<boolean> {
+  return sql<boolean>`allow('${sql.raw(relation)}', 'quotation:' || reference_id)`;
+}
+
 export const quotationTable = purchaseSchema.table(
   'quotation',
   {
     ...DEFAULT_COLUMNS,
     reference_id: varchar().notNull().unique().default('PLACE_HOLDER'),
-    supplier_id: integer('supplier_id').notNull(),
+
+    supplier_id: integer().notNull(),
     quotation_type: purchaseQuotationType().notNull(),
     total_value: priceCol('total_value').notNull(),
     notes: text(),
@@ -34,6 +49,31 @@ export const quotationTable = purchaseSchema.table(
       columns: [table.updated_by],
       foreignColumns: [userTable.id],
       name: 'fk_quotation_updated_by',
+    }),
+
+    /**
+     * RLS policies for the purchase quotation table.
+     * @see {@link openfga/quotation.fga}
+     */
+    pgPolicy('purchase_quotation_select_policy', {
+      as: 'permissive',
+      for: 'select',
+      using: checkExpression('can_view_quotation'),
+    }),
+    pgPolicy('purchase_quotation_insert_policy', {
+      as: 'permissive',
+      for: 'insert',
+      withCheck: checkExpression('can_create_quotation'),
+    }),
+    pgPolicy('purchase_quotation_update_policy', {
+      as: 'permissive',
+      for: 'update',
+      using: checkExpression('can_edit_quotation'),
+    }),
+    pgPolicy('purchase_quotation_delete_policy', {
+      as: 'permissive',
+      for: 'delete',
+      using: checkExpression('can_delete_quotation'),
     }),
   ],
 );

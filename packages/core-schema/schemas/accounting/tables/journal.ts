@@ -1,3 +1,4 @@
+import { relations } from 'drizzle-orm';
 import { foreignKey, integer, text } from 'drizzle-orm/pg-core';
 
 import { DEFAULT_COLUMNS } from '../../utils.ts';
@@ -24,3 +25,10 @@ export const journalTable = accountingSchema
     ],
   )
   .enableRLS();
+
+export const journalRelations = relations(journalTable, ({ one }) => ({
+  defaultAccount: one(accountTable, {
+    fields: [journalTable.default_account_id],
+    references: [accountTable.id],
+  }),
+}));

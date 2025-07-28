@@ -2918,6 +2918,34 @@ function uniqueIndex(name) {
   return new IndexBuilderOn(true, name);
 }
 
+// ../../node_modules/drizzle-orm/pg-core/policies.js
+class PgPolicy {
+  constructor(name, config) {
+    this.name = name;
+    if (config) {
+      this.as = config.as;
+      this.for = config.for;
+      this.to = config.to;
+      this.using = config.using;
+      this.withCheck = config.withCheck;
+    }
+  }
+  static [entityKind] = "PgPolicy";
+  as;
+  for;
+  to;
+  using;
+  withCheck;
+  _linkedTable;
+  link(table) {
+    this._linkedTable = table;
+    return this;
+  }
+}
+function pgPolicy(name, config) {
+  return new PgPolicy(name, config);
+}
+
 // ../../node_modules/drizzle-orm/pg-core/view-common.js
 var PgViewConfig = Symbol.for("drizzle:PgViewConfig");
 
@@ -4166,6 +4194,9 @@ function pgMaterializedViewWithSchema(name, selection, schema) {
   }
   return new MaterializedViewBuilder(name, schema);
 }
+function pgView(name, columns) {
+  return pgViewWithSchema(name, columns, undefined);
+}
 
 // ../../node_modules/drizzle-orm/pg-core/utils.js
 function extractUsedTable(table) {
@@ -5116,6 +5147,9 @@ var uomTable = resourceSchema.table("uom", {
 }, (table) => [index("uom_code_idx").on(table.code)]);
 
 // schemas/product/tables/product_template.ts
+function checkExpression(relation) {
+  return sql`allow('${sql.raw(relation)}', 'inventory:' || cast(id as varchar))`;
+}
 var productTemplateTable = productSchema.table("template", {
   ...DEFAULT_COLUMNS,
   name: text().notNull(),
@@ -5138,7 +5172,27 @@ var productTemplateTable = productSchema.table("template", {
     foreignColumns: [uomTable.id]
   }),
   index("product_template_type_idx").on(table.type),
-  index("product_template_category_idx").on(table.category)
+  index("product_template_category_idx").on(table.category),
+  pgPolicy("product_template_select_policy", {
+    as: "permissive",
+    for: "select",
+    using: checkExpression("can_view_products")
+  }),
+  pgPolicy("product_template_insert_policy", {
+    as: "permissive",
+    for: "insert",
+    withCheck: checkExpression("can_create_products")
+  }),
+  pgPolicy("product_template_update_policy", {
+    as: "permissive",
+    for: "update",
+    using: checkExpression("can_edit_products")
+  }),
+  pgPolicy("product_template_delete_policy", {
+    as: "permissive",
+    for: "delete",
+    using: checkExpression("can_delete_products")
+  })
 ]);
 var productTemplateRelations = relations(productTemplateTable, ({ one }) => ({
   uom: one(uomTable, {
@@ -5148,6 +5202,9 @@ var productTemplateRelations = relations(productTemplateTable, ({ one }) => ({
 }));
 
 // schemas/product/tables/product.ts
+function checkExpression2(relation) {
+  return sql`exists(select 1 from ${productTemplateTable} pt where template_id = pt.id and allow('${sql.raw(relation)}', 'inventory:' || cast(pt.id as varchar)))`;
+}
 var productTable = productSchema.table("product", {
   ...DEFAULT_COLUMNS,
   template_id: integer().notNull(),
@@ -5171,7 +5228,27 @@ var productTable = productSchema.table("product", {
   uniqueIndex("product_gtin_idx").on(table.gtin).where(sql`gtin IS NOT NULL`),
   uniqueIndex("product_isbn_idx").on(table.isbn).where(sql`isbn IS NOT NULL`),
   uniqueIndex("product_mpn_idx").on(table.mpn).where(sql`mpn IS NOT NULL`),
-  uniqueIndex("product_asin_idx").on(table.asin).where(sql`asin IS NOT NULL`)
+  uniqueIndex("product_asin_idx").on(table.asin).where(sql`asin IS NOT NULL`),
+  pgPolicy("product_select_policy", {
+    as: "permissive",
+    for: "select",
+    using: checkExpression2("can_view_products")
+  }),
+  pgPolicy("product_insert_policy", {
+    as: "permissive",
+    for: "insert",
+    withCheck: checkExpression2("can_create_products")
+  }),
+  pgPolicy("product_update_policy", {
+    as: "permissive",
+    for: "update",
+    using: checkExpression2("can_edit_products")
+  }),
+  pgPolicy("product_delete_policy", {
+    as: "permissive",
+    for: "delete",
+    using: checkExpression2("can_delete_products")
+  })
 ]);
 var productRelations = relations(productTable, ({ one }) => ({
   template: one(productTemplateTable, {
@@ -5182,7 +5259,124 @@ var productRelations = relations(productTable, ({ one }) => ({
 
 // schemas/schema.ts
 var stockSchema = pgSchema("stock");
-
+// schemas/product/tables/combo.ts
+var comboTable = productSchema.table("combo", {
+  ...DEFAULT_COLUMNS,
+  name: text().notNull()
+});
+// schemas/product/tables/combo_product.ts
+function checkExpression3(relation) {
+  return sql`exists(select 1 from ${productTable} p left join ${productTemplateTable} pt on p.template_id = pt.id where product_id = p.id and allow('${sql.raw(relation)}', 'inventory:' || cast(pt.id as varchar)))`;
+}
+var comboProductTable = productSchema.table("combo_product", {
+  ...DEFAULT_COLUMNS,
+  combo_id: integer().notNull(),
+  product_id: integer().notNull(),
+  extra_price: priceCol("extra_price").default("0").notNull()
+}, (table) => [
+  foreignKey({
+    name: "combo_product_combo_id_fkey",
+    columns: [table.combo_id],
+    foreignColumns: [comboTable.id]
+  }),
+  foreignKey({
+    name: "combo_product_product_id_fkey",
+    columns: [table.product_id],
+    foreignColumns: [productTable.id]
+  }),
+  pgPolicy("combo_product_select_policy", {
+    as: "permissive",
+    for: "select",
+    using: checkExpression3("can_view_products")
+  }),
+  pgPolicy("combo_product_insert_policy", {
+    as: "permissive",
+    for: "insert",
+    withCheck: checkExpression3("can_create_products")
+  }),
+  pgPolicy("combo_product_update_policy", {
+    as: "permissive",
+    for: "update",
+    using: checkExpression3("can_edit_products")
+  }),
+  pgPolicy("combo_product_delete_policy", {
+    as: "permissive",
+    for: "delete",
+    using: checkExpression3("can_delete_products")
+  })
+]);
+var comboItemRelations = relations(comboProductTable, ({ one }) => ({
+  combo: one(comboTable, {
+    fields: [comboProductTable.combo_id],
+    references: [comboTable.id]
+  }),
+  product: one(productTable, {
+    fields: [comboProductTable.product_id],
+    references: [productTable.id]
+  })
+}));
+// schemas/product/tables/template_combo.ts
+function checkExpression4(relation) {
+  return sql`exists(select 1 from ${productTemplateTable} pt where template_id = pt.id and allow('${sql.raw(relation)}', 'inventory:' || cast(pt.id as varchar)))`;
+}
+var templateComboTable = productSchema.table("template_combo", {
+  ...DEFAULT_COLUMNS,
+  combo_id: integer().notNull(),
+  template_id: integer().notNull()
+}, (table) => [
+  foreignKey({
+    name: "template_combo_combo_id_fkey",
+    columns: [table.combo_id],
+    foreignColumns: [comboTable.id]
+  }),
+  foreignKey({
+    name: "template_combo_template_id_fkey",
+    columns: [table.template_id],
+    foreignColumns: [productTemplateTable.id]
+  }),
+  pgPolicy("template_combo_select_policy", {
+    as: "permissive",
+    for: "select",
+    using: checkExpression4("can_view_products")
+  }),
+  pgPolicy("template_combo_insert_policy", {
+    as: "permissive",
+    for: "insert",
+    withCheck: checkExpression4("can_create_products")
+  }),
+  pgPolicy("template_combo_update_policy", {
+    as: "permissive",
+    for: "update",
+    using: checkExpression4("can_edit_products")
+  }),
+  pgPolicy("template_combo_delete_policy", {
+    as: "permissive",
+    for: "delete",
+    using: checkExpression4("can_delete_products")
+  })
+]);
+var templateComboRelations = relations(templateComboTable, ({ one }) => ({
+  combo: one(comboTable, {
+    fields: [templateComboTable.combo_id],
+    references: [comboTable.id]
+  }),
+  template: one(productTemplateTable, {
+    fields: [templateComboTable.template_id],
+    references: [productTemplateTable.id]
+  })
+}));
+// schemas/product/views/product_template_view.ts
+var productTemplateView = pgView("product_template_view").with({
+  checkOption: "cascaded",
+  securityBarrier: true,
+  securityInvoker: true
+}).as((qb) => qb.select({
+  id: productTemplateTable.id,
+  name: productTemplateTable.name,
+  description: productTemplateTable.description,
+  list_price: productTemplateTable.list_price,
+  category: productTemplateTable.category
+}).from(productTemplateTable));
 // schemas/stock/tables/warehouse.ts
 var warehouseTable = stockSchema.table("warehouse", {
   ...DEFAULT_COLUMNS,
@@ -5223,6 +5417,9 @@ var warehouseLocationRelations = relations(warehouseLocationTable, ({ one }) => 
 }));
 
 // schemas/stock/tables/stock_unit.ts
+function checkExpression5(relation) {
+  return sql`exists(select 1 from ${productTable} p left join ${productTemplateTable} pt on p.template_id = pt.id where product_id = p.id and allow('${sql.raw(relation)}', 'inventory:' || cast(pt.id as varchar)))`;
+}
 var stockUnitTable = stockSchema.table("unit", {
   ...DEFAULT_COLUMNS,
   product_id: integer().notNull(),
@@ -5250,7 +5447,27 @@ var stockUnitTable = stockSchema.table("unit", {
   }).onUpdate("cascade").onDelete("restrict"),
   index("stock_unit_product_idx").on(table.product_id),
   uniqueIndex("stock_unit_serial_idx").on(table.serial_no).where(sql`serial_no IS NOT NULL`),
-  index("stock_unit_batch_idx").on(table.batch_no).where(sql`batch_no IS NOT NULL`)
+  index("stock_unit_batch_idx").on(table.batch_no).where(sql`batch_no IS NOT NULL`),
+  pgPolicy("stock_unit_select_policy", {
+    as: "permissive",
+    for: "select",
+    using: checkExpression5("can_view_products")
+  }),
+  pgPolicy("stock_unit_insert_policy", {
+    as: "permissive",
+    for: "insert",
+    withCheck: checkExpression5("can_create_products")
+  }),
+  pgPolicy("stock_unit_update_policy", {
+    as: "permissive",
+    for: "update",
+    using: checkExpression5("can_edit_products")
+  }),
+  pgPolicy("stock_unit_delete_policy", {
+    as: "permissive",
+    for: "delete",
+    using: checkExpression5("can_delete_products")
+  })
 ]);
 var stockUnitRelations = relations(stockUnitTable, ({ one }) => ({
   product: one(productTable, {
@@ -5260,6 +5477,9 @@ var stockUnitRelations = relations(stockUnitTable, ({ one }) => ({
 }));
 
 // schemas/stock/tables/inventory.ts
+function checkExpression6(relation) {
+  return sql`allow('${sql.raw(relation)}', 'inventory:' || cast(product_id as varchar))`;
+}
 var inventoryTable = stockSchema.table("inventory", {
   ...DEFAULT_COLUMNS,
   product_id: integer().notNull(),
@@ -5297,7 +5517,27 @@ var inventoryTable = stockSchema.table("inventory", {
     foreignColumns: [warehouseLocationTable.id]
   }).onUpdate("cascade").onDelete("restrict"),
   index("inventory_warehouse_idx").on(table.warehouse_id),
-  index("inventory_composite_idx").on(table.warehouse_id, table.product_id)
+  index("inventory_composite_idx").on(table.warehouse_id, table.product_id),
+  pgPolicy("inventory_select_policy", {
+    as: "permissive",
+    for: "select",
+    using: checkExpression6("can_view_stock")
+  }),
+  pgPolicy("inventory_insert_policy", {
+    as: "permissive",
+    for: "insert",
+    withCheck: checkExpression6("can_edit_stock")
+  }),
+  pgPolicy("inventory_update_policy", {
+    as: "permissive",
+    for: "update",
+    using: checkExpression6("can_edit_stock")
+  }),
+  pgPolicy("inventory_delete_policy", {
+    as: "permissive",
+    for: "delete",
+    using: checkExpression6("can_edit_stock")
+  })
 ]);
 var inventoryRelations = relations(inventoryTable, ({ one }) => ({
   warehouse: one(warehouseTable, {

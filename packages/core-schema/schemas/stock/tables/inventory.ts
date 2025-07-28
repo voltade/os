@@ -1,10 +1,11 @@
-import { sql } from 'drizzle-orm';
+import { type SQL, sql } from 'drizzle-orm';
 import {
   foreignKey,
   index,
   integer,
   jsonb,
   numeric,
+  pgPolicy,
   text,
 } from 'drizzle-orm/pg-core';
 import { relations } from 'drizzle-orm/relations';
@@ -15,6 +16,13 @@ import { DEFAULT_COLUMNS } from '../../utils.ts';
 import { stockUnitTable } from './stock_unit.ts';
 import { warehouseTable } from './warehouse.ts';
 import { warehouseLocationTable } from './warehouse_location.ts';
+
+/**
+ * Check expression for RLS policies.
+ */
+function checkExpression(relation: string): SQL<boolean> {
+  return sql<boolean>`allow('${sql.raw(relation)}', 'inventory:' || cast(product_id as varchar))`;
+}
 
 /**
  * The inventory tracks {@link productTable products} and/or {@link stockUnitTable stock units}
@@ -106,8 +114,34 @@ export const inventoryTable = stockSchema.table(
       .onUpdate('cascade')
       .onDelete('restrict'),
 
+    // Inventory indexes
     index('inventory_warehouse_idx').on(table.warehouse_id),
     index('inventory_composite_idx').on(table.warehouse_id, table.product_id),
+
+    /**
+     * RLS policies for the inventory table.
+     * @see {@link openfga/inventory.fga}
+     */
+    pgPolicy('inventory_select_policy', {
+      as: 'permissive',
+      for: 'select',
+      using: checkExpression('can_view_stock'),
+    }),
+    pgPolicy('inventory_insert_policy', {
+      as: 'permissive',
+      for: 'insert',
+      withCheck: checkExpression('can_edit_stock'),
+    }),
+    pgPolicy('inventory_update_policy', {
+      as: 'permissive',
+      for: 'update',
+      using: checkExpression('can_edit_stock'),
+    }),
+    pgPolicy('inventory_delete_policy', {
+      as: 'permissive',
+      for: 'delete',
+      using: checkExpression('can_edit_stock'),
+    }),
   ],
 );
 

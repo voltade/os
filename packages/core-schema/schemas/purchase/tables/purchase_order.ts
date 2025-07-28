@@ -1,4 +1,5 @@
-import { foreignKey, integer, varchar } from 'drizzle-orm/pg-core';
+import { type SQL, sql } from 'drizzle-orm';
+import { foreignKey, integer, pgPolicy, varchar } from 'drizzle-orm/pg-core';
 
 import { userTable } from '../../resource/tables/user.ts';
 import { warehouseTable } from '../../stock/tables/warehouse.ts';
@@ -8,11 +9,19 @@ import { purchaseSchema } from '../schema.ts';
 import { purchaseRequisitionTable } from './purchase_requisition.ts';
 import { quotationTable } from './quotation.ts';
 
+/**
+ * Check expression for RLS policies.
+ */
+function checkExpression(relation: string): SQL<boolean> {
+  return sql<boolean>`allow('${sql.raw(relation)}', 'order:' || reference_id)`;
+}
+
 export const purchaseOrderTable = purchaseSchema.table(
   'order',
   {
     ...DEFAULT_COLUMNS,
-    reference_id: varchar().notNull().unique().default('PLACE_HOLDER'),
+    reference_id: varchar().notNull().default('PLACE_HOLDER'), // TODO: ensure unique reference ID
+
     purchase_requisition_id: integer().notNull(),
     quotation_id: integer().notNull(),
     warehouse_id: integer().notNull(),
@@ -48,6 +57,31 @@ export const purchaseOrderTable = purchaseSchema.table(
       columns: [table.updated_by],
       foreignColumns: [userTable.id],
       name: 'fk_purchase_order_updated_by',
+    }),
+
+    /**
+     * RLS policies for the purchase order table.
+     * @see {@link openfga/order.fga}
+     */
+    pgPolicy('purchase_order_select_policy', {
+      as: 'permissive',
+      for: 'select',
+      using: checkExpression('can_view_order'),
+    }),
+    pgPolicy('purchase_order_insert_policy', {
+      as: 'permissive',
+      for: 'insert',
+      withCheck: checkExpression('can_create_order'),
+    }),
+    pgPolicy('purchase_order_update_policy', {
+      as: 'permissive',
+      for: 'update',
+      using: checkExpression('can_edit_order'),
+    }),
+    pgPolicy('purchase_order_delete_policy', {
+      as: 'permissive',
+      for: 'delete',
+      using: checkExpression('can_delete_order'),
     }),
   ],
 );

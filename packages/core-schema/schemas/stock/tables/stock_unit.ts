@@ -1,18 +1,26 @@
-import { relations, sql } from 'drizzle-orm';
+import { relations, type SQL, sql } from 'drizzle-orm';
 import {
   foreignKey,
   index,
   integer,
   jsonb,
+  pgPolicy,
   text,
   uniqueIndex,
 } from 'drizzle-orm/pg-core';
 
-import { productTable } from '../../product/tables/product.ts';
+import { productTable, productTemplateTable } from '../../product/index.ts';
 import { stockSchema } from '../../schema.ts';
 import { DEFAULT_COLUMNS } from '../../utils.ts';
 import { warehouseTable } from './warehouse.ts';
 import { warehouseLocationTable } from './warehouse_location.ts';
+
+/**
+ * Check expression for RLS policies.
+ */
+function checkExpression(relation: string): SQL<boolean> {
+  return sql<boolean>`exists(select 1 from ${productTable} p left join ${productTemplateTable} pt on p.template_id = pt.id where product_id = p.id and allow('${sql.raw(relation)}', 'inventory:' || cast(pt.id as varchar)))`;
+}
 
 /**
  * This table represents an individual physical unit or batch of a `product` stored in inventory.
@@ -89,6 +97,7 @@ export const stockUnitTable = stockSchema.table(
       .onUpdate('cascade')
       .onDelete('restrict'),
 
+    // Stock unit indexes
     index('stock_unit_product_idx').on(table.product_id),
     uniqueIndex('stock_unit_serial_idx')
       .on(table.serial_no)
@@ -96,6 +105,31 @@ export const stockUnitTable = stockSchema.table(
     index('stock_unit_batch_idx')
       .on(table.batch_no)
       .where(sql`batch_no IS NOT NULL`),
+
+    /**
+     * RLS policies for the stock unit table.
+     * @see {@link openfga/inventory.fga}
+     */
+    pgPolicy('stock_unit_select_policy', {
+      as: 'permissive',
+      for: 'select',
+      using: checkExpression('can_view_products'),
+    }),
+    pgPolicy('stock_unit_insert_policy', {
+      as: 'permissive',
+      for: 'insert',
+      withCheck: checkExpression('can_create_products'),
+    }),
+    pgPolicy('stock_unit_update_policy', {
+      as: 'permissive',
+      for: 'update',
+      using: checkExpression('can_edit_products'),
+    }),
+    pgPolicy('stock_unit_delete_policy', {
+      as: 'permissive',
+      for: 'delete',
+      using: checkExpression('can_delete_products'),
+    }),
   ],
 );
 

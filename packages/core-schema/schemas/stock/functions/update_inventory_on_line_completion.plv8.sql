@@ -2899,6 +2899,34 @@ function uniqueIndex(name) {
   return new IndexBuilderOn(true, name);
 }
 
+// ../../node_modules/drizzle-orm/pg-core/policies.js
+class PgPolicy {
+  constructor(name, config) {
+    this.name = name;
+    if (config) {
+      this.as = config.as;
+      this.for = config.for;
+      this.to = config.to;
+      this.using = config.using;
+      this.withCheck = config.withCheck;
+    }
+  }
+  static [entityKind] = "PgPolicy";
+  as;
+  for;
+  to;
+  using;
+  withCheck;
+  _linkedTable;
+  link(table) {
+    this._linkedTable = table;
+    return this;
+  }
+}
+function pgPolicy(name, config) {
+  return new PgPolicy(name, config);
+}
+
 // ../../node_modules/drizzle-orm/pg-core/view-common.js
 var PgViewConfig = Symbol.for("drizzle:PgViewConfig");
 
@@ -5143,13 +5171,16 @@ var warehouseLocationRelations = relations(warehouseLocationTable, ({ one }) => 
 }));
 
 // schemas/stock/tables/stock_operation.ts
+function checkExpression(relation) {
+  return sql`allow('${sql.raw(relation)}', 'order:' || reference_id)`;
+}
 var stockOperationTable = stockSchema.table("operation", {
   ...DEFAULT_COLUMNS,
   name: text().notNull(),
   description: text(),
   status: stockOperationStatusEnum().notNull().default("Draft" /* DRAFT */),
   type_id: integer().notNull(),
-  reference_id: text(),
+  reference_id: varchar("reference_id").notNull().unique().default("PLACE_HOLDER"),
   reserved_at: timestampCol("reserved_at"),
   started_at: timestampCol("started_at"),
   completed_at: timestampCol("completed_at"),
@@ -5193,7 +5224,27 @@ var stockOperationTable = stockSchema.table("operation", {
   index("stock_operation_src_location_idx").on(table.source_location_id).where(sql`source_location_id IS NOT NULL`),
   index("stock_operation_dest_warehouse_idx").on(table.destination_warehouse_id).where(sql`destination_warehouse_id IS NOT NULL`),
   index("stock_operation_dest_location_idx").on(table.destination_location_id).where(sql`destination_location_id IS NOT NULL`),
-  uniqueIndex("stock_operation_reference_id_idx").on(table.reference_id).where(sql`reference_id IS NOT NULL`)
+  uniqueIndex("stock_operation_reference_id_idx").on(table.reference_id).where(sql`reference_id IS NOT NULL`),
+  pgPolicy("stock_operation_select_policy", {
+    as: "permissive",
+    for: "select",
+    using: checkExpression("can_view_order")
+  }),
+  pgPolicy("stock_operation_insert_policy", {
+    as: "permissive",
+    for: "insert",
+    withCheck: checkExpression("can_create_order")
+  }),
+  pgPolicy("stock_operation_update_policy", {
+    as: "permissive",
+    for: "update",
+    using: checkExpression("can_edit_order")
+  }),
+  pgPolicy("stock_operation_delete_policy", {
+    as: "permissive",
+    for: "delete",
+    using: checkExpression("can_delete_order")
+  })
 ]);
 var stockOperationRelations = relations(stockOperationTable, ({ one }) => ({
   type: one(stockOperationTypeTable, {

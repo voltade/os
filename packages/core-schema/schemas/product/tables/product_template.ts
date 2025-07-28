@@ -1,10 +1,11 @@
-import { relations } from 'drizzle-orm';
+import { relations, type SQL, sql } from 'drizzle-orm';
 import {
   boolean,
   foreignKey,
   index,
   integer,
   numeric,
+  pgPolicy,
   text,
 } from 'drizzle-orm/pg-core';
 
@@ -12,6 +13,13 @@ import { uomTable } from '../../resource/tables/uom.ts';
 import { DEFAULT_COLUMNS, priceCol } from '../../utils.ts';
 import { productCategoryEnum, productTypeEnum } from '../enums.ts';
 import { productSchema } from '../schema.ts';
+
+/**
+ * Check expression for RLS policies.
+ */
+function checkExpression(relation: string): SQL<boolean> {
+  return sql<boolean>`allow('${sql.raw(relation)}', 'inventory:' || cast(id as varchar))`;
+}
 
 /**
  * This table represents the abstract definition of a product, commonly known as a "template" or "product model".
@@ -82,8 +90,35 @@ export const productTemplateTable = productSchema.table(
       columns: [table.uom_id],
       foreignColumns: [uomTable.id],
     }),
+
+    // Product template indexes
     index('product_template_type_idx').on(table.type),
     index('product_template_category_idx').on(table.category),
+
+    /**
+     * RLS policies for the product template table.
+     * @see {@link openfga/inventory.fga}
+     */
+    pgPolicy('product_template_select_policy', {
+      as: 'permissive',
+      for: 'select',
+      using: checkExpression('can_view_products'),
+    }),
+    pgPolicy('product_template_insert_policy', {
+      as: 'permissive',
+      for: 'insert',
+      withCheck: checkExpression('can_create_products'),
+    }),
+    pgPolicy('product_template_update_policy', {
+      as: 'permissive',
+      for: 'update',
+      using: checkExpression('can_edit_products'),
+    }),
+    pgPolicy('product_template_delete_policy', {
+      as: 'permissive',
+      for: 'delete',
+      using: checkExpression('can_delete_products'),
+    }),
   ],
 );
 

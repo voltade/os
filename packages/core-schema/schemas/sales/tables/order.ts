@@ -1,16 +1,34 @@
-import { sql } from 'drizzle-orm';
-import { check, foreignKey, integer, numeric, text } from 'drizzle-orm/pg-core';
+import { type SQL, sql } from 'drizzle-orm';
+import {
+  check,
+  foreignKey,
+  integer,
+  numeric,
+  pgPolicy,
+  text,
+  varchar,
+} from 'drizzle-orm/pg-core';
 
 import { contactTable } from '../../resource/tables/contact.ts';
 import { currencyTable } from '../../resource/tables/currency.ts';
 import { partnerTable } from '../../resource/tables/partner.ts';
+import { DEFAULT_COLUMNS } from '../../utils.ts';
 import { orderState } from '../enums.ts';
 import { salesSchema } from '../schema.ts';
+
+/**
+ * Check expression for RLS policies.
+ */
+function checkExpression(relation: string): SQL<boolean> {
+  return sql<boolean>`allow('${sql.raw(relation)}', 'order:' || reference_id)`;
+}
 
 export const orderTable = salesSchema.table(
   'order',
   {
-    id: integer().primaryKey().generatedAlwaysAsIdentity(),
+    ...DEFAULT_COLUMNS,
+    reference_id: varchar().notNull().default('PLACE_HOLDER'), // TODO: ensure unique reference ID
+
     currency_id: integer().notNull(),
     partner_id: integer(),
     contact_id: integer(),
@@ -39,6 +57,31 @@ export const orderTable = salesSchema.table(
       name: 'order_contact_id_fk',
       columns: [table.contact_id],
       foreignColumns: [contactTable.id],
+    }),
+
+    /**
+     * RLS policies for the sales order table.
+     * @see {@link openfga/order.fga}
+     */
+    pgPolicy('sales_order_select_policy', {
+      as: 'permissive',
+      for: 'select',
+      using: checkExpression('can_view_order'),
+    }),
+    pgPolicy('sales_order_insert_policy', {
+      as: 'permissive',
+      for: 'insert',
+      withCheck: checkExpression('can_create_order'),
+    }),
+    pgPolicy('sales_order_update_policy', {
+      as: 'permissive',
+      for: 'update',
+      using: checkExpression('can_edit_order'),
+    }),
+    pgPolicy('sales_order_delete_policy', {
+      as: 'permissive',
+      for: 'delete',
+      using: checkExpression('can_delete_order'),
     }),
   ],
 );

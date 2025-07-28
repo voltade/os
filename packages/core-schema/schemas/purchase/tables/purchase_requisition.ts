@@ -1,4 +1,5 @@
-import { foreignKey, integer, varchar } from 'drizzle-orm/pg-core';
+import { type SQL, sql } from 'drizzle-orm';
+import { foreignKey, integer, pgPolicy, varchar } from 'drizzle-orm/pg-core';
 
 import { userTable } from '../../resource/tables/user.ts';
 import { DEFAULT_COLUMNS, priceCol, timestampCol } from '../../utils.ts';
@@ -8,11 +9,19 @@ import {
 } from '../enums.ts';
 import { purchaseSchema } from '../schema.ts';
 
+/**
+ * Check expression for RLS policies.
+ */
+function checkExpression(relation: string): SQL<boolean> {
+  return sql<boolean>`allow('${sql.raw(relation)}', 'quotation:' || reference_id)`;
+}
+
 export const purchaseRequisitionTable = purchaseSchema.table(
   'requisition',
   {
     ...DEFAULT_COLUMNS,
     reference_id: varchar().notNull().unique().default('PLACE_HOLDER'),
+
     title: varchar().notNull(),
     description: varchar(),
     priority: purchaseRequisitionPriority().notNull(),
@@ -32,6 +41,31 @@ export const purchaseRequisitionTable = purchaseSchema.table(
       columns: [table.updated_by],
       foreignColumns: [userTable.id],
       name: 'fk_purchase_requisition_updated_by',
+    }),
+
+    /**
+     * RLS policies for the purchase requisition table.
+     * @see {@link openfga/quotation.fga}
+     */
+    pgPolicy('purchase_requisition_select_policy', {
+      as: 'permissive',
+      for: 'select',
+      using: checkExpression('can_view_quotation'),
+    }),
+    pgPolicy('purchase_requisition_insert_policy', {
+      as: 'permissive',
+      for: 'insert',
+      withCheck: checkExpression('can_create_quotation'),
+    }),
+    pgPolicy('purchase_requisition_update_policy', {
+      as: 'permissive',
+      for: 'update',
+      using: checkExpression('can_edit_quotation'),
+    }),
+    pgPolicy('purchase_requisition_delete_policy', {
+      as: 'permissive',
+      for: 'delete',
+      using: checkExpression('can_delete_quotation'),
     }),
   ],
 );

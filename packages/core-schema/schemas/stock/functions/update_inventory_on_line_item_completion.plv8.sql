@@ -2900,6 +2900,34 @@ function uniqueIndex(name) {
   return new IndexBuilderOn(true, name);
 }
 
+// ../../node_modules/drizzle-orm/pg-core/policies.js
+class PgPolicy {
+  constructor(name, config) {
+    this.name = name;
+    if (config) {
+      this.as = config.as;
+      this.for = config.for;
+      this.to = config.to;
+      this.using = config.using;
+      this.withCheck = config.withCheck;
+    }
+  }
+  static [entityKind] = "PgPolicy";
+  as;
+  for;
+  to;
+  using;
+  withCheck;
+  _linkedTable;
+  link(table) {
+    this._linkedTable = table;
+    return this;
+  }
+}
+function pgPolicy(name, config) {
+  return new PgPolicy(name, config);
+}
+
 // ../../node_modules/drizzle-orm/pg-core/view-common.js
 var PgViewConfig = Symbol.for("drizzle:PgViewConfig");
 
@@ -5144,13 +5172,16 @@ var warehouseLocationRelations = relations(warehouseLocationTable, ({ one }) => 
 }));
 
 // schemas/stock/tables/stock_operation.ts
+function checkExpression(relation) {
+  return sql`allow('${sql.raw(relation)}', 'order:' || reference_id)`;
+}
 var stockOperationTable = stockSchema.table("operation", {
   ...DEFAULT_COLUMNS,
   name: text().notNull(),
   description: text(),
   status: stockOperationStatusEnum().notNull().default("Draft" /* DRAFT */),
   type_id: integer().notNull(),
-  reference_id: text(),
+  reference_id: varchar("reference_id").notNull().unique().default("PLACE_HOLDER"),
   reserved_at: timestampCol("reserved_at"),
   started_at: timestampCol("started_at"),
   completed_at: timestampCol("completed_at"),
@@ -5194,7 +5225,27 @@ var stockOperationTable = stockSchema.table("operation", {
   index("stock_operation_src_location_idx").on(table.source_location_id).where(sql`source_location_id IS NOT NULL`),
   index("stock_operation_dest_warehouse_idx").on(table.destination_warehouse_id).where(sql`destination_warehouse_id IS NOT NULL`),
   index("stock_operation_dest_location_idx").on(table.destination_location_id).where(sql`destination_location_id IS NOT NULL`),
-  uniqueIndex("stock_operation_reference_id_idx").on(table.reference_id).where(sql`reference_id IS NOT NULL`)
+  uniqueIndex("stock_operation_reference_id_idx").on(table.reference_id).where(sql`reference_id IS NOT NULL`),
+  pgPolicy("stock_operation_select_policy", {
+    as: "permissive",
+    for: "select",
+    using: checkExpression("can_view_order")
+  }),
+  pgPolicy("stock_operation_insert_policy", {
+    as: "permissive",
+    for: "insert",
+    withCheck: checkExpression("can_create_order")
+  }),
+  pgPolicy("stock_operation_update_policy", {
+    as: "permissive",
+    for: "update",
+    using: checkExpression("can_edit_order")
+  }),
+  pgPolicy("stock_operation_delete_policy", {
+    as: "permissive",
+    for: "delete",
+    using: checkExpression("can_delete_order")
+  })
 ]);
 var stockOperationRelations = relations(stockOperationTable, ({ one }) => ({
   type: one(stockOperationTypeTable, {
@@ -5264,6 +5315,9 @@ var uomTable = resourceSchema.table("uom", {
 }, (table) => [index("uom_code_idx").on(table.code)]);
 
 // schemas/product/tables/product_template.ts
+function checkExpression2(relation) {
+  return sql`allow('${sql.raw(relation)}', 'inventory:' || cast(id as varchar))`;
+}
 var productTemplateTable = productSchema.table("template", {
   ...DEFAULT_COLUMNS,
   name: text().notNull(),
@@ -5286,7 +5340,27 @@ var productTemplateTable = productSchema.table("template", {
     foreignColumns: [uomTable.id]
   }),
   index("product_template_type_idx").on(table.type),
-  index("product_template_category_idx").on(table.category)
+  index("product_template_category_idx").on(table.category),
+  pgPolicy("product_template_select_policy", {
+    as: "permissive",
+    for: "select",
+    using: checkExpression2("can_view_products")
+  }),
+  pgPolicy("product_template_insert_policy", {
+    as: "permissive",
+    for: "insert",
+    withCheck: checkExpression2("can_create_products")
+  }),
+  pgPolicy("product_template_update_policy", {
+    as: "permissive",
+    for: "update",
+    using: checkExpression2("can_edit_products")
+  }),
+  pgPolicy("product_template_delete_policy", {
+    as: "permissive",
+    for: "delete",
+    using: checkExpression2("can_delete_products")
+  })
 ]);
 var productTemplateRelations = relations(productTemplateTable, ({ one }) => ({
   uom: one(uomTable, {
@@ -5296,6 +5370,9 @@ var productTemplateRelations = relations(productTemplateTable, ({ one }) => ({
 }));
 
 // schemas/product/tables/product.ts
+function checkExpression3(relation) {
+  return sql`exists(select 1 from ${productTemplateTable} pt where template_id = pt.id and allow('${sql.raw(relation)}', 'inventory:' || cast(pt.id as varchar)))`;
+}
 var productTable = productSchema.table("product", {
   ...DEFAULT_COLUMNS,
   template_id: integer().notNull(),
@@ -5319,7 +5396,27 @@ var productTable = productSchema.table("product", {
   uniqueIndex("product_gtin_idx").on(table.gtin).where(sql`gtin IS NOT NULL`),
   uniqueIndex("product_isbn_idx").on(table.isbn).where(sql`isbn IS NOT NULL`),
   uniqueIndex("product_mpn_idx").on(table.mpn).where(sql`mpn IS NOT NULL`),
-  uniqueIndex("product_asin_idx").on(table.asin).where(sql`asin IS NOT NULL`)
+  uniqueIndex("product_asin_idx").on(table.asin).where(sql`asin IS NOT NULL`),
+  pgPolicy("product_select_policy", {
+    as: "permissive",
+    for: "select",
+    using: checkExpression3("can_view_products")
+  }),
+  pgPolicy("product_insert_policy", {
+    as: "permissive",
+    for: "insert",
+    withCheck: checkExpression3("can_create_products")
+  }),
+  pgPolicy("product_update_policy", {
+    as: "permissive",
+    for: "update",
+    using: checkExpression3("can_edit_products")
+  }),
+  pgPolicy("product_delete_policy", {
+    as: "permissive",
+    for: "delete",
+    using: checkExpression3("can_delete_products")
+  })
 ]);
 var productRelations = relations(productTable, ({ one }) => ({
   template: one(productTemplateTable, {
@@ -5329,6 +5426,9 @@ var productRelations = relations(productTable, ({ one }) => ({
 }));
 
 // schemas/stock/tables/stock_operation_line.ts
+function checkExpression4(relation) {
+  return sql`exists(select 1 from ${stockOperationTable} so where stock_operation_id = so.id and allow('${sql.raw(relation)}', 'order:' || so.reference_id))`;
+}
 var stockOperationLineTable = stockSchema.table("operation_line", {
   ...DEFAULT_COLUMNS,
   stock_operation_id: integer().notNull(),
@@ -5366,7 +5466,27 @@ var stockOperationLineTable = stockSchema.table("operation_line", {
   index("stock_operation_line_stock_operation_idx").on(table.stock_operation_id),
   index("stock_operation_line_status_idx").on(table.status),
   uniqueIndex("stock_operation_line_product_idx").on(table.stock_operation_id, table.product_id),
-  uniqueIndex("stock_operation_line_reference_idx").on(table.reference_id).where(sql`reference_id IS NOT NULL`)
+  uniqueIndex("stock_operation_line_reference_idx").on(table.reference_id).where(sql`reference_id IS NOT NULL`),
+  pgPolicy("stock_operation_line_select_policy", {
+    as: "permissive",
+    for: "select",
+    using: checkExpression4("can_view_order")
+  }),
+  pgPolicy("stock_operation_line_insert_policy", {
+    as: "permissive",
+    for: "insert",
+    withCheck: checkExpression4("can_create_order")
+  }),
+  pgPolicy("stock_operation_line_update_policy", {
+    as: "permissive",
+    for: "update",
+    using: checkExpression4("can_edit_order")
+  }),
+  pgPolicy("stock_operation_line_delete_policy", {
+    as: "permissive",
+    for: "delete",
+    using: checkExpression4("can_delete_order")
+  })
 ]);
 var stockOperationLineRelations = relations(stockOperationLineTable, ({ one }) => ({
   operation: one(stockOperationTable, {

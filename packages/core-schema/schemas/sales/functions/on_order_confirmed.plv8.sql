@@ -2582,6 +2582,15 @@ class Relation {
   referencedTableName;
   fieldName;
 }
+
+class Relations {
+  constructor(table, config) {
+    this.table = table;
+    this.config = config;
+  }
+  static [entityKind] = "Relations";
+}
+
 class One extends Relation {
   constructor(sourceTable, referencedTable, config, isNullable) {
     super(sourceTable, referencedTable, config?.relationName);
@@ -2640,6 +2649,12 @@ function getOrderByOperators() {
     asc,
     desc
   };
+}
+function relations(table, relations2) {
+  return new Relations(table, (helpers) => Object.fromEntries(Object.entries(relations2(helpers)).map(([key, value]) => [
+    key,
+    value.withFieldName(key)
+  ])));
 }
 function normalizeRelation(schema, tableNamesMap, relation) {
   if (is(relation, One) && relation.config) {
@@ -2809,6 +2824,34 @@ class SelectionProxyHandler {
     }
     return new Proxy(value, new SelectionProxyHandler(this.config));
   }
+}
+
+// ../../node_modules/drizzle-orm/pg-core/policies.js
+class PgPolicy {
+  constructor(name, config) {
+    this.name = name;
+    if (config) {
+      this.as = config.as;
+      this.for = config.for;
+      this.to = config.to;
+      this.using = config.using;
+      this.withCheck = config.withCheck;
+    }
+  }
+  static [entityKind] = "PgPolicy";
+  as;
+  for;
+  to;
+  using;
+  withCheck;
+  _linkedTable;
+  link(table) {
+    this._linkedTable = table;
+    return this;
+  }
+}
+function pgPolicy(name, config) {
+  return new PgPolicy(name, config);
 }
 
 // ../../node_modules/drizzle-orm/pg-core/view-common.js
@@ -5073,6 +5116,12 @@ var accountTable = accountingSchema.table("account", {
     foreignColumns: [currencyTable.id]
   })
 ]).enableRLS();
+var accountRelations = relations(accountTable, ({ one }) => ({
+  currency: one(currencyTable, {
+    fields: [accountTable.currency_id],
+    references: [currencyTable.id]
+  })
+}));
 
 // schemas/accounting/tables/journal.ts
 var journalTable = accountingSchema.table("journal", {
@@ -5088,8 +5137,17 @@ var journalTable = accountingSchema.table("journal", {
     foreignColumns: [accountTable.id]
   })
 ]).enableRLS();
+var journalRelations = relations(journalTable, ({ one }) => ({
+  defaultAccount: one(accountTable, {
+    fields: [journalTable.default_account_id],
+    references: [accountTable.id]
+  })
+}));
 
 // schemas/accounting/tables/journal_entry.ts
+function checkExpression(relation) {
+  return sql`allow('${sql.raw(relation)}', 'invoice:' || cast(journal_id as varchar))`;
+}
 var journalEntryTable = accountingSchema.table("journal_entry", {
   ...DEFAULT_COLUMNS,
   journal_id: integer().notNull(),
@@ -5117,8 +5175,42 @@ var journalEntryTable = accountingSchema.table("journal_entry", {
     name: "journal_entry_currency_id_fk",
     columns: [table.currency_id],
     foreignColumns: [currencyTable.id]
+  }),
+  pgPolicy("journal_entry_select_policy", {
+    as: "permissive",
+    for: "select",
+    using: checkExpression("can_view_invoice")
+  }),
+  pgPolicy("journal_entry_insert_policy", {
+    as: "permissive",
+    for: "insert",
+    withCheck: checkExpression("can_create_invoice")
+  }),
+  pgPolicy("journal_entry_update_policy", {
+    as: "permissive",
+    for: "update",
+    using: checkExpression("can_edit_invoice")
+  }),
+  pgPolicy("journal_entry_delete_policy", {
+    as: "permissive",
+    for: "delete",
+    using: checkExpression("can_delete_invoice")
   })
-]).enableRLS();
+]);
+var journalEntryRelations = relations(journalEntryTable, ({ one }) => ({
+  journal: one(journalTable, {
+    fields: [journalEntryTable.journal_id],
+    references: [journalTable.id]
+  }),
+  currency: one(currencyTable, {
+    fields: [journalEntryTable.currency_id],
+    references: [currencyTable.id]
+  }),
+  partner: one(partnerTable, {
+    fields: [journalEntryTable.partner_id],
+    references: [partnerTable.id]
+  })
+}));
 
 // schemas/resource/tables/contact.ts
 var contactTable = resourceSchema.table("contact", {
@@ -5151,8 +5243,12 @@ var orderLineType = salesSchema.enum("order_line_type", [
 ]);
 
 // schemas/sales/tables/order.ts
+function checkExpression2(relation) {
+  return sql`allow('${sql.raw(relation)}', 'order:' || reference_id)`;
+}
 var orderTable = salesSchema.table("order", {
-  id: integer().primaryKey().generatedAlwaysAsIdentity(),
+  ...DEFAULT_COLUMNS,
+  reference_id: varchar().notNull().default("PLACE_HOLDER"),
   currency_id: integer().notNull(),
   partner_id: integer(),
   contact_id: integer(),
@@ -5177,6 +5273,26 @@ var orderTable = salesSchema.table("order", {
     name: "order_contact_id_fk",
     columns: [table.contact_id],
     foreignColumns: [contactTable.id]
+  }),
+  pgPolicy("sales_order_select_policy", {
+    as: "permissive",
+    for: "select",
+    using: checkExpression2("can_view_order")
+  }),
+  pgPolicy("sales_order_insert_policy", {
+    as: "permissive",
+    for: "insert",
+    withCheck: checkExpression2("can_create_order")
+  }),
+  pgPolicy("sales_order_update_policy", {
+    as: "permissive",
+    for: "update",
+    using: checkExpression2("can_edit_order")
+  }),
+  pgPolicy("sales_order_delete_policy", {
+    as: "permissive",
+    for: "delete",
+    using: checkExpression2("can_delete_order")
   })
 ]);
 

@@ -1,3 +1,4 @@
+import { relations } from 'drizzle-orm';
 import { foreignKey, integer, text } from 'drizzle-orm/pg-core';
 
 import { currencyTable } from '../../resource/tables/currency.ts';
@@ -24,3 +25,10 @@ export const accountTable = accountingSchema
     ],
   )
   .enableRLS();
+
+export const accountRelations = relations(accountTable, ({ one }) => ({
+  currency: one(currencyTable, {
+    fields: [accountTable.currency_id],
+    references: [currencyTable.id],
+  }),
+}));

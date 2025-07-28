@@ -1,11 +1,13 @@
-import { relations, sql } from 'drizzle-orm';
+import { relations, type SQL, sql } from 'drizzle-orm';
 import {
   boolean,
   foreignKey,
   index,
   integer,
+  pgPolicy,
   text,
   uniqueIndex,
+  varchar,
 } from 'drizzle-orm/pg-core';
 
 import { stockSchema } from '../../schema.ts';
@@ -14,6 +16,13 @@ import { StockOperationStatus, stockOperationStatusEnum } from '../enums.ts';
 import { stockOperationTypeTable } from './stock_operation_type.ts';
 import { warehouseTable } from './warehouse.ts';
 import { warehouseLocationTable } from './warehouse_location.ts';
+
+/**
+ * Check expression for RLS policies.
+ */
+function checkExpression(relation: string): SQL<boolean> {
+  return sql<boolean>`allow('${sql.raw(relation)}', 'order:' || reference_id)`;
+}
 
 /**
  * This table represents a single **stock movement operation**, such as an import (receiving),
@@ -48,7 +57,10 @@ export const stockOperationTable = stockSchema.table(
       .default(StockOperationStatus.DRAFT),
 
     type_id: integer().notNull(),
-    reference_id: text(),
+    reference_id: varchar('reference_id')
+      .notNull()
+      .unique()
+      .default('PLACE_HOLDER'),
 
     // Date fields
     reserved_at: timestampCol('reserved_at'),
@@ -105,6 +117,7 @@ export const stockOperationTable = stockSchema.table(
       .onUpdate('cascade')
       .onDelete('restrict'),
 
+    // Stock operation indexes
     index('stock_operation_type_idx').on(table.type_id),
     index('stock_operation_status_idx').on(table.status),
     index('stock_operation_src_warehouse_idx')
@@ -122,6 +135,31 @@ export const stockOperationTable = stockSchema.table(
     uniqueIndex('stock_operation_reference_id_idx')
       .on(table.reference_id)
       .where(sql`reference_id IS NOT NULL`),
+
+    /**
+     * RLS policies for the stock operation table.
+     * @see {@link openfga/order.fga}
+     */
+    pgPolicy('stock_operation_select_policy', {
+      as: 'permissive',
+      for: 'select',
+      using: checkExpression('can_view_order'),
+    }),
+    pgPolicy('stock_operation_insert_policy', {
+      as: 'permissive',
+      for: 'insert',
+      withCheck: checkExpression('can_create_order'),
+    }),
+    pgPolicy('stock_operation_update_policy', {
+      as: 'permissive',
+      for: 'update',
+      using: checkExpression('can_edit_order'),
+    }),
+    pgPolicy('stock_operation_delete_policy', {
+      as: 'permissive',
+      for: 'delete',
+      using: checkExpression('can_delete_order'),
+    }),
   ],
 );
 
