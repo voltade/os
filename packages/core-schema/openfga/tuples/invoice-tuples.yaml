@@ -1,11 +1,11 @@
 # Stores all invoice tuples for the OpenFGA model
 # This file is used in the invoice.fga.yaml test file.
 
-# Create invoices collection with team permissions
+# Create invoices folder with team permissions
 # Finance team owns invoices (create, edit, approve, view)
 - user: team:finance
   relation: owner_team
-  object: invoices_collection:main
+  object: folder:invoices
 
 # Multiple invoices with different order associations
 # o001, o002, o004 have been completed into invoices
@@ -25,15 +25,15 @@
 # Note: order:o003 has NOT been completed into an invoice yet
 # This reflects real business scenarios where orders are pending completion/delivery
 
-# Link invoices to the main collection (only existing invoices)
-- user: invoices_collection:main
-  relation: collection
+# Link all invoices to the invoices folder
+- user: folder:invoices
+  relation: crud_folder
   object: invoice:inv001
 
-- user: invoices_collection:main
-  relation: collection
+- user: folder:invoices
+  relation: crud_folder
   object: invoice:inv002
 
-- user: invoices_collection:main
-  relation: collection
+- user: folder:invoices
+  relation: crud_folder
   object: invoice:inv004

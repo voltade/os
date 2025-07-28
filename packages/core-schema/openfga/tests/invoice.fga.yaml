@@ -9,31 +9,31 @@ tuple_files:
 
 tests:
   # =============================================================================
-  # COLLECTION-LEVEL PERMISSIONS
+  # FOLDER-LEVEL PERMISSIONS
   # =============================================================================
-  - name: Invoices collection has correct team assignments
+  - name: Invoices folder has correct team assignments
     check:
       # Finance team is the owner team
       - user: user:finance_head
-        object: invoices_collection:main
+        object: folder:invoices
         assertions:
-          assignee: true
+          owner: true
           viewer: true
       - user: user:finance_manager
-        object: invoices_collection:main
+        object: folder:invoices
         assertions:
-          assignee: true
+          owner: true
           viewer: true
       - user: user:finance_member1
-        object: invoices_collection:main
+        object: folder:invoices
         assertions:
-          assignee: true
+          owner: true
           viewer: true
 
   # =============================================================================
-  # FINANCE TEAM PERMISSIONS (INVOICE MANAGERS VIA COLLECTION)
+  # FINANCE TEAM PERMISSIONS (INVOICE MANAGERS VIA FOLDER)
   # =============================================================================
-  - name: Finance team members have full invoice permissions via collection ownership
+  - name: Finance team members have full invoice permissions via folder ownership
     check:
       # Finance team head has all permissions
       - user: user:finance_head
@@ -43,7 +43,7 @@ tests:
           can_create_invoice: true
           can_edit_invoice: true
           can_delete_invoice: true
-          can_approve_invoice: true
+
       - user: user:finance_head
         object: invoice:inv002
         assertions:
@@ -51,7 +51,7 @@ tests:
           can_create_invoice: true
           can_edit_invoice: true
           can_delete_invoice: true
-          can_approve_invoice: true
+
       # Finance team manager has all permissions
       - user: user:finance_manager
         object: invoice:inv002
@@ -60,7 +60,7 @@ tests:
           can_create_invoice: true
           can_edit_invoice: true
           can_delete_invoice: true
-          can_approve_invoice: true
+
       # Finance team members have all permissions
       - user: user:finance_member1
         object: invoice:inv004
@@ -69,7 +69,6 @@ tests:
           can_create_invoice: true
           can_edit_invoice: true
           can_delete_invoice: true
-          can_approve_invoice: true
 
   # =============================================================================
   # OTHER TEAMS HAVE NO INVOICE ACCESS
@@ -84,7 +83,6 @@ tests:
           can_create_invoice: false
           can_edit_invoice: false
           can_delete_invoice: false
-          can_approve_invoice: false
       - user: user:sales_head
         object: invoice:inv002
         assertions:
@@ -92,7 +90,7 @@ tests:
           can_create_invoice: false
           can_edit_invoice: false
           can_delete_invoice: false
-          can_approve_invoice: false
+
       # Sales team managers
       - user: user:sales_manager1
         object: invoice:inv003
@@ -101,7 +99,6 @@ tests:
           can_create_invoice: false
           can_edit_invoice: false
           can_delete_invoice: false
-          can_approve_invoice: false
       - user: user:sales_manager2
         object: invoice:inv004
         assertions:
@@ -109,7 +106,6 @@ tests:
           can_create_invoice: false
           can_edit_invoice: false
           can_delete_invoice: false
-          can_approve_invoice: false
       # Sales team members
       - user: user:sales_member1
         object: invoice:inv005
@@ -118,7 +114,7 @@ tests:
           can_create_invoice: false
           can_edit_invoice: false
           can_delete_invoice: false
-          can_approve_invoice: false
+
       - user: user:sales_member2
         object: invoice:inv006
         assertions:
@@ -126,10 +122,9 @@ tests:
           can_create_invoice: false
           can_edit_invoice: false
           can_delete_invoice: false
-          can_approve_invoice: false
 
   # =============================================================================
-  # PRODUCT TEAM PERMISSIONS (VIEW-ONLY ACCESS VIA COLLECTION)
+  # PRODUCT TEAM PERMISSIONS (NO INVOICE ACCESS)
   # =============================================================================
   - name: Product team members have no invoice permissions
     check:
@@ -141,7 +136,7 @@ tests:
           can_create_invoice: false
           can_edit_invoice: false
           can_delete_invoice: false
-          can_approve_invoice: false
+
       - user: user:product_head
         object: invoice:inv002
         assertions:
@@ -149,7 +144,7 @@ tests:
           can_create_invoice: false
           can_edit_invoice: false
           can_delete_invoice: false
-          can_approve_invoice: false
+
       # Product team managers
       - user: user:product_manager1
         object: invoice:inv003
@@ -158,7 +153,7 @@ tests:
           can_create_invoice: false
           can_edit_invoice: false
           can_delete_invoice: false
-          can_approve_invoice: false
+
       - user: user:product_manager2
         object: invoice:inv004
         assertions:
@@ -166,7 +161,7 @@ tests:
           can_create_invoice: false
           can_edit_invoice: false
           can_delete_invoice: false
-          can_approve_invoice: false
+
       # Product team members
       - user: user:product_member1
         object: invoice:inv005
@@ -175,7 +170,7 @@ tests:
           can_create_invoice: false
           can_edit_invoice: false
           can_delete_invoice: false
-          can_approve_invoice: false
+
       - user: user:product_member2
         object: invoice:inv006
         assertions:
@@ -183,7 +178,7 @@ tests:
           can_create_invoice: false
           can_edit_invoice: false
           can_delete_invoice: false
-          can_approve_invoice: false
+
       - user: user:product_member3
         object: invoice:inv007
         assertions:
@@ -191,7 +186,6 @@ tests:
           can_create_invoice: false
           can_edit_invoice: false
           can_delete_invoice: false
-          can_approve_invoice: false
 
   # =============================================================================
   # PURCHASE TEAM PERMISSIONS (NO INVOICE ACCESS)
@@ -206,7 +200,7 @@ tests:
           can_create_invoice: false
           can_edit_invoice: false
           can_delete_invoice: false
-          can_approve_invoice: false
+
       # Purchase team managers
       - user: user:purchase_manager1
         object: invoice:inv002
@@ -215,7 +209,7 @@ tests:
           can_create_invoice: false
           can_edit_invoice: false
           can_delete_invoice: false
-          can_approve_invoice: false
+
       # Purchase team members
       - user: user:purchase_member1
         object: invoice:inv003
@@ -224,7 +218,74 @@ tests:
           can_create_invoice: false
           can_edit_invoice: false
           can_delete_invoice: false
-          can_approve_invoice: false
+
+  # =============================================================================
+  # IS_COMPLETED FLAG TESTS (INVOICE EDITING RESTRICTIONS)
+  # =============================================================================
+  - name: Completed invoices cannot be edited or approved but can still be deleted
+    tuples:
+      # Mark invoice inv001 as completed
+      - user: invoice:inv001
+        relation: is_completed
+        object: invoice:inv001
+      # Mark invoice inv002 as completed
+      - user: invoice:inv002
+        relation: is_completed
+        object: invoice:inv002
+    check:
+      # Finance team can still view completed invoices
+      - user: user:finance_head
+        object: invoice:inv001
+        assertions:
+          can_view_invoice: true
+          can_create_invoice: true # This is not restricted by completion
+      - user: user:finance_manager
+        object: invoice:inv002
+        assertions:
+          can_view_invoice: true
+          can_create_invoice: true
+
+      # But cannot edit or approve completed invoices
+      - user: user:finance_head
+        object: invoice:inv001
+        assertions:
+          can_edit_invoice: false # Blocked by is_completed
+
+      - user: user:finance_manager
+        object: invoice:inv002
+        assertions:
+          can_edit_invoice: false
+
+      # However, can still delete completed invoices (special requirement)
+      - user: user:finance_head
+        object: invoice:inv001
+        assertions:
+          can_delete_invoice: true # NOT blocked by is_completed
+      - user: user:finance_manager
+        object: invoice:inv002
+        assertions:
+          can_delete_invoice: true
+
+  - name: Non-completed invoices can still be edited and approved by authorized teams
+    check:
+      # inv004 is NOT marked as completed (no is_completed tuples)
+      # This tests the normal flow where invoices can be edited and approved
+      # Finance team can edit non-completed invoices
+      - user: user:finance_head
+        object: invoice:inv004
+        assertions:
+          can_view_invoice: true
+          can_create_invoice: true
+          can_edit_invoice: true # Not blocked by is_completed
+          can_delete_invoice: true
+
+      - user: user:finance_member1
+        object: invoice:inv004
+        assertions:
+          can_view_invoice: true
+          can_create_invoice: true
+          can_edit_invoice: true
+          can_delete_invoice: true
 
   # =============================================================================
   # MULTI-ORDER INVOICE PERMISSIONS
@@ -239,7 +300,7 @@ tests:
           can_create_invoice: true
           can_edit_invoice: true
           can_delete_invoice: true
-          can_approve_invoice: true
+
       - user: user:finance_member1
         object: invoice:inv004
         assertions:
@@ -247,22 +308,21 @@ tests:
           can_create_invoice: true
           can_edit_invoice: true
           can_delete_invoice: true
-          can_approve_invoice: true
 
   # =============================================================================
-  # COLLECTION LINKAGE VALIDATION
+  # FOLDER LINKAGE VALIDATION
   # =============================================================================
-  - name: All invoices are properly linked to their collection
+  - name: All invoices are properly linked to their folder
     check:
-      # Verify that invoices derive permissions from their collection
+      # Verify that invoices derive permissions from their folder
       - user: user:finance_head
         object: invoice:inv001
         assertions:
-          can_edit_invoice: true # Should work via collection assignee
+          can_edit_invoice: true # Should work via folder ownership
       - user: user:finance_member1
         object: invoice:inv002
         assertions:
-          can_edit_invoice: true # Should work via collection assignee
+          can_edit_invoice: true # Should work via folder ownership
       - user: user:sales_member1
         object: invoice:inv003
         assertions:
@@ -283,11 +343,11 @@ tests:
       - user: user:finance_head
         object: invoice:inv001
         assertions:
-          can_edit_invoice: true # Should have edit access via collection
+          can_edit_invoice: true # Should have edit access via folder ownership
       - user: user:finance_manager
         object: invoice:inv002
         assertions:
-          can_edit_invoice: true # Should have edit access via collection
+          can_edit_invoice: true # Should have edit access via folder ownership
       - user: user:finance_member1
         object: invoice:inv003
         assertions:
@@ -296,7 +356,7 @@ tests:
       - user: user:finance_head
         object: invoice:inv004
         assertions:
-          can_edit_invoice: true # Should have edit access via collection
+          can_edit_invoice: true # Should have edit access via folder ownership
 
   # =============================================================================
   # TEAM HIERARCHY VALIDATION
@@ -476,20 +536,19 @@ tests:
       - user: user:finance_head
         object: invoice:inv001
         assertions:
-          can_approve_invoice: true
+
       - user: user:finance_manager
         object: invoice:inv002
         assertions:
-          can_approve_invoice: true
+
       # Other teams cannot approve invoices
       - user: user:sales_head
         object: invoice:inv001
         assertions:
-          can_approve_invoice: false
+
       - user: user:product_head
         object: invoice:inv001
         assertions:
-          can_approve_invoice: false
 
   # =============================================================================
   # NEGATIVE TESTS
@@ -503,7 +562,6 @@ tests:
           can_create_invoice: false
           can_edit_invoice: false
           can_delete_invoice: false
-          can_approve_invoice: false
 
   - name: Organization members without team membership have no invoice access
     check:
@@ -515,7 +573,6 @@ tests:
           can_create_invoice: false
           can_edit_invoice: false
           can_delete_invoice: false
-          can_approve_invoice: false
 
   - name: Organization admin has organization permissions but not invoice
     check:
@@ -533,7 +590,6 @@ tests:
           can_create_invoice: false
           can_edit_invoice: false
           can_delete_invoice: false
-          can_approve_invoice: false
 
   - name: Teams without explicit access cannot view invoices
     check:
@@ -545,7 +601,7 @@ tests:
           can_create_invoice: false
           can_edit_invoice: false
           can_delete_invoice: false
-          can_approve_invoice: false
+
       - user: user:purchase_member1
         object: invoice:inv007
         assertions:
@@ -553,7 +609,6 @@ tests:
           can_create_invoice: false
           can_edit_invoice: false
           can_delete_invoice: false
-          can_approve_invoice: false
 
   # =============================================================================
   # BUSINESS LOGIC VALIDATION - COMPLETION GAPS
@@ -582,7 +637,6 @@ tests:
       - user: user:finance_manager
         object: invoice:inv002
         assertions:
-          can_approve_invoice: true # Finance can approve existing invoices
 
       # Note: order:o003 exists but has NO corresponding invoice yet
       # This validates the business logic that not all orders become invoices immediately
@@ -594,9 +648,9 @@ tests:
     check:
       # Finance has full control over existing invoices
       - user: user:finance_head
-        object: invoices_collection:main
+        object: folder:invoices
         assertions:
-          assignee: true # Finance owns the invoices collection
+          owner: true # Finance owns the invoices folder
 
       # All existing invoices should be manageable by finance
       - user: user:finance_member1
@@ -605,7 +659,39 @@ tests:
           can_view_invoice: true
           can_edit_invoice: true
           can_delete_invoice: true
-          can_approve_invoice: true
 
       # Note: The absence of invoice:inv003, inv005, inv006, inv007 in tuples
       # validates that orders o003, o005, o006, o007 have not been completed yet
+
+  # =============================================================================
+  # FOLDER PERMISSIONS VALIDATION
+  # =============================================================================
+  - name: Invoices folder correctly manages team-based access control
+    check:
+      # Finance team owns the folder and gets full access
+      - user: user:finance_head
+        object: folder:invoices
+        assertions:
+          owner: true
+          viewer: true
+      - user: user:finance_member1
+        object: folder:invoices
+        assertions:
+          owner: true
+          viewer: true
+      # Other teams have no access to the folder
+      - user: user:sales_head
+        object: folder:invoices
+        assertions:
+          owner: false
+          viewer: false
+      - user: user:product_head
+        object: folder:invoices
+        assertions:
+          owner: false
+          viewer: false
+      - user: user:purchase_head
+        object: folder:invoices
+        assertions:
+          owner: false
+          viewer: false

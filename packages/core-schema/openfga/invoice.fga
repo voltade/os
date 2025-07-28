@@ -1,25 +1,23 @@
 module invoice
 
-# invoices_collection = container for all invoices to manage team-level access
-type invoices_collection
-  relations
-    define owner_team: [team]  # team with read-write access to all invoices in collection
-    
-    # Collection-level permissions
-    define assignee: member from owner_team
-    define viewer: member from owner_team
-
 # invoice = billing document generated from completed orders
 # invoices are managed by a specific team (typically finance), and can be viewed by other teams
 # there are different types of invoices: sales invoices, purchase invoices, etc.
 type invoice
   relations
     define order: [order] # the order(s) associated with the invoice
-    define collection: [invoices_collection]
+    
+    # CRUD permissions
+    define crud_folder: [folder]
+    define owner: owner from crud_folder
+    define viewer: viewer from crud_folder
 
-    # Permissions derived from collection
-    define can_view_invoice: viewer from collection or can_edit_invoice
-    define can_create_invoice: assignee from collection or can_edit_invoice
-    define can_edit_invoice: assignee from collection
-    define can_delete_invoice: assignee from collection or can_edit_invoice
-    define can_approve_invoice: assignee from collection
+    # status as ABAC-based ReBAC
+    # see: https://github.com/openfga/sample-stores/blob/main/stores/abac-with-rebac/README.md
+    define is_completed: [invoice]
+
+    # permissions derived from folder
+    define can_view_invoice: viewer or can_edit_invoice
+    define can_create_invoice: owner or can_edit_invoice
+    define can_edit_invoice: owner but not owner from is_completed
+    define can_delete_invoice: owner or can_edit_invoice
