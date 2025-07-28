@@ -1,0 +1,18 @@
+apiVersion: gateway.networking.k8s.io/v1
+kind: HTTPRoute
+metadata:
+  name: supabase-meta
+spec:
+  parentRefs:
+    - name: cilium-gateway
+      namespace: gateway
+  hostnames:
+    - supabase-meta.127.0.0.1.nip.io
+  rules:
+    - backendRefs:
+        - name: supabase-meta
+          port: 8080
+      matches:
+        - path:
+            type: PathPrefix
+            value: /
