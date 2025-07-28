@@ -1,9 +1,8 @@
 {
-  "kty": "EC",
+  "kty": "RSA",
+  "e": "AQAB",
   "use": "sig",
-  "crv": "P-384",
-  "kid": "1vyXzew67U3SqlurcufEQDR9j-uiTNech1ozQ0NHot4",
-  "x": "v2Iaw7X6xNR5RV9i7xe54prBN_ZjXocbH141n88UqHijA0liQ8UitBUE1IrTeaww",
-  "y": "2a6P0YimyPER7jpPsOQnLKXbfekVogi9bi7EzMs4-NMXm0ASar7xx8lQNfnalc3m",
-  "alg": "ES256"
+  "kid": "voltade-os",
+  "alg": "RS256",
+  "n": "iWU94jUmBgUrT0g2GjNHjzowTta5ZA5WjuygcGZRI4JPmRMKq536MIooprAyo6jyJvoKtU9ToDUCjoMUg1hL8XbB5frBZWQ9t-jnhLiDySLZTWP4gJmVEWEEDvvlC-s_BynuKk6z_r_oSGb7_FlLYIMpdtMT0-YxpIZOtJ3gurSoW1Hj95Ib9yu9CwA-CdFZ3t8bIcCc_e4BDgSSi1yHU3oNN06jj2n7QqU7hUyuMoHvYs-p1GQScVPQPzH1FRwO4UzgyRMH1XgJZPL8DoTwXqzUFT0iJ44qEX2xEma5nAW3v2lXTuHP2Cs_CEQROiRhc5DyZvjCGtc5xP3Ud9gOiQ"
 }

@@ -43,13 +43,8 @@ helmCharts:
         PGRST_DB_ANON_ROLE: anon
         PGRST_DB_SCHEMAS: public
         PGRST_OPENAPI_MODE: disabled
-        PGRST_JWT_SECRET:
-          valueFrom:
-            secretKeyRef:
-              name: platform-envs
-              key: jwt-secret
-        PGRST_APP_SETTINGS_JWT_SECRET:
-          valueFrom:
-            secretKeyRef:
-              name: platform-envs
-              key: jwt-secret
+        # https://docs.postgrest.org/en/v13/references/configuration.html#jwt-secret
+        # https://docs.postgrest.org/en/v13/references/auth.html#asymmetric-keys
+        # argocd/platform/kratos/base/jwt-jwks-public.json
+        PGRST_JWT_SECRET: ewogICJrdHkiOiAiUlNBIiwKICAiZSI6ICJBUUFCIiwKICAidXNlIjogInNpZyIsCiAgImtpZCI6ICJ2b2x0YWRlLW9zIiwKICAiYWxnIjogIlJTMjU2IiwKICAibiI6ICJpV1U5NGpVbUJnVXJUMGcyR2pOSGp6b3dUdGE1WkE1V2p1eWdjR1pSSTRKUG1STUtxNTM2TUlvb3ByQXlvNmp5SnZvS3RVOVRvRFVDam9NVWcxaEw4WGJCNWZyQlpXUTl0LWpuaExpRHlTTFpUV1A0Z0ptVkVXRUVEdnZsQy1zX0J5bnVLazZ6X3Jfb1NHYjdfRmxMWUlNcGR0TVQwLVl4cElaT3RKM2d1clNvVzFIajk1SWI5eXU5Q3dBLUNkRlozdDhiSWNDY19lNEJEZ1NTaTF5SFUzb05OMDZqajJuN1FxVTdoVXl1TW9IdllzLXAxR1FTY1ZQUVB6SDFGUndPNFV6Z3lSTUgxWGdKWlBMOERvVHdYcXpVRlQwaUo0NHFFWDJ4RW1hNW5BVzN2MmxYVHVIUDJDc19DRVFST2lSaGM1RHladmpDR3RjNXhQM1VkOWdPaVEiCn0K
+        PGRST_JWT_SECRET_IS_BASE64: "true"
