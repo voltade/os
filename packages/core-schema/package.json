@@ -71,6 +71,7 @@
   "dependencies": {
     "@faker-js/faker": "^9.9.0",
     "@hono/zod-validator": "^0.7.1",
+    "@supabase/postgrest-js": "^1.21.1",
     "drizzle-kit": "^0.31.4",
     "drizzle-orm": "^0.44.3",
     "drizzle-zod": "^0.8.2",

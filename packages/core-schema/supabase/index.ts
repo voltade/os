@@ -1,4 +1,4 @@
-import { createClient as createSupabaseClient } from '@supabase/supabase-js';
+import { PostgrestClient } from '@supabase/postgrest-js';
 
 import type { Database } from './database.gen.ts';
 
@@ -9,10 +9,12 @@ export const createClient = (
   VITE_SUPABASE_URL: string,
   VITE_SUPABASE_ANON_KEY: string,
 ) => {
-  return createSupabaseClient<Database>(
-    VITE_SUPABASE_URL,
-    VITE_SUPABASE_ANON_KEY,
-  );
+  return new PostgrestClient<Database>(VITE_SUPABASE_URL, {
+    headers: {
+      Authorization: `Bearer ${VITE_SUPABASE_ANON_KEY}`,
+      'Content-Type': 'application/json',
+    },
+  });
 };
 
 export type SupabaseClient = ReturnType<typeof createClient>;

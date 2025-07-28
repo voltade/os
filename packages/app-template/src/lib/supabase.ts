@@ -12,6 +12,6 @@ if (!supabaseAnonKey) {
   throw new Error('VITE_SUPABASE_ANON_KEY is required');
 }
 
-export const supabase = createClient(supabaseUrl, supabaseAnonKey);
+export const supabase = createClient(supabaseUrl + '/rest/v1', supabaseAnonKey);
 
 export type SupabaseClient = typeof supabase;
