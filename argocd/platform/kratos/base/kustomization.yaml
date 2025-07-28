@@ -11,7 +11,7 @@ helmCharts:
   - repo: https://k8s.ory.sh/helm/charts
     name: kratos
     # https://artifacthub.io/packages/helm/ory/kratos
-    version: 0.56.0
+    version: 0.57.2
     releaseName: kratos
     namespace: platform
     # https://artifacthub.io/packages/helm/ory/kratos?modal=values
