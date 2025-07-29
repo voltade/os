@@ -2,12 +2,13 @@
 # This is a YAML-formatted file.
 # Declare variables to be passed into your templates.
 
-parameters:
-  domain: &domain 127.0.0.1.nip.io
-  jwt:
-    aud: &jwt_aud authenticated
-    service_key: &service_key service_key
-    anon_key: &anon_key anon_key
+global:
+  orgId: ""
+  environmentId: ""
+  baseDomain: 127.0.0.1.nip.io
+  publicKey: ""
+  anonKey: ""
+  serviceKey: ""
 
 postgrest:
   enabled: true
@@ -43,15 +44,10 @@ postgrest:
           key: password
     DB_NAME: postgres
     DB_SSL: disable
-    PGRST_APP_SETTINGS_JWT_EXP: 3600
     PGRST_DB_ANON_ROLE: anon
     PGRST_DB_SCHEMAS: public,storage
     PGRST_OPENAPI_MODE: disabled
-    PGRST_JWT_SECRET: super-secret-jwt-token-with-at-least-32-characters-long
-    PGRST_APP_SETTINGS_JWT_SECRET: super-secret-jwt-token-with-at-least-32-characters-long
-    PGRST_JWT_AUD: *jwt_aud
 
-# Metadata API configuration
 supabase-meta:
   enabled: true
   fullnameOverride: supabase-meta
@@ -90,9 +86,6 @@ supabase-meta:
 supabase-studio:
   enabled: true
   fullnameOverride: supabase-studio
-  global:
-    enabled: true
-    baseDomain: *domain
   replicaCount: 1
   image:
     repository: supabase/studio
@@ -113,13 +106,12 @@ supabase-studio:
       port: 3000
     initialDelaySeconds: 30
   environment:
-    AUTH_JWT_SECRET: super-secret-jwt-token-with-at-least-32-characters-long
-    SUPABASE_ANON_KEY: *anon_key
-    SUPABASE_SERVICE_KEY: *service_key
     STUDIO_PORT: 3000
     NEXT_PUBLIC_ENABLE_LOGS: "false"
     NEXT_PUBLIC_ENABLE_TELEMETRY: "false"
     NODE_ENV: "production"
+    STUDIO_PG_META_URL: http://supabase-meta:8080
+    POSTGREST_URL: http://postgrest:3000
 
 supabase-storage:
   enabled: true
@@ -140,7 +132,6 @@ supabase-storage:
       cpu: 100m
   environment:
     NODE_ENV: "production"
-    AUTH_JWT_SECRET: super-secret-jwt-token-with-at-least-32-characters-long
     DB_DRIVER: postgres
     DB_HOST: cnpg-cluster-rw
     DB_PORT: 5432
@@ -203,10 +194,12 @@ deployment:
   # For more information checkout: https://kubernetes.io/docs/concepts/overview/working-with-objects/labels/
   podLabels: {}
 
-  podSecurityContext: {}
+  podSecurityContext:
+    {}
     # fsGroup: 2000
 
-  securityContext: {}
+  securityContext:
+    {}
     # capabilities:
     #   drop:
     #   - ALL
@@ -221,7 +214,8 @@ deployment:
     # This sets the ports more information can be found here: https://kubernetes.io/docs/concepts/services-networking/service/#field-spec-ports
     port: 3000
 
-  resources: {}
+  resources:
+    {}
     # We usually recommend not to specify default resources and to leave this as a conscious
     # choice for the user. This also increases chances charts run on environments with little
     # resources, such as Minikube. If you do want to specify resources, uncomment the following

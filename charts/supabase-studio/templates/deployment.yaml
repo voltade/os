@@ -49,18 +49,16 @@ spec:
               protocol: TCP
           {{- if .Values.environment }}
           env:
-            {{- if .Values.global.enabled }}
             - name: SUPABASE_PUBLIC_URL
-              value: http://{{ include "supabase-studio.fullname" . }}.{{ .Values.global.baseDomain }}
+              value: http://{{ .Values.global.orgId }}-{{ .Values.global.environmentId }}.{{ .Values.global.baseDomain }}
             - name: NEXT_PUBLIC_STUDIO_URL
-              value: http://{{ include "supabase-studio.fullname" . }}.{{ .Values.global.baseDomain }}
+              value: http://{{ .Values.global.orgId }}-{{ .Values.global.environmentId }}.{{ .Values.global.baseDomain }}
             - name: SUPABASE_URL
-              value: http://{{ .Values.global.nameOverride }}:80
-            - name: STUDIO_PG_META_URL
-              value: http://{{ .Values.global.nameOverride }}-meta:8080
-            - name: POSTGREST_URL
-              value: http://{{ .Values.global.nameOverride }}-rest:3000
-            {{- end }}
+              value: http://{{ .Values.global.orgId }}-{{ .Values.global.environmentId }}.{{ .Values.global.baseDomain }}
+            - name: SUPABASE_ANON_KEY
+              value: {{ .Values.global.anonKey | quote }}
+            - name: SUPABASE_SERVICE_KEY
+              value: {{ .Values.global.serviceKey | quote }}
             {{- range $key, $value := .Values.environment }}
             {{- if kindIs "map" $value }}
             - name: {{ $key }}

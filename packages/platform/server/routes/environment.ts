@@ -11,18 +11,12 @@ type Variables = {
 };
 
 type Values = Record<string, unknown> & {
-  anon_key: string;
-  service_key: string;
-  postgrest: {
-    environment: {
-      PGRST_JWT_SECRET: string;
-      PGRST_JWT_AUD: string;
-    };
-  };
-  deployment: {
-    environment: {
-      ORG_ID: string;
-    };
+  global: {
+    orgId: string;
+    environmentId: string;
+    publicKey: string;
+    anonKey: string;
+    serviceKey: string;
   };
 };
 
@@ -43,27 +37,20 @@ export const route = factory
         variables: {
           orgId: environment.org_id,
           environmentId: environment.id,
-          environmentChartVersion: '0.1.7',
+          environmentChartVersion: '0.1.12',
           isProduction: environment.is_production,
         },
         values: {
-          anon_key: await anonJwt
-            .setAudience([environment.org_id])
-            .sign(privateKey),
-          service_key: await serviceJwt
-            .setAudience([environment.org_id])
-            .sign(privateKey),
-          postgrest: {
-            environment: {
-              PGRST_JWT_SECRET: publicKey,
-              // https://docs.postgrest.org/en/v13/references/auth.html#jwt-aud-validation
-              PGRST_JWT_AUD: environment.org_id,
-            },
-          },
-          deployment: {
-            environment: {
-              ORG_ID: environment.org_id,
-            },
+          global: {
+            orgId: environment.org_id,
+            environmentId: environment.id,
+            publicKey,
+            anonKey: await anonJwt
+              .setAudience([environment.org_id])
+              .sign(privateKey),
+            serviceKey: await serviceJwt
+              .setAudience([environment.org_id])
+              .sign(privateKey),
           },
         },
       })),
