@@ -18,32 +18,19 @@ spec:
         requeueAfterSeconds: 15
   template:
     metadata:
-      name: "{{ .org_id }}-{{ .environment_id }}"
+      name: "org-{{ .variables.orgId }}-{{ .variables.environmentId }}"
       labels:
-        org: "{{ .org_id }}"
-        is_production: "{{ .is_production }}"
+        orgId: "{{ .variables.orgId }}"
+        isProduction: "{{ .variables.isProduction }}"
     spec:
       project: default
       source:
         repoURL: registry.127.0.0.1.nip.io
         chart: environment
-        targetRevision: "{{ .environment_chart_version}}"
+        targetRevision: "{{ .variables.environmentChartVersion}}"
         helm:
-          parameters:
-            - name: fullnameOverride
-              value: "{{ .org_id }}-{{ .environment_id }}"
-            - name: global.environment_id
-              value: "{{ .environment_id }}"
-            - name: global.environment
-              value: "development"
-            - name: parameters.domain
-              value: 127.0.0.1.nip.io
-            - name: parameters.jwt.aud
-              value: "{{ .org_id }}"
-            - name: parameters.jwt.service_key
-              value: "{{ .service_key }}"
-            - name: parameters.jwt.anon_key
-              value: "{{ .anon_key }}"
+          values: |
+            {{ .values | toYaml }}
       syncPolicy:
         automated:
           prune: true
@@ -54,4 +41,4 @@ spec:
           - ApplyOutOfSyncOnly=true
       destination:
         server: https://kubernetes.default.svc
-        namespace: "{{ .org_id }}-{{ .environment_id }}"
+        namespace: "org-{{ .variables.orgId }}-{{ .variables.environmentId }}"

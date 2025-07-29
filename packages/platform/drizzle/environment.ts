@@ -26,9 +26,6 @@ export const environmentTable = pgTable(
     description: text(),
 
     is_production: boolean().notNull().default(false),
-
-    service_key: text().notNull(),
-    anon_key: text().notNull(),
     runner_count: integer().notNull().default(1),
     database_instance_count: integer().notNull().default(1),
   },

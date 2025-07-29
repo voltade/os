@@ -1,14 +1,29 @@
 import { environmentTable } from '#drizzle/environment';
 import { factory } from '#server/factory.ts';
 import { db } from '#server/lib/db.ts';
+import { anonJwt, privateKey, publicKey, serviceJwt } from '#server/lib/jwk.ts';
 
-interface Environment {
-  org_id: string;
-  is_production: boolean;
-  environment_id: string;
-  environment_chart_version: string;
-  service_key: string;
+type Variables = {
+  orgId: string;
+  environmentId: string;
+  environmentChartVersion: string;
+  isProduction: boolean;
+};
+
+type Values = Record<string, unknown> & {
   anon_key: string;
+  service_key: string;
+  postgrest: {
+    environment: {
+      PGRST_JWT_SECRET: string;
+      PGRST_JWT_AUD: string;
+    };
+  };
+};
+
+interface Parameters {
+  variables: Variables;
+  values: Values;
 }
 
 export const route = factory
@@ -17,16 +32,37 @@ export const route = factory
     // const reqBody = await c.req.json();
     console.log(c.req.method, c.req.url);
     const environments = await db.select().from(environmentTable);
+
+    const parameters: Parameters[] = await Promise.all(
+      environments.map(async (environment) => ({
+        variables: {
+          orgId: environment.org_id,
+          environmentId: environment.id,
+          environmentChartVersion: '0.1.6',
+          isProduction: environment.is_production,
+        },
+        values: {
+          anon_key: await anonJwt
+            .setAudience([environment.org_id])
+            .sign(privateKey),
+          service_key: await serviceJwt
+            .setAudience([environment.org_id])
+            .sign(privateKey),
+          postgrest: {
+            environment: {
+              PGRST_JWT_SECRET: publicKey,
+              // https://docs.postgrest.org/en/v13/references/auth.html#jwt-aud-validation
+              PGRST_JWT_AUD: environment.org_id,
+            },
+          },
+        },
+      })),
+    );
+
+    // https://argo-cd.readthedocs.io/en/stable/operator-manual/applicationset/Generators-Plugin/#http-server
     return c.json({
       output: {
-        parameters: environments.map((environment) => ({
-          org_id: environment.org_id,
-          is_production: environment.is_production,
-          environment_id: environment.id,
-          environment_chart_version: '0.1.5',
-          service_key: environment.service_key,
-          anon_key: environment.anon_key,
-        })) satisfies Environment[],
+        parameters,
       },
     });
   });
