@@ -37,7 +37,7 @@ spec:
       {{- end }}
       initContainers:
         - name: wait-for-db
-          image: postgres:15-alpine
+          image: postgres:17-alpine
           env:
             {{- range $key, $value := .Values.environment }}
             {{- if and (kindIs "map" $value) (hasKey $value "valueFrom") }}
