@@ -44,21 +44,6 @@ spec:
         login: true
         passwordSecret:
           name: cnpg-hydra-admin
-
-      - name: authenticator
-        login: true
-        inherit: false
-        inRoles:
-          - authenticated
-        passwordSecret:
-          name: cnpg-authenticator
-
-      - name: authenticated
-        inherit: false
-
-      - name: service_role
-        bypassrls: true
-
   bootstrap:
     initdb:
       database: platform
