@@ -12,8 +12,11 @@ resource "kind_cluster" "this" {
     }
     containerd_config_patches = [
       <<-TOML
+      version = 2
       [plugins."io.containerd.grpc.v1.cri".registry.mirrors."docker.io"]
         endpoint = ["https://mirror.gcr.io"]
+      [plugins."io.containerd.grpc.v1.cri".registry.mirrors."${local.registry_host}"]
+        endpoint = ["https://${local.registry_ip}"]
       TOML
     ]
 
@@ -49,6 +52,16 @@ resource "kind_cluster" "this" {
         container_path = "/mnt/voltade-os.git"
         read_only      = true
       }
+
+      extra_mounts {
+        host_path      = local_file.selfsigned_ca.filename
+        container_path = "/usr/local/share/ca-certificates/voltade-ca.crt"
+        read_only      = true
+      }
     }
+  }
+
+  provisioner "local-exec" {
+    command = "docker exec ${self.name}-control-plane update-ca-certificates"
   }
 }

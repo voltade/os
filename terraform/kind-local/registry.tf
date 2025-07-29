@@ -1,6 +1,5 @@
 data "docker_network" "kind" {
-  depends_on = [kind_cluster.this]
-  name       = "kind"
+  name = "kind"
 }
 
 resource "docker_image" "registry" {
