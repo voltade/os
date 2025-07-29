@@ -14,6 +14,7 @@ export const db = drizzle({
     password: DB_PASSWORD,
     database: DB_NAME,
     tls: true,
+    // TODO: adjust pool settings as needed
     max: 10,
     idleTimeout: 10,
   },
