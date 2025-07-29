@@ -94,7 +94,7 @@ BEGIN
     alphabetLength := array_length(alphabetArray, 1);
 
     LOOP
-        bytes := gen_random_bytes(step);
+        bytes := extensions.gen_random_bytes(step);
         FOR counter IN 0..step - 1
             LOOP
                 alphabetIndex := (get_byte(bytes, counter) & mask) + 1;

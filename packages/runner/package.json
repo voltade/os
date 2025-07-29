@@ -4,6 +4,11 @@
   "license": "AGPL-3.0-only",
   "version": "0.1.0",
   "type": "module",
+  "scripts": {
+    "dev": "bun run --hot server/index.ts",
+    "build": "bun build --minify --sourcemap --target=bun --outdir=dist src/index.ts",
+    "build:docker": "docker build -t voltade-runner:latest ."
+  },
   "devDependencies": {
     "@hono/zod-validator": "^0.7.1",
     "@types/bun": "latest"

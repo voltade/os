@@ -165,16 +165,21 @@ supabase-storage:
     STORAGE_FILE_ETAG_ALGORITHM: md5
 
 deployment:
+  enabled: true
   # This will set the replicaset count more information can be found here: https://kubernetes.io/docs/concepts/workloads/controllers/replicaset/
   replicaCount: 1
 
   # This sets the container image more information can be found here: https://kubernetes.io/docs/concepts/containers/images/
   image:
-    repository: nginx
+    repository: voltade-runner
     # This sets the pull policy for images.
     pullPolicy: IfNotPresent
     # Overrides the image tag whose default is the chart appVersion.
-    tag: ""
+    tag: "latest"
+
+  environment:
+    ORG_ID: "acme"
+    OS_URL: "http://platform.platform.svc.cluster.local"
 
   # This is for the secrets for pulling an image from a private repository more information can be found here: https://kubernetes.io/docs/tasks/configure-pod-container/pull-image-private-registry/
   imagePullSecrets: []
@@ -214,7 +219,7 @@ deployment:
     # This sets the service type more information can be found here: https://kubernetes.io/docs/concepts/services-networking/service/#publishing-services-service-types
     type: ClusterIP
     # This sets the ports more information can be found here: https://kubernetes.io/docs/concepts/services-networking/service/#field-spec-ports
-    port: 80
+    port: 3000
 
   resources: {}
     # We usually recommend not to specify default resources and to leave this as a conscious
@@ -231,11 +236,11 @@ deployment:
   # This is to setup the liveness and readiness probes more information can be found here: https://kubernetes.io/docs/tasks/configure-pod-container/configure-liveness-readiness-startup-probes/
   livenessProbe:
     httpGet:
-      path: /
+      path: /healthz
       port: http
   readinessProbe:
     httpGet:
-      path: /
+      path: /healthz
       port: http
 
   # This section is for setting up autoscaling more information can be found here: https://kubernetes.io/docs/concepts/workloads/autoscaling/

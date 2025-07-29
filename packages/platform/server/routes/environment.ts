@@ -19,6 +19,11 @@ type Values = Record<string, unknown> & {
       PGRST_JWT_AUD: string;
     };
   };
+  deployment: {
+    environment: {
+      ORG_ID: string;
+    };
+  };
 };
 
 interface Parameters {
@@ -38,7 +43,7 @@ export const route = factory
         variables: {
           orgId: environment.org_id,
           environmentId: environment.id,
-          environmentChartVersion: '0.1.6',
+          environmentChartVersion: '0.1.8',
           isProduction: environment.is_production,
         },
         values: {
@@ -53,6 +58,11 @@ export const route = factory
               PGRST_JWT_SECRET: publicKey,
               // https://docs.postgrest.org/en/v13/references/auth.html#jwt-aud-validation
               PGRST_JWT_AUD: environment.org_id,
+            },
+          },
+          deployment: {
+            environment: {
+              ORG_ID: environment.org_id,
             },
           },
         },

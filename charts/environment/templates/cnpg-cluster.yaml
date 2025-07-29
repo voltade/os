@@ -14,3 +14,13 @@ spec:
   storage:
     size: 4Gi
   enableSuperuserAccess: true
+  managed:
+    roles:
+      - name: authenticated
+        inherit: false
+
+      - name: service_role
+        bypassrls: true
+
+      - name: anon
+        inherit: false
