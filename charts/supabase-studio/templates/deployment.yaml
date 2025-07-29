@@ -50,11 +50,11 @@ spec:
           {{- if .Values.environment }}
           env:
             - name: SUPABASE_PUBLIC_URL
-              value: http://{{ .Values.global.orgId }}-{{ .Values.global.environmentId }}.{{ .Values.global.baseDomain }}
+              value: http://{{ .Release.Name }}.{{ .Values.global.baseDomain }}
             - name: NEXT_PUBLIC_STUDIO_URL
-              value: http://{{ .Values.global.orgId }}-{{ .Values.global.environmentId }}.{{ .Values.global.baseDomain }}
+              value: http://{{ .Release.Name }}.{{ .Values.global.baseDomain }}
             - name: SUPABASE_URL
-              value: http://{{ .Values.global.orgId }}-{{ .Values.global.environmentId }}.{{ .Values.global.baseDomain }}
+              value: http://{{ .Release.Name }}.{{ .Values.global.baseDomain }}
             - name: SUPABASE_ANON_KEY
               value: {{ .Values.global.anonKey | quote }}
             - name: SUPABASE_SERVICE_KEY

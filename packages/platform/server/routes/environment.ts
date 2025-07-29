@@ -7,6 +7,7 @@ type Variables = {
   orgId: string;
   environmentId: string;
   environmentChartVersion: string;
+  releaseName: string;
   isProduction: boolean;
 };
 
@@ -38,6 +39,7 @@ export const route = factory
           orgId: environment.org_id,
           environmentId: environment.id,
           environmentChartVersion: '0.1.12',
+          releaseName: `${environment.org_id}-${environment.id}`,
           isProduction: environment.is_production,
         },
         values: {
