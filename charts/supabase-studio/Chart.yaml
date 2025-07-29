@@ -22,4 +22,4 @@ version: 0.1.3
 # follow Semantic Versioning. They should reflect the version the application is using.
 # It is recommended to use it with quotes.
 # https://hub.docker.com/r/supabase/studio/tags
-appVersion: "2025.07.21-sha-88dca02"
+appVersion: "2025.07.28-sha-578b707"

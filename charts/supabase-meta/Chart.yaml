@@ -23,4 +23,4 @@ version: 0.1.0
 # follow Semantic Versioning. They should reflect the version the application is using.
 # It is recommended to use it with quotes.
 # https://hub.docker.com/r/supabase/postgres-meta/tags
-appVersion: "v0.91.1"
+appVersion: "v0.91.2"
