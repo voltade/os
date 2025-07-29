@@ -50,6 +50,7 @@ spec:
       owner: platform_admin
       dataChecksums: true
       postInitApplicationSQL:
+        - create schema if not exists extensions;
         - create extension supabase_vault cascade;
         - grant usage on schema vault to platform_admin;
         - grant execute on all functions in schema vault to platform_admin;

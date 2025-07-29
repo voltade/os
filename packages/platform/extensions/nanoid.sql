@@ -23,6 +23,8 @@
 -- use-cases requiring small, unpredictable IDs (e.g., URL shorteners, generated file names, etc.).
 -- While it comes with a default configuration, the function is designed to be flexible,
 -- allowing for customization to meet specific needs.
+create schema if not exists extensions;
+
 drop function if exists extensions.nanoid (int, text, float);
 
 create or replace function extensions.nanoid (
@@ -92,7 +94,7 @@ BEGIN
     alphabetLength := array_length(alphabetArray, 1);
 
     LOOP
-        bytes := extensions.gen_random_bytes(step);
+        bytes := gen_random_bytes(step);
         FOR counter IN 0..step - 1
             LOOP
                 alphabetIndex := (get_byte(bytes, counter) & mask) + 1;
