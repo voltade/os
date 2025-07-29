@@ -43,7 +43,7 @@ export const route = factory
         variables: {
           orgId: environment.org_id,
           environmentId: environment.id,
-          environmentChartVersion: '0.1.8',
+          environmentChartVersion: '0.1.7',
           isProduction: environment.is_production,
         },
         values: {
