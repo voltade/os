@@ -30,11 +30,7 @@ function RouteComponent() {
             const session = await ory.toSession({
               tokenizeAs: 'postgrest',
             });
-            await fetch('http://postgrest.127.0.0.1.nip.io/org', {
-              headers: {
-                Authorization: `Bearer ${session.tokenized}`,
-              },
-            });
+            console.log(session.tokenized);
           }}
         >
           JWT
