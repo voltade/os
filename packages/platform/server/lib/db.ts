@@ -6,6 +6,7 @@ import { appEnvVariables } from '#server/env.ts';
 const { DB_NAME, DB_USER, DB_HOST, DB_PORT, DB_PASSWORD } = appEnvVariables;
 
 export const db = drizzle({
+  // https://bun.com/docs/api/sql#connection-options
   connection: {
     host: DB_HOST,
     port: DB_PORT,
@@ -13,6 +14,8 @@ export const db = drizzle({
     password: DB_PASSWORD,
     database: DB_NAME,
     tls: true,
+    max: 10,
+    idleTimeout: 10,
   },
   schema: {
     ...schema.orgTable,
