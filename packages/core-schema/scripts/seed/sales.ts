@@ -1,13 +1,13 @@
 import { faker } from '@faker-js/faker';
 import type { InferInsertModel } from 'drizzle-orm';
 
+import { db } from '../../lib/db.ts';
 import {
   OrderLineType,
   OrderState,
   orderLineTable,
   orderTable,
 } from '../../schemas/index.ts';
-import { db } from '../../utils/db.ts';
 import { type CurrencyIds, clearTables, type SeedContext } from './utils.ts';
 
 /**

@@ -2,7 +2,7 @@
 
 import { sql } from 'drizzle-orm';
 
-import { db } from '../utils/db.ts';
+import { db } from '../lib/db.ts';
 
 interface TableInfo {
   schema: string;

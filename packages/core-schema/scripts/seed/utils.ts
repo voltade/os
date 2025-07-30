@@ -1,7 +1,7 @@
 import { sql } from 'drizzle-orm';
 import type { PgTable } from 'drizzle-orm/pg-core';
 
-import { db } from '../../utils/db.ts';
+import { db } from '../../lib/db.ts';
 
 export type CountryIds = { [name: string]: number };
 export type CurrencyIds = { [name: string]: number };

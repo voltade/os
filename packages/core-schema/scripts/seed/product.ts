@@ -1,6 +1,7 @@
 import { faker } from '@faker-js/faker';
 import type { InferInsertModel } from 'drizzle-orm';
 
+import { db } from '../../lib/db.ts';
 import {
   comboProductTable,
   comboTable,
@@ -11,7 +12,6 @@ import {
   productTemplateTable,
   templateComboTable,
 } from '../../schemas/index.ts';
-import { db } from '../../utils/db.ts';
 import { clearTables, type SeedContext } from './utils.ts';
 
 const NUM_GENERIC_TEMPLATES = 3;

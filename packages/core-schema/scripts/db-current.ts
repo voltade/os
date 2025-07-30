@@ -1,4 +1,4 @@
-import { db } from '../utils/db.ts';
+import { db } from '../lib/db.ts';
 import { processSqlFile } from './utils/processSqlFile.ts';
 
 const currentSql = await processSqlFile('current.sql');

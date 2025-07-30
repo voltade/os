@@ -1,6 +1,7 @@
 import { faker } from '@faker-js/faker';
 import type { InferInsertModel } from 'drizzle-orm';
 
+import { db } from '../../lib/db.ts';
 import {
   inventoryTable,
   StockOperationLineStatus,
@@ -13,7 +14,6 @@ import {
   warehouseLocationTable,
   warehouseTable,
 } from '../../schemas/index.ts';
-import { db } from '../../utils/db.ts';
 import { clearTables, type SeedContext } from './utils.ts';
 
 const HARDCODED_WAREHOUSE_COUNT = 3;

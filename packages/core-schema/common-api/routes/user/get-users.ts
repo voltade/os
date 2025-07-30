@@ -1,5 +1,5 @@
+import type { Db } from '../../../lib/db.ts';
 import { userTable } from '../../../schemas/resource/index.ts';
-import type { Db } from '../../../utils/db.ts';
 import { createListRoute } from '../../factories/list-route.ts';
 
 export const createGetUsersRoute = (db: Db) => {

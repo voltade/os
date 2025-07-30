@@ -1,6 +1,7 @@
 import { faker } from '@faker-js/faker';
 import type { InferInsertModel } from 'drizzle-orm';
 
+import { db } from '../../lib/db.ts';
 import {
   countryTable,
   currencyTable,
@@ -10,7 +11,6 @@ import {
   uomTable,
   userTable,
 } from '../../schemas/index.ts';
-import { db } from '../../utils/db.ts';
 import {
   type CountryIds,
   type CurrencyIds,

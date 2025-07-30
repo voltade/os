@@ -1,6 +1,7 @@
 import { faker } from '@faker-js/faker';
 import type { InferInsertModel } from 'drizzle-orm';
 
+import { db } from '../../lib/db.ts';
 import {
   PurchaseQuotationType,
   PurchaseRequisitionPriority,
@@ -12,7 +13,6 @@ import {
   quotationItemTable,
   quotationTable,
 } from '../../schemas/index.ts';
-import { db } from '../../utils/db.ts';
 import { clearTables, type SeedContext } from './utils.ts';
 
 /**

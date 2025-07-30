@@ -1,6 +1,6 @@
 import { Hono } from 'hono';
 
-import type { Db } from '../../utils/db.ts';
+import type { Db } from '../../lib/db.ts';
 import { createProductRoute } from './products/index.ts';
 import { createUserRoute } from './user/index.ts';
 

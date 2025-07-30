@@ -1,12 +1,12 @@
 import { faker } from '@faker-js/faker';
 import type { InferInsertModel } from 'drizzle-orm';
 
+import { db } from '../../lib/db.ts';
 import {
   RepairOrderPriority,
   RepairOrderStatus,
   repairOrderTable,
 } from '../../schemas/index.ts';
-import { db } from '../../utils/db.ts';
 import { clearTables, type SeedContext } from './utils.ts';
 
 const REPAIR_SCENARIOS = [

@@ -4,7 +4,7 @@ import type { PgTable } from 'drizzle-orm/pg-core';
 import { createSelectSchema } from 'drizzle-zod';
 import { Hono } from 'hono';
 
-import type { Db } from '../../utils/db.ts';
+import type { Db } from '../../lib/db.ts';
 import { buildWhereClause } from '../builders/where-clause.ts';
 import {
   calculateOffset,
