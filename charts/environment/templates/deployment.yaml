@@ -44,8 +44,17 @@ spec:
           {{- end }}
           image: "{{ .Values.deployment.image.repository }}:{{ .Values.deployment.image.tag | default .Chart.AppVersion }}"
           imagePullPolicy: {{ .Values.deployment.image.pullPolicy }}
-          {{- if .Values.environment }}
           env:
+            - name: ORG_ID
+              value: {{ .Values.global.orgId | quote }}
+            - name: POSTGREST_URL
+              value: http://postgrest:3000
+            - name: SUPABASE_META_URL
+              value: http://supabase-meta:8080
+            - name: SUPABASE_STORAGE_URL
+              value: http://supabase-storage:5000
+            - name: SUPABASE_STUDIO_URL
+              value: http://supabase-studio:3000
             {{- range $key, $value := .Values.deployment.environment }}
             {{- if kindIs "map" $value }}
             - name: {{ $key }}
@@ -55,7 +64,6 @@ spec:
               value: {{ $value | quote }}
             {{- end }}
             {{- end }}
-          {{- end }}
           ports:
             - name: http
               containerPort: {{ .Values.deployment.service.port }}

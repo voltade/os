@@ -1,0 +1,22 @@
+{{- if .Values.httproute.enabled }}
+apiVersion: gateway.networking.k8s.io/v1
+kind: HTTPRoute
+metadata:
+  name: {{ include "supabase-studio.fullname" . }}
+  labels:
+    {{- include "supabase-studio.labels" . | nindent 4 }}
+spec:
+  parentRefs:
+    - name: {{ .Values.global.gatewayName }}
+      namespace: {{ .Values.global.gatewayNamespace }}
+  hostnames:
+    - "{{ include "supabase-studio.fullname" . }}.{{ .Release.Name }}.{{ .Values.global.baseDomain }}"
+  rules:
+    - backendRefs:
+        - name: {{ include "supabase-studio.fullname" . }}
+          port: {{ .Values.service.port }}
+      matches:
+        - path:
+            type: PathPrefix
+            value: /
+{{- end }}

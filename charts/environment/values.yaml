@@ -29,8 +29,7 @@ deployment:
     tag: "latest"
 
   environment:
-    ORG_ID: "acme"
-    OS_URL: "http://platform.platform.svc.cluster.local"
+    PLATFORM_URL: "http://socat.platform.svc.cluster.local:5173"
 
   # This is for the secrets for pulling an image from a private repository more information can be found here: https://kubernetes.io/docs/tasks/configure-pod-container/pull-image-private-registry/
   imagePullSecrets: []
@@ -73,7 +72,7 @@ deployment:
     # This sets the service type more information can be found here: https://kubernetes.io/docs/concepts/services-networking/service/#publishing-services-service-types
     type: ClusterIP
     # This sets the ports more information can be found here: https://kubernetes.io/docs/concepts/services-networking/service/#field-spec-ports
-    port: 3000
+    port: 3001
 
   httproute:
     enabled: true
@@ -143,6 +142,8 @@ postgrest:
   service:
     type: ClusterIP
     port: 3000
+  httproute:
+    enabled: true
   resources:
     requests:
       memory: 256Mi
@@ -181,6 +182,8 @@ supabase-meta:
   service:
     type: ClusterIP
     port: 8080
+  httproute:
+    enabled: true
   resources:
     requests:
       memory: 256Mi
@@ -216,6 +219,8 @@ supabase-studio:
   service:
     type: ClusterIP
     port: 3000
+  httproute:
+    enabled: true
   resources:
     requests:
       memory: 512Mi
@@ -232,6 +237,7 @@ supabase-studio:
     STUDIO_PORT: 3000
     NEXT_PUBLIC_ENABLE_LOGS: "false"
     NEXT_PUBLIC_ENABLE_TELEMETRY: "false"
+    NEXT_PUBLIC_IS_PLATFORM: "false"
     NODE_ENV: "production"
     STUDIO_PG_META_URL: http://supabase-meta:8080
     POSTGREST_URL: http://postgrest:3000
@@ -246,6 +252,8 @@ supabase-storage:
   service:
     type: ClusterIP
     port: 5000
+  httproute:
+    enabled: true
   resources:
     requests:
       memory: 128Mi
