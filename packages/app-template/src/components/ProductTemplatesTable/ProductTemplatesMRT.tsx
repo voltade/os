@@ -11,6 +11,7 @@ import {
   type MRT_ColumnFilterFnsState,
   type MRT_ColumnFiltersState,
   type MRT_PaginationState,
+  type MRT_SortingState,
   useMantineReactTable,
 } from 'mantine-react-table';
 import { useEffect, useState } from 'react';
@@ -52,7 +53,7 @@ const columns: MRT_ColumnDef<ProductTemplate>[] = [
 
 export default function ProductTemplatesMRT() {
   const [pagination, setPagination] = useState<MRT_PaginationState>({
-    pageIndex: 0, // Changed from 1 to 0
+    pageIndex: 0,
     pageSize: 10,
   });
 
@@ -69,11 +70,14 @@ export default function ProductTemplatesMRT() {
       ) as MRT_ColumnFilterFnsState,
     );
 
+  const [sorting, setSorting] = useState<MRT_SortingState>([]);
+
   const { data, isLoading } = useProductTemplates({
     pagination,
     supabase,
     columnFilters,
     columnFilterFns,
+    sorting,
   });
 
   useEffect(() => {
@@ -82,33 +86,32 @@ export default function ProductTemplatesMRT() {
     }
   }, [data?.count]);
 
-  // Reset to first page when page size changes.
+  // Reset to first page when page size, column filters, or sorting changes.
   // biome-ignore lint/correctness/useExhaustiveDependencies: This is intentional to reset pagination.
   useEffect(() => {
     setPagination((prev) => ({
       ...prev,
       pageIndex: 0,
     }));
-  }, [pagination.pageSize]);
-
-  // Reset to first page when column filters change.
-  // biome-ignore lint/correctness/useExhaustiveDependencies: This is intentional to reset pagination.
-  useEffect(() => {
-    setPagination((prev) => ({
-      ...prev,
-      pageIndex: 0,
-    }));
-  }, [columnFilters]);
+  }, [pagination.pageSize, columnFilters, sorting]);
 
   const table = useMantineReactTable({
     columns,
     data: data?.data ?? [],
     onPaginationChange: setPagination,
-    state: { pagination, isLoading, columnFilterFns, columnFilters },
+    state: { pagination, isLoading, columnFilterFns, columnFilters, sorting },
+    rowCount,
+
+    // Pagination
     manualPagination: true,
     enablePagination: true,
-    enableSorting: false, // TODO: Backend sorting.
-    rowCount,
+
+    // Sorting
+    enableSorting: true,
+    manualSorting: true,
+    onSortingChange: setSorting,
+
+    // Filtering
     manualFiltering: true,
     enableFilterMatchHighlighting: false,
     enableColumnFilters: true,

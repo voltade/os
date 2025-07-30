@@ -3,6 +3,7 @@ import type {
   MRT_ColumnFilterFnsState,
   MRT_ColumnFiltersState,
   MRT_PaginationState,
+  MRT_SortingState,
 } from 'mantine-react-table';
 
 import type { Database, SupabaseClient } from '../../../supabase/index.ts';
@@ -15,6 +16,7 @@ interface UseProductTemplatesOptions {
   supabase: SupabaseClient;
   columnFilters: MRT_ColumnFiltersState;
   columnFilterFns: MRT_ColumnFilterFnsState;
+  sorting: MRT_SortingState;
 }
 
 interface UseProductTemplatesResult {
@@ -27,20 +29,22 @@ export function useProductTemplates({
   supabase,
   columnFilters,
   columnFilterFns,
+  sorting,
 }: UseProductTemplatesOptions) {
   return useQuery({
     queryKey: [
       'product_template',
-      { pagination, columnFilters, columnFilterFns },
+      { pagination, columnFilters, columnFilterFns, sorting },
     ],
     queryFn: async (): Promise<UseProductTemplatesResult> => {
-      const from = pagination.pageIndex * pagination.pageSize; // Removed the -1 since pageIndex is now zero-based
+      const from = pagination.pageIndex * pagination.pageSize;
       const to = from + pagination.pageSize - 1;
 
       const query = supabase
         .from('product_template_view')
         .select('*', { count: 'exact' });
 
+      // Apply filtering.
       for (const columnId in columnFilterFns) {
         // TODO: Support other filter functions.
         if (columnFilterFns[columnId] === 'contains') {
@@ -56,7 +60,17 @@ export function useProductTemplates({
         }
       }
 
-      const { data, error, count } = await query.range(from, to);
+      // Apply sorting.
+      if (sorting.length === 0 || !sorting[0]) {
+        query.order('id', { ascending: true }); // Sort by ID by default for consistent pagination.
+      } else {
+        query.order(sorting[0].id, { ascending: !sorting[0].desc });
+      }
+
+      // Apply pagination.
+      query.range(from, to);
+
+      const { data, error, count } = await query;
 
       if (error) {
         throw new Error(`Failed to fetch products: ${error.message}`);

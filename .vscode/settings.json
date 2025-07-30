@@ -36,6 +36,7 @@
     "containerd",
     "gitea",
     "httproute",
+    "ilike",
     "initdb",
     "kratos",
     "kubeconfig",
