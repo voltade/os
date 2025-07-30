@@ -11,6 +11,7 @@
     "renesaarsoo.sql-formatter-vsc",
     "ast-grep.ast-grep-vscode",
     "opentofu.vscode-opentofu",
-    "qufiwefefwoyn.inline-sql-syntax"
+    "qufiwefefwoyn.inline-sql-syntax",
+    "openfga.openfga-vscode"
   ]
 }
