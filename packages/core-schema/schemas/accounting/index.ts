@@ -4,6 +4,7 @@
 
 export * from './enums.ts';
 export * from './tables/account.ts';
+export * from './tables/journal.ts';
 export * from './tables/journal_entry.ts';
 export * from './tables/journal_line.ts';
 export * from './tables/payment_term.ts';

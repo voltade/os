@@ -13,7 +13,7 @@ import { contactTable } from '../../resource/tables/contact.ts';
 import { currencyTable } from '../../resource/tables/currency.ts';
 import { partnerTable } from '../../resource/tables/partner.ts';
 import { DEFAULT_COLUMNS } from '../../utils.ts';
-import { orderState } from '../enums.ts';
+import { OrderState, orderState } from '../enums.ts';
 import { salesSchema } from '../schema.ts';
 
 /**
@@ -33,7 +33,7 @@ export const orderTable = salesSchema.table(
     partner_id: integer(),
     contact_id: integer(),
     name: text().notNull(),
-    state: orderState().notNull().default('Draft'),
+    state: orderState().notNull().default(OrderState.DRAFT),
     amount_untaxed: numeric().notNull(), // Before tax.
     amount_tax: numeric().notNull(),
     amount_total: numeric().notNull(), // Including tax.

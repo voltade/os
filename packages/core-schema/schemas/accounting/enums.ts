@@ -1,3 +1,4 @@
+import { enumToPgEnum } from '../utils.ts';
 import { accountingSchema } from './schema.ts';
 
 export const accountCategoryEnum = accountingSchema.enum('category_enum', [
@@ -33,9 +34,41 @@ export const accountCategoryEnum = accountingSchema.enum('category_enum', [
   'Off-Balance Sheet',
 ]);
 
+/**
+ * Enum for journal types.
+ *
+ * - GENERAL: General journal entries.
+ * - SALES: Journal entries related to sales transactions.
+ * - PURCHASES: Journal entries related to purchase transactions.
+ * - CASH: Journal entries related to cash transactions.
+ * - BANK: Journal entries related to bank transactions.
+ * - CREDIT_CARD: Journal entries related to credit card transactions.
+ * - OTHER: Any other type of journal entry.
+ */
+export enum JournalType {
+  GENERAL = 'General',
+  SALES = 'Sales',
+  PURCHASES = 'Purchases',
+  CASH = 'Cash',
+  BANK = 'Bank',
+  CREDIT_CARD = 'Credit Card',
+  OTHER = 'Other',
+}
+
+/**
+ * Enum for journal types as a `pgEnum`.
+ *
+ * - GENERAL: General journal entries.
+ * - SALES: Journal entries related to sales transactions.
+ * - PURCHASES: Journal entries related to purchase transactions.
+ * - CASH: Journal entries related to cash transactions.
+ * - BANK: Journal entries related to bank transactions.
+ * - CREDIT_CARD: Journal entries related to credit card transactions.
+ * - OTHER: Any other type of journal entry.
+ */
 export const journalTypeEnum = accountingSchema.enum(
   'account_journal_type_enum',
-  ['General', 'Sales', 'Purchases', 'Cash', 'Bank', 'Credit Card', 'Other'],
+  enumToPgEnum(JournalType),
 );
 
 export const journalEntryStatusEnum = accountingSchema.enum(
@@ -96,12 +129,46 @@ export const taxPriceIncludeEnum = accountingSchema.enum(
   ['Tax included', 'Tax excluded'],
 );
 
+/**
+ * The type of tax distribution line.
+ *
+ * - BASE: Represents the base amount before tax.
+ * - TAX: Represents the tax amount.
+ */
+export enum TaxDistributionLineType {
+  BASE = 'Base',
+  TAX = 'Tax',
+}
+
+/**
+ * The type of tax distribution line as a `pgEnum`.
+ *
+ * - Base: Represents the base amount before tax.
+ * - Tax: Represents the tax amount.
+ */
 export const taxDistributionLineTypeEnum = accountingSchema.enum(
   'account_tax_distribution_type_enum',
-  ['Base', 'Tax'],
+  enumToPgEnum(TaxDistributionLineType),
 );
 
+/**
+ * The document type for tax distribution lines.
+ *
+ * - INVOICE: Represents a standard invoice document.
+ * - REFUND: Represents a refund document.
+ */
+export enum TaxDistributionLineDocumentType {
+  INVOICE = 'Invoice',
+  REFUND = 'Refund',
+}
+
+/**
+ * The document type for tax distribution lines as a `pgEnum`.
+ *
+ * - INVOICE: Represents a standard invoice document.
+ * - REFUND: Represents a refund document.
+ */
 export const taxDistributionLineDocumentTypeEnum = accountingSchema.enum(
   'account_tax_distribution_document_type_enum',
-  ['Invoice', 'Refund'],
+  enumToPgEnum(TaxDistributionLineDocumentType),
 );

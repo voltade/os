@@ -11,7 +11,7 @@ import {
 
 import { uomTable } from '../../resource/tables/uom.ts';
 import { DEFAULT_COLUMNS, priceCol } from '../../utils.ts';
-import { productCategoryEnum, productTypeEnum } from '../enums.ts';
+import { ProductType, productCategoryEnum, productTypeEnum } from '../enums.ts';
 import { productSchema } from '../schema.ts';
 
 /**
@@ -50,7 +50,7 @@ export const productTemplateTable = productSchema.table(
     uom_id: integer(),
 
     // Product categorization
-    type: productTypeEnum().notNull().default('Goods'),
+    type: productTypeEnum().notNull().default(ProductType.GOODS),
     category: productCategoryEnum(),
 
     // Tracking

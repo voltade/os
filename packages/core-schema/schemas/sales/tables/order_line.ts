@@ -10,7 +10,7 @@ import {
 import { comboProductTable } from '../../product/tables/combo_product.ts';
 import { productTable } from '../../product/tables/product.ts';
 import { DEFAULT_COLUMNS } from '../../utils.ts';
-import { orderLineType } from '../enums.ts';
+import { OrderLineType, orderLineType } from '../enums.ts';
 import { salesSchema } from '../schema.ts';
 import { orderTable } from './order.ts';
 
@@ -36,7 +36,7 @@ export const orderLineTable = salesSchema.table(
     // The product's name is not customizable (it follows the product template's name).
     // If the order line type is Section or Note, this is the text rendered.
 
-    type: orderLineType().notNull().default('Product'),
+    type: orderLineType().notNull().default(OrderLineType.PRODUCT),
     quantity: numeric(),
     unit_price: numeric(),
     price_subtotal: numeric(), // Before tax.

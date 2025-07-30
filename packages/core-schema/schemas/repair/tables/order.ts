@@ -13,7 +13,12 @@ import { entityTable } from '../../resource/tables/entity.ts';
 import { partnerTable } from '../../resource/tables/partner.ts';
 import { userTable } from '../../resource/tables/user.ts';
 import { DEFAULT_COLUMNS } from '../../utils.ts';
-import { repairOrderPriorityEnum, repairOrderStatusEnum } from '../enums.ts';
+import {
+  RepairOrderPriority,
+  RepairOrderStatus,
+  repairOrderPriorityEnum,
+  repairOrderStatusEnum,
+} from '../enums.ts';
 import { repairSchema } from '../schema.ts';
 
 export const repairOrderTable = repairSchema
@@ -26,8 +31,8 @@ export const repairOrderTable = repairSchema
       assigned_technician_id: integer(),
       product_id: integer(),
       reference_number: varchar({ length: 20 }).notNull().unique(),
-      status: repairOrderStatusEnum().default('new'),
-      priority: repairOrderPriorityEnum().default('normal'),
+      status: repairOrderStatusEnum().default(RepairOrderStatus.NEW),
+      priority: repairOrderPriorityEnum().default(RepairOrderPriority.NORMAL),
       custom_properties: jsonb(),
       technician_notes: text(),
       warranty_covered: boolean().default(false),

@@ -1,4 +1,4 @@
-import { relations, type SQL, sql } from 'drizzle-orm';
+import { isNotNull, relations, type SQL, sql } from 'drizzle-orm';
 import {
   foreignKey,
   index,
@@ -9,7 +9,7 @@ import {
 } from 'drizzle-orm/pg-core';
 
 import { DEFAULT_COLUMNS } from '../../utils.ts';
-import { productTrackingEnum } from '../enums.ts';
+import { ProductTracking, productTrackingEnum } from '../enums.ts';
 import { productSchema } from '../schema.ts';
 import { productTemplateTable } from './product_template.ts';
 
@@ -58,7 +58,9 @@ export const productTable = productSchema.table(
     /**
      * Indicates how (if at all) the product is tracked in inventory.
      */
-    tracking_policy: productTrackingEnum().default('None').notNull(),
+    tracking_policy: productTrackingEnum()
+      .default(ProductTracking.NONE)
+      .notNull(),
 
     /**
      * These fields represent the different types of product identifiers used across retail, manufacturing, distribution,
@@ -128,12 +130,12 @@ export const productTable = productSchema.table(
 
     // Product indexes
     index('product_tracking_policy_idx').on(table.tracking_policy),
-    uniqueIndex('product_upc_idx').on(table.upc).where(sql`upc IS NOT NULL`),
-    uniqueIndex('product_ean_idx').on(table.ean).where(sql`ean IS NOT NULL`),
-    uniqueIndex('product_gtin_idx').on(table.gtin).where(sql`gtin IS NOT NULL`),
-    uniqueIndex('product_isbn_idx').on(table.isbn).where(sql`isbn IS NOT NULL`),
-    uniqueIndex('product_mpn_idx').on(table.mpn).where(sql`mpn IS NOT NULL`),
-    uniqueIndex('product_asin_idx').on(table.asin).where(sql`asin IS NOT NULL`),
+    uniqueIndex('product_upc_idx').on(table.upc).where(isNotNull(table.upc)),
+    uniqueIndex('product_ean_idx').on(table.ean).where(isNotNull(table.ean)),
+    uniqueIndex('product_gtin_idx').on(table.gtin).where(isNotNull(table.gtin)),
+    uniqueIndex('product_isbn_idx').on(table.isbn).where(isNotNull(table.isbn)),
+    uniqueIndex('product_mpn_idx').on(table.mpn).where(isNotNull(table.mpn)),
+    uniqueIndex('product_asin_idx').on(table.asin).where(isNotNull(table.asin)),
 
     /**
      * RLS policies for the product table.

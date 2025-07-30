@@ -4,7 +4,7 @@ import { foreignKey, integer, pgPolicy, varchar } from 'drizzle-orm/pg-core';
 import { userTable } from '../../resource/tables/user.ts';
 import { warehouseTable } from '../../stock/tables/warehouse.ts';
 import { DEFAULT_COLUMNS, timestampCol } from '../../utils.ts';
-import { purchaseOrderStatus } from '../enums.ts';
+import { PurchaseOrderStatus, purchaseOrderStatus } from '../enums.ts';
 import { purchaseSchema } from '../schema.ts';
 import { purchaseRequisitionTable } from './purchase_requisition.ts';
 import { quotationTable } from './quotation.ts';
@@ -26,7 +26,7 @@ export const purchaseOrderTable = purchaseSchema.table(
     quotation_id: integer().notNull(),
     warehouse_id: integer().notNull(),
     remarks: varchar(),
-    status: purchaseOrderStatus().notNull().default('draft'),
+    status: purchaseOrderStatus().notNull().default(PurchaseOrderStatus.DRAFT),
     expected_delivery_date: timestampCol('expected_delivery_date').notNull(),
     order_deadline: timestampCol('order_deadline').notNull(),
     created_by: integer().notNull(),

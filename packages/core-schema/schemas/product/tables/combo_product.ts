@@ -1,5 +1,10 @@
 import { relations, type SQL, sql } from 'drizzle-orm';
-import { foreignKey, integer, pgPolicy } from 'drizzle-orm/pg-core';
+import {
+  foreignKey,
+  integer,
+  pgPolicy,
+  uniqueIndex,
+} from 'drizzle-orm/pg-core';
 
 import { DEFAULT_COLUMNS, priceCol } from '../../utils.ts';
 import { comboTable, productTable, productTemplateTable } from '../index.ts';
@@ -31,6 +36,12 @@ export const comboProductTable = productSchema.table(
       columns: [table.product_id],
       foreignColumns: [productTable.id],
     }),
+
+    // Combo product indexes
+    uniqueIndex('combo_product_combo_id_product_id_key').on(
+      table.combo_id,
+      table.product_id,
+    ),
 
     /**
      * RLS policies for the combo product table.
