@@ -5094,6 +5094,9 @@ var db = new Plv8Database(pgDialect, new Plv8Session(pgDialect), undefined);
 function priceCol(name) {
   return numeric(name, { precision: 18, scale: 2 });
 }
+function enumToPgEnum(myEnum) {
+  return Object.values(myEnum).map((value) => `${value}`);
+}
 function timestampCol(name) {
   return timestamp(name, {
     precision: 3,
@@ -5177,7 +5180,17 @@ var accountCategoryEnum = accountingSchema.enum("category_enum", [
   "Depreciation",
   "Off-Balance Sheet"
 ]);
-var journalTypeEnum = accountingSchema.enum("account_journal_type_enum", ["General", "Sales", "Purchases", "Cash", "Bank", "Credit Card", "Other"]);
+var JournalType;
+((JournalType2) => {
+  JournalType2["GENERAL"] = "General";
+  JournalType2["SALES"] = "Sales";
+  JournalType2["PURCHASES"] = "Purchases";
+  JournalType2["CASH"] = "Cash";
+  JournalType2["BANK"] = "Bank";
+  JournalType2["CREDIT_CARD"] = "Credit Card";
+  JournalType2["OTHER"] = "Other";
+})(JournalType ||= {});
+var journalTypeEnum = accountingSchema.enum("account_journal_type_enum", enumToPgEnum(JournalType));
 var journalEntryStatusEnum = accountingSchema.enum("account_journal_entry_status_enum", ["Draft", "Posted", "Cancelled"]);
 var journalEntryTypeEnum = accountingSchema.enum("account_transaction_type_enum", [
   "Journal Entry",
@@ -5206,8 +5219,18 @@ var taxScopeEnum = accountingSchema.enum("account_tax_scope_enum", [
   "Services"
 ]);
 var taxPriceIncludeEnum = accountingSchema.enum("account_tax_price_include_override_enum", ["Tax included", "Tax excluded"]);
-var taxDistributionLineTypeEnum = accountingSchema.enum("account_tax_distribution_type_enum", ["Base", "Tax"]);
-var taxDistributionLineDocumentTypeEnum = accountingSchema.enum("account_tax_distribution_document_type_enum", ["Invoice", "Refund"]);
+var TaxDistributionLineType;
+((TaxDistributionLineType2) => {
+  TaxDistributionLineType2["BASE"] = "Base";
+  TaxDistributionLineType2["TAX"] = "Tax";
+})(TaxDistributionLineType ||= {});
+var taxDistributionLineTypeEnum = accountingSchema.enum("account_tax_distribution_type_enum", enumToPgEnum(TaxDistributionLineType));
+var TaxDistributionLineDocumentType;
+((TaxDistributionLineDocumentType2) => {
+  TaxDistributionLineDocumentType2["INVOICE"] = "Invoice";
+  TaxDistributionLineDocumentType2["REFUND"] = "Refund";
+})(TaxDistributionLineDocumentType ||= {});
+var taxDistributionLineDocumentTypeEnum = accountingSchema.enum("account_tax_distribution_document_type_enum", enumToPgEnum(TaxDistributionLineDocumentType));
 
 // schemas/accounting/tables/account.ts
 var accountTable = accountingSchema.table("account", {
@@ -5338,16 +5361,20 @@ var contactTable = resourceSchema.table("contact", {
 var salesSchema = pgSchema("sales");
 
 // schemas/sales/enums.ts
-var orderState = salesSchema.enum("order_state", [
-  "Draft",
-  "Sent",
-  "Sale"
-]);
-var orderLineType = salesSchema.enum("order_line_type", [
-  "Product",
-  "Section",
-  "Note"
-]);
+var OrderState;
+((OrderState2) => {
+  OrderState2["DRAFT"] = "Draft";
+  OrderState2["SENT"] = "Sent";
+  OrderState2["SALE"] = "Sale";
+})(OrderState ||= {});
+var orderState = salesSchema.enum("order_state", enumToPgEnum(OrderState));
+var OrderLineType;
+((OrderLineType2) => {
+  OrderLineType2["PRODUCT"] = "Product";
+  OrderLineType2["SECTION"] = "Section";
+  OrderLineType2["NOTE"] = "Note";
+})(OrderLineType ||= {});
+var orderLineType = salesSchema.enum("order_line_type", enumToPgEnum(OrderLineType));
 
 // schemas/sales/tables/order.ts
 function checkExpression2(relation) {
@@ -5360,7 +5387,7 @@ var orderTable = salesSchema.table("order", {
   partner_id: integer(),
   contact_id: integer(),
   name: text().notNull(),
-  state: orderState().notNull().default("Draft"),
+  state: orderState().notNull().default("Draft" /* DRAFT */),
   amount_untaxed: numeric().notNull(),
   amount_tax: numeric().notNull(),
   amount_total: numeric().notNull()
@@ -5407,31 +5434,44 @@ var orderTable = salesSchema.table("order", {
 var productSchema = pgSchema("product");
 
 // schemas/product/enums.ts
-var productTypeEnum = productSchema.enum("product_type_enum", [
-  "Goods",
-  "Combo",
-  "Service"
-]);
-var productTrackingEnum = productSchema.enum("product_tracking_enum", [
-  "None",
-  "Quantity",
-  "Batch",
-  "Serial"
-]);
-var productCategoryEnum = productSchema.enum("product_category_enum", [
-  "Automotive",
-  "Beauty & Personal Care",
-  "Books & Media",
-  "Clothing & Apparel",
-  "Electronics",
-  "Food & Grocery",
-  "Health & Wellness",
-  "Home & Kitchen",
-  "Office Supplies",
-  "Sports & Outdoors",
-  "Toys & Games"
-]);
-var productLifecycleStatusEnum = productSchema.enum("product_lifecycle_status_enum", ["Draft", "Active", "Discontinued", "EndOfLife"]);
+var ProductType;
+((ProductType2) => {
+  ProductType2["GOODS"] = "Goods";
+  ProductType2["COMBO"] = "Combo";
+  ProductType2["SERVICE"] = "Service";
+})(ProductType ||= {});
+var productTypeEnum = productSchema.enum("product_type_enum", enumToPgEnum(ProductType));
+var ProductTracking;
+((ProductTracking2) => {
+  ProductTracking2["NONE"] = "None";
+  ProductTracking2["QUANTITY"] = "Quantity";
+  ProductTracking2["BATCH"] = "Batch";
+  ProductTracking2["SERIAL"] = "Serial";
+})(ProductTracking ||= {});
+var productTrackingEnum = productSchema.enum("product_tracking_enum", enumToPgEnum(ProductTracking));
+var ProductCategory;
+((ProductCategory2) => {
+  ProductCategory2["AUTOMOTIVE"] = "Automotive";
+  ProductCategory2["BEAUTY_AND_PERSONAL_CARE"] = "Beauty & Personal Care";
+  ProductCategory2["BOOKS_AND_MEDIA"] = "Books & Media";
+  ProductCategory2["CLOTHING_AND_APPAREL"] = "Clothing & Apparel";
+  ProductCategory2["ELECTRONICS"] = "Electronics";
+  ProductCategory2["FOOD_AND_GROCERY"] = "Food & Grocery";
+  ProductCategory2["HEALTH_AND_WELLNESS"] = "Health & Wellness";
+  ProductCategory2["HOME_AND_KITCHEN"] = "Home & Kitchen";
+  ProductCategory2["OFFICE_SUPPLIES"] = "Office Supplies";
+  ProductCategory2["SPORTS_AND_OUTDOORS"] = "Sports & Outdoors";
+  ProductCategory2["TOYS_AND_GAMES"] = "Toys & Games";
+})(ProductCategory ||= {});
+var productCategoryEnum = productSchema.enum("product_category_enum", enumToPgEnum(ProductCategory));
+var ProductLifecycleStatus;
+((ProductLifecycleStatus2) => {
+  ProductLifecycleStatus2["DRAFT"] = "Draft";
+  ProductLifecycleStatus2["ACTIVE"] = "Active";
+  ProductLifecycleStatus2["DISCONTINUED"] = "Discontinued";
+  ProductLifecycleStatus2["END_OF_LIFE"] = "EndOfLife";
+})(ProductLifecycleStatus ||= {});
+var productLifecycleStatusEnum = productSchema.enum("product_lifecycle_status_enum", enumToPgEnum(ProductLifecycleStatus));
 // schemas/product/tables/combo.ts
 var comboTable = productSchema.table("combo", {
   ...DEFAULT_COLUMNS,
@@ -5459,7 +5499,7 @@ var productTemplateTable = productSchema.table("template", {
   weight: numeric({ precision: 18, scale: 3 }),
   volume: numeric({ precision: 18, scale: 3 }),
   uom_id: integer(),
-  type: productTypeEnum().notNull().default("Goods"),
+  type: productTypeEnum().notNull().default("Goods" /* GOODS */),
   category: productCategoryEnum(),
   purchase_ok: boolean().default(true).notNull(),
   sale_ok: boolean().default(true).notNull(),
@@ -5510,7 +5550,7 @@ function checkExpression4(relation) {
 var productTable = productSchema.table("product", {
   ...DEFAULT_COLUMNS,
   template_id: integer().notNull(),
-  tracking_policy: productTrackingEnum().default("None").notNull(),
+  tracking_policy: productTrackingEnum().default("None" /* NONE */).notNull(),
   sku: text().unique().notNull(),
   upc: text(),
   ean: text(),
@@ -5525,12 +5565,12 @@ var productTable = productSchema.table("product", {
     foreignColumns: [productTemplateTable.id]
   }),
   index("product_tracking_policy_idx").on(table.tracking_policy),
-  uniqueIndex("product_upc_idx").on(table.upc).where(sql`upc IS NOT NULL`),
-  uniqueIndex("product_ean_idx").on(table.ean).where(sql`ean IS NOT NULL`),
-  uniqueIndex("product_gtin_idx").on(table.gtin).where(sql`gtin IS NOT NULL`),
-  uniqueIndex("product_isbn_idx").on(table.isbn).where(sql`isbn IS NOT NULL`),
-  uniqueIndex("product_mpn_idx").on(table.mpn).where(sql`mpn IS NOT NULL`),
-  uniqueIndex("product_asin_idx").on(table.asin).where(sql`asin IS NOT NULL`),
+  uniqueIndex("product_upc_idx").on(table.upc).where(isNotNull(table.upc)),
+  uniqueIndex("product_ean_idx").on(table.ean).where(isNotNull(table.ean)),
+  uniqueIndex("product_gtin_idx").on(table.gtin).where(isNotNull(table.gtin)),
+  uniqueIndex("product_isbn_idx").on(table.isbn).where(isNotNull(table.isbn)),
+  uniqueIndex("product_mpn_idx").on(table.mpn).where(isNotNull(table.mpn)),
+  uniqueIndex("product_asin_idx").on(table.asin).where(isNotNull(table.asin)),
   pgPolicy("product_select_policy", {
     as: "permissive",
     for: "select",
@@ -5640,6 +5680,7 @@ var comboProductTable = productSchema.table("combo_product", {
     columns: [table.product_id],
     foreignColumns: [productTable.id]
   }),
+  uniqueIndex("combo_product_combo_id_product_id_key").on(table.combo_id, table.product_id),
   pgPolicy("combo_product_select_policy", {
     as: "permissive",
     for: "select",
@@ -5684,7 +5725,7 @@ var orderLineTable = salesSchema.table("order_line", {
   product_id: integer(),
   combo_product_id: integer(),
   description: text(),
-  type: orderLineType().notNull().default("Product"),
+  type: orderLineType().notNull().default("Product" /* PRODUCT */),
   quantity: numeric(),
   unit_price: numeric(),
   price_subtotal: numeric(),

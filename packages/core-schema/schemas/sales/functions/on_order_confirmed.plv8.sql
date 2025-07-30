@@ -4987,6 +4987,9 @@ var pgDialect = new PgDialect;
 var db = new Plv8Database(pgDialect, new Plv8Session(pgDialect), undefined);
 
 // schemas/utils.ts
+function enumToPgEnum(myEnum) {
+  return Object.values(myEnum).map((value) => `${value}`);
+}
 function timestampCol(name) {
   return timestamp(name, {
     precision: 3,
@@ -5070,7 +5073,17 @@ var accountCategoryEnum = accountingSchema.enum("category_enum", [
   "Depreciation",
   "Off-Balance Sheet"
 ]);
-var journalTypeEnum = accountingSchema.enum("account_journal_type_enum", ["General", "Sales", "Purchases", "Cash", "Bank", "Credit Card", "Other"]);
+var JournalType;
+((JournalType2) => {
+  JournalType2["GENERAL"] = "General";
+  JournalType2["SALES"] = "Sales";
+  JournalType2["PURCHASES"] = "Purchases";
+  JournalType2["CASH"] = "Cash";
+  JournalType2["BANK"] = "Bank";
+  JournalType2["CREDIT_CARD"] = "Credit Card";
+  JournalType2["OTHER"] = "Other";
+})(JournalType ||= {});
+var journalTypeEnum = accountingSchema.enum("account_journal_type_enum", enumToPgEnum(JournalType));
 var journalEntryStatusEnum = accountingSchema.enum("account_journal_entry_status_enum", ["Draft", "Posted", "Cancelled"]);
 var journalEntryTypeEnum = accountingSchema.enum("account_transaction_type_enum", [
   "Journal Entry",
@@ -5099,8 +5112,18 @@ var taxScopeEnum = accountingSchema.enum("account_tax_scope_enum", [
   "Services"
 ]);
 var taxPriceIncludeEnum = accountingSchema.enum("account_tax_price_include_override_enum", ["Tax included", "Tax excluded"]);
-var taxDistributionLineTypeEnum = accountingSchema.enum("account_tax_distribution_type_enum", ["Base", "Tax"]);
-var taxDistributionLineDocumentTypeEnum = accountingSchema.enum("account_tax_distribution_document_type_enum", ["Invoice", "Refund"]);
+var TaxDistributionLineType;
+((TaxDistributionLineType2) => {
+  TaxDistributionLineType2["BASE"] = "Base";
+  TaxDistributionLineType2["TAX"] = "Tax";
+})(TaxDistributionLineType ||= {});
+var taxDistributionLineTypeEnum = accountingSchema.enum("account_tax_distribution_type_enum", enumToPgEnum(TaxDistributionLineType));
+var TaxDistributionLineDocumentType;
+((TaxDistributionLineDocumentType2) => {
+  TaxDistributionLineDocumentType2["INVOICE"] = "Invoice";
+  TaxDistributionLineDocumentType2["REFUND"] = "Refund";
+})(TaxDistributionLineDocumentType ||= {});
+var taxDistributionLineDocumentTypeEnum = accountingSchema.enum("account_tax_distribution_document_type_enum", enumToPgEnum(TaxDistributionLineDocumentType));
 
 // schemas/accounting/tables/account.ts
 var accountTable = accountingSchema.table("account", {
@@ -5231,16 +5254,20 @@ var contactTable = resourceSchema.table("contact", {
 var salesSchema = pgSchema("sales");
 
 // schemas/sales/enums.ts
-var orderState = salesSchema.enum("order_state", [
-  "Draft",
-  "Sent",
-  "Sale"
-]);
-var orderLineType = salesSchema.enum("order_line_type", [
-  "Product",
-  "Section",
-  "Note"
-]);
+var OrderState;
+((OrderState2) => {
+  OrderState2["DRAFT"] = "Draft";
+  OrderState2["SENT"] = "Sent";
+  OrderState2["SALE"] = "Sale";
+})(OrderState ||= {});
+var orderState = salesSchema.enum("order_state", enumToPgEnum(OrderState));
+var OrderLineType;
+((OrderLineType2) => {
+  OrderLineType2["PRODUCT"] = "Product";
+  OrderLineType2["SECTION"] = "Section";
+  OrderLineType2["NOTE"] = "Note";
+})(OrderLineType ||= {});
+var orderLineType = salesSchema.enum("order_line_type", enumToPgEnum(OrderLineType));
 
 // schemas/sales/tables/order.ts
 function checkExpression2(relation) {
@@ -5253,7 +5280,7 @@ var orderTable = salesSchema.table("order", {
   partner_id: integer(),
   contact_id: integer(),
   name: text().notNull(),
-  state: orderState().notNull().default("Draft"),
+  state: orderState().notNull().default("Draft" /* DRAFT */),
   amount_untaxed: numeric().notNull(),
   amount_tax: numeric().notNull(),
   amount_total: numeric().notNull()

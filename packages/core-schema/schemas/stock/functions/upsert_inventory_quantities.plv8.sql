@@ -5085,6 +5085,9 @@ var db = new Plv8Database(pgDialect, new Plv8Session(pgDialect), undefined);
 function priceCol(name) {
   return numeric(name, { precision: 18, scale: 2 });
 }
+function enumToPgEnum(myEnum) {
+  return Object.values(myEnum).map((value) => `${value}`);
+}
 function timestampCol(name) {
   return timestamp(name, {
     precision: 3,
@@ -5106,31 +5109,44 @@ var DEFAULT_COLUMNS = {
 var productSchema = pgSchema("product");
 
 // schemas/product/enums.ts
-var productTypeEnum = productSchema.enum("product_type_enum", [
-  "Goods",
-  "Combo",
-  "Service"
-]);
-var productTrackingEnum = productSchema.enum("product_tracking_enum", [
-  "None",
-  "Quantity",
-  "Batch",
-  "Serial"
-]);
-var productCategoryEnum = productSchema.enum("product_category_enum", [
-  "Automotive",
-  "Beauty & Personal Care",
-  "Books & Media",
-  "Clothing & Apparel",
-  "Electronics",
-  "Food & Grocery",
-  "Health & Wellness",
-  "Home & Kitchen",
-  "Office Supplies",
-  "Sports & Outdoors",
-  "Toys & Games"
-]);
-var productLifecycleStatusEnum = productSchema.enum("product_lifecycle_status_enum", ["Draft", "Active", "Discontinued", "EndOfLife"]);
+var ProductType;
+((ProductType2) => {
+  ProductType2["GOODS"] = "Goods";
+  ProductType2["COMBO"] = "Combo";
+  ProductType2["SERVICE"] = "Service";
+})(ProductType ||= {});
+var productTypeEnum = productSchema.enum("product_type_enum", enumToPgEnum(ProductType));
+var ProductTracking;
+((ProductTracking2) => {
+  ProductTracking2["NONE"] = "None";
+  ProductTracking2["QUANTITY"] = "Quantity";
+  ProductTracking2["BATCH"] = "Batch";
+  ProductTracking2["SERIAL"] = "Serial";
+})(ProductTracking ||= {});
+var productTrackingEnum = productSchema.enum("product_tracking_enum", enumToPgEnum(ProductTracking));
+var ProductCategory;
+((ProductCategory2) => {
+  ProductCategory2["AUTOMOTIVE"] = "Automotive";
+  ProductCategory2["BEAUTY_AND_PERSONAL_CARE"] = "Beauty & Personal Care";
+  ProductCategory2["BOOKS_AND_MEDIA"] = "Books & Media";
+  ProductCategory2["CLOTHING_AND_APPAREL"] = "Clothing & Apparel";
+  ProductCategory2["ELECTRONICS"] = "Electronics";
+  ProductCategory2["FOOD_AND_GROCERY"] = "Food & Grocery";
+  ProductCategory2["HEALTH_AND_WELLNESS"] = "Health & Wellness";
+  ProductCategory2["HOME_AND_KITCHEN"] = "Home & Kitchen";
+  ProductCategory2["OFFICE_SUPPLIES"] = "Office Supplies";
+  ProductCategory2["SPORTS_AND_OUTDOORS"] = "Sports & Outdoors";
+  ProductCategory2["TOYS_AND_GAMES"] = "Toys & Games";
+})(ProductCategory ||= {});
+var productCategoryEnum = productSchema.enum("product_category_enum", enumToPgEnum(ProductCategory));
+var ProductLifecycleStatus;
+((ProductLifecycleStatus2) => {
+  ProductLifecycleStatus2["DRAFT"] = "Draft";
+  ProductLifecycleStatus2["ACTIVE"] = "Active";
+  ProductLifecycleStatus2["DISCONTINUED"] = "Discontinued";
+  ProductLifecycleStatus2["END_OF_LIFE"] = "EndOfLife";
+})(ProductLifecycleStatus ||= {});
+var productLifecycleStatusEnum = productSchema.enum("product_lifecycle_status_enum", enumToPgEnum(ProductLifecycleStatus));
 
 // schemas/resource/schema.ts
 var resourceSchema = pgSchema("resource");
@@ -5157,7 +5173,7 @@ var productTemplateTable = productSchema.table("template", {
   weight: numeric({ precision: 18, scale: 3 }),
   volume: numeric({ precision: 18, scale: 3 }),
   uom_id: integer(),
-  type: productTypeEnum().notNull().default("Goods"),
+  type: productTypeEnum().notNull().default("Goods" /* GOODS */),
   category: productCategoryEnum(),
   purchase_ok: boolean().default(true).notNull(),
   sale_ok: boolean().default(true).notNull(),
@@ -5208,7 +5224,7 @@ function checkExpression2(relation) {
 var productTable = productSchema.table("product", {
   ...DEFAULT_COLUMNS,
   template_id: integer().notNull(),
-  tracking_policy: productTrackingEnum().default("None").notNull(),
+  tracking_policy: productTrackingEnum().default("None" /* NONE */).notNull(),
   sku: text().unique().notNull(),
   upc: text(),
   ean: text(),
@@ -5223,12 +5239,12 @@ var productTable = productSchema.table("product", {
     foreignColumns: [productTemplateTable.id]
   }),
   index("product_tracking_policy_idx").on(table.tracking_policy),
-  uniqueIndex("product_upc_idx").on(table.upc).where(sql`upc IS NOT NULL`),
-  uniqueIndex("product_ean_idx").on(table.ean).where(sql`ean IS NOT NULL`),
-  uniqueIndex("product_gtin_idx").on(table.gtin).where(sql`gtin IS NOT NULL`),
-  uniqueIndex("product_isbn_idx").on(table.isbn).where(sql`isbn IS NOT NULL`),
-  uniqueIndex("product_mpn_idx").on(table.mpn).where(sql`mpn IS NOT NULL`),
-  uniqueIndex("product_asin_idx").on(table.asin).where(sql`asin IS NOT NULL`),
+  uniqueIndex("product_upc_idx").on(table.upc).where(isNotNull(table.upc)),
+  uniqueIndex("product_ean_idx").on(table.ean).where(isNotNull(table.ean)),
+  uniqueIndex("product_gtin_idx").on(table.gtin).where(isNotNull(table.gtin)),
+  uniqueIndex("product_isbn_idx").on(table.isbn).where(isNotNull(table.isbn)),
+  uniqueIndex("product_mpn_idx").on(table.mpn).where(isNotNull(table.mpn)),
+  uniqueIndex("product_asin_idx").on(table.asin).where(isNotNull(table.asin)),
   pgPolicy("product_select_policy", {
     as: "permissive",
     for: "select",
@@ -5284,6 +5300,7 @@ var comboProductTable = productSchema.table("combo_product", {
     columns: [table.product_id],
     foreignColumns: [productTable.id]
   }),
+  uniqueIndex("combo_product_combo_id_product_id_key").on(table.combo_id, table.product_id),
   pgPolicy("combo_product_select_policy", {
     as: "permissive",
     for: "select",
