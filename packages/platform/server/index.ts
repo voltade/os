@@ -4,7 +4,6 @@ import { factory } from '#server/factory.ts';
 import { route as environmentRoute } from '#server/routes/environment.ts';
 import { route as environmentVariableRoute } from '#server/routes/environment_variable.ts';
 import { route as kratosRoute } from '#server/routes/kratos.ts';
-import { route as supabaseRoute } from '#server/routes/supabase.ts';
 
 const app = factory.createApp();
 
@@ -20,8 +19,7 @@ export const apiRoutes = app
   .basePath('/api')
   .route('/environment', environmentRoute)
   .route('/environment_variable', environmentVariableRoute)
-  .route('/kratos', kratosRoute)
-  .route('/supabase', supabaseRoute);
+  .route('/kratos', kratosRoute);
 
 app
   .get('/*', serveStatic({ root: './dist/static' }))
