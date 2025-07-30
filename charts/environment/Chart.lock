@@ -1,15 +1,15 @@
 dependencies:
 - name: postgrest
   repository: file://../postgrest
-  version: 0.1.3
+  version: 0.1.4
 - name: supabase-meta
   repository: file://../supabase-meta
-  version: 0.1.3
+  version: 0.1.4
 - name: supabase-storage
   repository: file://../supabase-storage
-  version: 0.1.5
+  version: 0.1.6
 - name: supabase-studio
   repository: file://../supabase-studio
-  version: 0.1.6
-digest: sha256:8e0354a3bdd510ccf90e501e6aadf484c499c9300afafca6fab69a0823062b8d
-generated: "2025-07-30T17:28:54.000304+08:00"
+  version: 0.1.8
+digest: sha256:b93c4be1930c2eaa43212a43448357959cf19b031069259e2adad657b0fa85d7
+generated: "2025-07-30T19:07:17.003441+08:00"

@@ -1,4 +1,7 @@
+import { eq } from 'drizzle-orm';
+
 import { environmentTable } from '#drizzle/environment';
+import { orgTable } from '#drizzle/org.ts';
 import { factory } from '#server/factory.ts';
 import { db } from '#server/lib/db.ts';
 import { anonJwt, privateKey, publicKey, serviceJwt } from '#server/lib/jwk.ts';
@@ -31,20 +34,24 @@ export const route = factory
   .post('/api/v1/getparams.execute', async (c) => {
     // const reqBody = await c.req.json();
     console.log(c.req.method, c.req.url);
-    const environments = await db.select().from(environmentTable);
+    const results = await db
+      .select()
+      .from(environmentTable)
+      .innerJoin(orgTable, eq(environmentTable.org_id, orgTable.id));
 
     const parameters: Parameters[] = await Promise.all(
-      environments.map(async (environment) => ({
+      results.map(async ({ environment, org }) => ({
         variables: {
-          orgId: environment.org_id,
+          orgId: org.id,
           environmentId: environment.id,
-          environmentChartVersion: '0.1.19',
+          environmentChartVersion: '0.1.32',
           releaseName: `${environment.org_id}-${environment.id}`,
           isProduction: environment.is_production,
         },
         values: {
           global: {
-            orgId: environment.org_id,
+            orgId: org.id,
+            orgName: org.display_name,
             environmentId: environment.id,
             publicKey,
             anonKey: await anonJwt

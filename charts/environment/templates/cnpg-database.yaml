@@ -1,0 +1,22 @@
+apiVersion: postgresql.cnpg.io/v1
+kind: Database
+metadata:
+  name: app
+  labels: {{- include "environment.labels" . | nindent 4 }}
+  annotations:
+    argocd.argoproj.io/sync-wave: "0"
+spec:
+  cluster:
+    name: cnpg-cluster
+  name: app
+  owner: app
+  ensure: present
+  schemas:
+    - name: extensions
+      owner: app
+    - name: storage
+      owner: app
+  extensions:
+    - name: plv8
+    - name: pgcrypto
+      schema: extensions

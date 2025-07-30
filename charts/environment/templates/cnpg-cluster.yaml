@@ -2,8 +2,7 @@ apiVersion: postgresql.cnpg.io/v1
 kind: Cluster
 metadata:
   name: cnpg-cluster
-  labels:
-    {{- include "environment.labels" . | nindent 4 }}
+  labels: {{- include "environment.labels" . | nindent 4 }}
   annotations:
     argocd.argoproj.io/sync-options: SkipDryRunOnMissingResource=true
     argocd.argoproj.io/sync-wave: "-1"
@@ -16,14 +15,40 @@ spec:
     serverTLSSecret: cnpg-tls
   storage:
     size: 4Gi
-  enableSuperuserAccess: true
+  postgresql:
+    parameters:
+      pgsodium.enable_event_trigger: "off"
+      pgsodium.getkey_script: /usr/share/postgresql/17/extension/pgsodium_getkey
+    shared_preload_libraries:
+      - supabase_vault
   managed:
     roles:
+      - name: authenticator
+        login: true
+        inherit: false
+        inRoles:
+          - authenticated
+        passwordSecret:
+          name: cnpg-authenticator
+
       - name: authenticated
+        inherit: false
+      
+      - name: anon
         inherit: false
 
       - name: service_role
         bypassrls: true
 
-      - name: anon
-        inherit: false
+  bootstrap:
+    initdb:
+      database: app
+      owner: app
+      dataChecksums: true
+      postInitApplicationSQL:
+        - create schema if not exists extensions;
+        - create extension supabase_vault cascade;
+        - grant usage on schema vault to app;
+        - grant execute on all functions in schema vault to app;
+        - grant select on all tables in schema vault to app;
+        - grant references on all tables in schema vault to app;

@@ -4,6 +4,7 @@
 
 global:
   orgId: ""
+  orgName: ""
   environmentId: ""
   baseDomain: 127.0.0.1.nip.io
   publicKey: ""
@@ -68,13 +69,22 @@ deployment:
 
   # This is for setting up a service more information can be found here: https://kubernetes.io/docs/concepts/services-networking/service/
   service:
+    enabled: true
     # This sets the service type more information can be found here: https://kubernetes.io/docs/concepts/services-networking/service/#publishing-services-service-types
     type: ClusterIP
     # This sets the ports more information can be found here: https://kubernetes.io/docs/concepts/services-networking/service/#field-spec-ports
     port: 3000
 
+  httproute:
+    enabled: true
+
   resources:
-    {}
+    requests:
+      memory: 128Mi
+      cpu: 100m
+    limits:
+      memory: 256Mi
+      cpu: 200m
     # We usually recommend not to specify default resources and to leave this as a conscious
     # choice for the user. This also increases chances charts run on environments with little
     # resources, such as Minikube. If you do want to specify resources, uncomment the following
@@ -133,15 +143,13 @@ postgrest:
   service:
     type: ClusterIP
     port: 3000
-  httproute:
-    enabled: true
   resources:
     requests:
-      memory: 64Mi
-      cpu: 25m
+      memory: 256Mi
+      cpu: 250m
     limits:
-      memory: 128Mi
-      cpu: 50m
+      memory: 512Mi
+      cpu: 500m
   environment:
     PGRST_DB_URI: $(DB_DRIVER)://$(DB_USER):$(DB_PASSWORD)@$(DB_HOST):$(DB_PORT)/$(DB_NAME)?sslmode=$(DB_SSL)
     DB_DRIVER: postgres
@@ -150,12 +158,12 @@ postgrest:
     DB_USER:
       valueFrom:
         secretKeyRef:
-          name: cnpg-cluster-superuser
+          name: cnpg-authenticator
           key: username
     DB_PASSWORD:
       valueFrom:
         secretKeyRef:
-          name: cnpg-cluster-superuser
+          name: cnpg-authenticator
           key: password
     DB_NAME: postgres
     DB_SSL: disable
@@ -173,15 +181,13 @@ supabase-meta:
   service:
     type: ClusterIP
     port: 8080
-  httproute:
-    enabled: true
   resources:
     requests:
-      memory: 64Mi
-      cpu: 25m
+      memory: 256Mi
+      cpu: 250m
     limits:
-      memory: 128Mi
-      cpu: 50m
+      memory: 512Mi
+      cpu: 500m
   environment:
     DB_DRIVER: postgres
     PG_META_DB_HOST: cnpg-cluster-rw
@@ -189,12 +195,12 @@ supabase-meta:
     PG_META_DB_USER:
       valueFrom:
         secretKeyRef:
-          name: cnpg-cluster-superuser
+          name: cnpg-cluster-app
           key: username
     PG_META_DB_PASSWORD:
       valueFrom:
         secretKeyRef:
-          name: cnpg-cluster-superuser
+          name: cnpg-cluster-app
           key: password
     PG_META_DB_NAME: postgres
     PG_META_DB_SSL_MODE: disable
@@ -210,15 +216,13 @@ supabase-studio:
   service:
     type: ClusterIP
     port: 3000
-  httproute:
-    enabled: true
   resources:
     requests:
-      memory: 128Mi
-      cpu: 50m
+      memory: 512Mi
+      cpu: 500m
     limits:
-      memory: 256Mi
-      cpu: 100m
+      memory: 1024Mi
+      cpu: 1000m
   livenessProbe:
     httpGet:
       path: /api/platform/profile
@@ -242,8 +246,6 @@ supabase-storage:
   service:
     type: ClusterIP
     port: 5000
-  httproute:
-    enabled: true
   resources:
     requests:
       memory: 128Mi
@@ -259,14 +261,18 @@ supabase-storage:
     DB_USER:
       valueFrom:
         secretKeyRef:
-          name: cnpg-cluster-superuser
+          name: cnpg-cluster-app
           key: username
     DB_PASSWORD:
       valueFrom:
         secretKeyRef:
-          name: cnpg-cluster-superuser
+          name: cnpg-cluster-app
           key: password
-    DB_NAME: postgres
+    DB_NAME:
+      valueFrom:
+        secretKeyRef:
+          name: cnpg-cluster-app
+          key: dbname
     DB_SSL: disable
     DATABASE_URL:
       value: "postgres://$(DB_USER):$(DB_PASSWORD)@$(DB_HOST):$(DB_PORT)/$(DB_NAME)?sslmode=$(DB_SSL)"
