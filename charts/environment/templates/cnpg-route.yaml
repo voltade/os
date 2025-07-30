@@ -12,9 +12,9 @@ spec:
   entryPoints:
     - postgres
   routes:
-    - match: HostSNI(`{{ .Values.global.orgId }}-{{ .Values.global.environmentId }}.{{ .Values.global.baseDomain }}`)
+    - match: HostSNI(`{{ .Release.Name }}.{{ .Values.global.baseDomain }}`)
       services:
         - name: cnpg-cluster-rw
           port: 5432
   tls:
-    secretName: tls-certificate
+    passthrough: true

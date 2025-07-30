@@ -9,8 +9,10 @@ global:
   publicKey: ""
   anonKey: ""
   serviceKey: ""
+  gatewayName: cilium-gateway
+  gatewayNamespace: gateway
 
-fullnameOverride: environment-runner
+fullnameOverride: runner
 
 deployment:
   enabled: true
@@ -131,6 +133,8 @@ postgrest:
   service:
     type: ClusterIP
     port: 3000
+  httproute:
+    enabled: true
   resources:
     requests:
       memory: 64Mi
@@ -169,6 +173,8 @@ supabase-meta:
   service:
     type: ClusterIP
     port: 8080
+  httproute:
+    enabled: true
   resources:
     requests:
       memory: 64Mi
@@ -204,6 +210,8 @@ supabase-studio:
   service:
     type: ClusterIP
     port: 3000
+  httproute:
+    enabled: true
   resources:
     requests:
       memory: 128Mi
@@ -234,6 +242,8 @@ supabase-storage:
   service:
     type: ClusterIP
     port: 5000
+  httproute:
+    enabled: true
   resources:
     requests:
       memory: 128Mi

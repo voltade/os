@@ -1,0 +1,18 @@
+apiVersion: cert-manager.io/v1
+kind: Certificate
+metadata:
+  name: cnpg-tls
+  labels:
+    {{- include "environment.labels" . | nindent 4 }}
+spec:
+  issuerRef:
+    kind: ClusterIssuer
+    name: selfsigned-cluster-issuer
+  secretName: cnpg-tls
+  secretTemplate:
+    annotations:
+      cnpg.io/reload: "true"
+  usages:
+    - server auth
+  dnsNames:
+    - {{ .Release.Name }}.{{ .Values.global.baseDomain }}
