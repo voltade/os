@@ -3,8 +3,6 @@ import { z } from 'zod';
 export const appEnvVariablesSchema = z.object({
   // Frontend
   VITE_APP_URL: z.url(),
-  VITE_SUPABASE_URL: z.url(),
-  VITE_SUPABASE_ANON_KEY: z.string(),
 
   NODE_ENV: z.enum(['development', 'production']).default('development'),
 
