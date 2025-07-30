@@ -9,18 +9,18 @@ FROM base AS install
 
 # Install Alpine packages needed for native dependencies
 RUN apk add --no-cache \
-    python3 \
-    make \
-    g++ \
-    libwebp-dev \
-    libjpeg-turbo-dev \
-    libpng-dev \
-    tiff-dev \
-    giflib-dev \
-    libde265-dev \
-    libheif-dev \
-    expat-dev \
-    glib-dev
+  python3 \
+  make \
+  g++ \
+  libwebp-dev \
+  libjpeg-turbo-dev \
+  libpng-dev \
+  tiff-dev \
+  giflib-dev \
+  libde265-dev \
+  libheif-dev \
+  expat-dev \
+  glib-dev
 
 RUN mkdir -p /temp/dev
 COPY package.json /temp/dev/
@@ -47,7 +47,7 @@ COPY --chown=bun:bun package.json /app/
 
 # run the app
 USER bun
-EXPOSE 3000/tcp
+EXPOSE 3001/tcp
 ENV NODE_ENV=production
 ENTRYPOINT [ "bun", "run", "dist/index.js" ]
 # CMD ["sleep", "infinity"]

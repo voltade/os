@@ -3,7 +3,7 @@ import type { JWTPayload } from 'hono/utils/jwt/types';
 import {
   type AppEnvVariables,
   appEnvVariablesSchema,
-} from '#runner/zod/env.ts';
+} from '#server/zod/env.ts';
 
 export const appEnvVariables = appEnvVariablesSchema.parse(process.env);
 
