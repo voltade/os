@@ -2,6 +2,7 @@ import { useQuery } from '@tanstack/react-query';
 import type {
   MRT_ColumnFilterFnsState,
   MRT_ColumnFiltersState,
+  MRT_PaginationState,
 } from 'mantine-react-table';
 
 import type { Database, SupabaseClient } from '../../../supabase/index.ts';
@@ -10,8 +11,7 @@ type ProductTemplate =
   Database['public']['Views']['product_template_view']['Row'];
 
 interface UseProductTemplatesOptions {
-  page: number;
-  pageSize: number;
+  pagination: MRT_PaginationState;
   supabase: SupabaseClient;
   columnFilters: MRT_ColumnFiltersState;
   columnFilterFns: MRT_ColumnFilterFnsState;
@@ -23,8 +23,7 @@ interface UseProductTemplatesResult {
 }
 
 export function useProductTemplates({
-  page,
-  pageSize,
+  pagination,
   supabase,
   columnFilters,
   columnFilterFns,
@@ -32,11 +31,11 @@ export function useProductTemplates({
   return useQuery({
     queryKey: [
       'product_template',
-      { page, limit: pageSize, columnFilters, columnFilterFns },
+      { pagination, columnFilters, columnFilterFns },
     ],
     queryFn: async (): Promise<UseProductTemplatesResult> => {
-      const from = (page - 1) * pageSize;
-      const to = from + pageSize - 1;
+      const from = pagination.pageIndex * pagination.pageSize; // Removed the -1 since pageIndex is now zero-based
+      const to = from + pagination.pageSize - 1;
 
       const query = supabase
         .from('product_template_view')

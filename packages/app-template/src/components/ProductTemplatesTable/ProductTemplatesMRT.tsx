@@ -52,7 +52,7 @@ const columns: MRT_ColumnDef<ProductTemplate>[] = [
 
 export default function ProductTemplatesMRT() {
   const [pagination, setPagination] = useState<MRT_PaginationState>({
-    pageIndex: 0,
+    pageIndex: 0, // Changed from 1 to 0
     pageSize: 10,
   });
 
@@ -70,8 +70,7 @@ export default function ProductTemplatesMRT() {
     );
 
   const { data, isLoading } = useProductTemplates({
-    page: pagination.pageIndex + 1,
-    pageSize: pagination.pageSize,
+    pagination,
     supabase,
     columnFilters,
     columnFilterFns,
@@ -82,6 +81,24 @@ export default function ProductTemplatesMRT() {
       setRowCount(data.count);
     }
   }, [data?.count]);
+
+  // Reset to first page when page size changes.
+  // biome-ignore lint/correctness/useExhaustiveDependencies: This is intentional to reset pagination.
+  useEffect(() => {
+    setPagination((prev) => ({
+      ...prev,
+      pageIndex: 0,
+    }));
+  }, [pagination.pageSize]);
+
+  // Reset to first page when column filters change.
+  // biome-ignore lint/correctness/useExhaustiveDependencies: This is intentional to reset pagination.
+  useEffect(() => {
+    setPagination((prev) => ({
+      ...prev,
+      pageIndex: 0,
+    }));
+  }, [columnFilters]);
 
   const table = useMantineReactTable({
     columns,
