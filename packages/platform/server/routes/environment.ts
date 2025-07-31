@@ -40,7 +40,7 @@ export const route = factory
       .from(environmentTable)
       .innerJoin(orgTable, eq(environmentTable.org_id, orgTable.id));
 
-    const jwks = auth.api.getJwks();
+    const jwks = await auth.api.getJwks();
 
     const parameters: Parameters[] = await Promise.all(
       results.map(async ({ environment, org }) => ({
