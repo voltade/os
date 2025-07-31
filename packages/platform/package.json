@@ -5,6 +5,7 @@
   "version": "0.1.0",
   "type": "module",
   "scripts": {
+    "auth:generate": "bun --bun cli generate --output drizzle/auth.ts --config server/lib/auth.ts && bun biome check --write --no-errors-on-unmatched --files-ignore-unknown=true drizzle/auth.ts --unsafe",
     "db:pre-push": "bun scripts/db-pre-push.ts",
     "db:current": "bun scripts/db-current.ts",
     "db:push": "bun drizzle-kit push",
@@ -51,6 +52,9 @@
     "typescript": "^5"
   },
   "dependencies": {
+    "@better-auth/cli": "^1.3.4",
+    "@kubernetes/client-node": "^1.3.0",
+    "better-auth": "^1.3.4",
     "drizzle-zod": "^0.8.2",
     "hono": "^4.8.5",
     "zod": "^4.0.5"

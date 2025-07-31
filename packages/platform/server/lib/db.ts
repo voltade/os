@@ -18,13 +18,7 @@ export const db = drizzle({
     max: 10,
     idleTimeout: 10,
   },
-  schema: {
-    ...schema.orgTable,
-    ...schema.environmentTable,
-    ...schema.environmentVariableTable,
-    ...schema.appTable,
-    ...schema.appInstallationTable,
-  },
+  schema: schema,
 });
 
 export type Tx = Parameters<Parameters<typeof db.transaction>[0]>[0];

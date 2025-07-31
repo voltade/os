@@ -31,7 +31,7 @@ export const routes = factory.createApp().all(
         await downloadPackage(c.env.ORG_ID, appId, releaseId, workerPath);
       }
 
-      const envs = await getAppEnvs(c.env.ORG_ID, appId, c.env.OS_URL);
+      const envs = await getAppEnvs(c.env.ORG_ID, appId, c.env.PLATFORM_URL);
       worker = await createWorker(appId, truncatedReleaseId, workerPath, envs);
     }
 

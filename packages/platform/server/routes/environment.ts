@@ -3,8 +3,9 @@ import { eq } from 'drizzle-orm';
 import { environmentTable } from '#drizzle/environment';
 import { orgTable } from '#drizzle/org.ts';
 import { factory } from '#server/factory.ts';
+import { auth } from '#server/lib/auth.ts';
 import { db } from '#server/lib/db.ts';
-import { anonJwt, privateKey, publicKey, serviceJwt } from '#server/lib/jwk.ts';
+import { anonJwt, privateKey, serviceJwt } from '#server/lib/jwk.ts';
 
 type Variables = {
   orgId: string;
@@ -39,6 +40,8 @@ export const route = factory
       .from(environmentTable)
       .innerJoin(orgTable, eq(environmentTable.org_id, orgTable.id));
 
+    const jwks = auth.api.getJwks();
+
     const parameters: Parameters[] = await Promise.all(
       results.map(async ({ environment, org }) => ({
         variables: {
@@ -53,7 +56,7 @@ export const route = factory
             orgId: org.id,
             orgName: org.display_name,
             environmentId: environment.id,
-            publicKey,
+            publicKey: JSON.stringify(jwks),
             anonKey: await anonJwt
               .setAudience([environment.org_id])
               .sign(privateKey),

@@ -4,6 +4,7 @@ import { factory } from '#server/factory.ts';
 import { route as environmentRoute } from '#server/routes/environment.ts';
 import { route as environmentVariableRoute } from '#server/routes/environment_variable.ts';
 import { route as kratosRoute } from '#server/routes/kratos.ts';
+import { auth } from './lib/auth.ts';
 
 const app = factory.createApp();
 
@@ -17,6 +18,9 @@ app.get('/healthz', (c) => {
 
 export const apiRoutes = app
   .basePath('/api')
+  .on(['POST', 'GET'], '/auth/*', (c) => {
+    return auth.handler(c.req.raw);
+  })
   .route('/environment', environmentRoute)
   .route('/environment_variable', environmentVariableRoute)
   .route('/kratos', kratosRoute);

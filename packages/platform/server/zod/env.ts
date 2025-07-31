@@ -4,6 +4,9 @@ export const appEnvVariablesSchema = z.object({
   // Frontend
   VITE_APP_URL: z.url(),
 
+  // BetterAuth
+  AUTH_SECRET: z.string(),
+
   NODE_ENV: z.enum(['development', 'production']).default('development'),
 
   // Postgres

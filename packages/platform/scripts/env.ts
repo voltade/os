@@ -17,6 +17,9 @@ import { $ } from 'bun';
     await $`kubectl config view --raw --minify -o jsonpath='{.clusters[0].cluster.certificate-authority-data}'`.text();
   console.log('Retrieved CLUSTER_CA_DATA');
 
+  const db_password =
+    await $`kubectl get secret -n platform cnpg-platform-admin -o jsonpath="{.data.password}" | base64 -d`.text();
+
   // Path to .env.development
   const envPath = join(process.cwd(), '.env');
 
@@ -33,11 +36,14 @@ import { $ } from 'bun';
       'CLUSTER_SERVER',
       cluster_server.trim(),
     );
+
     envContent = updateEnvVar(
       envContent,
       'CLUSTER_CA_DATA',
       cluster_ca_data.trim(),
     );
+
+    envContent = updateEnvVar(envContent, 'DB_PASSWORD', db_password.trim());
 
     // Write the updated content back to the file
     await writeFile(envPath, envContent);
