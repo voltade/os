@@ -31,6 +31,8 @@ bun tofu:destroy
 bun --cwd packages/platform db:reset
 ```
 
+Note: If `drizzle-kit` is stuck after outputting `Reading config file...`, run `bun run clean && bun install` and try again.
+
 ## Start the platform web app
 
 ```bash
