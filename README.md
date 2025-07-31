@@ -28,10 +28,7 @@ bun tofu:destroy
 ## Prepare the platform database
 
 ```bash
-cp packages/platform/.env.example packages/platform/.env
-# Update the created .env file by running the included commands.
-
-bun -cwd packages/platform db:reset
+bun --cwd packages/platform db:reset
 ```
 
 ## Start the platform web app
