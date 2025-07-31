@@ -1,12 +1,12 @@
 export async function getAppEnvs(
-  orgId: string,
+  organizationId: string,
   appId: string,
-  OS_URL: string,
+  platformUrl: string,
 ): Promise<Record<string, string>> {
-  const res = await fetch(`${OS_URL}/api/env/`, {
+  const res = await fetch(`${platformUrl}/api/env/`, {
     method: 'POST',
     body: JSON.stringify({
-      orgId,
+      organizationId,
       appId,
     }),
   });

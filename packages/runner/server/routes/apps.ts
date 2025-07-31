@@ -28,10 +28,19 @@ export const routes = factory.createApp().all(
         existsSync(workerPath) && readdirSync(workerPath).length > 0;
 
       if (!folderExists) {
-        await downloadPackage(c.env.ORG_ID, appId, releaseId, workerPath);
+        await downloadPackage(
+          c.env.ORGANIZATION_ID,
+          appId,
+          releaseId,
+          workerPath,
+        );
       }
 
-      const envs = await getAppEnvs(c.env.ORG_ID, appId, c.env.PLATFORM_URL);
+      const envs = await getAppEnvs(
+        c.env.ORGANIZATION_ID,
+        appId,
+        c.env.PLATFORM_URL,
+      );
       worker = await createWorker(appId, truncatedReleaseId, workerPath, envs);
     }
 
