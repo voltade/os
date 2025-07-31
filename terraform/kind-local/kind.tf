@@ -38,6 +38,11 @@ resource "kind_cluster" "this" {
       }
 
       extra_port_mappings {
+        container_port = 30425
+        host_port      = 2500
+      }
+
+      extra_port_mappings {
         container_port = 30432
         host_port      = 5432
       }

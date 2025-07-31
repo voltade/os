@@ -19,6 +19,12 @@ ports:
     expose:
       default: true
     protocol: TCP
+  smtp:
+    port: 2500
+    nodePort: 30425
+    expose:
+      default: true
+    protocol: TCP
 
 service:
   type: NodePort
