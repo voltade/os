@@ -2,8 +2,8 @@ import { sql } from 'drizzle-orm';
 import { check, pgTable, text, unique, uuid } from 'drizzle-orm/pg-core';
 
 import { DEFAULT_COLUMNS, zodSchemaFactory } from './_helpers.ts';
+import { organization as organizationTable } from './auth.ts';
 import { environmentTable } from './environment.ts';
-import { orgTable } from './org.ts';
 import { secretsTable } from './vault/secrets.ts';
 
 export const environmentVariableTable = pgTable(
@@ -13,8 +13,8 @@ export const environmentVariableTable = pgTable(
     created_at: DEFAULT_COLUMNS.created_at,
     updated_at: DEFAULT_COLUMNS.updated_at,
 
-    org_id: text()
-      .references(() => orgTable.id)
+    organization_id: text()
+      .references(() => organizationTable.id)
       .notNull(),
     environment_id: text()
       .references(() => environmentTable.id)
@@ -30,7 +30,7 @@ export const environmentVariableTable = pgTable(
       sql`${table.name} ~ '^[A-Z_][A-Z0-9_]*$'`,
     ),
     unique('environment_variable_name_unq').on(
-      table.org_id,
+      table.organization_id,
       table.environment_id,
       table.name,
     ),

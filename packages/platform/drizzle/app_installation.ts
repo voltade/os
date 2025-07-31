@@ -3,15 +3,15 @@ import { foreignKey, pgTable, primaryKey, text } from 'drizzle-orm/pg-core';
 import { DEFAULT_COLUMNS, zodSchemaFactory } from './_helpers.ts';
 import { appTable } from './app.ts';
 import { appBuildTable } from './app_build.ts';
+import { organization as organizationTable } from './auth.ts';
 import { environmentTable } from './environment.ts';
-import { orgTable } from './org.ts';
 
 export const appInstallationTable = pgTable(
   'app_installation',
   {
-    org_id: text()
+    organization_id: text()
       .notNull()
-      .references(() => orgTable.id),
+      .references(() => organizationTable.id),
     environment_id: text()
       .notNull()
       .references(() => environmentTable.id),
@@ -23,11 +23,13 @@ export const appInstallationTable = pgTable(
     updated_at: DEFAULT_COLUMNS.updated_at,
   },
   (table) => [
-    primaryKey({ columns: [table.app_id, table.environment_id, table.org_id] }),
+    primaryKey({
+      columns: [table.app_id, table.environment_id, table.organization_id],
+    }),
     foreignKey({
-      columns: [table.org_id, table.app_id, table.app_build_id],
+      columns: [table.organization_id, table.app_id, table.app_build_id],
       foreignColumns: [
-        appBuildTable.org_id,
+        appBuildTable.organization_id,
         appBuildTable.app_id,
         appBuildTable.id,
       ],

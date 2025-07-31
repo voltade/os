@@ -1,18 +1,61 @@
-import { sql } from 'drizzle-orm';
+import { hashPassword } from 'better-auth/crypto';
 
+import { account as accountTable, user as userTable } from '#drizzle/auth.ts';
 import { environmentTable } from '#drizzle/environment.ts';
-import { orgTable } from '#drizzle/org.ts';
-import { orgDomainTable } from '#drizzle/org_domain.ts';
+import { auth } from '#server/lib/auth.ts';
 import { db } from '#server/lib/db.ts';
 
 await db.transaction(async (tx) => {
-  await tx.execute(sql`truncate table org restart identity cascade`);
-  await tx.execute(sql`truncate table org_domain restart identity cascade`);
-  await tx.execute(sql`truncate table environment restart identity cascade`);
-
-  await tx.insert(orgTable).values({ id: 'voltade', display_name: 'Voltade' });
   await tx
-    .insert(orgDomainTable)
-    .values({ org_id: 'voltade', domain: 'voltade.com' });
-  await tx.insert(environmentTable).values({ id: 'abcd12', org_id: 'voltade' });
+    .insert(userTable)
+    .values({
+      id: 'admin',
+      name: 'Admin',
+      email: 'admin@voltade.com',
+      emailVerified: true,
+    })
+    .onConflictDoNothing();
+  await tx
+    .insert(accountTable)
+    .values({
+      id: 'admin',
+      accountId: 'admin',
+      userId: 'admin',
+      providerId: 'credential',
+      password: await hashPassword('password'),
+      createdAt: new Date(),
+      updatedAt: new Date(),
+    })
+    .onConflictDoNothing();
+});
+
+const res = await auth.api.signInEmail({
+  body: {
+    email: 'admin@voltade.com',
+    password: 'password',
+  },
+});
+const headers = new Headers({ Authorization: `Bearer ${res.token}` });
+
+// Trigger the generation of JWKS
+await auth.api.getToken({ headers });
+
+const organization = await auth.api.createOrganization({
+  headers,
+  body: {
+    name: 'Voltade',
+    slug: 'voltade',
+  },
+});
+if (!organization) {
+  throw new Error('Failed to create organization');
+}
+
+await db.transaction(async (tx) => {
+  await tx.insert(environmentTable).values({
+    organization_id: organization.id,
+    is_production: true,
+    slug: 'main',
+    name: 'Main',
+  });
 });
