@@ -1,24 +1,33 @@
-import { eq } from 'drizzle-orm';
+import { symmetricDecrypt } from 'better-auth/crypto';
+import { desc, eq } from 'drizzle-orm';
+import * as jose from 'jose';
 
+import {
+  jwks as jwksTable,
+  organization as organizationTable,
+} from '#drizzle/auth.ts';
 import { environmentTable } from '#drizzle/environment';
-import { orgTable } from '#drizzle/org.ts';
+import { appEnvVariables } from '#server/env.ts';
 import { factory } from '#server/factory.ts';
-import { auth } from '#server/lib/auth.ts';
 import { db } from '#server/lib/db.ts';
-import { anonJwt, privateKey, serviceJwt } from '#server/lib/jwk.ts';
+import { signJwt } from '#server/lib/jwk.ts';
 
-type Variables = {
-  orgId: string;
+type Common = {
+  organizationId: string;
+  organizationSlug: string;
+  organizationName: string;
   environmentId: string;
+  environmentSlug: string;
+  environmentName: string | null;
+};
+
+type Variables = Common & {
   environmentChartVersion: string;
-  releaseName: string;
   isProduction: boolean;
 };
 
 type Values = Record<string, unknown> & {
-  global: {
-    orgId: string;
-    environmentId: string;
+  global: Common & {
     publicKey: string;
     anonKey: string;
     serviceKey: string;
@@ -38,34 +47,71 @@ export const route = factory
     const results = await db
       .select()
       .from(environmentTable)
-      .innerJoin(orgTable, eq(environmentTable.org_id, orgTable.id));
+      .innerJoin(
+        organizationTable,
+        eq(environmentTable.organization_id, organizationTable.id),
+      );
 
-    const jwks = await auth.api.getJwks();
+    // Pass the latest two JWKs to the PostgREST to be used as the JWT_SECRET config: https://docs.postgrest.org/en/v13/references/auth.html#asym-keys
+    const jwks = await db
+      .select()
+      .from(jwksTable)
+      .orderBy(desc(jwksTable.createdAt))
+      .limit(2);
+    const publicWebKeySet: jose.JSONWebKeySet = {
+      keys: jwks.map(({ publicKey }) => JSON.parse(publicKey)),
+    };
+    const publicKey = JSON.stringify(publicWebKeySet);
+
+    // Decrypt the private key to be used for signing long-live anon and service_role tokens
+    const decryptedPrivateKey = await symmetricDecrypt({
+      key: appEnvVariables.AUTH_SECRET,
+      data: jwks[0].privateKey,
+    });
+    const privateWebKey = JSON.parse(
+      decryptedPrivateKey,
+    ) as jose.JWK_RSA_Private;
+    if (!privateWebKey.alg) {
+      throw new Error('Private key must have an algorithm specified');
+    }
+    const privateKey = await jose.importJWK(privateWebKey, privateWebKey.alg);
 
     const parameters: Parameters[] = await Promise.all(
-      results.map(async ({ environment, org }) => ({
-        variables: {
-          orgId: org.id,
+      results.map(async ({ organization, environment }) => {
+        const common: Common = {
+          organizationId: organization.id,
+          organizationSlug: organization.slug,
+          organizationName: organization.name,
           environmentId: environment.id,
-          environmentChartVersion: '0.1.40',
-          releaseName: `${environment.org_id}-${environment.id}`,
-          isProduction: environment.is_production,
-        },
-        values: {
-          global: {
-            orgId: org.id,
-            orgName: org.display_name,
-            environmentId: environment.id,
-            publicKey: JSON.stringify(jwks),
-            anonKey: await anonJwt
-              .setAudience([environment.org_id])
-              .sign(privateKey),
-            serviceKey: await serviceJwt
-              .setAudience([environment.org_id])
-              .sign(privateKey),
+          environmentSlug: environment.slug,
+          environmentName: environment.name,
+        };
+        return {
+          variables: {
+            ...common,
+            environmentChartVersion: '0.1.40',
+            isProduction: environment.is_production,
           },
-        },
-      })),
+          values: {
+            global: {
+              ...common,
+              publicKey,
+              anonKey: await signJwt(
+                privateWebKey.alg as string,
+                privateKey,
+                'anon',
+                [organization.id],
+              ),
+              serviceKey: await signJwt(
+                privateWebKey.alg as string,
+                privateKey,
+                'service_role',
+                [organization.id],
+              ),
+            },
+          },
+        };
+      }),
     );
 
     // https://argo-cd.readthedocs.io/en/stable/operator-manual/applicationset/Generators-Plugin/#http-server
