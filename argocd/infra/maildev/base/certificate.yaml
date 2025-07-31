@@ -10,7 +10,7 @@ spec:
     name: selfsigned-cluster-issuer
   secretName: smtp-tls
   secretTemplate:
-    annotations:
+    labels:
       cnpg.io/reload: "true"
   usages:
     - server auth
