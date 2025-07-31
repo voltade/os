@@ -10,7 +10,7 @@ spec:
     - name: {{ .Values.global.gatewayName }}
       namespace: {{ .Values.global.gatewayNamespace }}
   hostnames:
-    - "{{ include "supabase-studio.fullname" . }}.{{ .Release.Name }}.{{ .Values.global.baseDomain }}"
+    - "{{ include "supabase-studio.fullname" . }}.{{ .Values.global.slug }}.{{ .Values.global.baseDomain }}"
   rules:
     - backendRefs:
         - name: {{ include "supabase-studio.fullname" . }}

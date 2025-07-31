@@ -74,7 +74,7 @@ spec:
             - name: PGRST_JWT_SECRET
               value: {{ .Values.global.publicKey | quote }}
             - name: PGRST_JWT_AUD
-              value: {{ .Values.global.orgId | quote }}
+              value: {{ .Values.global.organizationSlug | quote }}
             {{- range $key, $value := .Values.environment }}
             {{- if kindIs "map" $value }}
             - name: {{ $key }}

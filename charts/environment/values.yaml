@@ -3,9 +3,14 @@
 # Declare variables to be passed into your templates.
 
 global:
-  orgId: ""
-  orgName: ""
+  id: ""
+  slug: ""
+  organizationId: ""
+  organizationSlug: ""
+  organizationName: ""
   environmentId: ""
+  environmentSlug: ""
+  environmentName: ""
   baseDomain: 127.0.0.1.nip.io
   publicKey: ""
   anonKey: ""

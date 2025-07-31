@@ -13,6 +13,8 @@ import { db } from '#server/lib/db.ts';
 import { signJwt } from '#server/lib/jwk.ts';
 
 type Common = {
+  id: string;
+  slug: string;
   organizationId: string;
   organizationSlug: string;
   organizationName: string;
@@ -62,23 +64,23 @@ export const route = factory
       keys: jwks.map(({ publicKey }) => JSON.parse(publicKey)),
     };
     const publicKey = JSON.stringify(publicWebKeySet);
+    const alg = publicWebKeySet.keys[0].alg as string;
 
     // Decrypt the private key to be used for signing long-live anon and service_role tokens
     const decryptedPrivateKey = await symmetricDecrypt({
       key: appEnvVariables.AUTH_SECRET,
-      data: jwks[0].privateKey,
+      data: JSON.parse(jwks[0].privateKey),
     });
     const privateWebKey = JSON.parse(
       decryptedPrivateKey,
     ) as jose.JWK_RSA_Private;
-    if (!privateWebKey.alg) {
-      throw new Error('Private key must have an algorithm specified');
-    }
-    const privateKey = await jose.importJWK(privateWebKey, privateWebKey.alg);
+    const privateKey = await jose.importJWK(privateWebKey, alg);
 
     const parameters: Parameters[] = await Promise.all(
       results.map(async ({ organization, environment }) => {
         const common: Common = {
+          id: `${organization.id}-${environment.id}`,
+          slug: `${organization.slug}-${environment.slug}`,
           organizationId: organization.id,
           organizationSlug: organization.slug,
           organizationName: organization.name,
@@ -89,25 +91,19 @@ export const route = factory
         return {
           variables: {
             ...common,
-            environmentChartVersion: '0.1.40',
+            environmentChartVersion: '0.1.41',
             isProduction: environment.is_production,
           },
           values: {
             global: {
               ...common,
               publicKey,
-              anonKey: await signJwt(
-                privateWebKey.alg as string,
-                privateKey,
-                'anon',
-                [organization.id],
-              ),
-              serviceKey: await signJwt(
-                privateWebKey.alg as string,
-                privateKey,
-                'service_role',
-                [organization.id],
-              ),
+              anonKey: await signJwt(alg, privateKey, 'anon', [
+                organization.slug,
+              ]),
+              serviceKey: await signJwt(alg, privateKey, 'service_role', [
+                organization.slug,
+              ]),
             },
           },
         };

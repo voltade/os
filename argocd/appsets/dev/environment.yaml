@@ -18,9 +18,12 @@ spec:
         requeueAfterSeconds: 15
   template:
     metadata:
-      name: "org-{{ .variables.orgId }}-{{ .variables.environmentId }}"
+      name: "org-{{ .variables.slug }}"
       labels:
-        orgId: "{{ .variables.orgId }}"
+        organizationId: "{{ .variables.organizationId }}"
+        organizationSlug: "{{ .variables.organizationSlug }}"
+        environmentId: "{{ .variables.environmentId }}"
+        environmentSlug: "{{ .variables.environmentSlug }}"
         isProduction: "{{ .variables.isProduction }}"
     spec:
       project: default
@@ -28,9 +31,9 @@ spec:
         # https://argo-cd.readthedocs.io/en/stable/user-guide/helm/
         repoURL: registry.127.0.0.1.nip.io
         chart: environment
-        targetRevision: "{{ .variables.environmentChartVersion}}"
+        targetRevision: "{{ .variables.environmentChartVersion }}"
         helm:
-          releaseName: "{{ .variables.releaseName }}"
+          releaseName: "{{ .variables.slug }}"
           values: |
             {{ .values | toYaml }}
       syncPolicy:
@@ -43,4 +46,4 @@ spec:
           - ApplyOutOfSyncOnly=true
       destination:
         server: https://kubernetes.default.svc
-        namespace: "org-{{ .variables.orgId }}-{{ .variables.environmentId }}"
+        namespace: "org-{{ .variables.slug }}"
