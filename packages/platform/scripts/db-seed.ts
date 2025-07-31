@@ -14,5 +14,5 @@ await db.transaction(async (tx) => {
   await tx
     .insert(orgDomainTable)
     .values({ org_id: 'voltade', domain: 'voltade.com' });
-  await tx.insert(environmentTable).values({ org_id: 'voltade' });
+  await tx.insert(environmentTable).values({ id: 'abcd12', org_id: 'voltade' });
 });
