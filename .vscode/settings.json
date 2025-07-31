@@ -38,7 +38,6 @@
     "httproute",
     "ilike",
     "initdb",
-    "kratos",
     "kubeconfig",
     "lefthook",
     "maildev",
