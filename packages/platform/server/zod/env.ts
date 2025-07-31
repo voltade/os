@@ -16,6 +16,14 @@ export const appEnvVariablesSchema = z.object({
   DB_PORT: z.preprocess((v) => Number(v), z.number()),
   DB_NAME: z.string(),
 
+  // SMTP
+  SMTP_HOST: z.string(),
+  SMTP_PORT: z.preprocess((v) => Number(v), z.number()).default(587),
+  SMTP_SECURE: z.preprocess((v) => v === 'true', z.boolean()).default(false),
+  SMTP_USER: z.string().optional().default(''),
+  SMTP_PASS: z.string().optional().default(''),
+  SMTP_FROM: z.email(),
+
   // Local Kubernetes
   CLUSTER_NAME: z.string().optional().default(''),
   CLUSTER_SERVER: z.string().optional().default(''),

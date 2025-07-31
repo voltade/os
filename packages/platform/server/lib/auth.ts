@@ -4,15 +4,29 @@ import { jwt, openAPI, organization } from 'better-auth/plugins';
 
 import { appEnvVariables } from '#server/env.ts';
 import { db } from '#server/lib/db.ts';
+import { mailer } from '#server/lib/mailer.ts';
 
+// https://www.better-auth.com/docs/reference/options
 export const auth = betterAuth({
+  appName: 'Voltade OS',
+  baseURL: `${appEnvVariables.VITE_APP_URL}/api/auth`,
+  trustedOrigins: [appEnvVariables.VITE_APP_URL],
+  secret: appEnvVariables.AUTH_SECRET,
   database: drizzleAdapter(db, {
     provider: 'pg',
   }),
-
-  baseURL: `${appEnvVariables.VITE_APP_URL}/api/auth`,
-  secret: appEnvVariables.AUTH_SECRET,
-
+  emailVerification: {
+    sendVerificationEmail: async ({ user, token }) => {
+      await mailer.sendMail({
+        to: user.email,
+        subject: 'Verify your email',
+        text: `Your verification code is: ${token}`,
+      });
+    },
+  },
+  emailAndPassword: {
+    enabled: false,
+  },
   plugins: [
     openAPI({
       path: '/docs',
@@ -20,22 +34,20 @@ export const auth = betterAuth({
     jwt(),
     organization(),
   ],
-
+  user: {
+    additionalFields: {},
+  },
+  session: {
+    cookieCache: {
+      enabled: true,
+      maxAge: 5 * 60, // Cache duration in seconds
+    },
+  },
   onAPIError: {
     throw: true,
     onError: (error) => {
       console.error('Auth error:', error);
     },
-  },
-  trustedOrigins: [appEnvVariables.VITE_APP_URL],
-
-  emailAndPassword: {
-    enabled: true,
-  },
-
-  // Reference: https://www.better-auth.com/docs/reference/options#user
-  user: {
-    additionalFields: {},
   },
 });
 
