@@ -15,7 +15,8 @@
     "dev:server": "bun run --hot server/index.ts",
     "dev:vite": "wait-on http://localhost:3000/healthz && vite dev",
     "dev": "conc bun:dev:*",
-    "build:typecheck": "tsc --project tsconfig.json"
+    "build:typecheck": "tsc --project tsconfig.json",
+    "env": "bun scripts/env.ts"
   },
   "devDependencies": {
     "@mantine/core": "^8.1.3",

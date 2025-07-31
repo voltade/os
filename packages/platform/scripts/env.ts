@@ -6,7 +6,7 @@ import { $ } from 'bun';
   const user_name = process.env.USER_NAME;
 
   const user_token =
-    await $`kubectl create token ${user_name ?? 'platform-default'} -n platform`.text();
+    await $`kubectl create token ${user_name ?? 'platform'} -n platform`.text();
   console.log('Generated USER_TOKEN');
 
   const cluster_server =
