@@ -1,10 +1,19 @@
 import { betterAuth } from 'better-auth';
 import { drizzleAdapter } from 'better-auth/adapters/drizzle';
-import { jwt, openAPI, organization } from 'better-auth/plugins';
+import {
+  admin,
+  apiKey,
+  bearer,
+  emailOTP,
+  jwt,
+  openAPI,
+  organization,
+} from 'better-auth/plugins';
 
 import { appEnvVariables } from '#server/env.ts';
 import { db } from '#server/lib/db.ts';
 import { mailer } from '#server/lib/mailer.ts';
+import { nanoid } from '#server/lib/nanoid.ts';
 
 // https://www.better-auth.com/docs/reference/options
 export const auth = betterAuth({
@@ -15,19 +24,28 @@ export const auth = betterAuth({
   database: drizzleAdapter(db, {
     provider: 'pg',
   }),
-  emailVerification: {
-    sendVerificationEmail: async ({ user, token }) => {
-      await mailer.sendMail({
-        to: user.email,
-        subject: 'Verify your email',
-        text: `Your verification code is: ${token}`,
-      });
-    },
-  },
   emailAndPassword: {
-    enabled: false,
+    enabled: true,
+    disableSignUp: true,
   },
   plugins: [
+    admin(),
+    apiKey(),
+    bearer(),
+    emailOTP({
+      async sendVerificationOTP({ email, otp }) {
+        if (import.meta.env.NODE_ENV === 'development') {
+          console.log(
+            `Sending verification email to ${email} with otp: ${otp}`,
+          );
+        }
+        await mailer.sendMail({
+          to: email,
+          subject: 'Verify your email',
+          text: `Your verification code is: ${otp}`,
+        });
+      },
+    }),
     openAPI({
       path: '/docs',
     }),
@@ -47,6 +65,16 @@ export const auth = betterAuth({
     throw: true,
     onError: (error) => {
       console.error('Auth error:', error);
+    },
+  },
+  advanced: {
+    database: {
+      generateId: ({ model, size }) => {
+        if (model === 'organization') {
+          return nanoid(7);
+        }
+        return nanoid(size);
+      },
     },
   },
 });
