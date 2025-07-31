@@ -10,7 +10,7 @@ spec:
     - name: {{ .Values.global.gatewayName }}
       namespace: {{ .Values.global.gatewayNamespace }}
   hostnames:
-    - "{{ .Release.Name }}.{{ .Values.global.baseDomain }}"
+    - "{{ .Values.global.slug }}.{{ .Values.global.baseDomain }}"
   rules:
     - backendRefs:
         - name: {{ include "environment.fullname" . }}

@@ -12,7 +12,7 @@ spec:
   entryPoints:
     - postgres
   routes:
-    - match: HostSNI(`{{ .Release.Name }}.{{ .Values.global.baseDomain }}`)
+    - match: HostSNI(`{{ .Values.global.slug }}.{{ .Values.global.baseDomain }}`)
       services:
         - name: cnpg-cluster-rw
           port: 5432
