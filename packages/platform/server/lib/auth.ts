@@ -10,7 +10,7 @@ export const auth = betterAuth({
     provider: 'pg',
   }),
 
-  baseURL: appEnvVariables.VITE_APP_URL + '/api/auth',
+  baseURL: `${appEnvVariables.VITE_APP_URL}/api/auth`,
   secret: appEnvVariables.AUTH_SECRET,
 
   plugins: [
