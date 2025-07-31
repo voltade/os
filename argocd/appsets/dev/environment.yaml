@@ -33,7 +33,6 @@ spec:
         chart: environment
         targetRevision: "{{ .variables.environmentChartVersion }}"
         helm:
-          releaseName: "{{ .variables.slug }}"
           values: |
             {{ .values | toYaml }}
       syncPolicy:
@@ -46,4 +45,4 @@ spec:
           - ApplyOutOfSyncOnly=true
       destination:
         server: https://kubernetes.default.svc
-        namespace: "org-{{ .variables.slug }}"
+        namespace: "org-{{ .variables.id }}"
