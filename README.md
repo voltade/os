@@ -28,6 +28,7 @@ bun tofu:destroy
 ## Prepare the platform database
 
 ```bash
+bun --cwd packages/platform env
 bun --cwd packages/platform db:reset
 ```
 
