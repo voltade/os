@@ -1,8 +1,0 @@
-{
-  "kty": "RSA",
-  "e": "AQAB",
-  "use": "sig",
-  "kid": "voltade-os",
-  "alg": "RS256",
-  "n": "iWU94jUmBgUrT0g2GjNHjzowTta5ZA5WjuygcGZRI4JPmRMKq536MIooprAyo6jyJvoKtU9ToDUCjoMUg1hL8XbB5frBZWQ9t-jnhLiDySLZTWP4gJmVEWEEDvvlC-s_BynuKk6z_r_oSGb7_FlLYIMpdtMT0-YxpIZOtJ3gurSoW1Hj95Ib9yu9CwA-CdFZ3t8bIcCc_e4BDgSSi1yHU3oNN06jj2n7QqU7hUyuMoHvYs-p1GQScVPQPzH1FRwO4UzgyRMH1XgJZPL8DoTwXqzUFT0iJ44qEX2xEma5nAW3v2lXTuHP2Cs_CEQROiRhc5DyZvjCGtc5xP3Ud9gOiQ"
-}

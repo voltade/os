@@ -34,16 +34,6 @@ spec:
           - platform_admin
         passwordSecret:
           name: cnpg-platform-migrator
-
-      - name: kratos_admin
-        login: true
-        passwordSecret:
-          name: cnpg-kratos-admin
-
-      - name: hydra_admin
-        login: true
-        passwordSecret:
-          name: cnpg-hydra-admin
   bootstrap:
     initdb:
       database: platform
