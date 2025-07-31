@@ -23,6 +23,10 @@ spec:
       - supabase_vault
   managed:
     roles:
+      - name: app
+        login: true
+        superuser: true
+        
       - name: authenticator
         login: true
         inherit: false
