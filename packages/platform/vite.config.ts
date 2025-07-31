@@ -13,7 +13,12 @@ export default defineConfig({
   },
   server: {
     host: '0.0.0.0',
-    allowedHosts: ['127.0.0.1.nip.io', 'socat'],
+    allowedHosts: [
+      '127.0.0.1.nip.io',
+      'socat',
+      'socat.platform',
+      'socat.platform.svc.cluster.local',
+    ],
     open: true,
     proxy: {
       '/api': {

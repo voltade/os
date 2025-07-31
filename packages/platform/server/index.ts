@@ -1,6 +1,8 @@
 import { serveStatic } from 'hono/bun';
 
 import { factory } from '#server/factory.ts';
+import { route as appInstallationRoute } from '#server/routes/app_installation.ts';
+import { route as appsRoute } from '#server/routes/apps.ts';
 import { route as environmentRoute } from '#server/routes/environment.ts';
 import { route as environmentVariableRoute } from '#server/routes/environment_variable.ts';
 import { route as kratosRoute } from '#server/routes/kratos.ts';
@@ -37,7 +39,9 @@ export const apiRoutes = app
   })
   .route('/environment', environmentRoute)
   .route('/environment_variable', environmentVariableRoute)
-  .route('/kratos', kratosRoute);
+  .route('/kratos', kratosRoute)
+  .route('/apps', appsRoute)
+  .route('/app_installation', appInstallationRoute);
 
 app
   .get('/*', serveStatic({ root: './dist/static' }))

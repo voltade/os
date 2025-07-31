@@ -141,6 +141,7 @@ echo "=== Build process completed ==="
     kind: 'Job',
     metadata: {
       name: `${app.id}-build-${buildId}`,
+      namespace: 'platform',
       labels: {
         'app.voltade.dev/app-id': app.id,
         'app.voltade.dev/build-id': buildId,
@@ -215,6 +216,13 @@ echo "=== Build process completed ==="
                     ]
                   : []),
               ],
+              volumeMounts: [
+                {
+                  name: 'voltade-os',
+                  readOnly: true,
+                  mountPath: '/mnt/voltade-os.git',
+                },
+              ],
               resources: {
                 limits: {
                   cpu: resources.cpu || '2',
@@ -224,6 +232,15 @@ echo "=== Build process completed ==="
                   cpu: '500m',
                   memory: '1Gi',
                 },
+              },
+            },
+          ],
+          volumes: [
+            {
+              name: 'voltade-os',
+              hostPath: {
+                path: '/mnt/voltade-os.git',
+                type: 'Directory',
               },
             },
           ],

@@ -28,7 +28,7 @@ export const appBuildTable = pgTable(
   },
   (table) => [
     primaryKey({
-      columns: [table.app_id, table.org_id, table.id],
+      columns: [table.org_id, table.app_id, table.id],
     }),
   ],
 );

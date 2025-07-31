@@ -93,6 +93,8 @@ export const route = factory
         where: and(eq(appTable.id, appId), eq(appTable.org_id, orgId)),
       });
 
+      console.log('app', app);
+
       if (!app) {
         return c.json({ error: 'App not found' }, 404);
       }
@@ -155,7 +157,7 @@ export const route = factory
         const jobOptions: BuildJobOptions = {
           resources: {},
           enableS3Upload: true, // S3 config will be injected from secrets
-          statusCallbackUrl: `http://socat.platform:5173/api/apps/build/${buildId}/status`,
+          // statusCallbackUrl: `http://socat.platform:5173/api/apps/builds/${buildId}/status`,
         };
 
         await createBuildJob(k8sClient, app, buildId, jobOptions);
