@@ -12,7 +12,7 @@ spec:
   routes:
     - match: HostSNI(`smtp.127.0.0.1.nip.io`)
       services:
-        - name: smtp
-          port: 2500
+        - name: maildev-smtp
+          port: 1025
   tls:
     secretName: smtp-tls

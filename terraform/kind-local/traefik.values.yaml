@@ -6,6 +6,7 @@ global:
 additionalArguments:
   - "--entryPoints.postgres.address=:5432/tcp"
 
+# 30000-32767
 ports:
   web:
     expose:
@@ -13,15 +14,15 @@ ports:
   websecure:
     expose:
       default: false
-  postgres:
-    port: 5432
-    nodePort: 30432
+  smtp:
+    port: 1025
+    nodePort: 30025
     expose:
       default: true
     protocol: TCP
-  smtp:
-    port: 2500
-    nodePort: 30425
+  postgres:
+    port: 5432
+    nodePort: 30432
     expose:
       default: true
     protocol: TCP
