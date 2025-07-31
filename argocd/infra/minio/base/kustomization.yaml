@@ -8,3 +8,6 @@ helmCharts:
     version: 17.0.11
     releaseName: minio
     namespace: minio
+
+resources:
+  - httproute.yaml
