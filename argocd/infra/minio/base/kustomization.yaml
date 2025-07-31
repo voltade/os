@@ -11,3 +11,12 @@ helmCharts:
 
 resources:
   - httproute.yaml
+
+patches:
+  - target:
+      kind: Secret
+      name: minio
+    patch: |-
+      - op: add
+        path: /metadata/annotations/reflector.v1.k8s.emberstack.com~1reflection-allowed
+        value: "true"
