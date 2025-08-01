@@ -61,7 +61,13 @@ export const route = factory
       .orderBy(desc(jwksTable.createdAt))
       .limit(2);
     const publicWebKeySet: jose.JSONWebKeySet = {
-      keys: jwks.map(({ publicKey }) => JSON.parse(publicKey)),
+      keys: jwks.map((jwk) => {
+        const publicKey = JSON.parse(jwk.publicKey) as jose.JWK_RSA_Public;
+        return {
+          ...publicKey,
+          kid: jwk.id,
+        };
+      }),
     };
     const publicKey = JSON.stringify(publicWebKeySet);
     const alg = publicWebKeySet.keys[0].alg as string;
@@ -91,7 +97,7 @@ export const route = factory
         return {
           variables: {
             ...common,
-            environmentChartVersion: '0.1.43',
+            environmentChartVersion: '0.1.44',
             isProduction: environment.is_production,
           },
           values: {
