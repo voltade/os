@@ -171,7 +171,11 @@ postgrest:
         secretKeyRef:
           name: cnpg-authenticator
           key: password
-    DB_NAME: postgres
+    DB_NAME:
+      valueFrom:
+        secretKeyRef:
+          name: cnpg-cluster-app
+          key: dbname
     DB_SSL: disable
     PGRST_DB_ANON_ROLE: anon
     # TODO: add storage schema
@@ -211,7 +215,11 @@ supabase-meta:
         secretKeyRef:
           name: cnpg-cluster-app
           key: password
-    PG_META_DB_NAME: postgres
+    PG_META_DB_NAME:
+      valueFrom:
+        secretKeyRef:
+          name: cnpg-cluster-app
+          key: dbname
     PG_META_DB_SSL_MODE: disable
     PG_META_PORT: "8080"
 
