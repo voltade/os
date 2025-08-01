@@ -509,7 +509,7 @@ class WithSubquery extends Subquery {
 }
 
 // ../../node_modules/drizzle-orm/version.js
-var version = "0.44.3";
+var version = "0.44.4";
 
 // ../../node_modules/drizzle-orm/tracing.js
 var otel;
@@ -1034,6 +1034,19 @@ class DrizzleError extends Error {
     super(message);
     this.name = "DrizzleError";
     this.cause = cause;
+  }
+}
+
+class DrizzleQueryError extends Error {
+  constructor(query, params, cause) {
+    super(`Failed query: ${query}
+params: ${params}`);
+    this.query = query;
+    this.params = params;
+    this.cause = cause;
+    Error.captureStackTrace(this, DrizzleQueryError);
+    if (cause)
+      this.cause = cause;
   }
 }
 
@@ -4830,20 +4843,6 @@ function pgSchema(name) {
   return new PgSchema(name);
 }
 
-// ../../node_modules/drizzle-orm/errors/index.js
-class DrizzleQueryError extends Error {
-  constructor(query, params, cause) {
-    super(`Failed query: ${query}
-params: ${params}`);
-    this.query = query;
-    this.params = params;
-    this.cause = cause;
-    Error.captureStackTrace(this, DrizzleQueryError);
-    if (cause)
-      this.cause = cause;
-  }
-}
-
 // ../../node_modules/drizzle-orm/pg-core/session.js
 class PgPreparedQuery {
   constructor(query, cache, queryMetadata, cacheConfig) {
@@ -5054,25 +5053,27 @@ var partnerTable = resourceSchema.table("partner", {
 var accountingSchema = pgSchema("account");
 
 // schemas/accounting/enums.ts
-var accountCategoryEnum = accountingSchema.enum("category_enum", [
-  "Bank and Cash",
-  "Prepayment",
-  "Current Asset",
-  "Fixed Asset",
-  "Non-current Asset",
-  "Payable",
-  "Credit Card",
-  "Current Liability",
-  "Non-current Liability",
-  "Equity",
-  "Current Year Earning",
-  "Income",
-  "Other Income",
-  "Expense",
-  "Cost of Revenue",
-  "Depreciation",
-  "Off-Balance Sheet"
-]);
+var AccountCategory;
+((AccountCategory2) => {
+  AccountCategory2["BANK_AND_CASH"] = "Bank and Cash";
+  AccountCategory2["PREPAYMENT"] = "Prepayment";
+  AccountCategory2["CURRENT_ASSET"] = "Current Asset";
+  AccountCategory2["FIXED_ASSET"] = "Fixed Asset";
+  AccountCategory2["NON_CURRENT_ASSET"] = "Non-current Asset";
+  AccountCategory2["PAYABLE"] = "Payable";
+  AccountCategory2["CREDIT_CARD"] = "Credit Card";
+  AccountCategory2["CURRENT_LIABILITY"] = "Current Liability";
+  AccountCategory2["NON_CURRENT_LIABILITY"] = "Non-current Liability";
+  AccountCategory2["EQUITY"] = "Equity";
+  AccountCategory2["CURRENT_YEAR_EARNING"] = "Current Year Earning";
+  AccountCategory2["INCOME"] = "Income";
+  AccountCategory2["OTHER_INCOME"] = "Other Income";
+  AccountCategory2["EXPENSE"] = "Expense";
+  AccountCategory2["COST_OF_REVENUE"] = "Cost of Revenue";
+  AccountCategory2["DEPRECIATION"] = "Depreciation";
+  AccountCategory2["OFF_BALANCE_SHEET"] = "Off-Balance Sheet";
+})(AccountCategory ||= {});
+var accountCategoryEnum = accountingSchema.enum("category_enum", enumToPgEnum(AccountCategory));
 var JournalType;
 ((JournalType2) => {
   JournalType2["GENERAL"] = "General";
@@ -5103,14 +5104,18 @@ var paymentTermLineDelayTypeEnum = accountingSchema.enum("account_payment_term_l
   "Days after end of this month",
   "Days after end of the next month"
 ]);
-var taxTypeEnum = accountingSchema.enum("account_tax_type_enum", [
-  "Sales",
-  "Purchases"
-]);
-var taxScopeEnum = accountingSchema.enum("account_tax_scope_enum", [
-  "Goods",
-  "Services"
-]);
+var TaxType;
+((TaxType2) => {
+  TaxType2["SALES"] = "Sales";
+  TaxType2["PURCHASES"] = "Purchases";
+})(TaxType ||= {});
+var taxTypeEnum = accountingSchema.enum("account_tax_type_enum", enumToPgEnum(TaxType));
+var TaxScope;
+((TaxScope2) => {
+  TaxScope2["GOODS"] = "Goods";
+  TaxScope2["SERVICES"] = "Services";
+})(TaxScope ||= {});
+var taxScopeEnum = accountingSchema.enum("account_tax_scope_enum", enumToPgEnum(TaxScope));
 var taxPriceIncludeEnum = accountingSchema.enum("account_tax_price_include_override_enum", ["Tax included", "Tax excluded"]);
 var TaxDistributionLineType;
 ((TaxDistributionLineType2) => {
@@ -5147,6 +5152,9 @@ var accountRelations = relations(accountTable, ({ one }) => ({
 }));
 
 // schemas/accounting/tables/journal.ts
+function checkExpression(relation) {
+  return sql`allow('${sql.raw(relation)}', 'invoice:' || cast(id as varchar))`;
+}
 var journalTable = accountingSchema.table("journal", {
   ...DEFAULT_COLUMNS,
   name: text().notNull().unique(),
@@ -5158,8 +5166,28 @@ var journalTable = accountingSchema.table("journal", {
     name: "journal_default_account_id_fk",
     columns: [table.default_account_id],
     foreignColumns: [accountTable.id]
+  }),
+  pgPolicy("journal_select_policy", {
+    as: "permissive",
+    for: "select",
+    using: checkExpression("can_view_invoice")
+  }),
+  pgPolicy("journal_insert_policy", {
+    as: "permissive",
+    for: "insert",
+    withCheck: checkExpression("can_create_invoice")
+  }),
+  pgPolicy("journal_update_policy", {
+    as: "permissive",
+    for: "update",
+    using: checkExpression("can_edit_invoice")
+  }),
+  pgPolicy("journal_delete_policy", {
+    as: "permissive",
+    for: "delete",
+    using: checkExpression("can_delete_invoice")
   })
-]).enableRLS();
+]);
 var journalRelations = relations(journalTable, ({ one }) => ({
   defaultAccount: one(accountTable, {
     fields: [journalTable.default_account_id],
@@ -5168,7 +5196,7 @@ var journalRelations = relations(journalTable, ({ one }) => ({
 }));
 
 // schemas/accounting/tables/journal_entry.ts
-function checkExpression(relation) {
+function checkExpression2(relation) {
   return sql`allow('${sql.raw(relation)}', 'invoice:' || cast(journal_id as varchar))`;
 }
 var journalEntryTable = accountingSchema.table("journal_entry", {
@@ -5202,22 +5230,22 @@ var journalEntryTable = accountingSchema.table("journal_entry", {
   pgPolicy("journal_entry_select_policy", {
     as: "permissive",
     for: "select",
-    using: checkExpression("can_view_invoice")
+    using: checkExpression2("can_view_invoice")
   }),
   pgPolicy("journal_entry_insert_policy", {
     as: "permissive",
     for: "insert",
-    withCheck: checkExpression("can_create_invoice")
+    withCheck: checkExpression2("can_create_invoice")
   }),
   pgPolicy("journal_entry_update_policy", {
     as: "permissive",
     for: "update",
-    using: checkExpression("can_edit_invoice")
+    using: checkExpression2("can_edit_invoice")
   }),
   pgPolicy("journal_entry_delete_policy", {
     as: "permissive",
     for: "delete",
-    using: checkExpression("can_delete_invoice")
+    using: checkExpression2("can_delete_invoice")
   })
 ]);
 var journalEntryRelations = relations(journalEntryTable, ({ one }) => ({
@@ -5270,12 +5298,12 @@ var OrderLineType;
 var orderLineType = salesSchema.enum("order_line_type", enumToPgEnum(OrderLineType));
 
 // schemas/sales/tables/order.ts
-function checkExpression2(relation) {
+function checkExpression3(relation) {
   return sql`allow('${sql.raw(relation)}', 'order:' || reference_id)`;
 }
 var orderTable = salesSchema.table("order", {
   ...DEFAULT_COLUMNS,
-  reference_id: varchar().notNull().default("PLACE_HOLDER"),
+  reference_id: varchar().unique().notNull().default("PLACE_HOLDER"),
   currency_id: integer().notNull(),
   partner_id: integer(),
   contact_id: integer(),
@@ -5304,22 +5332,22 @@ var orderTable = salesSchema.table("order", {
   pgPolicy("sales_order_select_policy", {
     as: "permissive",
     for: "select",
-    using: checkExpression2("can_view_order")
+    using: checkExpression3("can_view_order")
   }),
   pgPolicy("sales_order_insert_policy", {
     as: "permissive",
     for: "insert",
-    withCheck: checkExpression2("can_create_order")
+    withCheck: checkExpression3("can_create_order")
   }),
   pgPolicy("sales_order_update_policy", {
     as: "permissive",
     for: "update",
-    using: checkExpression2("can_edit_order")
+    using: checkExpression3("can_edit_order")
   }),
   pgPolicy("sales_order_delete_policy", {
     as: "permissive",
     for: "delete",
-    using: checkExpression2("can_delete_order")
+    using: checkExpression3("can_delete_order")
   })
 ]);
 

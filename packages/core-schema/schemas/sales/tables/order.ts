@@ -27,7 +27,7 @@ export const orderTable = salesSchema.table(
   'order',
   {
     ...DEFAULT_COLUMNS,
-    reference_id: varchar().notNull().default('PLACE_HOLDER'), // TODO: ensure unique reference ID
+    reference_id: varchar().unique().notNull().default('PLACE_HOLDER'),
 
     currency_id: integer().notNull(),
     partner_id: integer(),

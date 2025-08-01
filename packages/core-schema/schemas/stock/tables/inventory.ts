@@ -10,18 +10,20 @@ import {
 } from 'drizzle-orm/pg-core';
 import { relations } from 'drizzle-orm/relations';
 
-import { productTable } from '../../product/tables/product.ts';
+import { productTable, productTemplateTable } from '../../product/index.ts';
 import { stockSchema } from '../../schema.ts';
 import { DEFAULT_COLUMNS } from '../../utils.ts';
-import { stockUnitTable } from './stock_unit.ts';
-import { warehouseTable } from './warehouse.ts';
-import { warehouseLocationTable } from './warehouse_location.ts';
+import {
+  stockUnitTable,
+  warehouseLocationTable,
+  warehouseTable,
+} from '../index.ts';
 
 /**
  * Check expression for RLS policies.
  */
 function checkExpression(relation: string): SQL<boolean> {
-  return sql<boolean>`allow('${sql.raw(relation)}', 'inventory:' || cast(product_id as varchar))`;
+  return sql<boolean>`exists(select 1 from ${productTable} p left join ${productTemplateTable} pt on p.template_id = pt.id where product_id = p.id and allow('${sql.raw(relation)}', 'inventory:' || cast(pt.id as varchar)))`;
 }
 
 /**

@@ -3,8 +3,6 @@ name: Tests for invoice module
 model_file: ../fga.mod
 tuple_files:
   - ../tuples/core-tuples.yaml
-  - ../tuples/quotation-tuples.yaml
-  - ../tuples/order-tuples.yaml
   - ../tuples/invoice-tuples.yaml
 
 tests:
@@ -288,28 +286,6 @@ tests:
           can_delete_invoice: true
 
   # =============================================================================
-  # MULTI-ORDER INVOICE PERMISSIONS
-  # =============================================================================
-  - name: Invoices tied to multiple orders work correctly
-    check:
-      # Invoice inv004 is tied to orders o004 and o005
-      - user: user:finance_head
-        object: invoice:inv004
-        assertions:
-          can_view_invoice: true
-          can_create_invoice: true
-          can_edit_invoice: true
-          can_delete_invoice: true
-
-      - user: user:finance_member1
-        object: invoice:inv004
-        assertions:
-          can_view_invoice: true
-          can_create_invoice: true
-          can_edit_invoice: true
-          can_delete_invoice: true
-
-  # =============================================================================
   # FOLDER LINKAGE VALIDATION
   # =============================================================================
   - name: All invoices are properly linked to their folder
@@ -333,30 +309,6 @@ tests:
         assertions:
           can_view_invoice: false
           can_edit_invoice: false
-
-  # =============================================================================
-  # ORDER-INVOICE RELATIONSHIP VALIDATION
-  # =============================================================================
-  - name: Invoices properly reference their associated orders
-    check:
-      # Single order invoices
-      - user: user:finance_head
-        object: invoice:inv001
-        assertions:
-          can_edit_invoice: true # Should have edit access via folder ownership
-      - user: user:finance_manager
-        object: invoice:inv002
-        assertions:
-          can_edit_invoice: true # Should have edit access via folder ownership
-      - user: user:finance_member1
-        object: invoice:inv003
-        assertions:
-          can_edit_invoice: false
-      # Multi-order invoices
-      - user: user:finance_head
-        object: invoice:inv004
-        assertions:
-          can_edit_invoice: true # Should have edit access via folder ownership
 
   # =============================================================================
   # TEAM HIERARCHY VALIDATION
@@ -528,29 +480,6 @@ tests:
           can_edit_invoice: true
 
   # =============================================================================
-  # APPROVAL PERMISSIONS
-  # =============================================================================
-  - name: Finance team members can approve invoices
-    check:
-      # All finance team members can approve invoices
-      - user: user:finance_head
-        object: invoice:inv001
-        assertions:
-
-      - user: user:finance_manager
-        object: invoice:inv002
-        assertions:
-
-      # Other teams cannot approve invoices
-      - user: user:sales_head
-        object: invoice:inv001
-        assertions:
-
-      - user: user:product_head
-        object: invoice:inv001
-        assertions:
-
-  # =============================================================================
   # NEGATIVE TESTS
   # =============================================================================
   - name: Users without team relationships have no invoice permissions
@@ -609,59 +538,6 @@ tests:
           can_create_invoice: false
           can_edit_invoice: false
           can_delete_invoice: false
-
-  # =============================================================================
-  # BUSINESS LOGIC VALIDATION - COMPLETION GAPS
-  # =============================================================================
-  - name: Some orders have not been completed into invoices yet
-    check:
-      # o001, o002, o004 have been completed into invoices (have corresponding invoices)
-      - user: user:finance_head
-        object: invoice:inv001
-        assertions:
-          can_view_invoice: true # These invoices exist for completed orders
-      - user: user:finance_head
-        object: invoice:inv002
-        assertions:
-          can_view_invoice: true
-      - user: user:finance_head
-        object: invoice:inv004
-        assertions:
-          can_view_invoice: true
-
-      # Only existing invoices should be accessible
-      - user: user:finance_member1
-        object: invoice:inv001
-        assertions:
-          can_edit_invoice: true # Finance can edit existing invoices
-      - user: user:finance_manager
-        object: invoice:inv002
-        assertions:
-
-      # Note: order:o003 exists but has NO corresponding invoice yet
-      # This validates the business logic that not all orders become invoices immediately
-
-  # =============================================================================
-  # ORDER-TO-INVOICE COMPLETION GAPS VALIDATION
-  # =============================================================================
-  - name: Finance team manages only completed invoices (business logic validation)
-    check:
-      # Finance has full control over existing invoices
-      - user: user:finance_head
-        object: folder:invoices
-        assertions:
-          owner: true # Finance owns the invoices folder
-
-      # All existing invoices should be manageable by finance
-      - user: user:finance_member1
-        object: invoice:inv001
-        assertions:
-          can_view_invoice: true
-          can_edit_invoice: true
-          can_delete_invoice: true
-
-      # Note: The absence of invoice:inv003, inv005, inv006, inv007 in tuples
-      # validates that orders o003, o005, o006, o007 have not been completed yet
 
   # =============================================================================
   # FOLDER PERMISSIONS VALIDATION

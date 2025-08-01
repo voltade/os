@@ -3,8 +3,61 @@ import type { PgTable } from 'drizzle-orm/pg-core';
 
 import { db } from '../../lib/db.ts';
 
-export type CountryIds = { [name: string]: number };
-export type CurrencyIds = { [name: string]: number };
+// region OpenFGA
+/**
+ * List of organization teams.
+ * These teams are used to create tuples in OpenFGA.
+ */
+export enum ORG_TEAMS {
+  PRODUCT = 'team:product',
+  SALES = 'team:sales',
+  FINANCE = 'team:finance',
+  PURCHASE = 'team:purchase',
+}
+
+/**
+ * List of organization roles.
+ * These roles are used to create tuples in OpenFGA.
+ */
+export enum ORG_ROLES {
+  MEMBER = 'member',
+  MANAGER = 'manager',
+  HEAD = 'head',
+}
+
+/**
+ * List of organization folders.
+ * These folders are used to aggregate object permissions in OpenFGA.
+ */
+export enum ORG_FOLDERS {
+  INVENTORY = 'folder:inventory',
+  INVOICES = 'folder:invoices',
+  SALES_ORDERS = 'folder:sales_orders',
+  PURCHASE_ORDERS = 'folder:purchase_orders',
+  QUOTATIONS = 'folder:quotations',
+}
+// endregion
+
+// region Resource context
+export type CountryIds = { SG: number; US: number } & {
+  [name: string]: number;
+};
+export type CurrencyIds = { SG: number; US: number } & {
+  [name: string]: number;
+};
+export type UserIds = Record<
+  keyof typeof ORG_TEAMS,
+  Record<keyof typeof ORG_ROLES, number[]>
+>;
+export type EntityIds = { SG: number } & {
+  [name: string]: number;
+};
+export type PartnerIds = { SG: number } & {
+  [name: string]: number;
+};
+export type UomIds = { PC: number } & {
+  [name: string]: number;
+};
 
 /**
  * Represents the context for seeding resource data.
@@ -12,65 +65,96 @@ export type CurrencyIds = { [name: string]: number };
 interface SeedResourceContext {
   countryIds?: CountryIds;
   currencyIds?: CurrencyIds;
-  userIds?: number[];
-  entityIds?: number[];
-  partnerIds?: number[];
-  uomIds?: number[];
+  userIds?: UserIds;
+  entityIds?: EntityIds;
+  partnerIds?: PartnerIds;
+  uomIds?: UomIds;
+}
+// endregion
+
+// region Product context
+export enum FoodProducts {
+  COCA_COLA = 'Coca Cola',
+  PEPSI_COLA = 'Pepsi Cola',
+  SPRITE = 'Sprite',
+  FRENCH_FRIES = 'French Fries',
+  CHICKEN_NUGGETS = 'Chicken Nuggets',
+  ONION_RINGS = 'Onion Rings',
+  CHEESEBURGER = 'Cheeseburger',
+  CHICKEN_SANDWICH = 'Chicken Sandwich',
+  FISH_SANDWICH = 'Fish Sandwich',
+  APPLE_PIE = 'Apple Pie',
+  ICED_LATTE = 'Iced Latte',
+  CHEESEBURGER_VALUE_MEAL = 'Cheeseburger Value Meal',
 }
 
-/**
- * Represents the context for seeding accounting data.
- */
-interface SeedAccountingContext {
-  accountIds?: number[];
-  taxIds?: number[];
-  taxDistributionLineIds?: number[];
-  taxTagIds?: number[];
-}
+export type ProductIds = Record<keyof typeof FoodProducts, number> & {
+  [name: string]: number;
+};
+export type ComboIds = {
+  CHEESEBURGER: number;
+  FRIES: number;
+  DRINK: number;
+} & {
+  [name: string]: number;
+};
 
 /**
  * Represents the context for seeding product data.
  */
 interface SeedProductContext {
-  productIds?: number[];
-  templateIds?: number[];
-  comboIds?: number[];
+  productIds?: ProductIds;
+  comboIds?: ComboIds;
 }
+// endregion
+
+// region Stock context
+export type WarehouseIds = {
+  CENTRAL: number;
+  EAST: number;
+  WEST: number;
+} & {
+  [name: string]: number;
+};
+export type WarehouseLocationIds = {
+  CENTRAL: {
+    RECEIVING_DOCK: number;
+    COLD_STORAGE: number;
+    OVERFLOW_RACK: number;
+  } & {
+    [name: string]: number;
+  };
+  EAST: {
+    DRY_GOODS_AISLE: number;
+    DISPATCH_ZONE: number;
+  } & {
+    [name: string]: number;
+  };
+  WEST: {
+    SPARE_PARTS_BAY: number;
+    HAZMAT_LOCKER: number;
+  } & {
+    [name: string]: number;
+  };
+} & {
+  [name: keyof WarehouseIds]: { [name: string]: number };
+};
 
 /**
  * Represents the context for seeding stock data.
  */
 interface SeedStockContext {
-  warehouseIds?: number[];
-  warehouseLocationIds?: number[];
-  stockOperationTypeIds?: number[];
-  stockOperationIds?: number[];
+  warehouseIds?: WarehouseIds;
+  warehouseLocationIds?: WarehouseLocationIds;
 }
-
-/**
- * Represents the context for seeding purchase data.
- */
-interface SeedPurchaseContext {
-  purchaseRequisitionIds?: number[];
-  purchaseQuotationIds?: number[];
-}
-
-/**
- * Represents the context for seeding sales data.
- */
-interface SeedSalesContext {
-  salesOrderIds?: number[];
-}
+// endregion
 
 /**
  * Represents the context for seeding all data.
  */
 export type SeedContext = SeedResourceContext &
-  SeedAccountingContext &
   SeedProductContext &
-  SeedStockContext &
-  SeedPurchaseContext &
-  SeedSalesContext;
+  SeedStockContext;
 
 /**
  * Clears the specified tables in the database.

@@ -1,5 +1,7 @@
 #!/usr/bin/env bun
 
+import { faker } from '@faker-js/faker';
+
 import {
   clearAccountingData,
   clearProductData,
@@ -29,6 +31,8 @@ async function clearAllTables(): Promise<void> {
   await clearAccountingData();
   await clearResourceData();
 
+  // TODO: Truncate OpenFGA tuples table
+
   console.log('=== ALL TABLES CLEARED SUCCESSFULLY ===\n');
 }
 
@@ -38,6 +42,10 @@ async function seedAllData(): Promise<void> {
   const startTime = Date.now();
   let context: SeedContext = {};
 
+  // Initialize faker.js seeding
+  faker.seed(42);
+  faker.setDefaultRefDate(startTime);
+
   try {
     context = await seedResourceData(context);
     context = await seedAccountingData(context);
@@ -46,35 +54,16 @@ async function seedAllData(): Promise<void> {
     context = await seedPurchaseData(context);
     context = await seedSalesData(context);
     context = await seedRepairData(context);
-
-    const duration = Date.now() - startTime;
-    console.log('🎉 SEEDING COMPLETED SUCCESSFULLY!');
-    console.log(`Duration: ${duration}ms\n`);
-
-    console.log('📊 SUMMARY:');
-    console.log(`Countries: ${Object.keys(context.countryIds ?? {}).length}`);
-    console.log(`Currencies: ${Object.keys(context.currencyIds ?? {}).length}`);
-    console.log(`Users: ${context.userIds?.length ?? 0}`);
-    console.log(`Entities: ${context.entityIds?.length ?? 0}`);
-    console.log(`Partners: ${context.partnerIds?.length ?? 0}`);
-    console.log(`Products: ${context.productIds?.length ?? 0}`);
-    console.log(`Templates: ${context.templateIds?.length ?? 0}`);
-    console.log(`Sales Orders: ${context.salesOrderIds?.length ?? 0}`);
-    console.log(
-      `Purchase Requisitions: ${context.purchaseRequisitionIds?.length ?? 0}`,
-    );
-    console.log(
-      `Purchase Quotations: ${context.purchaseQuotationIds?.length ?? 0}`,
-    );
-    console.log(`Warehouses: ${context.warehouseIds?.length ?? 0}`);
-    console.log(
-      `Warehouse Locations: ${context.warehouseLocationIds?.length ?? 0}`,
-    );
-    console.log('');
   } catch (error) {
     console.error('❌ SEEDING FAILED:', error);
     process.exit(1);
   }
+
+  const duration = Date.now() - startTime;
+  console.log('🎉 SEEDING COMPLETED SUCCESSFULLY!');
+  console.log(`Duration: ${duration}ms\n`);
+
+  console.log('Users: ', context.userIds);
 }
 
 if (import.meta.main) {

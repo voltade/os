@@ -20,7 +20,7 @@ export const purchaseOrderTable = purchaseSchema.table(
   'order',
   {
     ...DEFAULT_COLUMNS,
-    reference_id: varchar().notNull().default('PLACE_HOLDER'), // TODO: ensure unique reference ID
+    reference_id: varchar().unique().notNull().default('PLACE_HOLDER'),
 
     purchase_requisition_id: integer().notNull(),
     quotation_id: integer().notNull(),

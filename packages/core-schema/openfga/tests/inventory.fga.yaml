@@ -7,13 +7,61 @@ tuple_files:
 
 tests:
   # =============================================================================
-  # PRODUCT TEAM PERMISSIONS (INVENTORY MANAGERS)
+  # FOLDER-LEVEL PERMISSIONS
   # =============================================================================
-  - name: Product team members have full inventory permissions
+  - name: Inventory folder has correct team assignments
+    check:
+      # Product team is the owner team (only team with access)
+      - user: user:product_head
+        object: folder:inventory
+        assertions:
+          owner: true
+          viewer: true
+      - user: user:product_manager1
+        object: folder:inventory
+        assertions:
+          owner: true
+          viewer: true
+      - user: user:product_member1
+        object: folder:inventory
+        assertions:
+          owner: true
+          viewer: true
+
+      # Other teams have no folder access
+      - user: user:sales_head
+        object: folder:inventory
+        assertions:
+          owner: false
+          viewer: false
+      - user: user:finance_head
+        object: folder:inventory
+        assertions:
+          owner: false
+          viewer: false
+      - user: user:purchase_head
+        object: folder:inventory
+        assertions:
+          owner: false
+          viewer: false
+
+  # =============================================================================
+  # PRODUCT TEAM PERMISSIONS (INVENTORY MANAGERS VIA FOLDER)
+  # =============================================================================
+  - name: Product team members have full inventory permissions via folder ownership
     check:
       # Product team head has all permissions
       - user: user:product_head
-        object: inventory:main-warehouse
+        object: inventory:p001
+        assertions:
+          can_view_products: true
+          can_create_products: true
+          can_edit_products: true
+          can_delete_products: true
+          can_view_stock: true
+          can_edit_stock: true
+      - user: user:product_head
+        object: inventory:p002
         assertions:
           can_view_products: true
           can_create_products: true
@@ -23,7 +71,7 @@ tests:
           can_edit_stock: true
       # Product team managers have all permissions
       - user: user:product_manager1
-        object: inventory:main-warehouse
+        object: inventory:p003
         assertions:
           can_view_products: true
           can_create_products: true
@@ -32,7 +80,7 @@ tests:
           can_view_stock: true
           can_edit_stock: true
       - user: user:product_manager2
-        object: inventory:main-warehouse
+        object: inventory:p004
         assertions:
           can_view_products: true
           can_create_products: true
@@ -42,7 +90,7 @@ tests:
           can_edit_stock: true
       # Product team members have all permissions
       - user: user:product_member1
-        object: inventory:main-warehouse
+        object: inventory:p005
         assertions:
           can_view_products: true
           can_create_products: true
@@ -51,16 +99,7 @@ tests:
           can_view_stock: true
           can_edit_stock: true
       - user: user:product_member2
-        object: inventory:main-warehouse
-        assertions:
-          can_view_products: true
-          can_create_products: true
-          can_edit_products: true
-          can_delete_products: true
-          can_view_stock: true
-          can_edit_stock: true
-      - user: user:product_member3
-        object: inventory:main-warehouse
+        object: inventory:p001
         assertions:
           can_view_products: true
           can_create_products: true
@@ -70,15 +109,15 @@ tests:
           can_edit_stock: true
 
   # =============================================================================
-  # SALES TEAM PERMISSIONS (LIMITED ACCESS)
+  # OTHER TEAMS HAVE NO ACCESS TO INVENTORY
   # =============================================================================
-  - name: Sales team members can only view products
+  - name: Sales team members have no inventory permissions
     check:
       # Sales team head
       - user: user:sales_head
-        object: inventory:main-warehouse
+        object: inventory:p001
         assertions:
-          can_view_products: true
+          can_view_products: false
           can_create_products: false
           can_edit_products: false
           can_delete_products: false
@@ -86,18 +125,9 @@ tests:
           can_edit_stock: false
       # Sales team managers
       - user: user:sales_manager1
-        object: inventory:main-warehouse
+        object: inventory:p002
         assertions:
-          can_view_products: true
-          can_create_products: false
-          can_edit_products: false
-          can_delete_products: false
-          can_view_stock: false
-          can_edit_stock: false
-      - user: user:sales_manager2
-        object: inventory:main-warehouse
-        assertions:
-          can_view_products: true
+          can_view_products: false
           can_create_products: false
           can_edit_products: false
           can_delete_products: false
@@ -105,34 +135,22 @@ tests:
           can_edit_stock: false
       # Sales team members
       - user: user:sales_member1
-        object: inventory:main-warehouse
+        object: inventory:p003
         assertions:
-          can_view_products: true
-          can_create_products: false
-          can_edit_products: false
-          can_delete_products: false
-          can_view_stock: false
-          can_edit_stock: false
-      - user: user:sales_member2
-        object: inventory:main-warehouse
-        assertions:
-          can_view_products: true
+          can_view_products: false
           can_create_products: false
           can_edit_products: false
           can_delete_products: false
           can_view_stock: false
           can_edit_stock: false
 
-  # =============================================================================
-  # FINANCE TEAM PERMISSIONS (LIMITED ACCESS)
-  # =============================================================================
-  - name: Finance team members can only view products
+  - name: Finance team members have no inventory permissions
     check:
       # Finance team head
       - user: user:finance_head
-        object: inventory:main-warehouse
+        object: inventory:p001
         assertions:
-          can_view_products: true
+          can_view_products: false
           can_create_products: false
           can_edit_products: false
           can_delete_products: false
@@ -140,9 +158,9 @@ tests:
           can_edit_stock: false
       # Finance team manager
       - user: user:finance_manager
-        object: inventory:main-warehouse
+        object: inventory:p002
         assertions:
-          can_view_products: true
+          can_view_products: false
           can_create_products: false
           can_edit_products: false
           can_delete_products: false
@@ -150,140 +168,119 @@ tests:
           can_edit_stock: false
       # Finance team members
       - user: user:finance_member1
-        object: inventory:main-warehouse
+        object: inventory:p003
         assertions:
-          can_view_products: true
-          can_create_products: false
-          can_edit_products: false
-          can_delete_products: false
-          can_view_stock: false
-          can_edit_stock: false
-      - user: user:finance_member2
-        object: inventory:main-warehouse
-        assertions:
-          can_view_products: true
+          can_view_products: false
           can_create_products: false
           can_edit_products: false
           can_delete_products: false
           can_view_stock: false
           can_edit_stock: false
 
-  # =============================================================================
-  # PURCHASE TEAM PERMISSIONS (VIEW AND CREATE ACCESS)
-  # =============================================================================
-  - name: Purchase team members can view and create but not edit/delete products
+  - name: Purchase team members have no inventory permissions
     check:
       # Purchase team head
       - user: user:purchase_head
-        object: inventory:main-warehouse
+        object: inventory:p001
         assertions:
-          can_view_products: true
-          can_create_products: true
+          can_view_products: false
+          can_create_products: false
           can_edit_products: false
           can_delete_products: false
           can_view_stock: false
           can_edit_stock: false
       # Purchase team managers
       - user: user:purchase_manager1
-        object: inventory:main-warehouse
+        object: inventory:p002
         assertions:
-          can_view_products: true
-          can_create_products: true
-          can_edit_products: false
-          can_delete_products: false
-          can_view_stock: false
-          can_edit_stock: false
-      - user: user:purchase_manager2
-        object: inventory:main-warehouse
-        assertions:
-          can_view_products: true
-          can_create_products: true
+          can_view_products: false
+          can_create_products: false
           can_edit_products: false
           can_delete_products: false
           can_view_stock: false
           can_edit_stock: false
       # Purchase team members
       - user: user:purchase_member1
-        object: inventory:main-warehouse
+        object: inventory:p003
         assertions:
-          can_view_products: true
-          can_create_products: true
-          can_edit_products: false
-          can_delete_products: false
-          can_view_stock: false
-          can_edit_stock: false
-      - user: user:purchase_member2
-        object: inventory:main-warehouse
-        assertions:
-          can_view_products: true
-          can_create_products: true
-          can_edit_products: false
-          can_delete_products: false
-          can_view_stock: false
-          can_edit_stock: false
-      - user: user:purchase_member3
-        object: inventory:main-warehouse
-        assertions:
-          can_view_products: true
-          can_create_products: true
+          can_view_products: false
+          can_create_products: false
           can_edit_products: false
           can_delete_products: false
           can_view_stock: false
           can_edit_stock: false
 
   # =============================================================================
-  # STOCK ACCESS RESTRICTIONS
+  # IS_COMPLETED FLAG TESTS (INVENTORY EDITING RESTRICTIONS)
   # =============================================================================
-  - name: Stock access is restricted to product team members only
+  - name: Completed inventory cannot be edited but can still be viewed and deleted
+    tuples:
+      # Mark inventory as completed
+      - user: inventory:p001
+        relation: is_completed
+        object: inventory:p001
     check:
-      # Sales team cannot access stock
-      - user: user:sales_head
-        object: inventory:main-warehouse
+      # Product team can still view completed inventory
+      - user: user:product_head
+        object: inventory:p001
         assertions:
-          can_view_stock: false
-          can_edit_stock: false
-      - user: user:sales_manager1
-        object: inventory:main-warehouse
+          can_view_products: true
+          can_create_products: true # This is not restricted by completion
+          can_view_stock: true
+
+      # But cannot edit completed inventory (products or stock)
+      - user: user:product_head
+        object: inventory:p001
         assertions:
-          can_view_stock: false
-          can_edit_stock: false
-      - user: user:sales_member1
-        object: inventory:main-warehouse
+          can_edit_products: false # Blocked by is_completed
+          can_edit_stock: false # Blocked by is_completed
+
+      # However, can still delete completed inventory (follows same pattern as invoices)
+      - user: user:product_head
+        object: inventory:p001
         assertions:
-          can_view_stock: false
-          can_edit_stock: false
-      # Finance team cannot access stock
-      - user: user:finance_head
-        object: inventory:main-warehouse
+          can_delete_products: true # NOT blocked by is_completed
+
+  - name: Non-completed inventory can be edited by authorized teams
+    check:
+      # Test without is_completed flag - normal operations should work
+      # Product team can edit non-completed inventory
+      - user: user:product_head
+        object: inventory:p002
         assertions:
-          can_view_stock: false
-          can_edit_stock: false
-      - user: user:finance_manager
-        object: inventory:main-warehouse
+          can_view_products: true
+          can_create_products: true
+          can_edit_products: true # Not blocked by is_completed
+          can_delete_products: true
+          can_view_stock: true
+          can_edit_stock: true # Not blocked by is_completed
+
+      - user: user:product_member1
+        object: inventory:p003
         assertions:
-          can_view_stock: false
-          can_edit_stock: false
-      - user: user:finance_member1
-        object: inventory:main-warehouse
+          can_view_products: true
+          can_create_products: true
+          can_edit_products: true # Not blocked by is_completed
+          can_delete_products: true
+          can_view_stock: true
+          can_edit_stock: true # Not blocked by is_completed
+
+  # =============================================================================
+  # FOLDER LINKAGE VALIDATION
+  # =============================================================================
+  - name: All inventories are properly linked to their folder
+    check:
+      # Verify that inventory derives permissions from its folder
+      - user: user:product_head
+        object: inventory:p001
         assertions:
-          can_view_stock: false
-          can_edit_stock: false
-      # Purchase team cannot access stock
-      - user: user:purchase_head
-        object: inventory:main-warehouse
+          can_edit_products: true # Should work via folder ownership
+          can_edit_stock: true # Should work via folder ownership
+      - user: user:product_member1
+        object: inventory:p002
         assertions:
-          can_view_stock: false
-          can_edit_stock: false
-      - user: user:purchase_manager1
-        object: inventory:main-warehouse
-        assertions:
-          can_view_stock: false
-          can_edit_stock: false
-      - user: user:purchase_member1
-        object: inventory:main-warehouse
-        assertions:
-          can_view_stock: false
-          can_edit_stock: false
+          can_edit_products: true # Should work via folder ownership
+          can_edit_stock: true # Should work via folder ownership
 
   # =============================================================================
   # TEAM HIERARCHY VALIDATION
@@ -389,76 +386,6 @@ tests:
           head: false
           manager: false
           member: true
-      - user: user:purchase_member2
-        object: team:purchase
-        assertions:
-          head: false
-          manager: false
-          member: true
-      - user: user:purchase_member3
-        object: team:purchase
-        assertions:
-          head: false
-          manager: false
-          member: true
-
-  # =============================================================================
-  # ORGANIZATION MEMBERSHIP TESTS
-  # =============================================================================
-  - name: All team members inherit organization membership
-    check:
-      # Product team members get organization access
-      - user: user:product_head
-        object: organization:acme-corp
-        assertions:
-          member: true
-      - user: user:product_manager1
-        object: organization:acme-corp
-        assertions:
-          member: true
-      - user: user:product_member1
-        object: organization:acme-corp
-        assertions:
-          member: true
-      # Sales team members get organization access
-      - user: user:sales_head
-        object: organization:acme-corp
-        assertions:
-          member: true
-      - user: user:sales_manager1
-        object: organization:acme-corp
-        assertions:
-          member: true
-      - user: user:sales_member1
-        object: organization:acme-corp
-        assertions:
-          member: true
-      # Finance team members get organization access
-      - user: user:finance_head
-        object: organization:acme-corp
-        assertions:
-          member: true
-      - user: user:finance_manager
-        object: organization:acme-corp
-        assertions:
-          member: true
-      - user: user:finance_member1
-        object: organization:acme-corp
-        assertions:
-          member: true
-      # Purchase team members get organization access
-      - user: user:purchase_head
-        object: organization:acme-corp
-        assertions:
-          member: true
-      - user: user:purchase_manager1
-        object: organization:acme-corp
-        assertions:
-          member: true
-      - user: user:purchase_member1
-        object: organization:acme-corp
-        assertions:
-          member: true
 
   # =============================================================================
   # PERMISSION HIERARCHY VALIDATION
@@ -467,13 +394,13 @@ tests:
     check:
       # Product team members who can edit should also be able to view and create
       - user: user:product_head
-        object: inventory:main-warehouse
+        object: inventory:p001
         assertions:
           can_edit_products: true
           can_view_products: true # should be true due to "or can_edit_products"
           can_create_products: true # should be true due to "or can_edit_products"
       - user: user:product_member1
-        object: inventory:main-warehouse
+        object: inventory:p002
         assertions:
           can_edit_products: true
           can_view_products: true
@@ -485,7 +412,7 @@ tests:
   - name: Users without team relationships have no inventory permissions
     check:
       - user: user:random_user
-        object: inventory:main-warehouse
+        object: inventory:p001
         assertions:
           can_view_products: false
           can_create_products: false
@@ -498,7 +425,7 @@ tests:
     check:
       # Direct organization members (not in any team) should have no inventory access
       - user: user:org_member1
-        object: inventory:main-warehouse
+        object: inventory:p001
         assertions:
           can_view_products: false
           can_create_products: false
@@ -517,7 +444,7 @@ tests:
           member: true
       # But no automatic inventory permissions
       - user: user:org_admin
-        object: inventory:main-warehouse
+        object: inventory:p001
         assertions:
           can_view_products: false
           can_create_products: false

@@ -1,12 +1,10 @@
 module invoice
 
-# invoice = billing document generated from completed orders
+# invoice = billing document for the organization
 # invoices are managed by a specific team (typically finance), and can be viewed by other teams
 # there are different types of invoices: sales invoices, purchase invoices, etc.
 type invoice
   relations
-    define order: [order] # the order(s) associated with the invoice
-    
     # CRUD permissions
     define crud_folder: [folder]
     define owner: owner from crud_folder

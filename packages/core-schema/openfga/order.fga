@@ -6,8 +6,6 @@ module order
 # this type serves as an abstraction for the various order types
 type order
   relations
-    define quotation: [quotation] # the quotation(s) associated with the order
-    
     # CRUD permissions
     define crud_folder: [folder]
     define owner: owner from crud_folder

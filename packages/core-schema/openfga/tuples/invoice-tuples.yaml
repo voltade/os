@@ -7,24 +7,6 @@
   relation: owner_team
   object: folder:invoices
 
-# Multiple invoices with different order associations
-# o001, o002, o004 have been completed into invoices
-- user: order:o001
-  relation: order
-  object: invoice:inv001
-
-- user: order:o002
-  relation: order
-  object: invoice:inv002
-
-# Some invoices tied to multiple orders (consolidated billing)
-- user: order:o004
-  relation: order
-  object: invoice:inv004
-
-# Note: order:o003 has NOT been completed into an invoice yet
-# This reflects real business scenarios where orders are pending completion/delivery
-
 # Link all invoices to the invoices folder
 - user: folder:invoices
   relation: crud_folder

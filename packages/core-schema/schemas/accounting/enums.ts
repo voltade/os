@@ -1,38 +1,125 @@
 import { enumToPgEnum } from '../utils.ts';
 import { accountingSchema } from './schema.ts';
 
-export const accountCategoryEnum = accountingSchema.enum('category_enum', [
+/**
+ * Enum for account categories.
+ *
+ * This enum categorizes accounts into various types of balance sheets.
+ * The categories are structured to represent a typical accounting hierarchy, including assets, liabilities, equity, and income/expense accounts.
+ *
+ * The hierarchy is as follows:
+ * ```text
+ * Balance Sheet
+ * ├── Asset
+ * │   ├── Current Assets
+ * │   ├── Fixed Assets
+ * │   └── Non-current Assets
+ * ├── Liability
+ * │   ├── Current Liabilities
+ * │   └── Non-current Liabilities
+ * ├── Equity
+ * │   └── Retained Earnings
+ * └── Income Statement
+ *     ├── Revenue
+ *     └── Expenses
+ * ```
+ *
+ * - BANK_AND_CASH: Represents bank and cash accounts.
+ * - PREPAYMENT: Represents prepayment accounts.
+ * - CURRENT_ASSET: Represents current asset accounts.
+ * - FIXED_ASSET: Represents fixed asset accounts.
+ * - NON_CURRENT_ASSET: Represents non-current asset accounts.
+ * - PAYABLE: Represents payable accounts.
+ * - CREDIT_CARD: Represents credit card accounts.
+ * - CURRENT_LIABILITY: Represents current liability accounts.
+ * - NON_CURRENT_LIABILITY: Represents non-current liability accounts.
+ * - EQUITY: Represents equity accounts.
+ * - CURRENT_YEAR_EARNING: Represents current year earning accounts.
+ * - INCOME: Represents income accounts.
+ * - OTHER_INCOME: Represents other income accounts.
+ * - EXPENSE: Represents expense accounts.
+ * - COST_OF_REVENUE: Represents cost of revenue accounts.
+ * - DEPRECIATION: Represents depreciation accounts.
+ * - OFF_BALANCE_SHEET: Represents off-balance sheet accounts.
+ */
+export enum AccountCategory {
   // Balance Sheet
   // ├── Asset
   // │   ├── Current Assets
-  'Bank and Cash',
-  'Prepayment',
-  'Current Asset',
+  BANK_AND_CASH = 'Bank and Cash',
+  PREPAYMENT = 'Prepayment',
+  CURRENT_ASSET = 'Current Asset',
   // │   ├── Fixed Assets
-  'Fixed Asset',
+  FIXED_ASSET = 'Fixed Asset',
   // │   └─ Non-current Assets
-  'Non-current Asset',
+  NON_CURRENT_ASSET = 'Non-current Asset',
   // ├── Liability
   // │   ├─ Current Liabilities
-  'Payable',
-  'Credit Card',
-  'Current Liability',
+  PAYABLE = 'Payable',
+  CREDIT_CARD = 'Credit Card',
+  CURRENT_LIABILITY = 'Current Liability',
   // │   └─ Non-current Liabilities
-  'Non-current Liability',
+  NON_CURRENT_LIABILITY = 'Non-current Liability',
   // ├── Equity
-  'Equity',
-  'Current Year Earning',
+  EQUITY = 'Equity',
+  CURRENT_YEAR_EARNING = 'Current Year Earning',
   // Profit and Loss
   // ├── Income
-  'Income',
-  'Other Income',
+  INCOME = 'Income',
+  OTHER_INCOME = 'Other Income',
   // ├── Expense
-  'Expense',
-  'Cost of Revenue',
-  'Depreciation',
+  EXPENSE = 'Expense',
+  COST_OF_REVENUE = 'Cost of Revenue',
+  DEPRECIATION = 'Depreciation',
   // └─ Other
-  'Off-Balance Sheet',
-]);
+  OFF_BALANCE_SHEET = 'Off-Balance Sheet',
+}
+
+/**
+ * Enum for account categories as a `pgEnum`.
+ *
+ * This enum categorizes accounts into various types of balance sheets.
+ * The categories are structured to represent a typical accounting hierarchy, including assets, liabilities, equity, and income/expense accounts.
+ *
+ * The hierarchy is as follows:
+ * ```text
+ * Balance Sheet
+ * ├── Asset
+ * │   ├── Current Assets
+ * │   ├── Fixed Assets
+ * │   └── Non-current Assets
+ * ├── Liability
+ * │   ├── Current Liabilities
+ * │   └── Non-current Liabilities
+ * ├── Equity
+ * │   └── Retained Earnings
+ * └── Income Statement
+ *     ├── Revenue
+ *     └── Expenses
+ * ```
+ *
+ * - BANK_AND_CASH: Represents bank and cash accounts.
+ * - PREPAYMENT: Represents prepayment accounts.
+ * - CURRENT_ASSET: Represents current asset accounts.
+ * - FIXED_ASSET: Represents fixed asset accounts.
+ * - NON_CURRENT_ASSET: Represents non-current asset accounts.
+ * - PAYABLE: Represents payable accounts.
+ * - CREDIT_CARD: Represents credit card accounts.
+ * - CURRENT_LIABILITY: Represents current liability accounts.
+ * - NON_CURRENT_LIABILITY: Represents non-current liability accounts.
+ * - EQUITY: Represents equity accounts.
+ * - CURRENT_YEAR_EARNING: Represents current year earning accounts.
+ * - INCOME: Represents income accounts.
+ * - OTHER_INCOME: Represents other income accounts.
+ * - EXPENSE: Represents expense accounts.
+ * - COST_OF_REVENUE: Represents cost of revenue accounts.
+ * - DEPRECIATION: Represents depreciation accounts.
+ * - OFF_BALANCE_SHEET: Represents off-balance sheet accounts.
+ */
+export const accountCategoryEnum = accountingSchema.enum(
+  'category_enum',
+  enumToPgEnum(AccountCategory),
+);
 
 /**
  * Enum for journal types.
@@ -114,15 +201,49 @@ export const paymentTermLineDelayTypeEnum = accountingSchema.enum(
   ],
 );
 
-export const taxTypeEnum = accountingSchema.enum('account_tax_type_enum', [
-  'Sales',
-  'Purchases',
-]);
+/**
+ * Enum for tax types.
+ *
+ * - SALES: Represents sales tax.
+ * - PURCHASES: Represents purchase tax.
+ */
+export enum TaxType {
+  SALES = 'Sales',
+  PURCHASES = 'Purchases',
+}
 
-export const taxScopeEnum = accountingSchema.enum('account_tax_scope_enum', [
-  'Goods',
-  'Services',
-]);
+/**
+ * Enum for tax types as a `pgEnum`.
+ *
+ * - SALES: Represents sales tax.
+ * - PURCHASES: Represents purchase tax.
+ */
+export const taxTypeEnum = accountingSchema.enum(
+  'account_tax_type_enum',
+  enumToPgEnum(TaxType),
+);
+
+/**
+ * Enum for tax scopes.
+ *
+ * - GOODS: Represents tax applicable to goods.
+ * - SERVICES: Represents tax applicable to services.
+ */
+export enum TaxScope {
+  GOODS = 'Goods',
+  SERVICES = 'Services',
+}
+
+/**
+ * Enum for tax scopes as a `pgEnum`.
+ *
+ * - GOODS: Represents tax applicable to goods.
+ * - SERVICES: Represents tax applicable to services.
+ */
+export const taxScopeEnum = accountingSchema.enum(
+  'account_tax_scope_enum',
+  enumToPgEnum(TaxScope),
+);
 
 export const taxPriceIncludeEnum = accountingSchema.enum(
   'account_tax_price_include_override_enum',

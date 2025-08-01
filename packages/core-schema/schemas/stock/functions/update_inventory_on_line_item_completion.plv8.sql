@@ -524,7 +524,7 @@ class WithSubquery extends Subquery {
 }
 
 // ../../node_modules/drizzle-orm/version.js
-var version = "0.44.3";
+var version = "0.44.4";
 
 // ../../node_modules/drizzle-orm/tracing.js
 var otel;
@@ -1049,6 +1049,19 @@ class DrizzleError extends Error {
     super(message);
     this.name = "DrizzleError";
     this.cause = cause;
+  }
+}
+
+class DrizzleQueryError extends Error {
+  constructor(query, params, cause) {
+    super(`Failed query: ${query}
+params: ${params}`);
+    this.query = query;
+    this.params = params;
+    this.cause = cause;
+    Error.captureStackTrace(this, DrizzleQueryError);
+    if (cause)
+      this.cause = cause;
   }
 }
 
@@ -4902,20 +4915,6 @@ function pgSchema(name) {
     throw new Error(`You can't specify 'public' as schema name. Postgres is using public schema by default. If you want to use 'public' schema, just use pgTable() instead of creating a schema`);
   }
   return new PgSchema(name);
-}
-
-// ../../node_modules/drizzle-orm/errors/index.js
-class DrizzleQueryError extends Error {
-  constructor(query, params, cause) {
-    super(`Failed query: ${query}
-params: ${params}`);
-    this.query = query;
-    this.params = params;
-    this.cause = cause;
-    Error.captureStackTrace(this, DrizzleQueryError);
-    if (cause)
-      this.cause = cause;
-  }
 }
 
 // ../../node_modules/drizzle-orm/pg-core/session.js

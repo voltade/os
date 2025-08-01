@@ -7,7 +7,14 @@ import {
   RepairOrderStatus,
   repairOrderTable,
 } from '../../schemas/index.ts';
-import { clearTables, type SeedContext } from './utils.ts';
+import {
+  clearTables,
+  type EntityIds,
+  type PartnerIds,
+  type ProductIds,
+  type SeedContext,
+  type UserIds,
+} from './utils.ts';
 
 const REPAIR_SCENARIOS = [
   'Screen replacement needed due to crack',
@@ -26,24 +33,16 @@ const REPAIR_SCENARIOS = [
   'Firmware update and configuration reset',
 ];
 
+// region Database
 /**
  * Seeds repair orders with various scenarios and statuses.
  */
 async function seedRepairOrders(
-  entityIds: number[] = [],
-  partnerIds: number[] = [],
-  productIds: number[] = [],
-  userIds: number[] = [],
+  entityIds: EntityIds,
+  partnerIds: PartnerIds,
+  productIds: ProductIds,
+  userIds: UserIds,
 ): Promise<void> {
-  // Ensure required IDs are available
-  if (
-    entityIds.length === 0 ||
-    partnerIds.length === 0 ||
-    productIds.length === 0 ||
-    userIds.length === 0
-  )
-    throw new Error('No user IDs provided for repair orders');
-
   console.log('Repair Orders:');
 
   const repairOrderData = Array.from(
@@ -107,24 +106,30 @@ async function seedRepairOrders(
       const assignedTechnicianId =
         status === RepairOrderStatus.CONFIRMED ||
         status === RepairOrderStatus.UNDER_REPAIR
-          ? faker.helpers.arrayElement(userIds)
+          ? faker.helpers.arrayElement(
+              faker.helpers.objectValue(faker.helpers.objectValue(userIds)),
+            )
           : null;
 
-      const createdByUserId = faker.helpers.arrayElement(userIds);
+      const createdByUserId = faker.helpers.arrayElement(
+        faker.helpers.objectValue(faker.helpers.objectValue(userIds)),
+      );
       const lastModifiedById = faker.datatype.boolean(0.3)
-        ? faker.helpers.arrayElement(userIds)
+        ? faker.helpers.arrayElement(
+            faker.helpers.objectValue(faker.helpers.objectValue(userIds)),
+          )
         : createdByUserId;
 
       const timestamp = faker.date
-        .past({ years: 5, refDate: new Date() })
+        .past({ years: 5 })
         .toISOString()
         .slice(0, 10);
 
       const repairOrder: InferInsertModel<typeof repairOrderTable> = {
-        company_id: faker.helpers.arrayElement(entityIds),
-        customer_id: faker.helpers.arrayElement(partnerIds),
+        company_id: faker.helpers.objectValue(entityIds),
+        customer_id: faker.helpers.objectValue(partnerIds),
         assigned_technician_id: assignedTechnicianId,
-        product_id: faker.helpers.arrayElement(productIds),
+        product_id: faker.helpers.objectValue(productIds),
         reference_number: `RO-${timestamp}-${(index + 1).toString().padStart(3, '0')}`,
         status,
         priority,
@@ -151,7 +156,9 @@ async function seedRepairOrders(
         `but got ${repairOrders.length} repair orders`,
     );
 }
+// endregion
 
+// region Drivers
 /**
  * Seeds repair data for the application.
  *
@@ -162,6 +169,17 @@ export async function seedRepairData(
   context: SeedContext,
 ): Promise<SeedContext> {
   console.log('=== REPAIR DATA ===');
+
+  // Ensure required context is available
+  if (
+    !context.entityIds ||
+    !context.partnerIds ||
+    !context.productIds ||
+    !context.userIds
+  )
+    throw new Error(
+      'Required entity, partner, product, or user IDs not found for repair data',
+    );
 
   await seedRepairOrders(
     context.entityIds,
@@ -185,3 +203,4 @@ export async function clearRepairData(): Promise<void> {
   await clearTables(repairOrderTable);
   console.log('Repair data cleared successfully\n');
 }
+// endregion

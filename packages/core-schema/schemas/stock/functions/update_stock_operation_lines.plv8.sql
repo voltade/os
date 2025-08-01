@@ -524,7 +524,7 @@ class WithSubquery extends Subquery {
 }
 
 // ../../node_modules/drizzle-orm/version.js
-var version = "0.44.3";
+var version = "0.44.4";
 
 // ../../node_modules/drizzle-orm/tracing.js
 var otel;
@@ -1049,6 +1049,19 @@ class DrizzleError extends Error {
     super(message);
     this.name = "DrizzleError";
     this.cause = cause;
+  }
+}
+
+class DrizzleQueryError extends Error {
+  constructor(query, params, cause) {
+    super(`Failed query: ${query}
+params: ${params}`);
+    this.query = query;
+    this.params = params;
+    this.cause = cause;
+    Error.captureStackTrace(this, DrizzleQueryError);
+    if (cause)
+      this.cause = cause;
   }
 }
 
@@ -4907,20 +4920,6 @@ function pgSchema(name) {
   return new PgSchema(name);
 }
 
-// ../../node_modules/drizzle-orm/errors/index.js
-class DrizzleQueryError extends Error {
-  constructor(query, params, cause) {
-    super(`Failed query: ${query}
-params: ${params}`);
-    this.query = query;
-    this.params = params;
-    this.cause = cause;
-    Error.captureStackTrace(this, DrizzleQueryError);
-    if (cause)
-      this.cause = cause;
-  }
-}
-
 // ../../node_modules/drizzle-orm/pg-core/session.js
 class PgPreparedQuery {
   constructor(query, cache, queryMetadata, cacheConfig) {
@@ -5637,69 +5636,9 @@ var productTemplateView = pgView("product_template_view").with({
   list_price: productTemplateTable.list_price,
   category: productTemplateTable.category
 }).from(productTemplateTable));
-// schemas/stock/tables/stock_unit.ts
+// schemas/stock/tables/inventory.ts
 function checkExpression7(relation) {
   return sql`exists(select 1 from ${productTable} p left join ${productTemplateTable} pt on p.template_id = pt.id where product_id = p.id and allow('${sql.raw(relation)}', 'inventory:' || cast(pt.id as varchar)))`;
-}
-var stockUnitTable = stockSchema.table("unit", {
-  ...DEFAULT_COLUMNS,
-  product_id: integer().notNull(),
-  warehouse_id: integer(),
-  warehouse_location_id: integer(),
-  serial_no: text(),
-  batch_no: text(),
-  last_updated_by_id: text(),
-  remarks: jsonb()
-}, (table) => [
-  foreignKey({
-    name: "stock_unit_product_id_fk",
-    columns: [table.product_id],
-    foreignColumns: [productTable.id]
-  }).onUpdate("cascade").onDelete("restrict"),
-  foreignKey({
-    name: "stock_unit_warehouse_fk",
-    columns: [table.warehouse_id],
-    foreignColumns: [warehouseTable.id]
-  }).onUpdate("cascade").onDelete("restrict"),
-  foreignKey({
-    name: "stock_unit_warehouse_location_fk",
-    columns: [table.warehouse_location_id],
-    foreignColumns: [warehouseLocationTable.id]
-  }).onUpdate("cascade").onDelete("restrict"),
-  index("stock_unit_product_idx").on(table.product_id),
-  uniqueIndex("stock_unit_serial_idx").on(table.serial_no).where(sql`serial_no IS NOT NULL`),
-  index("stock_unit_batch_idx").on(table.batch_no).where(sql`batch_no IS NOT NULL`),
-  pgPolicy("stock_unit_select_policy", {
-    as: "permissive",
-    for: "select",
-    using: checkExpression7("can_view_products")
-  }),
-  pgPolicy("stock_unit_insert_policy", {
-    as: "permissive",
-    for: "insert",
-    withCheck: checkExpression7("can_create_products")
-  }),
-  pgPolicy("stock_unit_update_policy", {
-    as: "permissive",
-    for: "update",
-    using: checkExpression7("can_edit_products")
-  }),
-  pgPolicy("stock_unit_delete_policy", {
-    as: "permissive",
-    for: "delete",
-    using: checkExpression7("can_delete_products")
-  })
-]);
-var stockUnitRelations = relations(stockUnitTable, ({ one }) => ({
-  product: one(productTable, {
-    fields: [stockUnitTable.product_id],
-    references: [productTable.id]
-  })
-}));
-
-// schemas/stock/tables/inventory.ts
-function checkExpression8(relation) {
-  return sql`allow('${sql.raw(relation)}', 'inventory:' || cast(product_id as varchar))`;
 }
 var inventoryTable = stockSchema.table("inventory", {
   ...DEFAULT_COLUMNS,
@@ -5742,22 +5681,22 @@ var inventoryTable = stockSchema.table("inventory", {
   pgPolicy("inventory_select_policy", {
     as: "permissive",
     for: "select",
-    using: checkExpression8("can_view_stock")
+    using: checkExpression7("can_view_stock")
   }),
   pgPolicy("inventory_insert_policy", {
     as: "permissive",
     for: "insert",
-    withCheck: checkExpression8("can_edit_stock")
+    withCheck: checkExpression7("can_edit_stock")
   }),
   pgPolicy("inventory_update_policy", {
     as: "permissive",
     for: "update",
-    using: checkExpression8("can_edit_stock")
+    using: checkExpression7("can_edit_stock")
   }),
   pgPolicy("inventory_delete_policy", {
     as: "permissive",
     for: "delete",
-    using: checkExpression8("can_edit_stock")
+    using: checkExpression7("can_edit_stock")
   })
 ]);
 var inventoryRelations = relations(inventoryTable, ({ one }) => ({
@@ -5804,6 +5743,65 @@ var stockOperationSequenceRelations = relations(stockOperationSequenceTable, ({ 
   type: one(stockOperationTypeTable, {
     fields: [stockOperationSequenceTable.type_id],
     references: [stockOperationTypeTable.id]
+  })
+}));
+// schemas/stock/tables/stock_unit.ts
+function checkExpression8(relation) {
+  return sql`exists(select 1 from ${productTable} p left join ${productTemplateTable} pt on p.template_id = pt.id where product_id = p.id and allow('${sql.raw(relation)}', 'inventory:' || cast(pt.id as varchar)))`;
+}
+var stockUnitTable = stockSchema.table("unit", {
+  ...DEFAULT_COLUMNS,
+  product_id: integer().notNull(),
+  warehouse_id: integer(),
+  warehouse_location_id: integer(),
+  serial_no: text(),
+  batch_no: text(),
+  last_updated_by_id: text(),
+  remarks: jsonb()
+}, (table) => [
+  foreignKey({
+    name: "stock_unit_product_id_fk",
+    columns: [table.product_id],
+    foreignColumns: [productTable.id]
+  }).onUpdate("cascade").onDelete("restrict"),
+  foreignKey({
+    name: "stock_unit_warehouse_fk",
+    columns: [table.warehouse_id],
+    foreignColumns: [warehouseTable.id]
+  }).onUpdate("cascade").onDelete("restrict"),
+  foreignKey({
+    name: "stock_unit_warehouse_location_fk",
+    columns: [table.warehouse_location_id],
+    foreignColumns: [warehouseLocationTable.id]
+  }).onUpdate("cascade").onDelete("restrict"),
+  index("stock_unit_product_idx").on(table.product_id),
+  uniqueIndex("stock_unit_serial_idx").on(table.serial_no).where(sql`serial_no IS NOT NULL`),
+  index("stock_unit_batch_idx").on(table.batch_no).where(sql`batch_no IS NOT NULL`),
+  pgPolicy("stock_unit_select_policy", {
+    as: "permissive",
+    for: "select",
+    using: checkExpression8("can_view_products")
+  }),
+  pgPolicy("stock_unit_insert_policy", {
+    as: "permissive",
+    for: "insert",
+    withCheck: checkExpression8("can_create_products")
+  }),
+  pgPolicy("stock_unit_update_policy", {
+    as: "permissive",
+    for: "update",
+    using: checkExpression8("can_edit_products")
+  }),
+  pgPolicy("stock_unit_delete_policy", {
+    as: "permissive",
+    for: "delete",
+    using: checkExpression8("can_delete_products")
+  })
+]);
+var stockUnitRelations = relations(stockUnitTable, ({ one }) => ({
+  product: one(productTable, {
+    fields: [stockUnitTable.product_id],
+    references: [productTable.id]
   })
 }));
 // schemas/stock/tables/stock_operation_line_item.ts

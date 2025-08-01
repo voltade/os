@@ -3,7 +3,6 @@ name: Tests for order module
 model_file: ../fga.mod
 tuple_files:
   - ../tuples/core-tuples.yaml
-  - ../tuples/quotation-tuples.yaml
   - ../tuples/order-tuples.yaml
 
 tests:
@@ -58,7 +57,7 @@ tests:
   # =============================================================================
   - name: Sales team members have full order permissions via folder ownership
     check:
-      # Sales team head has all permissions on orders tied to quotations they manage
+      # Sales team head has all permissions on orders via folder ownership
       - user: user:sales_head
         object: order:o001
         assertions:
@@ -272,27 +271,6 @@ tests:
           can_delete_order: false
 
   # =============================================================================
-  # MULTI-QUOTATION ORDER PERMISSIONS
-  # =============================================================================
-  - name: Orders tied to multiple quotations inherit permissions from all quotations
-    check:
-      # Order o004 is tied to quotations q001 and q002 (both managed by sales team)
-      - user: user:sales_head
-        object: order:o004
-        assertions:
-          can_view_order: true
-          can_create_order: true
-          can_edit_order: true
-          can_delete_order: true
-      - user: user:sales_member1
-        object: order:o004
-        assertions:
-          can_view_order: true
-          can_create_order: true
-          can_edit_order: true
-          can_delete_order: true
-
-  # =============================================================================
   # FOLDER LINKAGE VALIDATION
   # =============================================================================
   - name: All orders are properly linked to their folder
@@ -316,30 +294,6 @@ tests:
         assertions:
           can_view_order: true # Should work via folder viewer access
           can_edit_order: false # Finance team is viewer only
-
-  # =============================================================================
-  # QUOTATION-ORDER RELATIONSHIP VALIDATION
-  # =============================================================================
-  - name: Orders maintain relationships with their associated quotations
-    check:
-      # Single quotation orders - permissions come from folder, not quotations
-      - user: user:sales_head
-        object: order:o001
-        assertions:
-          can_edit_order: true # Should have edit access via folder ownership
-      - user: user:sales_manager1
-        object: order:o002
-        assertions:
-          can_edit_order: true # Should have edit access via folder ownership
-      - user: user:sales_member1
-        object: order:o003
-        assertions:
-          can_edit_order: true # Should have edit access via folder ownership
-      # Multi-quotation orders
-      - user: user:sales_head
-        object: order:o004
-        assertions:
-          can_edit_order: true # Should have edit access via folder ownership
 
   # =============================================================================
   # TEAM HIERARCHY VALIDATION
@@ -485,7 +439,7 @@ tests:
         object: order:o001
         assertions:
           can_delete_order: true
-          can_edit_order: true # Both should be true for sales team via quotation ownership
+          can_edit_order: true # Both should be true for sales team via folder ownership
       - user: user:sales_member1
         object: order:o002
         assertions:
@@ -497,7 +451,7 @@ tests:
   # =============================================================================
   - name: Sales team permissions work across all orders
     check:
-      # Sales head should have full permissions on all orders (via quotation ownership)
+      # Sales head should have full permissions on all orders (via folder ownership)
       - user: user:sales_head
         object: order:o001
         assertions:
@@ -610,20 +564,6 @@ tests:
           can_view_order: true # Finance can view pending orders
           can_edit_order: false # But cannot edit them (view-only access)
           can_delete_order: false # And cannot delete them
-
-  # =============================================================================
-  # QUOTATION-TO-ORDER APPROVAL GAPS VALIDATION
-  # =============================================================================
-  - name: Some quotations were not approved into orders (business logic validation)
-    check:
-      # Verify that q004 and q005 do not have corresponding orders
-      # This is a documentation test - the tuples verify this by not including orders for these quotations
-      - user: user:sales_head
-        object: quotation:q001
-        assertions:
-          can_view_quotation: true # This should work if quotation tuples are included in this test
-      # Note: Orders for q004 and q005 should not exist in order tuples
-      # This validates the business logic that not all quotations become orders
 
   # =============================================================================
   # FOLDER PERMISSIONS VALIDATION

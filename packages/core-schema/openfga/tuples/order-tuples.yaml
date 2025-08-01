@@ -14,32 +14,6 @@
   relation: viewer_team
   object: folder:orders
 
-# Multiple orders with different quotation associations
-# q001, q002, q003 have been approved into orders
-- user: quotation:q001
-  relation: quotation
-  object: order:o001
-
-- user: quotation:q002
-  relation: quotation
-  object: order:o002
-
-- user: quotation:q003
-  relation: quotation
-  object: order:o003
-
-# Some orders tied to multiple quotations
-- user: quotation:q001
-  relation: quotation
-  object: order:o004
-
-- user: quotation:q002
-  relation: quotation
-  object: order:o004
-
-# Note: quotation:q004 and quotation:q005 have NOT been approved into orders yet
-# This reflects real business scenarios where quotations are pending approval
-
 # Link all orders to the orders folder
 - user: folder:orders
   relation: crud_folder

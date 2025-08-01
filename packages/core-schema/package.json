@@ -67,12 +67,17 @@
     "db:seed": "bun run --env-file=./.env scripts/db-seed.ts",
     "db:disable-rls": "bun run --env-file=./.env scripts/db-disable-rls.ts",
     "db:reset": "bun run --env-file=./.env scripts/db-openfga.ts && bun db:generate && bun db:migrate && bun db:plv8ify && bun db:current && bun db:seed && rm -r ./drizzle",
+    "fga:create": "source ./.env && cd openfga && export FGA_STORE_ID=$(fga store create --name \"Voltade OpenFGA Model\" --model fga.mod --debug | jq -r .store.id) && cd ..",
+    "fga:migrate": "source ./.env && openfga migrate --datastore-uri \"postgresql://$DB_USER:$DB_PASSWORD@$DB_HOST:$DB_PORT/$DB_NAME?sslmode=disable\" --datastore-engine postgres",
+    "fga:push": "source ./.env && cd openfga && fga model write --store-id $FGA_STORE_ID --file fga.mod && cd ..",
+    "fga:init": "bun fga:migrate && bun fga:create && bun fga:push",
     "build": "tsc --noEmit",
     "prepublishOnly": "bun run build"
   },
   "dependencies": {
     "@faker-js/faker": "^9.9.0",
     "@hono/zod-validator": "^0.7.1",
+    "@openfga/sdk": "^0.9.0",
     "@supabase/postgrest-js": "^1.21.1",
     "drizzle-kit": "^0.31.4",
     "drizzle-orm": "^0.44.3",
