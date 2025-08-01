@@ -26,7 +26,7 @@
     "core:db:current": "bun run --filter @voltade/core-schema db:current",
     "core:db:seed": "bun run --filter @voltade/core-schema db:seed",
     "core:db:nuke": "bun run --filter @voltade/core-schema db:nuke",
-    "core:db:reset": "supabase db reset && bun run --filter @voltade/core-schema db:reset && bun run core:db:typegen",
+    "core:db:reset": "bun run --filter @voltade/core-schema db:reset && bun run core:db:typegen",
     "core:db:typegen": "supabase gen types typescript --local > packages/core-schema/supabase/database.gen.ts",
     "clean": "git clean -xdf node_modules 'packages/*/node_modules'"
   },
