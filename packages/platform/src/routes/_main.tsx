@@ -1,20 +1,13 @@
 import { AppShell } from '@mantine/core';
 import { createFileRoute, Outlet, redirect } from '@tanstack/react-router';
 
-import { ory } from '#src/lib/ory.ts';
+import { authClient } from '#src/lib/auth.ts';
 
 export const Route = createFileRoute('/_main')({
-  beforeLoad: async ({ location }) => {
-    try {
-      await ory.toSession();
-    } catch (error) {
-      console.error(error);
-      throw redirect({
-        to: '/login',
-        search: {
-          redirect: location.href,
-        },
-      });
+  beforeLoad: async () => {
+    const { data, error } = await authClient.getSession();
+    if (!data || error) {
+      return redirect({ to: '/signin' });
     }
   },
   component: RouteComponent,
