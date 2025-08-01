@@ -91,7 +91,7 @@ export const route = factory
         return {
           variables: {
             ...common,
-            environmentChartVersion: '0.1.42',
+            environmentChartVersion: '0.1.43',
             isProduction: environment.is_production,
           },
           values: {

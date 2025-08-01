@@ -174,7 +174,8 @@ postgrest:
     DB_NAME: postgres
     DB_SSL: disable
     PGRST_DB_ANON_ROLE: anon
-    PGRST_DB_SCHEMAS: public,storage
+    # TODO: add storage schema
+    PGRST_DB_SCHEMAS: public
     PGRST_OPENAPI_MODE: disabled
 
 supabase-meta:
