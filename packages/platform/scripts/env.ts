@@ -1,4 +1,4 @@
-import { readFile, writeFile } from 'node:fs/promises';
+import { copyFile, readFile, writeFile } from 'node:fs/promises';
 import { join } from 'node:path';
 import { $ } from 'bun';
 
@@ -23,12 +23,29 @@ import { $ } from 'bun';
   const db_password =
     await $`kubectl get secret -n platform cnpg-platform-admin -o jsonpath="{.data.password}" | base64 -d`.text();
 
-  // Path to .env.development
+  // Path to .env and .env.example
   const envPath = join(process.cwd(), '.env');
+  const envExamplePath = join(process.cwd(), '.env.example');
 
   try {
-    // Try to read existing file
-    let envContent = await readFile(envPath, 'utf-8').catch(() => '');
+    // If .env doesn't exist, copy from .env.example
+    try {
+      await readFile(envPath);
+    } catch (error) {
+      if (
+        error instanceof Error &&
+        'code' in error &&
+        error.code === 'ENOENT'
+      ) {
+        await copyFile(envExamplePath, envPath);
+        console.log('.env created from .env.example');
+      } else {
+        throw error;
+      }
+    }
+
+    // Read existing file
+    let envContent = await readFile(envPath, 'utf-8');
 
     // Update or add the tokens
     envContent = updateEnvVar(envContent, 'USER_TOKEN', user_token.trim());
@@ -50,9 +67,9 @@ import { $ } from 'bun';
 
     // Write the updated content back to the file
     await writeFile(envPath, envContent);
-    console.log('.env.local updated successfully');
+    console.log('.env updated successfully');
   } catch (error) {
-    console.error('Error updating .env.local:', error);
+    console.error('Error updating .env:', error);
   }
 })();
 
