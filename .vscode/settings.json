@@ -43,6 +43,7 @@
     "maildev",
     "nindent",
     "pgsodium",
+    "pgxs",
     "postgrest",
     "selfsigned",
     "socat",

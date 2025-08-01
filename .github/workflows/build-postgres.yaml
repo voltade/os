@@ -53,7 +53,7 @@ jobs:
       - name: Build and push Docker image
         uses: docker/build-push-action@v6
         with:
-          context: ./docker/postgres
+          context: .
           build-args: |
             postgresql_major=${{ env.POSTGRES_MAJOR }}
             postgresql_minor=${{ env.POSTGRES_MINOR }}

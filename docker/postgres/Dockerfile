@@ -83,6 +83,21 @@ RUN apt update && apt install -y --no-install-recommends \
   cmake \
   postgresql-server-dev-${postgresql_major}
 
+FROM golang:1.24.5-${debian_version} AS go-builder
+ARG postgresql_major
+ARG TARGETARCH
+
+RUN apt update && apt install -y --no-install-recommends \
+  build-essential \
+  postgresql-common \
+  && rm -rf /var/lib/apt/lists/*
+
+RUN /usr/share/postgresql-common/pgdg/apt.postgresql.org.sh -y
+
+RUN apt update && apt install -y --no-install-recommends \
+  postgresql-server-dev-${postgresql_major} \
+  && rm -rf /var/lib/apt/lists/*
+
 FROM builder AS ccache
 # Cache large build artifacts
 RUN apt-get update && apt-get install -y --no-install-recommends \
@@ -438,6 +453,11 @@ RUN make -j$(nproc)
 # Create debian package
 RUN checkinstall -D --install=no --fstrans=no --backup=no --pakdir=/tmp --nodoc
 
+FROM go-builder AS openfga-source
+WORKDIR /tmp/pg-openfga
+COPY ./packages/pg-openfga .
+RUN make -j$(nproc)
+
 # https://github.com/cloudnative-pg/postgres-containers?tab=readme-ov-file#minimal-images
 # https://github.com/cloudnative-pg/postgres-containers/pkgs/container/postgresql/versions?filters%5Bversion_type%5D=tagged
 FROM ghcr.io/cloudnative-pg/postgresql:${postgresql_release}-minimal-${debian_version}
@@ -473,6 +493,9 @@ COPY --from=pgvector-source /tmp/*.deb /tmp/
 COPY --from=pg_tle-source /tmp/*.deb /tmp/
 COPY --from=index_advisor-source /tmp/*.deb /tmp/
 COPY --from=supautils-source /tmp/*.deb /tmp/
+COPY --from=openfga-source /tmp/pg-openfga/openfga.so "/usr/lib/postgresql/${postgresql_major}/lib/"
+COPY --from=openfga-source /tmp/pg-openfga/openfga.control "/usr/share/postgresql/${postgresql_major}/extension/"
+COPY --from=openfga-source /tmp/pg-openfga/openfga--0.1.sql "/usr/share/postgresql/${postgresql_major}/extension/"
 
 RUN apt update && apt install -y --no-install-recommends \
   /tmp/*.deb \
@@ -495,4 +518,4 @@ RUN usermod -u 26 postgres && chown -R 26:26 /var/run/postgresql
 USER 26
 
 # Copy the getkey script for pgsodium
-COPY --chown=26:26 --chmod=755 ./extension/pgsodium_getkey /usr/share/postgresql/${postgresql_major}/extension/pgsodium_getkey
+COPY --chown=26:26 --chmod=755 ./docker/postgres/extension/pgsodium_getkey /usr/share/postgresql/${postgresql_major}/extension/pgsodium_getkey
