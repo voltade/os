@@ -9,7 +9,12 @@ import {
   openAPI,
   organization,
 } from 'better-auth/plugins';
+import { eq } from 'drizzle-orm';
 
+import {
+  member as memberTable,
+  organization as organizationTable,
+} from '#drizzle/auth.ts';
 import { appEnvVariables } from '#server/env.ts';
 import { db } from '#server/lib/db.ts';
 import { mailer } from '#server/lib/mailer.ts';
@@ -49,7 +54,26 @@ export const auth = betterAuth({
     openAPI({
       path: '/docs',
     }),
-    jwt(),
+    jwt({
+      jwt: {
+        getAudience: async ({ user }) => {
+          const organizations = await db
+            .select({
+              slug: organizationTable.slug,
+            })
+            .from(memberTable)
+            .innerJoin(
+              organizationTable,
+              eq(organizationTable.id, memberTable.organizationId),
+            )
+            .where(eq(memberTable.userId, user.id));
+          return organizations.map((org) => org.slug);
+        },
+        definePayload: () => ({
+          role: 'authenticated',
+        }),
+      },
+    }),
     organization(),
   ],
   user: {

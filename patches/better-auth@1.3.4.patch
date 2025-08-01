@@ -1,0 +1,28 @@
+diff --git a/dist/plugins/jwt/index.d.ts b/dist/plugins/jwt/index.d.ts
+index ddc98ed1d5cc889a50d9c4db6e7f2a6f612845e4..54b29d7a1dfc6da4a40ce2d15c327a825c7f4a2f 100644
+--- a/dist/plugins/jwt/index.d.ts
++++ b/dist/plugins/jwt/index.d.ts
+@@ -78,6 +78,10 @@ interface JwtOptions {
+          * The audience of the JWT
+          */
+         audience?: string;
++        getAudience?: (session: {
++            user: User & Record<string, any>;
++            session: Session & Record<string, any>;
++        }) => Promise<string | string[]> | string | string[];
+         /**
+          * Set the "exp" (Expiration Time) Claim.
+          *
+diff --git a/dist/plugins/jwt/index.mjs b/dist/plugins/jwt/index.mjs
+index b50de3033b45c5361c7d1af2417347d8d20fc024..cef0bfd24a2cc2b5f76f77cebebeba015793a357 100644
+--- a/dist/plugins/jwt/index.mjs
++++ b/dist/plugins/jwt/index.mjs
+@@ -96,7 +96,7 @@ async function getJwtToken(ctx, options) {
+   const jwt = await new SignJWT(payload).setProtectedHeader({
+     alg: options?.jwks?.keyPairConfig?.alg ?? "EdDSA",
+     kid: key.id
+-  }).setIssuedAt().setIssuer(options?.jwt?.issuer ?? ctx.context.options.baseURL).setAudience(options?.jwt?.audience ?? ctx.context.options.baseURL).setExpirationTime(options?.jwt?.expirationTime ?? "15m").setSubject(
++  }).setIssuedAt().setIssuer(options?.jwt?.issuer ?? ctx.context.options.baseURL).setAudience(options?.jwt?.audience ?? await options?.jwt?.getAudience(ctx.context.session) ?? ctx.context.options.baseURL).setExpirationTime(options?.jwt?.expirationTime ?? "15m").setSubject(
+     await options?.jwt?.getSubject?.(ctx.context.session) ?? ctx.context.session.user.id
+   ).sign(privateKey);
+   return jwt;
