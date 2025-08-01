@@ -23,24 +23,41 @@ spec:
       - supabase_vault
   managed:
     roles:
+      # https://cloudnative-pg.io/documentation/current/declarative_role_management/
+      # https://cloudnative-pg.io/documentation/current/cloudnative-pg.v1/#postgresql-cnpg-io-v1-RoleConfiguration
+      # https://www.postgresql.org/docs/current/sql-createrole.html
       - name: app
         login: true
-        superuser: true
-        
+        inRoles:
+          - core_migrator
+          - custom_migrator
+
+      - name: core_migrator
+        login: true
+        connectionLimit: 1
+        passwordSecret:
+          name: cnpg-core-migrator
+
+      - name: custom_migrator
+        login: true
+        connectionLimit: 1
+        passwordSecret:
+          name: cnpg-custom-migrator
+
       - name: authenticator
+        comment: |
+          For the PostgREST to connect to the database. It's IN ROLE of the roles that PostgREST is able to switch to based on the role field in valid JWT tokens provided by the end users. But it does not inherit the privileges of those roles, so the role switching must be done explicitly (handled by PostgREST).
         login: true
         inherit: false
         inRoles:
           - authenticated
+          - anon
+          - service_role
         passwordSecret:
           name: cnpg-authenticator
 
       - name: authenticated
-        inherit: false
-      
       - name: anon
-        inherit: false
-
       - name: service_role
         bypassrls: true
 
@@ -56,3 +73,9 @@ spec:
         - grant execute on all functions in schema vault to app;
         - grant select on all tables in schema vault to app;
         - grant references on all tables in schema vault to app;
+
+        # TODO: use core-schema migration
+        - grant usage on schema public to anon, authenticated, service_role;
+        - grant all on all tables in schema public to anon, authenticated, service_role;
+        - grant all on all routines in schema public to anon, authenticated, service_role;
+        - grant all on all sequences in schema public to anon, authenticated, service_role;

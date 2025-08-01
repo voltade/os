@@ -15,16 +15,6 @@ import { factory } from '#server/factory.ts';
 import { db } from '#server/lib/db.ts';
 import { signJwt } from '#server/lib/jwk.ts';
 
-let environmentChartVersion = appEnvVariables.ENVIRONMENT_CHART_VERSION;
-if (!environmentChartVersion || import.meta.env.NODE_ENV === 'development') {
-  const chartYaml = readFileSync(
-    path.resolve(process.cwd(), '../../charts/environment/Chart.yaml'),
-    'utf8',
-  );
-  const chartDocument = yaml.parseDocument(chartYaml);
-  environmentChartVersion = chartDocument.get('version') as string;
-}
-
 type Common = {
   id: string;
   slug: string;
@@ -66,6 +56,19 @@ export const route = factory
         organizationTable,
         eq(environmentTable.organization_id, organizationTable.id),
       );
+
+    let environmentChartVersion = appEnvVariables.ENVIRONMENT_CHART_VERSION;
+    if (
+      !environmentChartVersion ||
+      import.meta.env.NODE_ENV === 'development'
+    ) {
+      const chartYaml = readFileSync(
+        path.resolve(process.cwd(), '../../charts/environment/Chart.yaml'),
+        'utf8',
+      );
+      const chartDocument = yaml.parseDocument(chartYaml);
+      environmentChartVersion = chartDocument.get('version') as string;
+    }
 
     // Pass the latest two JWKs to the PostgREST to be used as the JWT_SECRET config: https://docs.postgrest.org/en/v13/references/auth.html#asym-keys
     const jwks = await db

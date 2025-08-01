@@ -174,7 +174,7 @@ postgrest:
     DB_NAME:
       valueFrom:
         secretKeyRef:
-          name: cnpg-cluster-app
+          name: cnpg-authenticator
           key: dbname
     DB_SSL: disable
     PGRST_DB_ANON_ROLE: anon
