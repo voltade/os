@@ -3,7 +3,6 @@ kind: Kustomization
 
 resources:
   - ./cnpg-database.yaml
-  - ./minio-secrets.yaml
 
 helmCharts:
   - repo: oci://registry.127.0.0.1.nip.io

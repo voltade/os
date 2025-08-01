@@ -8,7 +8,7 @@ export function generateS3UploadScript(
   appId: string,
   orgId: string,
 ): string {
-  const s3Key = `builds/${orgId}/${appId}/${buildId}/artifact.zip`;
+  const s3Key = `builds/${orgId}/${appId}/${buildId}/artifact.tar.gz`;
 
   return `
 # Install AWS CLI
@@ -28,14 +28,14 @@ if [ -n "\$AWS_ENDPOINT_URL" ]; then
   echo "S3 Endpoint: \$AWS_ENDPOINT_URL"
 fi
 
-# Create artifact zip
-echo "=== Creating artifact zip from ${outputPath} ==="
-ARTIFACT_FILE="/tmp/build-${buildId}.zip"
+# Create artifact tar.gz
+echo "=== Creating artifact tar.gz from ${outputPath} ==="
+ARTIFACT_FILE="/tmp/build-${buildId}.tar.gz"
 
 if [ -d "${outputPath}" ]; then
-  echo "Zipping ${outputPath}/ directory"
+  echo "Compressing ${outputPath}/ directory"
   cd "${outputPath}"
-  zip -r "\$ARTIFACT_FILE" .
+  tar -czf "\$ARTIFACT_FILE" .
   cd -
 else
   echo "Error: Output path ${outputPath} not found"

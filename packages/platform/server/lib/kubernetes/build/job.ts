@@ -40,7 +40,7 @@ report_status() {
     -H "Content-Type: application/json" \\
     -d "{
       \"appId\": \"${app.id}\",
-      \"orgId\": \"${app.org_id}\",
+      \"orgId\": \"${app.organization_id}\",
       \"status\": \"\$status\",
       \"logs\": \"\$message\"
     }" || echo "Failed to report status"
@@ -124,7 +124,7 @@ ${
     ? `
 report_status "building" "Uploading build artifacts to S3"
 
-${generateS3UploadScript(buildId, app.output_path, app.id, app.org_id)}
+${generateS3UploadScript(buildId, app.output_path, app.id, app.organization_id)}
 
 report_status "ready" "Build completed successfully with artifacts uploaded to S3"
 `
@@ -211,7 +211,7 @@ echo "=== Build process completed ==="
                       },
                       {
                         name: 'AWS_ENDPOINT_URL',
-                        value: 'http://minio.platform:9000',
+                        value: 'http://minio.minio:9000',
                       },
                     ]
                   : []),

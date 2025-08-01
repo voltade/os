@@ -17,6 +17,7 @@
     "typescript": "^5"
   },
   "dependencies": {
+    "@aws-sdk/client-s3": "^3.858.0",
     "hono": "^4.8.5",
     "tar": "^7.4.3",
     "zod": "^4.0.5"

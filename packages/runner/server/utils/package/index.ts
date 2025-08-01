@@ -1,52 +1,52 @@
 import { mkdir } from 'node:fs/promises';
+import { Readable } from 'node:stream';
+import { GetObjectCommand } from '@aws-sdk/client-s3';
 import * as tar from 'tar';
 
+import { appEnvVariables } from '#server/env.ts';
+import { s3Client } from './s3.ts';
+
 export const downloadPackage = async (
-  orgId: string,
-  appId: string,
-  releaseId: string,
-  path: string,
+  packageDetails: {
+    orgId: string;
+    appId: string;
+    releaseId: string;
+  },
+  outputPath: string,
 ) => {
-  const response = await fetch(
-    `https://git.voltade.com/api/packages/${orgId}/generic/${appId}/${releaseId}/app.tar.gz`,
-    {
-      headers: {
-        Authorization: `Bearer ${process.env.FORGEJO_PACKAGE_TOKEN}`,
-      },
-    },
-  );
-  if (!response.ok || !response.body) {
+  const getPackageCommand = new GetObjectCommand({
+    Bucket: appEnvVariables.AWS_S3_BUCKET,
+    Key: `builds/${packageDetails.orgId}/${packageDetails.appId}/${packageDetails.releaseId}/artifact.tar.gz`,
+  });
+
+  const response = await s3Client.send(getPackageCommand);
+  if (!response.Body) {
     console.info(
-      appId,
+      packageDetails.appId,
       'error',
-      `Failed to download package: ${response.status}`,
+      'Failed to download package: No response body',
     );
-    throw new Error(`Failed to download package: ${response.status}`);
+    throw new Error('Failed to download package: No response body');
   }
 
-  await mkdir(path, { recursive: true });
+  const byteStream = await response.Body.transformToByteArray();
 
-  // Stream the response to tar and extract the contents to the worker path
-  const tarStream = tar.x({
-    strip: 1, // Number of leading components from file names to strip.
-    z: true, // gzip
-    C: path, // Extract to this directory
+  await mkdir(outputPath, { recursive: true });
+
+  // Extract tar.gz to output path
+  await new Promise<void>((resolve, reject) => {
+    const extractStream = tar.extract({
+      cwd: outputPath,
+      gzip: true,
+    });
+
+    extractStream.on('end', () => resolve());
+    extractStream.on('error', reject);
+
+    const readable = Readable.from(Buffer.from(byteStream));
+    readable.pipe(extractStream);
   });
 
-  const extractionFinished = new Promise((resolve, reject) => {
-    tarStream.on('finish', resolve);
-    tarStream.on('error', reject);
-  });
-  for await (const chunk of response.body) {
-    if (!tarStream.write(chunk)) {
-      await new Promise((resolveDrain) =>
-        tarStream.once('drain', resolveDrain),
-      );
-    }
-  }
-  tarStream.end();
-  await extractionFinished;
-
-  console.info(appId, 'info', 'Package extracted successfully');
-  return path;
+  console.info(packageDetails.appId, 'info', 'Package extracted successfully');
+  return outputPath;
 };

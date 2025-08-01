@@ -3,3 +3,6 @@ kind: Kustomization
 
 resources:
   - ../../base
+  - ./minio-secrets.yaml
+  - ./s3-secrets.yaml
+  - ./shared-secrets.yaml

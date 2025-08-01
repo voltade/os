@@ -20,12 +20,12 @@ export const route = factory
     zValidator(
       'param',
       z.object({
-        org_id: z.string(),
+        organization_id: z.string(),
         environment_id: z.string(),
       }),
     ),
     async (c) => {
-      const { org_id, environment_id } = c.req.valid('param');
+      const { organization_id, environment_id } = c.req.valid('param');
 
       const env_vars_ids = await db
         .select({
@@ -35,7 +35,7 @@ export const route = factory
         .from(environmentVariableTable)
         .where(
           and(
-            eq(environmentVariableTable.org_id, org_id),
+            eq(environmentVariableTable.organization_id, organization_id),
             eq(environmentVariableTable.environment_id, environment_id),
           ),
         );

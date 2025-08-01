@@ -33,7 +33,10 @@ export const route = factory
         .select()
         .from(appBuildTable)
         .where(
-          and(eq(appBuildTable.app_id, appId), eq(appBuildTable.org_id, orgId)),
+          and(
+            eq(appBuildTable.app_id, appId),
+            eq(appBuildTable.organization_id, orgId),
+          ),
         )
         .orderBy(desc(appBuildTable.created_at))
         .limit(limit)
@@ -65,7 +68,7 @@ export const route = factory
         where: and(
           eq(appBuildTable.id, buildId),
           eq(appBuildTable.app_id, appId),
-          eq(appBuildTable.org_id, orgId),
+          eq(appBuildTable.organization_id, orgId),
         ),
       });
 
@@ -90,10 +93,8 @@ export const route = factory
 
       // Find the app
       const app = await db.query.appTable.findFirst({
-        where: and(eq(appTable.id, appId), eq(appTable.org_id, orgId)),
+        where: and(eq(appTable.id, appId), eq(appTable.organization_id, orgId)),
       });
-
-      console.log('app', app);
 
       if (!app) {
         return c.json({ error: 'App not found' }, 404);
@@ -106,7 +107,7 @@ export const route = factory
           .insert(appBuildTable)
           .values({
             app_id: appId,
-            org_id: orgId,
+            organization_id: orgId,
             status: 'pending',
           })
           .returning();
@@ -149,7 +150,7 @@ export const route = factory
             and(
               eq(appBuildTable.id, buildId),
               eq(appBuildTable.app_id, appId),
-              eq(appBuildTable.org_id, orgId),
+              eq(appBuildTable.organization_id, orgId),
             ),
           );
 
@@ -189,7 +190,7 @@ export const route = factory
                 and(
                   eq(appBuildTable.id, buildRecord.id),
                   eq(appBuildTable.app_id, appId),
-                  eq(appBuildTable.org_id, orgId),
+                  eq(appBuildTable.organization_id, orgId),
                 ),
               );
           } catch (dbError) {
@@ -233,7 +234,7 @@ export const route = factory
         where: and(
           eq(appBuildTable.id, buildId),
           eq(appBuildTable.app_id, appId),
-          eq(appBuildTable.org_id, orgId),
+          eq(appBuildTable.organization_id, orgId),
         ),
       });
 
@@ -253,7 +254,7 @@ export const route = factory
           and(
             eq(appBuildTable.id, buildId),
             eq(appBuildTable.app_id, appId),
-            eq(appBuildTable.org_id, orgId),
+            eq(appBuildTable.organization_id, orgId),
           ),
         )
         .returning();

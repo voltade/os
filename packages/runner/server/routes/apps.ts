@@ -29,17 +29,22 @@ export const routes = factory.createApp().all(
 
       if (!folderExists) {
         await downloadPackage(
-          c.env.ORGANIZATION_ID,
-          appId,
-          releaseId,
+          {
+            orgId: c.env.ORGANIZATION_ID,
+            appId,
+            releaseId,
+          },
           workerPath,
         );
       }
 
       const envs = await getAppEnvs(
         c.env.ORGANIZATION_ID,
-        appId,
-        c.env.PLATFORM_URL,
+        c.env.ENVIRONMENT_ID,
+        {
+          RUNNER_SECRET_TOKEN: c.env.RUNNER_SECRET_TOKEN,
+          platformUrl: c.env.PLATFORM_URL,
+        },
       );
       worker = await createWorker(appId, truncatedReleaseId, workerPath, envs);
     }

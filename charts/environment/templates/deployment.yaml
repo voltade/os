@@ -45,8 +45,40 @@ spec:
           image: "{{ .Values.deployment.image.repository }}:{{ .Values.deployment.image.tag | default .Chart.AppVersion }}"
           imagePullPolicy: {{ .Values.deployment.image.pullPolicy }}
           env:
-            - name: ORG_ID
-              value: {{ .Values.global.orgId | quote }}
+            - name: ORGANIZATION_ID
+              value: {{ .Values.global.organizationId | quote }}
+            - name: ENVIRONMENT_ID
+              value: {{ .Values.global.environmentId | quote }}
+            - name: AWS_ACCESS_KEY_ID
+              valueFrom:
+                secretKeyRef:
+                  name: s3-secrets
+                  key: accessKeyId
+            - name: AWS_SECRET_ACCESS_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: s3-secrets
+                  key: secretAccessKey
+            - name: AWS_REGION
+              valueFrom:
+                secretKeyRef:
+                  name: s3-secrets
+                  key: region
+            - name: AWS_S3_BUCKET
+              valueFrom:
+                secretKeyRef:
+                  name: s3-secrets
+                  key: bucket
+            - name: AWS_S3_ENDPOINT
+              valueFrom:
+                secretKeyRef:
+                  name: s3-secrets
+                  key: endpoint
+            - name: RUNNER_SECRET_TOKEN
+              valueFrom:
+                secretKeyRef:
+                  name: shared-secrets
+                  key: runnerSecretToken
             - name: POSTGREST_URL
               value: http://postgrest:3000
             - name: SUPABASE_META_URL
