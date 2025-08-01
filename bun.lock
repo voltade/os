@@ -130,6 +130,7 @@
         "vite": "^7.0.5",
         "vite-tsconfig-paths": "^5.1.4",
         "wait-on": "^8.0.3",
+        "yaml": "^2.8.0",
       },
       "peerDependencies": {
         "typescript": "^5",

@@ -20,5 +20,10 @@ spec:
       engineVersion: v2
       type: kubernetes.io/basic-auth
       data:
-        username: authenticator
+        dbname: app
+        host: cnpg-cluster-rw
         password: "{{ `{{ .password }}` }}"
+        port: "5432"
+        uri: "postgresql://authenticator:{{ `{{ .password }}` }}@cnpg-cluster-rw:5432/app"
+        user: authenticator
+        username: authenticator

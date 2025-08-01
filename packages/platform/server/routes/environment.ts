@@ -1,6 +1,9 @@
+import { readFileSync } from 'node:fs';
+import path from 'node:path';
 import { symmetricDecrypt } from 'better-auth/crypto';
 import { desc, eq } from 'drizzle-orm';
 import * as jose from 'jose';
+import yaml from 'yaml';
 
 import {
   jwks as jwksTable,
@@ -11,6 +14,16 @@ import { appEnvVariables } from '#server/env.ts';
 import { factory } from '#server/factory.ts';
 import { db } from '#server/lib/db.ts';
 import { signJwt } from '#server/lib/jwk.ts';
+
+let environmentChartVersion = appEnvVariables.ENVIRONMENT_CHART_VERSION;
+if (!environmentChartVersion || import.meta.env.NODE_ENV === 'development') {
+  const chartYaml = readFileSync(
+    path.resolve(process.cwd(), '../../charts/environment/Chart.yaml'),
+    'utf8',
+  );
+  const chartDocument = yaml.parseDocument(chartYaml);
+  environmentChartVersion = chartDocument.get('version') as string;
+}
 
 type Common = {
   id: string;
@@ -97,7 +110,7 @@ export const route = factory
         return {
           variables: {
             ...common,
-            environmentChartVersion: '0.1.44',
+            environmentChartVersion,
             isProduction: environment.is_production,
           },
           values: {

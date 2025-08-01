@@ -1,7 +1,6 @@
 import '@mantine/core/styles.css';
 import '@mantine/notifications/styles.css';
 import '@mantine/dates/styles.css';
-import '@ory/elements-react/theme/styles.css';
 
 import './main.css';
 

@@ -40,6 +40,8 @@ export const appEnvVariablesSchema = z.object({
 
   // Runner Communication
   RUNNER_SECRET_TOKEN: z.string(),
+
+  ENVIRONMENT_CHART_VERSION: z.string().optional(),
 });
 
 export type AppEnvVariables = z.infer<typeof appEnvVariablesSchema>;
