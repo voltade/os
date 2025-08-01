@@ -5,7 +5,14 @@ import { authClient } from '#src/lib/auth.ts';
 
 export const Route = createFileRoute('/_main')({
   beforeLoad: async () => {
-    const { data, error } = await authClient.getSession();
+    const { data, error } = await authClient.getSession({
+      fetchOptions: {
+        onSuccess: (ctx) => {
+          const jwt = ctx.response.headers.get('set-auth-jwt');
+          console.log('set-auth-jwt header from session api:', jwt);
+        },
+      },
+    });
     if (!data || error) {
       return redirect({ to: '/signin' });
     }
