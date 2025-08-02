@@ -10,16 +10,16 @@
     "docker": "docker build -t registry.127.0.0.1.nip.io/runner:latest . && docker image push registry.127.0.0.1.nip.io/runner:latest"
   },
   "devDependencies": {
-    "@hono/zod-validator": "^0.7.1",
+    "@hono/zod-validator": "^0.7.2",
     "@types/bun": "latest"
   },
   "peerDependencies": {
     "typescript": "^5"
   },
   "dependencies": {
-    "@aws-sdk/client-s3": "^3.858.0",
-    "hono": "^4.8.5",
+    "@aws-sdk/client-s3": "^3.859.0",
+    "hono": "^4.8.12",
     "tar": "^7.4.3",
-    "zod": "^4.0.5"
+    "zod": "^4.0.14"
   }
 }
