@@ -56,7 +56,7 @@ export const auth = betterAuth({
     }),
     jwt({
       jwt: {
-        getAudience: async ({ user }) => {
+        audience: async ({ user }) => {
           const organizations = await db
             .select({
               slug: organizationTable.slug,

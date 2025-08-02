@@ -1,28 +1,230 @@
-diff --git a/dist/plugins/jwt/index.d.ts b/dist/plugins/jwt/index.d.ts
-index ddc98ed1d5cc889a50d9c4db6e7f2a6f612845e4..54b29d7a1dfc6da4a40ce2d15c327a825c7f4a2f 100644
---- a/dist/plugins/jwt/index.d.ts
-+++ b/dist/plugins/jwt/index.d.ts
-@@ -78,6 +78,10 @@ interface JwtOptions {
-          * The audience of the JWT
+diff --git a/node_modules/better-auth/.bun-tag-8ac6de35a254e3a8 b/.bun-tag-8ac6de35a254e3a8
+new file mode 100644
+index 0000000000000000000000000000000000000000..e69de29bb2d1d6434b8b29ae775ad8c2e48c5391
+diff --git a/dist/plugins/jwt/index.cjs b/dist/plugins/jwt/index.cjs
+index 962623170041151c6cbaf29fd032d6dba24c7f1a..ec10d82cf60c3e4c3fdd4bb3dcf011c34ca5760d 100644
+--- a/dist/plugins/jwt/index.cjs
++++ b/dist/plugins/jwt/index.cjs
+@@ -94,13 +94,16 @@ async function getJwtToken(ctx, options) {
+     JSON.parse(privateWebKey),
+     options?.jwks?.keyPairConfig?.alg ?? "EdDSA"
+   );
+-  const payload = !options?.jwt?.definePayload ? ctx.context.session.user : await options?.jwt.definePayload(ctx.context.session);
++  const session = ctx.context.session;
++  const baseURL = ctx.context.options.baseURL;
++  const payload = !options?.jwt?.definePayload ? session.user : await options?.jwt.definePayload(session);
++  const issuer = typeof options?.jwt?.issuer === "function" ? await options.jwt.issuer(session) : options?.jwt?.issuer;
++  const audience = typeof options?.jwt?.audience === "function" ? await options.jwt.audience(session) : options?.jwt?.audience;
++  const subject = options?.jwt?.getSubject ? await options.jwt.getSubject(session) : typeof options?.jwt?.subject === "function" ? await options.jwt.subject(session) : options?.jwt?.subject;
+   const jwt = await new jose.SignJWT(payload).setProtectedHeader({
+     alg: options?.jwks?.keyPairConfig?.alg ?? "EdDSA",
+     kid: key.id
+-  }).setIssuedAt().setIssuer(options?.jwt?.issuer ?? ctx.context.options.baseURL).setAudience(options?.jwt?.audience ?? ctx.context.options.baseURL).setExpirationTime(options?.jwt?.expirationTime ?? "15m").setSubject(
+-    await options?.jwt?.getSubject?.(ctx.context.session) ?? ctx.context.session.user.id
+-  ).sign(privateKey);
++  }).setIssuer(issuer ?? baseURL).setSubject(subject ?? session.user.id).setAudience(audience ?? baseURL).setExpirationTime(options?.jwt?.expirationTime ?? "15m").setIssuedAt().sign(privateKey);
+   return jwt;
+ }
+ 
+diff --git a/dist/plugins/jwt/index.d.cts b/dist/plugins/jwt/index.d.cts
+index 85534005d53fb9b4ae2562d2234acbc900f88a7f..bac49d5b3d123504eb7532c8e5cb0807285b3731 100644
+--- a/dist/plugins/jwt/index.d.cts
++++ b/dist/plugins/jwt/index.d.cts
+@@ -1,6 +1,6 @@
+ import { G as GenericEndpointContext, U as User, S as Session, I as InferOptionSchema, H as HookEndpointContext } from '../../shared/better-auth.ClujkCMK.cjs';
+ import * as better_call from 'better-call';
+-import { JWK } from 'jose';
++import { JWTPayload, JWK } from 'jose';
+ import 'kysely';
+ import 'zod/v4';
+ import '../../shared/better-auth.ZSfSbnQT.cjs';
+@@ -50,6 +50,10 @@ type JWKOptions = {
+     alg: "ES512";
+     crv?: never;
+ };
++type JwtClaim<T extends keyof Pick<JWTPayload, "iss" | "aud" | "sub">> = JWTPayload[T] | ((session: {
++    user: User & Record<string, any>;
++    session: Session & Record<string, any>;
++}) => Promise<JWTPayload[T]> | JWTPayload[T]);
+ interface JwtOptions {
+     jwks?: {
+         /**
+@@ -72,12 +76,19 @@ interface JwtOptions {
+     jwt?: {
+         /**
+          * The issuer of the JWT
++         * @description If not provided, the base URL of the application will be used as the issuer
           */
-         audience?: string;
-+        getAudience?: (session: {
-+            user: User & Record<string, any>;
-+            session: Session & Record<string, any>;
-+        }) => Promise<string | string[]> | string | string[];
+-        issuer?: string;
++        issuer?: JwtClaim<"iss">;
+         /**
+          * The audience of the JWT
++         * @description If not provided, the base URL of the application will be used as the audience
+          */
+-        audience?: string;
++        audience?: JwtClaim<"aud">;
++        /**
++         * The subject of the JWT
++         * @description If not provided, the user ID will be used as the subject
++         */
++        subject?: JwtClaim<"sub">;
          /**
           * Set the "exp" (Expiration Time) Claim.
           *
+@@ -113,6 +124,7 @@ interface JwtOptions {
+          * A function that is called to get the subject of the JWT
+          *
+          * @default session.user.id
++         * @deprecated use `subject` instead
+          */
+         getSubject?: (session: {
+             user: User & Record<string, any>;
+@@ -350,4 +362,4 @@ declare const jwt: (options?: JwtOptions) => {
+ };
+ 
+ export { generateExportedKeyPair, getJwtToken, jwt };
+-export type { JwtOptions };
++export type { JwtClaim, JwtOptions };
+diff --git a/dist/plugins/jwt/index.d.mts b/dist/plugins/jwt/index.d.mts
+index 98647f168ae242612f2cdbb2c139bf32a7598442..ab292a681b0bac72078b14c9cd46bb86754a7ba2 100644
+--- a/dist/plugins/jwt/index.d.mts
++++ b/dist/plugins/jwt/index.d.mts
+@@ -1,6 +1,6 @@
+ import { G as GenericEndpointContext, U as User, S as Session, I as InferOptionSchema, H as HookEndpointContext } from '../../shared/better-auth.CdI2sJZM.mjs';
+ import * as better_call from 'better-call';
+-import { JWK } from 'jose';
++import { JWTPayload, JWK } from 'jose';
+ import 'kysely';
+ import 'zod/v4';
+ import '../../shared/better-auth.ZSfSbnQT.mjs';
+@@ -50,6 +50,10 @@ type JWKOptions = {
+     alg: "ES512";
+     crv?: never;
+ };
++type JwtClaim<T extends keyof Pick<JWTPayload, "iss" | "aud" | "sub">> = JWTPayload[T] | ((session: {
++    user: User & Record<string, any>;
++    session: Session & Record<string, any>;
++}) => Promise<JWTPayload[T]> | JWTPayload[T]);
+ interface JwtOptions {
+     jwks?: {
+         /**
+@@ -72,12 +76,19 @@ interface JwtOptions {
+     jwt?: {
+         /**
+          * The issuer of the JWT
++         * @description If not provided, the base URL of the application will be used as the issuer
+          */
+-        issuer?: string;
++        issuer?: JwtClaim<"iss">;
+         /**
+          * The audience of the JWT
++         * @description If not provided, the base URL of the application will be used as the audience
+          */
+-        audience?: string;
++        audience?: JwtClaim<"aud">;
++        /**
++         * The subject of the JWT
++         * @description If not provided, the user ID will be used as the subject
++         */
++        subject?: JwtClaim<"sub">;
+         /**
+          * Set the "exp" (Expiration Time) Claim.
+          *
+@@ -113,6 +124,7 @@ interface JwtOptions {
+          * A function that is called to get the subject of the JWT
+          *
+          * @default session.user.id
++         * @deprecated use `subject` instead
+          */
+         getSubject?: (session: {
+             user: User & Record<string, any>;
+@@ -350,4 +362,4 @@ declare const jwt: (options?: JwtOptions) => {
+ };
+ 
+ export { generateExportedKeyPair, getJwtToken, jwt };
+-export type { JwtOptions };
++export type { JwtClaim, JwtOptions };
+diff --git a/dist/plugins/jwt/index.d.ts b/dist/plugins/jwt/index.d.ts
+index ddc98ed1d5cc889a50d9c4db6e7f2a6f612845e4..1090e6bc40ca3c8827abc0f917d6891a439433f0 100644
+--- a/dist/plugins/jwt/index.d.ts
++++ b/dist/plugins/jwt/index.d.ts
+@@ -1,6 +1,6 @@
+ import { G as GenericEndpointContext, U as User, S as Session, I as InferOptionSchema, H as HookEndpointContext } from '../../shared/better-auth.CUMpWXN6.js';
+ import * as better_call from 'better-call';
+-import { JWK } from 'jose';
++import { JWTPayload, JWK } from 'jose';
+ import 'kysely';
+ import 'zod/v4';
+ import '../../shared/better-auth.ZSfSbnQT.js';
+@@ -50,6 +50,10 @@ type JWKOptions = {
+     alg: "ES512";
+     crv?: never;
+ };
++type JwtClaim<T extends keyof Pick<JWTPayload, "iss" | "aud" | "sub">> = JWTPayload[T] | ((session: {
++    user: User & Record<string, any>;
++    session: Session & Record<string, any>;
++}) => Promise<JWTPayload[T]> | JWTPayload[T]);
+ interface JwtOptions {
+     jwks?: {
+         /**
+@@ -72,12 +76,19 @@ interface JwtOptions {
+     jwt?: {
+         /**
+          * The issuer of the JWT
++         * @description If not provided, the base URL of the application will be used as the issuer
+          */
+-        issuer?: string;
++        issuer?: JwtClaim<"iss">;
+         /**
+          * The audience of the JWT
++         * @description If not provided, the base URL of the application will be used as the audience
+          */
+-        audience?: string;
++        audience?: JwtClaim<"aud">;
++        /**
++         * The subject of the JWT
++         * @description If not provided, the user ID will be used as the subject
++         */
++        subject?: JwtClaim<"sub">;
+         /**
+          * Set the "exp" (Expiration Time) Claim.
+          *
+@@ -113,6 +124,7 @@ interface JwtOptions {
+          * A function that is called to get the subject of the JWT
+          *
+          * @default session.user.id
++         * @deprecated use `subject` instead
+          */
+         getSubject?: (session: {
+             user: User & Record<string, any>;
+@@ -350,4 +362,4 @@ declare const jwt: (options?: JwtOptions) => {
+ };
+ 
+ export { generateExportedKeyPair, getJwtToken, jwt };
+-export type { JwtOptions };
++export type { JwtClaim, JwtOptions };
 diff --git a/dist/plugins/jwt/index.mjs b/dist/plugins/jwt/index.mjs
-index b50de3033b45c5361c7d1af2417347d8d20fc024..cef0bfd24a2cc2b5f76f77cebebeba015793a357 100644
+index b50de3033b45c5361c7d1af2417347d8d20fc024..2dddf467320a694e1e7f4e644bb0387f3e83071f 100644
 --- a/dist/plugins/jwt/index.mjs
 +++ b/dist/plugins/jwt/index.mjs
-@@ -96,7 +96,7 @@ async function getJwtToken(ctx, options) {
+@@ -92,13 +92,16 @@ async function getJwtToken(ctx, options) {
+     JSON.parse(privateWebKey),
+     options?.jwks?.keyPairConfig?.alg ?? "EdDSA"
+   );
+-  const payload = !options?.jwt?.definePayload ? ctx.context.session.user : await options?.jwt.definePayload(ctx.context.session);
++  const session = ctx.context.session;
++  const baseURL = ctx.context.options.baseURL;
++  const payload = !options?.jwt?.definePayload ? session.user : await options?.jwt.definePayload(session);
++  const issuer = typeof options?.jwt?.issuer === "function" ? await options.jwt.issuer(session) : options?.jwt?.issuer;
++  const audience = typeof options?.jwt?.audience === "function" ? await options.jwt.audience(session) : options?.jwt?.audience;
++  const subject = options?.jwt?.getSubject ? await options.jwt.getSubject(session) : typeof options?.jwt?.subject === "function" ? await options.jwt.subject(session) : options?.jwt?.subject;
    const jwt = await new SignJWT(payload).setProtectedHeader({
      alg: options?.jwks?.keyPairConfig?.alg ?? "EdDSA",
      kid: key.id
 -  }).setIssuedAt().setIssuer(options?.jwt?.issuer ?? ctx.context.options.baseURL).setAudience(options?.jwt?.audience ?? ctx.context.options.baseURL).setExpirationTime(options?.jwt?.expirationTime ?? "15m").setSubject(
-+  }).setIssuedAt().setIssuer(options?.jwt?.issuer ?? ctx.context.options.baseURL).setAudience(options?.jwt?.audience ?? await options?.jwt?.getAudience(ctx.context.session) ?? ctx.context.options.baseURL).setExpirationTime(options?.jwt?.expirationTime ?? "15m").setSubject(
-     await options?.jwt?.getSubject?.(ctx.context.session) ?? ctx.context.session.user.id
-   ).sign(privateKey);
+-    await options?.jwt?.getSubject?.(ctx.context.session) ?? ctx.context.session.user.id
+-  ).sign(privateKey);
++  }).setIssuer(issuer ?? baseURL).setSubject(subject ?? session.user.id).setAudience(audience ?? baseURL).setExpirationTime(options?.jwt?.expirationTime ?? "15m").setIssuedAt().sign(privateKey);
    return jwt;
+ }
+ 
