@@ -54,6 +54,7 @@ jobs:
         uses: docker/build-push-action@v6
         with:
           context: .
+          file: ./docker/postgres/Dockerfile
           build-args: |
             postgresql_major=${{ env.POSTGRES_MAJOR }}
             postgresql_minor=${{ env.POSTGRES_MINOR }}
