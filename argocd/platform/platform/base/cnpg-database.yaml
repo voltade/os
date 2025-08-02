@@ -17,3 +17,5 @@ spec:
     - name: plv8
     - name: pgcrypto
       schema: extensions
+    - name: openfga
+      schema: extensions

@@ -8,7 +8,7 @@ metadata:
     argocd.argoproj.io/sync-wave: "-1"
 spec:
   # https://github.com/voltade/voltade-os/pkgs/container/postgres
-  imageName: ghcr.io/voltade/postgres:17.5-20250717-a2c5abf
+  imageName: ghcr.io/voltade/postgres:17.5-20250802-ac07c6b
   instances: 1
   certificates:
     serverCASecret: cnpg-tls

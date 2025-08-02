@@ -47,8 +47,6 @@ interface Parameters {
 export const route = factory
   .createApp()
   .post('/api/v1/getparams.execute', async (c) => {
-    // const reqBody = await c.req.json();
-    console.log(c.req.method, c.req.url);
     const results = await db
       .select()
       .from(environmentTable)
