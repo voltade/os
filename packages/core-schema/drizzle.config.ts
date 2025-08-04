@@ -13,10 +13,9 @@ export default defineConfig({
     password: DB_PASSWORD,
     database: DB_NAME,
     //TODO: reference ca.crt in the future
-    // ssl: {
-    //   rejectUnauthorized: false,
-    // },
-    ssl: false,
+    ssl: {
+      rejectUnauthorized: false,
+    },
   },
   dialect: 'postgresql',
   schema: [
