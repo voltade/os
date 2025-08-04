@@ -1,7 +1,7 @@
 import { readFileSync } from 'node:fs';
 import path from 'node:path';
 import { symmetricDecrypt } from 'better-auth/crypto';
-import { desc, eq } from 'drizzle-orm';
+import { and, desc, eq } from 'drizzle-orm';
 import * as jose from 'jose';
 import yaml from 'yaml';
 
@@ -12,6 +12,7 @@ import {
 import { environmentTable } from '#drizzle/environment';
 import { appEnvVariables } from '#server/env.ts';
 import { factory } from '#server/factory.ts';
+import { authMiddleware } from '#server/lib/auth.ts';
 import { db } from '#server/lib/db.ts';
 import { signJwt } from '#server/lib/jwk.ts';
 
@@ -136,4 +137,38 @@ export const route = factory
         parameters,
       },
     });
+  })
+  .get('/', authMiddleware(true), async (c) => {
+    // biome-ignore lint/style/noNonNullAssertion: session is guaranteed to be set by the authMiddleware
+    const { activeOrganizationId } = c.get('session')!;
+    if (!activeOrganizationId) {
+      return c.json({ error: 'No active organization' }, 400);
+    }
+    const environments = await db
+      .select()
+      .from(environmentTable)
+      .where(eq(environmentTable.organization_id, activeOrganizationId));
+    return c.json(environments);
+  })
+  .get('/:environmentSlug', authMiddleware(true), async (c) => {
+    // biome-ignore lint/style/noNonNullAssertion: session is guaranteed to be set by the authMiddleware
+    const { activeOrganizationId } = c.get('session')!;
+    if (!activeOrganizationId) {
+      return c.json({ error: 'No active organization' }, 400);
+    }
+    const { environmentSlug } = c.req.param();
+    const environment = await db
+      .select()
+      .from(environmentTable)
+      .where(
+        and(
+          eq(environmentTable.slug, environmentSlug),
+          eq(environmentTable.organization_id, activeOrganizationId),
+        ),
+      )
+      .limit(1);
+    if (environment.length === 0) {
+      return c.json({ error: 'Environment not found' }, 404);
+    }
+    return c.json(environment[0]);
   });

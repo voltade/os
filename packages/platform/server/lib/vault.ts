@@ -67,6 +67,7 @@ async function getManySecrets(
     sql`select id, decrypted_secret from vault.decrypted_secrets where id in (${sql.join(secretIds, sql`, `)})`,
   )) as { id: string; decrypted_secret: string }[];
 
+  console.log(decryptedSecrets);
   if (decryptedSecrets.length === 0) {
     throw new Error('Could not get decrypted secrets');
   }

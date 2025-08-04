@@ -30,3 +30,5 @@ app
   .get('/*', serveStatic({ path: './dist/static/index.html' }));
 
 export default app;
+
+export type AppType = typeof apiRoutes;

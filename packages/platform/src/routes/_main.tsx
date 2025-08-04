@@ -1,7 +1,14 @@
 import { AppShell } from '@mantine/core';
-import { createFileRoute, Outlet, redirect } from '@tanstack/react-router';
+import {
+  createFileRoute,
+  Outlet,
+  redirect,
+  useRouterState,
+} from '@tanstack/react-router';
 
-import { Header } from '#src/components/layout/Header.tsx';
+import { EnvironmentNavbar } from '#src/components/ui/environment/Navbar';
+import { Header } from '#src/components/ui/Header';
+import { OrganizationNavbar } from '#src/components/ui/organization/Navbar';
 import { authClient } from '#src/lib/auth.ts';
 import { isJWTExpired } from '#src/lib/isJWTExpired';
 
@@ -33,9 +40,17 @@ export const Route = createFileRoute('/_main')({
 });
 
 function RouteComponent() {
+  const location = useRouterState({ select: (s) => s.location });
   return (
-    <AppShell padding="md" header={{ height: 48 }}>
+    <AppShell
+      padding="md"
+      header={{ height: 48 }}
+      navbar={{ width: 200, breakpoint: 'sm' }}
+    >
       <Header />
+      {!location.pathname.startsWith('/environments/') && (
+        <OrganizationNavbar />
+      )}
       <AppShell.Main>
         <Outlet />
       </AppShell.Main>

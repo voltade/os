@@ -16,6 +16,7 @@ import {
   organization as organizationTable,
 } from '#drizzle/auth.ts';
 import { appEnvVariables } from '#server/env.ts';
+import { factory } from '#server/factory.ts';
 import { db } from '#server/lib/db.ts';
 import { mailer } from '#server/lib/mailer.ts';
 import { nanoid } from '#server/lib/nanoid.ts';
@@ -105,3 +106,19 @@ export const auth = betterAuth({
 
 export type Auth = typeof auth;
 export type Session = Auth['$Infer']['Session'];
+
+export const authMiddleware = (force: boolean = false) =>
+  factory.createMiddleware(async (c, next) => {
+    const session = await auth.api.getSession({ headers: c.req.raw.headers });
+    if (force && !session) {
+      return c.json({ error: 'Unauthorized' }, 401);
+    }
+    if (!session) {
+      c.set('user', null);
+      c.set('session', null);
+      return next();
+    }
+    c.set('user', session.user);
+    c.set('session', session.session);
+    return next();
+  });

@@ -14,6 +14,10 @@ import { Route as AuthRouteImport } from './routes/_auth'
 import { Route as MainIndexRouteImport } from './routes/_main.index'
 import { Route as AuthSignupRouteImport } from './routes/_auth.signup'
 import { Route as AuthSigninRouteImport } from './routes/_auth.signin'
+import { Route as MainEnvironmentsIndexRouteImport } from './routes/_main.environments.index'
+import { Route as MainEnvironmentsEnvironmentSlugRouteImport } from './routes/_main.environments.$environmentSlug'
+import { Route as MainEnvironmentsEnvironmentSlugIndexRouteImport } from './routes/_main.environments.$environmentSlug.index'
+import { Route as MainEnvironmentsEnvironmentSlugEnvironment_variablesRouteImport } from './routes/_main.environments.$environmentSlug.environment_variables'
 
 const MainRoute = MainRouteImport.update({
   id: '/_main',
@@ -38,16 +42,46 @@ const AuthSigninRoute = AuthSigninRouteImport.update({
   path: '/signin',
   getParentRoute: () => AuthRoute,
 } as any)
+const MainEnvironmentsIndexRoute = MainEnvironmentsIndexRouteImport.update({
+  id: '/environments/',
+  path: '/environments/',
+  getParentRoute: () => MainRoute,
+} as any)
+const MainEnvironmentsEnvironmentSlugRoute =
+  MainEnvironmentsEnvironmentSlugRouteImport.update({
+    id: '/environments/$environmentSlug',
+    path: '/environments/$environmentSlug',
+    getParentRoute: () => MainRoute,
+  } as any)
+const MainEnvironmentsEnvironmentSlugIndexRoute =
+  MainEnvironmentsEnvironmentSlugIndexRouteImport.update({
+    id: '/',
+    path: '/',
+    getParentRoute: () => MainEnvironmentsEnvironmentSlugRoute,
+  } as any)
+const MainEnvironmentsEnvironmentSlugEnvironment_variablesRoute =
+  MainEnvironmentsEnvironmentSlugEnvironment_variablesRouteImport.update({
+    id: '/environment_variables',
+    path: '/environment_variables',
+    getParentRoute: () => MainEnvironmentsEnvironmentSlugRoute,
+  } as any)
 
 export interface FileRoutesByFullPath {
   '/signin': typeof AuthSigninRoute
   '/signup': typeof AuthSignupRoute
   '/': typeof MainIndexRoute
+  '/environments/$environmentSlug': typeof MainEnvironmentsEnvironmentSlugRouteWithChildren
+  '/environments': typeof MainEnvironmentsIndexRoute
+  '/environments/$environmentSlug/environment_variables': typeof MainEnvironmentsEnvironmentSlugEnvironment_variablesRoute
+  '/environments/$environmentSlug/': typeof MainEnvironmentsEnvironmentSlugIndexRoute
 }
 export interface FileRoutesByTo {
   '/signin': typeof AuthSigninRoute
   '/signup': typeof AuthSignupRoute
   '/': typeof MainIndexRoute
+  '/environments': typeof MainEnvironmentsIndexRoute
+  '/environments/$environmentSlug/environment_variables': typeof MainEnvironmentsEnvironmentSlugEnvironment_variablesRoute
+  '/environments/$environmentSlug': typeof MainEnvironmentsEnvironmentSlugIndexRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -56,12 +90,29 @@ export interface FileRoutesById {
   '/_auth/signin': typeof AuthSigninRoute
   '/_auth/signup': typeof AuthSignupRoute
   '/_main/': typeof MainIndexRoute
+  '/_main/environments/$environmentSlug': typeof MainEnvironmentsEnvironmentSlugRouteWithChildren
+  '/_main/environments/': typeof MainEnvironmentsIndexRoute
+  '/_main/environments/$environmentSlug/environment_variables': typeof MainEnvironmentsEnvironmentSlugEnvironment_variablesRoute
+  '/_main/environments/$environmentSlug/': typeof MainEnvironmentsEnvironmentSlugIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/signin' | '/signup' | '/'
+  fullPaths:
+    | '/signin'
+    | '/signup'
+    | '/'
+    | '/environments/$environmentSlug'
+    | '/environments'
+    | '/environments/$environmentSlug/environment_variables'
+    | '/environments/$environmentSlug/'
   fileRoutesByTo: FileRoutesByTo
-  to: '/signin' | '/signup' | '/'
+  to:
+    | '/signin'
+    | '/signup'
+    | '/'
+    | '/environments'
+    | '/environments/$environmentSlug/environment_variables'
+    | '/environments/$environmentSlug'
   id:
     | '__root__'
     | '/_auth'
@@ -69,6 +120,10 @@ export interface FileRouteTypes {
     | '/_auth/signin'
     | '/_auth/signup'
     | '/_main/'
+    | '/_main/environments/$environmentSlug'
+    | '/_main/environments/'
+    | '/_main/environments/$environmentSlug/environment_variables'
+    | '/_main/environments/$environmentSlug/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -113,6 +168,34 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthSigninRouteImport
       parentRoute: typeof AuthRoute
     }
+    '/_main/environments/': {
+      id: '/_main/environments/'
+      path: '/environments'
+      fullPath: '/environments'
+      preLoaderRoute: typeof MainEnvironmentsIndexRouteImport
+      parentRoute: typeof MainRoute
+    }
+    '/_main/environments/$environmentSlug': {
+      id: '/_main/environments/$environmentSlug'
+      path: '/environments/$environmentSlug'
+      fullPath: '/environments/$environmentSlug'
+      preLoaderRoute: typeof MainEnvironmentsEnvironmentSlugRouteImport
+      parentRoute: typeof MainRoute
+    }
+    '/_main/environments/$environmentSlug/': {
+      id: '/_main/environments/$environmentSlug/'
+      path: '/'
+      fullPath: '/environments/$environmentSlug/'
+      preLoaderRoute: typeof MainEnvironmentsEnvironmentSlugIndexRouteImport
+      parentRoute: typeof MainEnvironmentsEnvironmentSlugRoute
+    }
+    '/_main/environments/$environmentSlug/environment_variables': {
+      id: '/_main/environments/$environmentSlug/environment_variables'
+      path: '/environment_variables'
+      fullPath: '/environments/$environmentSlug/environment_variables'
+      preLoaderRoute: typeof MainEnvironmentsEnvironmentSlugEnvironment_variablesRouteImport
+      parentRoute: typeof MainEnvironmentsEnvironmentSlugRoute
+    }
   }
 }
 
@@ -128,12 +211,35 @@ const AuthRouteChildren: AuthRouteChildren = {
 
 const AuthRouteWithChildren = AuthRoute._addFileChildren(AuthRouteChildren)
 
+interface MainEnvironmentsEnvironmentSlugRouteChildren {
+  MainEnvironmentsEnvironmentSlugEnvironment_variablesRoute: typeof MainEnvironmentsEnvironmentSlugEnvironment_variablesRoute
+  MainEnvironmentsEnvironmentSlugIndexRoute: typeof MainEnvironmentsEnvironmentSlugIndexRoute
+}
+
+const MainEnvironmentsEnvironmentSlugRouteChildren: MainEnvironmentsEnvironmentSlugRouteChildren =
+  {
+    MainEnvironmentsEnvironmentSlugEnvironment_variablesRoute:
+      MainEnvironmentsEnvironmentSlugEnvironment_variablesRoute,
+    MainEnvironmentsEnvironmentSlugIndexRoute:
+      MainEnvironmentsEnvironmentSlugIndexRoute,
+  }
+
+const MainEnvironmentsEnvironmentSlugRouteWithChildren =
+  MainEnvironmentsEnvironmentSlugRoute._addFileChildren(
+    MainEnvironmentsEnvironmentSlugRouteChildren,
+  )
+
 interface MainRouteChildren {
   MainIndexRoute: typeof MainIndexRoute
+  MainEnvironmentsEnvironmentSlugRoute: typeof MainEnvironmentsEnvironmentSlugRouteWithChildren
+  MainEnvironmentsIndexRoute: typeof MainEnvironmentsIndexRoute
 }
 
 const MainRouteChildren: MainRouteChildren = {
   MainIndexRoute: MainIndexRoute,
+  MainEnvironmentsEnvironmentSlugRoute:
+    MainEnvironmentsEnvironmentSlugRouteWithChildren,
+  MainEnvironmentsIndexRoute: MainEnvironmentsIndexRoute,
 }
 
 const MainRouteWithChildren = MainRoute._addFileChildren(MainRouteChildren)
