@@ -12,10 +12,14 @@ spec:
   owner: app
   ensure: present
   schemas:
+    - name: public
+      owner: core_migrator
+    - name: drizzle
+      owner: core_migrator
     - name: extensions
-      owner: app
+      owner: core_migrator
     - name: storage
-      owner: app
+      owner: core_migrator
     - name: openfga
       owner: openfga_admin
   extensions:
