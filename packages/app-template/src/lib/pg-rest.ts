@@ -1,4 +1,4 @@
-import { createClient } from '@voltade/core-schema/supabase';
+import { createClient } from '@voltade/core-schema/pgRest';
 
 const supabaseUrl = import.meta.env.VITE_SUPABASE_URL;
 const supabaseAnonKey = localStorage.getItem('voltade-jwt') || '';
@@ -13,6 +13,6 @@ if (supabaseAnonKey === '') {
   throw new Error('Voltade JWT is required. Please log in to get a valid JWT.');
 }
 
-export const supabase = createClient(supabaseUrl, supabaseAnonKey);
+export const pgRest = createClient(supabaseUrl, supabaseAnonKey);
 
-export type SupabaseClient = typeof supabase;
+export type PgRestClient = typeof pgRest;

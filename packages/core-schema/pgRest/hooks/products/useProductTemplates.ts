@@ -6,14 +6,14 @@ import type {
   MRT_SortingState,
 } from 'mantine-react-table';
 
-import type { Database, SupabaseClient } from '../../../supabase/index.ts';
+import type { Database, PgRestClient } from '../../../pgRest/index.ts';
 
 type ProductTemplate =
   Database['public']['Views']['product_template_view']['Row'];
 
 interface UseProductTemplatesOptions {
   pagination: MRT_PaginationState;
-  supabase: SupabaseClient;
+  pgRest: PgRestClient;
   columnFilters: MRT_ColumnFiltersState;
   columnFilterFns: MRT_ColumnFilterFnsState;
   sorting: MRT_SortingState;
@@ -26,7 +26,7 @@ interface UseProductTemplatesResult {
 
 export function useProductTemplates({
   pagination,
-  supabase,
+  pgRest,
   columnFilters,
   columnFilterFns,
   sorting,
@@ -40,7 +40,7 @@ export function useProductTemplates({
       const from = pagination.pageIndex * pagination.pageSize;
       const to = from + pagination.pageSize - 1;
 
-      const query = supabase
+      const query = pgRest
         .from('product_template_view')
         .select('*', { count: 'exact' });
 

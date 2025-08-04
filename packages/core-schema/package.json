@@ -25,9 +25,9 @@
   "main": "index.ts",
   "types": "index.ts",
   "exports": {
-    "./supabase": {
-      "import": "./supabase/index.ts",
-      "types": "./supabase/index.ts"
+    "./pgRest": {
+      "import": "./pgRest/index.ts",
+      "types": "./pgRest/index.ts"
     },
     "./schemas": {
       "import": "./schemas/index.ts",

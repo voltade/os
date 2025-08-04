@@ -6,15 +6,15 @@ export type { Database } from './database.gen.ts';
 export { useProductTemplates } from './hooks/products/useProductTemplates.ts';
 
 export const createClient = (
-  VITE_SUPABASE_URL: string,
-  VITE_SUPABASE_ANON_KEY: string,
+  POSTGRES_URL: string,
+  POSTGRES_JWT_TOKEN: string,
 ) => {
-  return new PostgrestClient<Database>(VITE_SUPABASE_URL, {
+  return new PostgrestClient<Database>(POSTGRES_URL, {
     headers: {
-      Authorization: `Bearer ${VITE_SUPABASE_ANON_KEY}`,
+      Authorization: `Bearer ${POSTGRES_JWT_TOKEN}`,
       'Content-Type': 'application/json',
     },
   });
 };
 
-export type SupabaseClient = ReturnType<typeof createClient>;
+export type PgRestClient = ReturnType<typeof createClient>;

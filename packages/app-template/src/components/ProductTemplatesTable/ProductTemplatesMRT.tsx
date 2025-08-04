@@ -4,7 +4,7 @@ import { Stack } from '@mantine/core';
 import {
   type Database,
   useProductTemplates,
-} from '@voltade/core-schema/supabase';
+} from '@voltade/core-schema/pgRest';
 import {
   MantineReactTable,
   type MRT_ColumnDef,
@@ -16,7 +16,7 @@ import {
 } from 'mantine-react-table';
 import { useEffect, useState } from 'react';
 
-import { supabase } from '#lib/supabase.ts';
+import { pgRest } from '#lib/pg-rest';
 
 type ProductTemplate =
   Database['public']['Views']['product_template_view']['Row'];
@@ -74,7 +74,7 @@ export default function ProductTemplatesMRT() {
 
   const { data, isLoading } = useProductTemplates({
     pagination,
-    supabase,
+    pgRest,
     columnFilters,
     columnFilterFns,
     sorting,

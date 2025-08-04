@@ -9,7 +9,7 @@ import type { Database } from '@voltade/core-schema/supabase';
 import { useProductTemplates } from '@voltade/core-schema/supabase';
 import { useEffect, useMemo, useState } from 'react';
 
-import { supabase } from '#lib/supabase.ts';
+import { supabase } from '#lib/pg-rest.ts';
 import UneditableMoneyCell from './UneditableMoneyCell.tsx';
 import UneditableNumberCell from './UneditableNumberCell.tsx';
 import UneditableTextCell from './UneditableTextCell.tsx';
