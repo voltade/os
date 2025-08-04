@@ -27,7 +27,7 @@ sed -i '' "s/^DB_PASSWORD=.*/DB_PASSWORD=$DB_PASSWORD/" "$ENV_FILE"
 
 kubectl cnpg psql cnpg-cluster \
   -n "$SELECTED_NAMESPACE" \
-  -- -c "drop database app if exists"
+  -- -c "drop database app with (force)"
 
 kubectl patch database app \
   --type='merge' \
