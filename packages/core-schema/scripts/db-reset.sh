@@ -50,8 +50,4 @@ grant usage on schema vault to app;
 grant execute on all functions in schema vault to app;
 grant select on all tables in schema vault to app;
 grant references on all tables in schema vault to app;
-grant usage on schema public to anon, authenticated, service_role;
-grant all on all tables in schema public to anon, authenticated, service_role;
-grant all on all routines in schema public to anon, authenticated, service_role;
-grant all on all sequences in schema public to anon, authenticated, service_role;
 "
