@@ -22,6 +22,11 @@ import { $ } from 'bun';
 
   const db_password =
     await $`kubectl get secret -n platform cnpg-platform-admin -o jsonpath="{.data.password}" | base64 -d`.text();
+  console.log('Retrieved DB_PASSWORD');
+
+  const runner_token =
+    await $`kubectl get secret -n platform shared-secrets -o jsonpath="{.data.runnerSecretToken}" | base64 -d`.text();
+  console.log('Retrieved RUNNER_SECRET_TOKEN');
 
   // Path to .env and .env.example
   const envPath = join(process.cwd(), '.env');
@@ -64,6 +69,12 @@ import { $ } from 'bun';
     );
 
     envContent = updateEnvVar(envContent, 'DB_PASSWORD', db_password.trim());
+
+    envContent = updateEnvVar(
+      envContent,
+      'RUNNER_SECRET_TOKEN',
+      runner_token.trim(),
+    );
 
     // Write the updated content back to the file
     await writeFile(envPath, envContent);

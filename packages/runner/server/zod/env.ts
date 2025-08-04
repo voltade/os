@@ -21,6 +21,7 @@ export const appEnvVariablesSchema = z.object({
   AWS_REGION: z.string(),
   AWS_S3_BUCKET: z.string(),
   AWS_S3_ENDPOINT: z.string(),
+  FORCE_PATH_STYLE: z.coerce.boolean().default(false),
 });
 
 export type AppEnvVariables = z.infer<typeof appEnvVariablesSchema>;

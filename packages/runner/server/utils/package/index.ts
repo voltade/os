@@ -1,9 +1,7 @@
 import { mkdir } from 'node:fs/promises';
 import { Readable } from 'node:stream';
-import { GetObjectCommand } from '@aws-sdk/client-s3';
 import * as tar from 'tar';
 
-import { appEnvVariables } from '#server/env.ts';
 import { s3Client } from './s3.ts';
 
 export const downloadPackage = async (
@@ -14,22 +12,11 @@ export const downloadPackage = async (
   },
   outputPath: string,
 ) => {
-  const getPackageCommand = new GetObjectCommand({
-    Bucket: appEnvVariables.AWS_S3_BUCKET,
-    Key: `builds/${packageDetails.orgId}/${packageDetails.appId}/${packageDetails.releaseId}/artifact.tar.gz`,
-  });
+  const s3file = s3Client.file(
+    `builds/${packageDetails.orgId}/${packageDetails.appId}/${packageDetails.releaseId}/artifact.tar.gz`,
+  );
 
-  const response = await s3Client.send(getPackageCommand);
-  if (!response.Body) {
-    console.info(
-      packageDetails.appId,
-      'error',
-      'Failed to download package: No response body',
-    );
-    throw new Error('Failed to download package: No response body');
-  }
-
-  const byteStream = await response.Body.transformToByteArray();
+  const buffer = await s3file.arrayBuffer();
 
   await mkdir(outputPath, { recursive: true });
 
@@ -43,7 +30,7 @@ export const downloadPackage = async (
     extractStream.on('end', () => resolve());
     extractStream.on('error', reject);
 
-    const readable = Readable.from(Buffer.from(byteStream));
+    const readable = Readable.from(Buffer.from(buffer));
     readable.pipe(extractStream);
   });
 

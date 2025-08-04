@@ -16,6 +16,10 @@ export async function getAppEnvs(
       },
     },
   );
+  if (!res.ok) {
+    console.error('Failed to fetch environment variables', res.statusText);
+    throw new Error('Failed to fetch environment variables');
+  }
   const data = (await res.json()) as Record<string, string>;
   return data;
 }

@@ -59,6 +59,10 @@ async function getSecret(secretId: string): Promise<string> {
 async function getManySecrets(
   secretIds: string[],
 ): Promise<Record<string, string>> {
+  if (secretIds.length === 0) {
+    return {};
+  }
+
   const decryptedSecrets = (await db.execute(
     sql`select id, decrypted_secret from vault.decrypted_secrets where id in (${sql.join(secretIds, sql`, `)})`,
   )) as { id: string; decrypted_secret: string }[];

@@ -79,6 +79,11 @@ spec:
                 secretKeyRef:
                   name: shared-secrets
                   key: runnerSecretToken
+            - name: FORCE_PATH_STYLE
+              valueFrom:
+                secretKeyRef:
+                  name: s3-secrets
+                  key: forcePathStyle
             - name: POSTGREST_URL
               value: http://postgrest:3000
             - name: SUPABASE_META_URL

@@ -15,7 +15,7 @@ import { Vault } from '#server/lib/vault.ts';
 export const route = factory
   .createApp()
   .get(
-    '/:org_id/:environment_id',
+    '/:organization_id/:environment_id',
     bearerAuth({ token: appEnvVariables.RUNNER_SECRET_TOKEN }),
     zValidator(
       'param',
