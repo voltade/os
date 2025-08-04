@@ -11,5 +11,8 @@ dependencies:
 - name: supabase-studio
   repository: file://../supabase-studio
   version: 0.1.12
-digest: sha256:0db8d425a5d26d185b1427eaaedfceeeef1a260d6b9d3bc0e0d59b60b8cdd671
-generated: "2025-07-31T18:59:46.651253+08:00"
+- name: openfga
+  repository: https://openfga.github.io/helm-charts
+  version: 0.2.39
+digest: sha256:f8b08c8e9f40eea1a386c914c7fa2c1d67331249a4e6cb8ffe60a561c81ceb5e
+generated: "2025-08-03T11:56:53.233816+08:00"

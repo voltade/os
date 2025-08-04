@@ -303,3 +303,19 @@ supabase-storage:
     STORAGE_BACKEND: file
     STORAGE_FILE_BACKEND_PATH: ./data
     STORAGE_FILE_ETAG_ALGORITHM: md5
+
+# https://github.com/openfga/helm-charts/blob/main/charts/openfga/values.yaml
+openfga:
+  enabled: true
+  fullnameOverride: openfga
+  replicaCount: 1
+  datastore:
+    engine: postgres
+    existingSecret: cnpg-openfga-admin
+    secretKeys:
+      uriKey: uri
+      usernameKey: username
+      passwordKey: password
+    applyMigrations: true
+    waitForMigrations: true
+    migrationType: initContainer

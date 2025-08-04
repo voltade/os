@@ -31,6 +31,7 @@ spec:
         inRoles:
           - core_migrator
           - custom_migrator
+          - openfga_admin
 
       - name: core_migrator
         login: true
@@ -60,6 +61,11 @@ spec:
       - name: anon
       - name: service_role
         bypassrls: true
+
+      - name: openfga_admin
+        login: true
+        passwordSecret:
+          name: cnpg-openfga-admin
 
   bootstrap:
     initdb:

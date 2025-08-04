@@ -1,7 +1,7 @@
 apiVersion: external-secrets.io/v1
 kind: ExternalSecret
 metadata:
-  name: cnpg-core-migrator
+  name: cnpg-openfga-admin
   labels: {{- include "environment.labels" . | nindent 4 }}
   annotations:
     argocd.argoproj.io/sync-wave: "-2"
@@ -14,7 +14,7 @@ spec:
           name: password-64-length
   refreshPolicy: OnChange
   target:
-    name: cnpg-core-migrator
+    name: cnpg-openfga-admin
     template:
       # https://external-secrets.io/latest/guides/templating/#examples
       engineVersion: v2
@@ -24,7 +24,6 @@ spec:
         host: cnpg-cluster-rw
         password: "{{ `{{ .password }}` }}"
         port: "5432"
-        uri: "postgresql://core_migrator:{{ `{{ .password }}` }}@cnpg-cluster-rw:5432/app"
-        uri_openfga: "postgresql://core_migrator:{{ `{{ .password }}` }}@cnpg-cluster-rw:5432/app?search_path=openfga"
-        user: core_migrator
-        username: core_migrator
+        uri: "postgresql://openfga_admin:{{ `{{ .password }}` }}@cnpg-cluster-rw:5432/app?search_path=openfga"
+        user: openfga_admin
+        username: openfga_admin

@@ -16,6 +16,8 @@ spec:
       owner: app
     - name: storage
       owner: app
+    - name: openfga
+      owner: openfga_admin
   extensions:
     - name: plv8
     - name: pgcrypto
