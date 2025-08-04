@@ -1,7 +1,7 @@
 import { Button, PinInput, Stack } from '@mantine/core';
 import { useForm } from '@mantine/form';
 import { notifications } from '@mantine/notifications';
-import { redirect } from '@tanstack/react-router';
+import { useNavigate } from '@tanstack/react-router';
 
 import { authClient } from '#src/lib/auth.ts';
 
@@ -10,6 +10,7 @@ interface Props {
 }
 
 export function EmailOtp({ email }: Props) {
+  const navigate = useNavigate();
   const form = useForm({
     mode: 'uncontrolled',
     initialValues: {
@@ -27,7 +28,7 @@ export function EmailOtp({ email }: Props) {
           if (error) {
             throw new Error(error.message);
           }
-          return redirect({ to: '/' });
+          navigate({ to: '/' }); // Use navigate hook for proper routing
         } catch (error) {
           notifications.show({
             title: 'Error',
