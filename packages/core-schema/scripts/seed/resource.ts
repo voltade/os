@@ -101,20 +101,20 @@ async function seedTeams(
     return tuple;
   });
 
-  const result = await fgaClient?.writeTuples(userTuples, {
-    authorizationModelId: FGA_AUTHORIZATION_MODEL_ID,
-  });
+  // const result = await fgaClient?.writeTuples(userTuples, {
+  //   authorizationModelId: FGA_AUTHORIZATION_MODEL_ID,
+  // });
 
-  let failedCount = 0;
-  result?.writes.forEach((write) => {
-    if (write.status === ClientWriteStatus.SUCCESS) return;
+  const failedCount = 0;
+  // result?.writes.forEach((write) => {
+  //   if (write.status === ClientWriteStatus.SUCCESS) return;
 
-    failedCount++;
-    console.error(
-      `Failed write for tuple ${JSON.stringify(write.tuple_key)}: ${write.err?.message || 'Unknown error'}`,
-    );
-    delete tupleMap[JSON.stringify(write.tuple_key)];
-  });
+  //   failedCount++;
+  //   console.error(
+  //     `Failed write for tuple ${JSON.stringify(write.tuple_key)}: ${write.err?.message || 'Unknown error'}`,
+  //   );
+  //   delete tupleMap[JSON.stringify(write.tuple_key)];
+  // });
 
   if (failedCount > 0)
     console.warn(
@@ -649,7 +649,7 @@ export async function seedResourceData(
 ): Promise<SeedContext> {
   console.log('=== RESOURCE DATA ===');
 
-  await seedOrganization();
+  // await seedOrganization();
 
   const countryIds = await seedCountries();
   const currencyIds = await seedCurrencies();

@@ -42,21 +42,21 @@ async function seedQuotationFolder(): Promise<void> {
     object: ORG_FOLDERS.QUOTATIONS,
   };
 
-  const result = await fgaClient?.writeTuples([quotationFolder], {
-    authorizationModelId: FGA_AUTHORIZATION_MODEL_ID,
-  });
-  result?.writes.forEach((write) => {
-    if (write.status === ClientWriteStatus.SUCCESS)
-      console.log(`   Created folder: ${quotationFolder.object}`);
-    else {
-      console.warn(
-        `   Warning: Failed to create folder ${quotationFolder.object}`,
-      );
-      console.error(
-        `Failed write for tuple ${JSON.stringify(write.tuple_key)}: ${write.err?.message || 'Unknown error'}`,
-      );
-    }
-  });
+  // const result = await fgaClient?.writeTuples([quotationFolder], {
+  //   authorizationModelId: FGA_AUTHORIZATION_MODEL_ID,
+  // });
+  // result?.writes.forEach((write) => {
+  //   if (write.status === ClientWriteStatus.SUCCESS)
+  //     console.log(`   Created folder: ${quotationFolder.object}`);
+  //   else {
+  //     console.warn(
+  //       `   Warning: Failed to create folder ${quotationFolder.object}`,
+  //     );
+  //     console.error(
+  //       `Failed write for tuple ${JSON.stringify(write.tuple_key)}: ${write.err?.message || 'Unknown error'}`,
+  //     );
+  //   }
+  // });
 }
 
 /**
@@ -76,27 +76,27 @@ async function seedRequisitionTuples(
     return tuple;
   });
 
-  const result = await fgaClient?.writeTuples(requisitionTuples, {
-    authorizationModelId: FGA_AUTHORIZATION_MODEL_ID,
-  });
+  // const result = await fgaClient?.writeTuples(requisitionTuples, {
+  //   authorizationModelId: FGA_AUTHORIZATION_MODEL_ID,
+  // });
 
-  let failedCount = 0;
-  result?.writes.forEach((write) => {
-    if (write.status === ClientWriteStatus.SUCCESS) return;
-    failedCount++;
-    console.error(
-      `Failed write for tuple ${JSON.stringify(write.tuple_key)}: ${write.err?.message || 'Unknown error'}`,
-    );
-  });
+  // let failedCount = 0;
+  // result?.writes.forEach((write) => {
+  //   if (write.status === ClientWriteStatus.SUCCESS) return;
+  //   failedCount++;
+  //   console.error(
+  //     `Failed write for tuple ${JSON.stringify(write.tuple_key)}: ${write.err?.message || 'Unknown error'}`,
+  //   );
+  // });
 
-  if (failedCount > 0)
-    console.warn(
-      `   Failed to write ${failedCount}/${requisitionTuples.length} requisition tuples to OpenFGA`,
-    );
-  else
-    console.log(
-      `   Successfully wrote ${requisitionTuples.length} requisition tuples to OpenFGA`,
-    );
+  // if (failedCount > 0)
+  //   console.warn(
+  //     `   Failed to write ${failedCount}/${requisitionTuples.length} requisition tuples to OpenFGA`,
+  //   );
+  // else
+  //   console.log(
+  //     `   Successfully wrote ${requisitionTuples.length} requisition tuples to OpenFGA`,
+  //   );
 }
 
 /**
@@ -116,26 +116,26 @@ async function seedQuotationTuples(
     return tuple;
   });
 
-  const result = await fgaClient?.writeTuples(quotationTuples, {
-    authorizationModelId: FGA_AUTHORIZATION_MODEL_ID,
-  });
+  // const result = await fgaClient?.writeTuples(quotationTuples, {
+  //   authorizationModelId: FGA_AUTHORIZATION_MODEL_ID,
+  // });
 
-  let failedCount = 0;
-  result?.writes.forEach((write) => {
-    if (write.status === ClientWriteStatus.SUCCESS) return;
-    failedCount++;
-    console.error(
-      `Failed write for tuple ${JSON.stringify(write.tuple_key)}: ${write.err?.message || 'Unknown error'}`,
-    );
-  });
-  if (failedCount > 0)
-    console.warn(
-      `   Failed to write ${failedCount}/${quotationTuples.length} quotation tuples to OpenFGA`,
-    );
-  else
-    console.log(
-      `   Successfully wrote ${quotationTuples.length} quotation tuples to OpenFGA`,
-    );
+  // let failedCount = 0;
+  // result?.writes.forEach((write) => {
+  //   if (write.status === ClientWriteStatus.SUCCESS) return;
+  //   failedCount++;
+  //   console.error(
+  //     `Failed write for tuple ${JSON.stringify(write.tuple_key)}: ${write.err?.message || 'Unknown error'}`,
+  //   );
+  // });
+  // if (failedCount > 0)
+  //   console.warn(
+  //     `   Failed to write ${failedCount}/${quotationTuples.length} quotation tuples to OpenFGA`,
+  //   );
+  // else
+  //   console.log(
+  //     `   Successfully wrote ${quotationTuples.length} quotation tuples to OpenFGA`,
+  //   );
 }
 // endregion
 

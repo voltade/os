@@ -6,7 +6,7 @@ Bun: `curl -fsSL https://bun.com/install | bash`
 
 Docker: `brew install --cask docker-desktop`
 
-Other tools: `brew install opentofu kubectl kubectl-cnpg kubecm helm k9s`
+Other tools: `brew install opentofu kubectl kubectl-cnpg kubecm helm k9s fga openfga/tap/fga`
 
 ## Terraform
 

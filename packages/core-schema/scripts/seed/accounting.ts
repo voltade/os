@@ -58,21 +58,21 @@ async function seedAccountingFolder(): Promise<void> {
     object: ORG_FOLDERS.INVOICES,
   };
 
-  const result = await fgaClient?.writeTuples([accountingFolder], {
-    authorizationModelId: FGA_AUTHORIZATION_MODEL_ID,
-  });
-  result?.writes.forEach((write) => {
-    if (write.status === ClientWriteStatus.SUCCESS)
-      console.log(`   Created folder: ${accountingFolder.object}`);
-    else {
-      console.warn(
-        `   Warning: Failed to create folder ${accountingFolder.object}`,
-      );
-      console.error(
-        `Failed write for tuple ${JSON.stringify(write.tuple_key)}: ${write.err?.message || 'Unknown error'}`,
-      );
-    }
-  });
+  // const result = await fgaClient?.writeTuples([accountingFolder], {
+  //   authorizationModelId: FGA_AUTHORIZATION_MODEL_ID,
+  // });
+  // result?.writes.forEach((write) => {
+  //   if (write.status === ClientWriteStatus.SUCCESS)
+  //     console.log(`   Created folder: ${accountingFolder.object}`);
+  //   else {
+  //     console.warn(
+  //       `   Warning: Failed to create folder ${accountingFolder.object}`,
+  //     );
+  //     console.error(
+  //       `Failed write for tuple ${JSON.stringify(write.tuple_key)}: ${write.err?.message || 'Unknown error'}`,
+  //     );
+  //   }
+  // });
 }
 
 /**
@@ -92,27 +92,27 @@ async function seedJournalTuples(
     return tuple;
   });
 
-  const result = await fgaClient?.writeTuples(journalTuples, {
-    authorizationModelId: FGA_AUTHORIZATION_MODEL_ID,
-  });
+  // const result = await fgaClient?.writeTuples(journalTuples, {
+  //   authorizationModelId: FGA_AUTHORIZATION_MODEL_ID,
+  // });
 
-  let failedCount = 0;
-  result?.writes.forEach((write) => {
-    if (write.status === ClientWriteStatus.SUCCESS) return;
-    failedCount++;
-    console.error(
-      `Failed write for tuple ${JSON.stringify(write.tuple_key)}: ${write.err?.message || 'Unknown error'}`,
-    );
-  });
+  // let failedCount = 0;
+  // result?.writes.forEach((write) => {
+  //   if (write.status === ClientWriteStatus.SUCCESS) return;
+  //   failedCount++;
+  //   console.error(
+  //     `Failed write for tuple ${JSON.stringify(write.tuple_key)}: ${write.err?.message || 'Unknown error'}`,
+  //   );
+  // });
 
-  if (failedCount > 0)
-    console.warn(
-      `   Failed to write ${failedCount}/${journalTuples.length} folder-invoice tuples to OpenFGA`,
-    );
-  else
-    console.log(
-      `   Successfully wrote ${journalTuples.length} folder-invoice tuples to OpenFGA`,
-    );
+  // if (failedCount > 0)
+  //   console.warn(
+  //     `   Failed to write ${failedCount}/${journalTuples.length} folder-invoice tuples to OpenFGA`,
+  //   );
+  // else
+  //   console.log(
+  //     `   Successfully wrote ${journalTuples.length} folder-invoice tuples to OpenFGA`,
+  //   );
 }
 // endregion
 

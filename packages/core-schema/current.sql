@@ -4,7 +4,6 @@
  * Run `bun db:commit` to add the linked SQL statements to the drizzle migrations.
  */
 --!include extensions/*.sql
---!include schemas/*/privileges.sql
 /**
  * Import all functions and triggers (triggers may depend on functions).
  */

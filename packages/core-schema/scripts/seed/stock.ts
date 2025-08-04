@@ -68,27 +68,27 @@ async function seedOperationFolders(): Promise<void> {
     financePurchaseOrder,
   ];
 
-  const result = await fgaClient?.writeTuples(orderFolders, {
-    authorizationModelId: FGA_AUTHORIZATION_MODEL_ID,
-  });
+  // const result = await fgaClient?.writeTuples(orderFolders, {
+  //   authorizationModelId: FGA_AUTHORIZATION_MODEL_ID,
+  // });
 
-  let failedCount = 0;
-  result?.writes.forEach((write) => {
-    if (write.status === ClientWriteStatus.SUCCESS) return;
-    failedCount++;
-    console.error(
-      `Failed write for tuple ${JSON.stringify(write.tuple_key)}: ${write.err?.message || 'Unknown error'}`,
-    );
-  });
+  // let failedCount = 0;
+  // result?.writes.forEach((write) => {
+  //   if (write.status === ClientWriteStatus.SUCCESS) return;
+  //   failedCount++;
+  //   console.error(
+  //     `Failed write for tuple ${JSON.stringify(write.tuple_key)}: ${write.err?.message || 'Unknown error'}`,
+  //   );
+  // });
 
-  if (failedCount > 0)
-    console.warn(
-      `   Failed to write ${failedCount}/${orderFolders.length} team-order tuples to OpenFGA`,
-    );
-  else
-    console.log(
-      `   Successfully wrote ${orderFolders.length} team-order tuples to OpenFGA`,
-    );
+  // if (failedCount > 0)
+  //   console.warn(
+  //     `   Failed to write ${failedCount}/${orderFolders.length} team-order tuples to OpenFGA`,
+  //   );
+  // else
+  //   console.log(
+  //     `   Successfully wrote ${orderFolders.length} team-order tuples to OpenFGA`,
+  //   );
 }
 
 /**
