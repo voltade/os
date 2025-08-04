@@ -1,6 +1,7 @@
 import { AppShell } from '@mantine/core';
 import { createFileRoute, Outlet, redirect } from '@tanstack/react-router';
 
+import { Header } from '#src/components/layout/Header.tsx';
 import { authClient } from '#src/lib/auth.ts';
 import { isJWTExpired } from '#src/lib/isJWTExpired';
 
@@ -33,7 +34,8 @@ export const Route = createFileRoute('/_main')({
 
 function RouteComponent() {
   return (
-    <AppShell padding="md">
+    <AppShell padding="md" header={{ height: 48 }}>
+      <Header />
       <AppShell.Main>
         <Outlet />
       </AppShell.Main>
