@@ -1,7 +1,13 @@
 # https://www.postgresql.org/docs/current/extend-pgxs.html
 EXTENSION = openfga
-DATA = openfga--0.1.0.sql
+EXTVERSION = 0.1
+DATA = $(wildcard sql/*--*.sql)
 MODULES = openfga
+
+all: $(EXTENSION).control
+
+$(EXTENSION).control:
+	sed "s/@VERSION@/$(EXTVERSION)/g" $(EXTENSION).control.in > $(EXTENSION).control
 
 # Include /usr/lib/postgresql/17/lib/pgxs/src/makefiles/pgxs.mk
 PG_CONFIG = pg_config
