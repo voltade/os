@@ -44,8 +44,7 @@ export function UserButton() {
   };
 
   const handleProfile = () => {
-    // Add profile navigation logic here
-    console.log('Profile clicked');
+    navigate({ to: '/profile' });
   };
 
   const handleSettings = () => {

@@ -12,9 +12,12 @@ import { Route as rootRouteImport } from './routes/__root'
 import { Route as MainRouteImport } from './routes/_main'
 import { Route as AuthRouteImport } from './routes/_auth'
 import { Route as MainIndexRouteImport } from './routes/_main.index'
+import { Route as MainProfileRouteImport } from './routes/_main.profile'
 import { Route as AuthSignupRouteImport } from './routes/_auth.signup'
 import { Route as AuthSigninRouteImport } from './routes/_auth.signin'
+import { Route as MainProfileIndexRouteImport } from './routes/_main.profile.index'
 import { Route as MainEnvironmentsIndexRouteImport } from './routes/_main.environments.index'
+import { Route as MainProfileSecurityRouteImport } from './routes/_main.profile.security'
 import { Route as MainEnvironmentsEnvironmentSlugRouteImport } from './routes/_main.environments.$environmentSlug'
 import { Route as MainEnvironmentsEnvironmentSlugIndexRouteImport } from './routes/_main.environments.$environmentSlug.index'
 import { Route as MainEnvironmentsEnvironmentSlugEnvironment_variablesRouteImport } from './routes/_main.environments.$environmentSlug.environment_variables'
@@ -32,6 +35,11 @@ const MainIndexRoute = MainIndexRouteImport.update({
   path: '/',
   getParentRoute: () => MainRoute,
 } as any)
+const MainProfileRoute = MainProfileRouteImport.update({
+  id: '/profile',
+  path: '/profile',
+  getParentRoute: () => MainRoute,
+} as any)
 const AuthSignupRoute = AuthSignupRouteImport.update({
   id: '/signup',
   path: '/signup',
@@ -42,10 +50,20 @@ const AuthSigninRoute = AuthSigninRouteImport.update({
   path: '/signin',
   getParentRoute: () => AuthRoute,
 } as any)
+const MainProfileIndexRoute = MainProfileIndexRouteImport.update({
+  id: '/',
+  path: '/',
+  getParentRoute: () => MainProfileRoute,
+} as any)
 const MainEnvironmentsIndexRoute = MainEnvironmentsIndexRouteImport.update({
   id: '/environments/',
   path: '/environments/',
   getParentRoute: () => MainRoute,
+} as any)
+const MainProfileSecurityRoute = MainProfileSecurityRouteImport.update({
+  id: '/security',
+  path: '/security',
+  getParentRoute: () => MainProfileRoute,
 } as any)
 const MainEnvironmentsEnvironmentSlugRoute =
   MainEnvironmentsEnvironmentSlugRouteImport.update({
@@ -69,9 +87,12 @@ const MainEnvironmentsEnvironmentSlugEnvironment_variablesRoute =
 export interface FileRoutesByFullPath {
   '/signin': typeof AuthSigninRoute
   '/signup': typeof AuthSignupRoute
+  '/profile': typeof MainProfileRouteWithChildren
   '/': typeof MainIndexRoute
   '/environments/$environmentSlug': typeof MainEnvironmentsEnvironmentSlugRouteWithChildren
+  '/profile/security': typeof MainProfileSecurityRoute
   '/environments': typeof MainEnvironmentsIndexRoute
+  '/profile/': typeof MainProfileIndexRoute
   '/environments/$environmentSlug/environment_variables': typeof MainEnvironmentsEnvironmentSlugEnvironment_variablesRoute
   '/environments/$environmentSlug/': typeof MainEnvironmentsEnvironmentSlugIndexRoute
 }
@@ -79,7 +100,9 @@ export interface FileRoutesByTo {
   '/signin': typeof AuthSigninRoute
   '/signup': typeof AuthSignupRoute
   '/': typeof MainIndexRoute
+  '/profile/security': typeof MainProfileSecurityRoute
   '/environments': typeof MainEnvironmentsIndexRoute
+  '/profile': typeof MainProfileIndexRoute
   '/environments/$environmentSlug/environment_variables': typeof MainEnvironmentsEnvironmentSlugEnvironment_variablesRoute
   '/environments/$environmentSlug': typeof MainEnvironmentsEnvironmentSlugIndexRoute
 }
@@ -89,9 +112,12 @@ export interface FileRoutesById {
   '/_main': typeof MainRouteWithChildren
   '/_auth/signin': typeof AuthSigninRoute
   '/_auth/signup': typeof AuthSignupRoute
+  '/_main/profile': typeof MainProfileRouteWithChildren
   '/_main/': typeof MainIndexRoute
   '/_main/environments/$environmentSlug': typeof MainEnvironmentsEnvironmentSlugRouteWithChildren
+  '/_main/profile/security': typeof MainProfileSecurityRoute
   '/_main/environments/': typeof MainEnvironmentsIndexRoute
+  '/_main/profile/': typeof MainProfileIndexRoute
   '/_main/environments/$environmentSlug/environment_variables': typeof MainEnvironmentsEnvironmentSlugEnvironment_variablesRoute
   '/_main/environments/$environmentSlug/': typeof MainEnvironmentsEnvironmentSlugIndexRoute
 }
@@ -100,9 +126,12 @@ export interface FileRouteTypes {
   fullPaths:
     | '/signin'
     | '/signup'
+    | '/profile'
     | '/'
     | '/environments/$environmentSlug'
+    | '/profile/security'
     | '/environments'
+    | '/profile/'
     | '/environments/$environmentSlug/environment_variables'
     | '/environments/$environmentSlug/'
   fileRoutesByTo: FileRoutesByTo
@@ -110,7 +139,9 @@ export interface FileRouteTypes {
     | '/signin'
     | '/signup'
     | '/'
+    | '/profile/security'
     | '/environments'
+    | '/profile'
     | '/environments/$environmentSlug/environment_variables'
     | '/environments/$environmentSlug'
   id:
@@ -119,9 +150,12 @@ export interface FileRouteTypes {
     | '/_main'
     | '/_auth/signin'
     | '/_auth/signup'
+    | '/_main/profile'
     | '/_main/'
     | '/_main/environments/$environmentSlug'
+    | '/_main/profile/security'
     | '/_main/environments/'
+    | '/_main/profile/'
     | '/_main/environments/$environmentSlug/environment_variables'
     | '/_main/environments/$environmentSlug/'
   fileRoutesById: FileRoutesById
@@ -154,6 +188,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof MainIndexRouteImport
       parentRoute: typeof MainRoute
     }
+    '/_main/profile': {
+      id: '/_main/profile'
+      path: '/profile'
+      fullPath: '/profile'
+      preLoaderRoute: typeof MainProfileRouteImport
+      parentRoute: typeof MainRoute
+    }
     '/_auth/signup': {
       id: '/_auth/signup'
       path: '/signup'
@@ -168,12 +209,26 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthSigninRouteImport
       parentRoute: typeof AuthRoute
     }
+    '/_main/profile/': {
+      id: '/_main/profile/'
+      path: '/'
+      fullPath: '/profile/'
+      preLoaderRoute: typeof MainProfileIndexRouteImport
+      parentRoute: typeof MainProfileRoute
+    }
     '/_main/environments/': {
       id: '/_main/environments/'
       path: '/environments'
       fullPath: '/environments'
       preLoaderRoute: typeof MainEnvironmentsIndexRouteImport
       parentRoute: typeof MainRoute
+    }
+    '/_main/profile/security': {
+      id: '/_main/profile/security'
+      path: '/security'
+      fullPath: '/profile/security'
+      preLoaderRoute: typeof MainProfileSecurityRouteImport
+      parentRoute: typeof MainProfileRoute
     }
     '/_main/environments/$environmentSlug': {
       id: '/_main/environments/$environmentSlug'
@@ -211,6 +266,20 @@ const AuthRouteChildren: AuthRouteChildren = {
 
 const AuthRouteWithChildren = AuthRoute._addFileChildren(AuthRouteChildren)
 
+interface MainProfileRouteChildren {
+  MainProfileSecurityRoute: typeof MainProfileSecurityRoute
+  MainProfileIndexRoute: typeof MainProfileIndexRoute
+}
+
+const MainProfileRouteChildren: MainProfileRouteChildren = {
+  MainProfileSecurityRoute: MainProfileSecurityRoute,
+  MainProfileIndexRoute: MainProfileIndexRoute,
+}
+
+const MainProfileRouteWithChildren = MainProfileRoute._addFileChildren(
+  MainProfileRouteChildren,
+)
+
 interface MainEnvironmentsEnvironmentSlugRouteChildren {
   MainEnvironmentsEnvironmentSlugEnvironment_variablesRoute: typeof MainEnvironmentsEnvironmentSlugEnvironment_variablesRoute
   MainEnvironmentsEnvironmentSlugIndexRoute: typeof MainEnvironmentsEnvironmentSlugIndexRoute
@@ -230,12 +299,14 @@ const MainEnvironmentsEnvironmentSlugRouteWithChildren =
   )
 
 interface MainRouteChildren {
+  MainProfileRoute: typeof MainProfileRouteWithChildren
   MainIndexRoute: typeof MainIndexRoute
   MainEnvironmentsEnvironmentSlugRoute: typeof MainEnvironmentsEnvironmentSlugRouteWithChildren
   MainEnvironmentsIndexRoute: typeof MainEnvironmentsIndexRoute
 }
 
 const MainRouteChildren: MainRouteChildren = {
+  MainProfileRoute: MainProfileRouteWithChildren,
   MainIndexRoute: MainIndexRoute,
   MainEnvironmentsEnvironmentSlugRoute:
     MainEnvironmentsEnvironmentSlugRouteWithChildren,
