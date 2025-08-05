@@ -1,17 +1,5 @@
 # core-schema
 
-## Getting Started
-
-Navigate to the current working directory (`packages/core-schema`) and run the following commands:
-
-```bash
-cp .env.example .env
-bun supabase start
-bun db:reset
-```
-
-If you need to reset your local database instance at any point, run `supabase db reset`.
-
 ## Naming Conventions
 
 ⚠️ NOTE: The schema does not strictly enforce these conventions yet. These naming conventions are a draft.

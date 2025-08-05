@@ -40,6 +40,12 @@ Note: If `drizzle-kit` is stuck after outputting `Reading config file...`, run `
 bun --cwd packages/platform dev
 ```
 
+## Prepare the core schema database
+
+```bash
+bun --cwd packages/core-schema db:reset
+```
+
 ## Installation of PostgreSQL extensions
 
 - Add source compiling to `docker/postgres/Dockerfile`: For most extensions that is not shipped with Postgres.
