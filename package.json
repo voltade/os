@@ -25,8 +25,8 @@
     "core:db:plv8ify": "bun run --filter @voltade/core-schema db:plv8ify",
     "core:db:current": "bun run --filter @voltade/core-schema db:current",
     "core:db:seed": "bun run --filter @voltade/core-schema db:seed",
-    "core:db:reset": "bun run --filter @voltade/core-schema db:reset && bun run core:db:typegen",
-    "core:db:typegen": "supabase gen types typescript --local > packages/core-schema/supabase/database.gen.ts",
+    "core:db:reset": "bun run --filter @voltade/core-schema db:reset",
+    "core:db:typegen": "bun run --filter @voltade/core-schema db:typegen",
     "clean": "git clean -xdf node_modules 'packages/*/node_modules'"
   },
   "devDependencies": {

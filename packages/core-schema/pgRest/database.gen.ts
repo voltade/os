@@ -78,10 +78,6 @@ export type Database = {
         Args: { p_relation: string; p_object: string }
         Returns: boolean
       }
-      dummy: {
-        Args: Record<PropertyKey, never>
-        Returns: string
-      }
     }
     Enums: {
       [_ in never]: never
@@ -214,4 +210,3 @@ export const Constants = {
     Enums: {},
   },
 } as const
-
