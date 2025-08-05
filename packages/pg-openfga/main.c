@@ -6,7 +6,7 @@ PG_MODULE_MAGIC;
 
 void _PG_init(void);
 
-PG_FUNCTION_INFO_V1(Check);
+PG_FUNCTION_INFO_V1(check);
 
 // C-level variable to hold the GUC value.
 // This variable is accessible from the Go code.
