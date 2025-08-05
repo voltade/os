@@ -1,4 +1,3 @@
-import { Center, Container } from '@mantine/core';
 import { createFileRoute, Outlet } from '@tanstack/react-router';
 
 export const Route = createFileRoute('/_auth')({
@@ -7,10 +6,8 @@ export const Route = createFileRoute('/_auth')({
 
 function RouteComponent() {
   return (
-    <Container py="lg">
-      <Center>
-        <Outlet />
-      </Center>
-    </Container>
+    <div className="min-h-screen w-full">
+      <Outlet />
+    </div>
   );
 }
