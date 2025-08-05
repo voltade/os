@@ -19,11 +19,7 @@ bun tofu:apply
 
 Login to ArgoCD with username `admin` and password `admin`.
 
-To destroy the cluster, run:
-
-```bash
-bun tofu:destroy
-```
+(To destroy the cluster, run `bun tofu:destroy`.)
 
 ## Prepare the platform database
 
@@ -31,8 +27,9 @@ bun tofu:destroy
 bun --cwd packages/platform env
 bun --cwd packages/platform db:reset
 ```
+This creates the platform database and inserts one row into the `environment` table.
 
-Note: If `drizzle-kit` is stuck after outputting `Reading config file...`, run `bun run clean && bun install` and try again.
+Note: If `drizzle-kit` is stuck after outputting `Reading config file`, run `bun run clean && bun install` and try again.
 
 ## Start the platform web app
 
@@ -40,10 +37,22 @@ Note: If `drizzle-kit` is stuck after outputting `Reading config file...`, run `
 bun --cwd packages/platform dev
 ```
 
-## Prepare the core schema database
+This serves an `/environment` endpoint which tells ArgoCD to create a  database ("environment database") which corresponds to the row inserted.
+## Apply the core schema to the environment database and seed it
 
 ```bash
 bun --cwd packages/core-schema db:reset
+```
+
+## Connect the app template to the environment database
+Edit `packages/app-template/.env` with reference to `.env.example`.
+
+(TODO: Update the names of the environment variables to stop implying Supabase.)
+
+## Start the app template
+
+```bash
+bun --cwd packages/app-template dev
 ```
 
 ## Installation of PostgreSQL extensions
