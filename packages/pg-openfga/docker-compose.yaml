@@ -1,0 +1,66 @@
+services:
+  postgres:
+    build: .
+    environment:
+      POSTGRES_DB: app
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+    ports:
+      - 54322:5432
+    volumes:
+      - postgres:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+  migrate:
+    depends_on:
+      postgres:
+        condition: service_healthy
+    image: openfga/openfga:latest
+    command: migrate
+    environment:
+      - OPENFGA_DATASTORE_ENGINE=postgres
+      - OPENFGA_DATASTORE_URI=postgres://postgres:postgres@postgres:5432/postgres?sslmode=disable
+
+  psql:
+    depends_on:
+      migrate:
+        condition: service_completed_successfully
+    image: alpine/psql:17.5
+    environment:
+      PGHOST: postgres
+      PGPORT: 5432
+      PGUSER: postgres
+      PGPASSWORD: postgres
+      PGDATABASE: postgres
+      PGSSLMODE: disable
+    command:
+      - -c
+      - |
+        drop extension if exists openfga cascade;
+        create extension openfga;
+
+  openfga:
+    depends_on:
+      migrate:
+        condition: service_completed_successfully
+    image: openfga/openfga:latest
+    container_name: openfga
+    environment:
+      - OPENFGA_DATASTORE_ENGINE=postgres
+      - OPENFGA_DATASTORE_URI=postgres://postgres:postgres@postgres:5432/postgres?sslmode=disable
+      - OPENFGA_LOG_FORMAT=json
+    command: run
+    ports:
+      # Needed for the http server
+      - "8080:8080"
+      # Needed for the grpc server (if used)
+      - "8081:8081"
+      # Needed for the playground (Do not enable in prod!)
+      - "3005:3000"
+
+volumes:
+  postgres: {}
