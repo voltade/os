@@ -1,6 +1,6 @@
 # https://www.postgresql.org/docs/current/extend-pgxs.html
 EXTENSION = openfga
-DATA = openfga--0.2.sql
+DATA = openfga--0.1.0.sql
 MODULES = openfga
 
 # Include /usr/lib/postgresql/17/lib/pgxs/src/makefiles/pgxs.mk

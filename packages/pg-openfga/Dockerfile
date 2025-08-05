@@ -28,4 +28,4 @@ FROM postgres:${postgresql_release}-${debian_version}
 ARG postgresql_major
 COPY --from=openfga-source /tmp/pg-openfga/openfga.so "/usr/lib/postgresql/${postgresql_major}/lib/"
 COPY --from=openfga-source /tmp/pg-openfga/openfga.control "/usr/share/postgresql/${postgresql_major}/extension/"
-COPY --from=openfga-source /tmp/pg-openfga/openfga--0.2.sql "/usr/share/postgresql/${postgresql_major}/extension/"
+COPY --from=openfga-source /tmp/pg-openfga/openfga--0.1.0.sql "/usr/share/postgresql/${postgresql_major}/extension/"
