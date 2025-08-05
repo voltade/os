@@ -59,7 +59,7 @@ export default function RouteComponent() {
           {!email ? (
             <EmailForm onEmailSent={setEmail} />
           ) : (
-            <EmailOtp email={email} />
+            <EmailOtp email={email} setEmail={setEmail} />
           )}
         </div>
       </Stack>

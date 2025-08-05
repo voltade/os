@@ -85,7 +85,7 @@ export function ProfileGeneral() {
         <Paper p="md" withBorder>
           <Stack gap="md">
             <Group>
-              <Avatar src={sessionData.user.image} size="lg" radius="md">
+              <Avatar src={sessionData.user.image} size="xl" radius="md">
                 {sessionData.user.name?.charAt(0).toUpperCase()}
               </Avatar>
               <Stack gap={4}>

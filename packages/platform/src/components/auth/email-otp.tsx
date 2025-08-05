@@ -8,9 +8,10 @@ import { authClient } from '#src/lib/auth.ts';
 
 interface Props {
   email: string;
+  setEmail: (email: string | null) => void;
 }
 
-export function EmailOtp({ email }: Props) {
+export function EmailOtp({ email, setEmail }: Props) {
   const navigate = useNavigate();
   const [isLoading, setIsLoading] = useState(false);
 
@@ -66,7 +67,7 @@ export function EmailOtp({ email }: Props) {
         </Stack>
 
         <Stack gap="lg">
-          <Stack gap="xs" align="center">
+          <Stack gap="xs">
             <PinInput
               length={6}
               size="lg"
@@ -79,32 +80,23 @@ export function EmailOtp({ email }: Props) {
                   fontWeight: 600,
                   width: '48px',
                   height: '48px',
-                  '&:focus': {
-                    borderColor: '#7c3aed',
-                    boxShadow: '0 0 0 3px rgba(124, 58, 237, 0.1)',
-                  },
                 },
               }}
               {...form.getInputProps('otp')}
             />
           </Stack>
 
+          <Button type="submit" fullWidth size="md" loading={isLoading}>
+            {isLoading ? 'Verifying...' : 'Verify and Sign in'}
+          </Button>
           <Button
-            type="submit"
-            fullWidth
-            size="lg"
-            loading={isLoading}
-            style={{
-              backgroundColor: '#7c3aed',
-              borderRadius: '6px',
-              border: 'none',
-              fontWeight: 600,
-              fontSize: '16px',
-              color: 'white',
-              height: '48px',
+            onClick={() => {
+              setEmail(null);
             }}
+            size="md"
+            variant="outline"
           >
-            {isLoading ? 'Verifying...' : 'Verify and sign in'}
+            Cancel
           </Button>
         </Stack>
       </Stack>
