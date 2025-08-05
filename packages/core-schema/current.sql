@@ -11,3 +11,5 @@
  */
 --!include schemas/*/functions/*.sql
 --!include schemas/*/triggers/*.sql
+notify pgrst,
+'reload schema';
