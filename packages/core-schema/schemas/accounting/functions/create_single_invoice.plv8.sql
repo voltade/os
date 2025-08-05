@@ -4216,9 +4216,6 @@ function pgMaterializedViewWithSchema(name, selection, schema) {
   }
   return new MaterializedViewBuilder(name, schema);
 }
-function pgView(name, columns) {
-  return pgViewWithSchema(name, columns, undefined);
-}
 
 // ../../node_modules/drizzle-orm/pg-core/utils.js
 function extractUsedTable(table) {
@@ -5461,6 +5458,12 @@ var orderTable = salesSchema.table("order", {
 // schemas/product/schema.ts
 var productSchema = pgSchema("product");
 
+// schemas/product/tables/combo.ts
+var comboTable = productSchema.table("combo", {
+  ...DEFAULT_COLUMNS,
+  name: text().notNull()
+});
+
 // schemas/product/enums.ts
 var ProductType;
 ((ProductType2) => {
@@ -5500,11 +5503,7 @@ var ProductLifecycleStatus;
   ProductLifecycleStatus2["END_OF_LIFE"] = "EndOfLife";
 })(ProductLifecycleStatus ||= {});
 var productLifecycleStatusEnum = productSchema.enum("product_lifecycle_status_enum", enumToPgEnum(ProductLifecycleStatus));
-// schemas/product/tables/combo.ts
-var comboTable = productSchema.table("combo", {
-  ...DEFAULT_COLUMNS,
-  name: text().notNull()
-});
+
 // schemas/resource/tables/uom.ts
 var uomTable = resourceSchema.table("uom", {
   ...DEFAULT_COLUMNS,
@@ -5626,70 +5625,9 @@ var productRelations = relations(productTable, ({ one }) => ({
     references: [productTemplateTable.id]
   })
 }));
-// schemas/product/tables/template_combo.ts
-function checkExpression6(relation) {
-  return sql`exists(select 1 from ${productTemplateTable} pt where template_id = pt.id and allow('${sql.raw(relation)}', 'inventory:' || cast(pt.id as varchar)))`;
-}
-var templateComboTable = productSchema.table("template_combo", {
-  ...DEFAULT_COLUMNS,
-  combo_id: integer().notNull(),
-  template_id: integer().notNull()
-}, (table) => [
-  foreignKey({
-    name: "template_combo_combo_id_fkey",
-    columns: [table.combo_id],
-    foreignColumns: [comboTable.id]
-  }),
-  foreignKey({
-    name: "template_combo_template_id_fkey",
-    columns: [table.template_id],
-    foreignColumns: [productTemplateTable.id]
-  }),
-  pgPolicy("template_combo_select_policy", {
-    as: "permissive",
-    for: "select",
-    using: checkExpression6("can_view_products")
-  }),
-  pgPolicy("template_combo_insert_policy", {
-    as: "permissive",
-    for: "insert",
-    withCheck: checkExpression6("can_create_products")
-  }),
-  pgPolicy("template_combo_update_policy", {
-    as: "permissive",
-    for: "update",
-    using: checkExpression6("can_edit_products")
-  }),
-  pgPolicy("template_combo_delete_policy", {
-    as: "permissive",
-    for: "delete",
-    using: checkExpression6("can_delete_products")
-  })
-]);
-var templateComboRelations = relations(templateComboTable, ({ one }) => ({
-  combo: one(comboTable, {
-    fields: [templateComboTable.combo_id],
-    references: [comboTable.id]
-  }),
-  template: one(productTemplateTable, {
-    fields: [templateComboTable.template_id],
-    references: [productTemplateTable.id]
-  })
-}));
-// schemas/product/views/product_template_view.ts
-var productTemplateView = pgView("product_template_view").with({
-  checkOption: "cascaded",
-  securityBarrier: true,
-  securityInvoker: true
-}).as((qb) => qb.select({
-  id: productTemplateTable.id,
-  name: productTemplateTable.name,
-  description: productTemplateTable.description,
-  list_price: productTemplateTable.list_price,
-  category: productTemplateTable.category
-}).from(productTemplateTable));
+
 // schemas/product/tables/combo_product.ts
-function checkExpression7(relation) {
+function checkExpression6(relation) {
   return sql`exists(select 1 from ${productTable} p left join ${productTemplateTable} pt on p.template_id = pt.id where product_id = p.id and allow('${sql.raw(relation)}', 'inventory:' || cast(pt.id as varchar)))`;
 }
 var comboProductTable = productSchema.table("combo_product", {
@@ -5712,22 +5650,22 @@ var comboProductTable = productSchema.table("combo_product", {
   pgPolicy("combo_product_select_policy", {
     as: "permissive",
     for: "select",
-    using: checkExpression7("can_view_products")
+    using: checkExpression6("can_view_products")
   }),
   pgPolicy("combo_product_insert_policy", {
     as: "permissive",
     for: "insert",
-    withCheck: checkExpression7("can_create_products")
+    withCheck: checkExpression6("can_create_products")
   }),
   pgPolicy("combo_product_update_policy", {
     as: "permissive",
     for: "update",
-    using: checkExpression7("can_edit_products")
+    using: checkExpression6("can_edit_products")
   }),
   pgPolicy("combo_product_delete_policy", {
     as: "permissive",
     for: "delete",
-    using: checkExpression7("can_delete_products")
+    using: checkExpression6("can_delete_products")
   })
 ]);
 var comboItemRelations = relations(comboProductTable, ({ one }) => ({
@@ -5742,7 +5680,7 @@ var comboItemRelations = relations(comboProductTable, ({ one }) => ({
 }));
 
 // schemas/sales/tables/order_line.ts
-function checkExpression8(relation) {
+function checkExpression7(relation) {
   return sql`exists(select 1 from ${orderTable} so where order_id = so.id and allow('${sql.raw(relation)}', 'order:' || so.reference_id))`;
 }
 var orderLineTable = salesSchema.table("order_line", {
@@ -5783,22 +5721,22 @@ var orderLineTable = salesSchema.table("order_line", {
   pgPolicy("order_line_select_policy", {
     as: "permissive",
     for: "select",
-    using: checkExpression8("can_view_order")
+    using: checkExpression7("can_view_order")
   }),
   pgPolicy("order_line_insert_policy", {
     as: "permissive",
     for: "insert",
-    withCheck: checkExpression8("can_create_order")
+    withCheck: checkExpression7("can_create_order")
   }),
   pgPolicy("order_line_update_policy", {
     as: "permissive",
     for: "update",
-    using: checkExpression8("can_edit_order")
+    using: checkExpression7("can_edit_order")
   }),
   pgPolicy("order_line_delete_policy", {
     as: "permissive",
     for: "delete",
-    using: checkExpression8("can_delete_order")
+    using: checkExpression7("can_delete_order")
   })
 ]);
 var orderLineRelations = relations(orderLineTable, ({ one }) => ({

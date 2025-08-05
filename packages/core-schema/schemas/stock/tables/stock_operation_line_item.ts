@@ -16,11 +16,9 @@ import {
   StockOperationLineStatus,
   stockOperationLineStatusEnum,
 } from '../enums.ts';
-import {
-  stockOperationLineTable,
-  stockOperationTable,
-  stockUnitTable,
-} from '../index.ts';
+import { stockOperationTable } from '../tables/stock_operation.ts';
+import { stockOperationLineTable } from '../tables/stock_operation_line.ts';
+import { stockUnitTable } from '../tables/stock_unit.ts';
 
 /**
  * Check expression for RLS policies.

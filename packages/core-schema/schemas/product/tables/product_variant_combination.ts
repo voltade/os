@@ -2,8 +2,9 @@ import { relations, type SQL, sql } from 'drizzle-orm';
 import { foreignKey, integer, pgPolicy } from 'drizzle-orm/pg-core';
 
 import { DEFAULT_COLUMNS } from '../../utils.ts';
-import { productTable, productTemplateTable } from '../index.ts';
 import { productSchema } from '../schema.ts';
+import { productTable } from '../tables/product.ts';
+import { productTemplateTable } from '../tables/product_template.ts';
 import { productAttributeTable } from './attribute.ts';
 
 /**

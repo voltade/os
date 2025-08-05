@@ -9,7 +9,8 @@ import {
   uniqueIndex,
 } from 'drizzle-orm/pg-core';
 
-import { productTable, productTemplateTable } from '../../product/index.ts';
+import { productTable } from '../../product/tables/product.ts';
+import { productTemplateTable } from '../../product/tables/product_template.ts';
 import { stockSchema } from '../../schema.ts';
 import { DEFAULT_COLUMNS } from '../../utils.ts';
 import { warehouseTable } from './warehouse.ts';

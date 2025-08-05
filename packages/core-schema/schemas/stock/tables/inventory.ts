@@ -10,14 +10,13 @@ import {
 } from 'drizzle-orm/pg-core';
 import { relations } from 'drizzle-orm/relations';
 
-import { productTable, productTemplateTable } from '../../product/index.ts';
+import { productTable } from '../../product/tables/product.ts';
+import { productTemplateTable } from '../../product/tables/product_template.ts';
 import { stockSchema } from '../../schema.ts';
 import { DEFAULT_COLUMNS } from '../../utils.ts';
-import {
-  stockUnitTable,
-  warehouseLocationTable,
-  warehouseTable,
-} from '../index.ts';
+import { stockUnitTable } from '../tables/stock_unit.ts';
+import { warehouseTable } from '../tables/warehouse.ts';
+import { warehouseLocationTable } from '../tables/warehouse_location.ts';
 
 /**
  * Check expression for RLS policies.

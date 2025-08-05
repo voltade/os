@@ -7,8 +7,10 @@ import {
 } from 'drizzle-orm/pg-core';
 
 import { DEFAULT_COLUMNS, priceCol } from '../../utils.ts';
-import { comboTable, productTable, productTemplateTable } from '../index.ts';
 import { productSchema } from '../schema.ts';
+import { comboTable } from '../tables/combo.ts';
+import { productTable } from '../tables/product.ts';
+import { productTemplateTable } from '../tables/product_template.ts';
 
 /**
  * Check expression for RLS policies.
