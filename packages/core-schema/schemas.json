@@ -1,16 +1,17 @@
 {
   "schemas": [
     "account",
-    "purchase",
-    "stock",
     "approval",
+    "education",
+    "hr",
     "mrp",
-    "repair",
     "product",
     "project",
-    "service",
-    "hr",
+    "purchase",
+    "repair",
     "resource",
-    "sales"
+    "sales",
+    "service",
+    "stock"
   ]
 }
