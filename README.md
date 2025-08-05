@@ -47,8 +47,6 @@ bun --cwd packages/core-schema db:reset
 ## Connect the app template to the environment database
 Edit `packages/app-template/.env` with reference to `.env.example`.
 
-(TODO: Update the names of the environment variables to stop implying Supabase.)
-
 ## Start the app template
 
 ```bash
