@@ -1,0 +1,19 @@
+{
+  "compilerOptions": {
+    "allowImportingTsExtensions": true,
+    "allowJs": true,
+    "baseUrl": ".",
+    "forceConsistentCasingInFileNames": true,
+    "jsx": "react-jsx",
+    "module": "Preserve",
+    "moduleResolution": "bundler",
+    "noEmit": true,
+    "paths": {
+      "#src/*": ["./src/*"]
+    },
+    "skipLibCheck": true,
+    "strict": true,
+    "target": "ESNext"
+  },
+  "exclude": ["dist", "node_modules"]
+}
