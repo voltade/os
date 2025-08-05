@@ -495,7 +495,7 @@ COPY --from=index_advisor-source /tmp/*.deb /tmp/
 COPY --from=supautils-source /tmp/*.deb /tmp/
 COPY --from=openfga-source /tmp/pg-openfga/openfga.so "/usr/lib/postgresql/${postgresql_major}/lib/"
 COPY --from=openfga-source /tmp/pg-openfga/openfga.control "/usr/share/postgresql/${postgresql_major}/extension/"
-COPY --from=openfga-source /tmp/pg-openfga/openfga--0.1.sql "/usr/share/postgresql/${postgresql_major}/extension/"
+COPY --from=openfga-source /tmp/pg-openfga/openfga--0.2.sql "/usr/share/postgresql/${postgresql_major}/extension/"
 
 RUN apt update && apt install -y --no-install-recommends \
   /tmp/*.deb \
