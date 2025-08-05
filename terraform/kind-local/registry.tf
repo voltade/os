@@ -38,7 +38,7 @@ resource "docker_container" "registry" {
 resource "null_resource" "run_bun_charts" {
   depends_on = [docker_container.registry]
   provisioner "local-exec" {
-    command = "bun charts -y"
+    command = "bun charts --force --yes"
   }
 }
 
