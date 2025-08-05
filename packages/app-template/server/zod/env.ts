@@ -5,8 +5,7 @@ export const appEnvVariablesSchema = z.object({
   VITE_NODE_ENV: z.string().default('production'),
 
   VITE_APP_URL: z.string().url(),
-  VITE_SUPABASE_URL: z.string(),
-  VITE_SUPABASE_ANON_KEY: z.string(),
+  VITE_PGREST_URL: z.string(),
   DB_USER: z.string(),
   DB_PASSWORD: z.string(),
   DB_HOST: z.string(),
@@ -17,8 +16,7 @@ export const appEnvVariablesSchema = z.object({
 // Validate and export the environment
 export const env = appEnvVariablesSchema.parse({
   VITE_NODE_ENV: process.env.VITE_NODE_ENV,
-  VITE_SUPABASE_URL: process.env.VITE_SUPABASE_URL,
-  VITE_SUPABASE_ANON_KEY: process.env.VITE_SUPABASE_ANON_KEY,
+  VITE_PGREST_URL: process.env.VITE_PGREST_URL,
   VITE_APP_URL: process.env.VITE_APP_URL,
   DB_USER: process.env.DB_USER,
   DB_PASSWORD: process.env.DB_PASSWORD,
