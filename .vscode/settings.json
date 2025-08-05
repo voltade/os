@@ -50,6 +50,7 @@
     "sslip",
     "supabase",
     "traefik",
+    "tstzrange",
     "vite",
     "voltade"
   ],
