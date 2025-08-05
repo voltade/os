@@ -1,8 +1,2 @@
-create or replace function openfga_check (
-  p_server_address text,
-  p_store_name text,
-  p_user text,
-  p_relation text,
-  p_object text
-) returns boolean as '$libdir/openfga',
+create or replace function openfga_check (p_store_name text, p_user text, p_relation text, p_object text) returns boolean as '$libdir/openfga',
 'Check' language c strict;

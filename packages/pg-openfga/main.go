@@ -9,13 +9,16 @@ package main
 
 // C.FunctionCallBaseData
 #include "fmgr.h"
+
+// Expose the C GUC variable to Go
+extern char *server_address;
 */
 import "C"
 import (
 	"context"
 	"fmt"
 	"sync"
-	"time" // Import the time package
+	"time"
 	"unsafe"
 
 	"github.com/jchappelow/go-pgxs"
@@ -72,28 +75,27 @@ func getGrpcClient(ctx context.Context, address string, storeName string) (openf
 	}
 
 	clients[address] = FgaClientCache{client: client, storeId: store.GetId()}
-	pgxs.LogNotice(fmt.Sprintf("Connected to FGA server at %s, using store %s (id: %s)", address, storeName, store.GetId()))
-
 	return client, store.GetId(), nil
 }
 
 //export Check
 func Check(fi *FuncInfo) Datum {
 	funcInfo := convFI(fi)
-	// The first argument should now be the address of the FGA server
-	var fgaServerAddress, storeName, user, relation, object string
-	err := funcInfo.Scan(&fgaServerAddress, &storeName, &user, &relation, &object)
+	var storeName, user, relation, object string
+	err := funcInfo.Scan(&storeName, &user, &relation, &object)
 	if err != nil {
 		pgxs.LogError(fmt.Sprintf("Check: failed to scan arguments: %v", err))
 		return Datum(pgxs.ToDatum(false))
 	}
-	pgxs.LogNotice(fmt.Sprintf("Check: fgaServerAddress=%s, storeName=%s, user=%s, relation=%s, object=%s", fgaServerAddress, storeName, user, relation, object))
 
 	// Create a context with a 5-second timeout.
 	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
 	defer cancel() // Important to release resources
 
-	client, storeId, err := getGrpcClient(ctx, fgaServerAddress, storeName)
+	// Read the server address from the C GUC variable
+	address := C.GoString(C.server_address)
+
+	client, storeId, err := getGrpcClient(ctx, address, storeName)
 	if err != nil {
 		pgxs.LogError(fmt.Sprintf("Check: failed to get gRPC client: %v", err))
 		return Datum(pgxs.ToDatum(false))

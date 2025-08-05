@@ -1,2 +1,4 @@
+comment = 'PostgreSQL extension for OpenFGA'
 default_version = '0.1'
+module_pathname = '$libdir/openfga'
 relocatable = true
