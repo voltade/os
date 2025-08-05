@@ -1,4 +1,5 @@
 #!/usr/bin/env bun
+import crypto from 'node:crypto';
 import * as path from 'node:path';
 import { $, Glob } from 'bun';
 import { checkbox } from '@inquirer/prompts';
@@ -6,6 +7,7 @@ import semver from 'semver';
 import yaml from 'yaml';
 
 const args = process.argv.slice(2);
+const force = args.includes('--force') || args.includes('-f');
 const patch = args.includes('--patch');
 const yes = args.includes('--yes') || args.includes('-y');
 
@@ -32,13 +34,34 @@ for await (const file of chartsGlob.scan({
     console.error(`Chart name not found in ${file}`);
     continue;
   }
+  let newVersion = '';
+  if (force) {
+    newVersion = chartVersion;
+  } else if (patch) {
+    newVersion = semver.inc(chartVersion, 'patch') as string;
+  } else {
+    const randomBytes = crypto.randomBytes(32);
+    const hash = crypto.createHash('sha256');
+    hash.update(randomBytes);
+    const randomHex = hash.digest('hex').slice(0, 7);
+
+    const parsed = semver.parse(chartVersion)!;
+    if (parsed.prerelease.length) {
+      newVersion = `${parsed.major}.${parsed.minor}.${parsed.patch}-${randomHex}`;
+    } else {
+      newVersion = semver.inc(
+        chartVersion,
+        'prerelease',
+        randomHex,
+        false,
+      ) as string;
+    }
+  }
   chartMap.set(chartName, {
     yaml: chartDocument,
     chartName,
     chartVersion,
-    newVersion: patch
-      ? (semver.inc(chartVersion, 'patch') as string)
-      : chartVersion,
+    newVersion,
   });
 }
 
