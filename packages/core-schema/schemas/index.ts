@@ -4,6 +4,7 @@
 
 import * as accounting from './accounting/index.ts';
 import * as approval from './approval/index.ts';
+import * as education from './education/index.ts';
 import * as hr from './hr/index.ts';
 import * as manufacturing from './manufacturing/index.ts';
 import * as mrp from './mrp/index.ts';
@@ -20,6 +21,7 @@ import * as stock from './stock/index.ts';
 const schema = {
   ...accounting,
   ...approval,
+  ...education,
   ...hr,
   ...manufacturing,
   ...mrp,
@@ -41,6 +43,7 @@ export type Schema = typeof schema;
 // Re-export all individual tables and types for direct imports
 export * from './accounting/index.ts';
 export * from './approval/index.ts';
+export * from './education/index.ts';
 export * from './hr/index.ts';
 export * from './manufacturing/index.ts';
 export * from './mrp/index.ts';

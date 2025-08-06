@@ -12,6 +12,21 @@ export type Database = {
       [_ in never]: never
     }
     Views: {
+      class_view: {
+        Row: {
+          id: number | null
+          temporary_name: string | null
+        }
+        Insert: {
+          id?: number | null
+          temporary_name?: string | null
+        }
+        Update: {
+          id?: number | null
+          temporary_name?: string | null
+        }
+        Relationships: []
+      }
       product_template_view: {
         Row: {
           category:
@@ -71,6 +86,31 @@ export type Database = {
           name?: string | null
         }
         Relationships: []
+      }
+      student_view: {
+        Row: {
+          id: number | null
+          name: string | null
+          selected_class: number | null
+        }
+        Insert: {
+          id?: number | null
+          name?: string | null
+          selected_class?: number | null
+        }
+        Update: {
+          id?: number | null
+          name?: string | null
+          selected_class?: number | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "student_selected_class_class_id_fk"
+            columns: ["selected_class"]
+            referencedRelation: "class_view"
+            referencedColumns: ["id"]
+          },
+        ]
       }
     }
     Functions: {
