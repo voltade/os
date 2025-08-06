@@ -6,5 +6,9 @@ spec:
   selector:
     app: socat
   ports:
-    - protocol: TCP
+    - name: http-5173
+      protocol: TCP
       port: 5173
+    - name: http-51733
+      protocol: TCP
+      port: 51733

@@ -15,19 +15,35 @@ spec:
         app: socat
     spec:
       containers:
-        - name: socat
+        - name: socat-platform
           image: alpine/socat:1.8.0.3
           args:
             - "-d"
             - "TCP4-LISTEN:5173,fork,reuseaddr"
             - "TCP4:host.docker.internal:5173"
           ports:
-            - name: socat
+            - name: http-5173
               containerPort: 5173
           resources:
             requests:
-              memory: 64Mi
+              memory: 16Mi
               cpu: 50m
             limits:
-              memory: 128Mi
+              memory: 32Mi
+              cpu: 100m
+        - name: socat-app-template
+          image: alpine/socat:1.8.0.3
+          args:
+            - "-d"
+            - "TCP4-LISTEN:51733,fork,reuseaddr"
+            - "TCP4:host.docker.internal:51733"
+          ports:
+            - name: http-51733
+              containerPort: 51733
+          resources:
+            requests:
+              memory: 16Mi
+              cpu: 50m
+            limits:
+              memory: 32Mi
               cpu: 100m
