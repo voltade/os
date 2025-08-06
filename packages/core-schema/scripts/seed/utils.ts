@@ -149,12 +149,20 @@ interface SeedStockContext {
 }
 // endregion
 
+// region Education context
+export type ClassIds = {
+  [key: string]: number;
+};
+// endregion
+
 /**
  * Represents the context for seeding all data.
  */
 export type SeedContext = SeedResourceContext &
   SeedProductContext &
-  SeedStockContext;
+  SeedStockContext & {
+    classIds?: ClassIds;
+  };
 
 /**
  * Clears the specified tables in the database.

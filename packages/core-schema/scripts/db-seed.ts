@@ -4,12 +4,14 @@ import { faker } from '@faker-js/faker';
 
 import {
   clearAccountingData,
+  clearEducationData,
   clearProductData,
   clearPurchaseData,
   clearRepairData,
   clearResourceData,
   clearSalesData,
   seedAccountingData,
+  seedEducationData,
   seedProductData,
   seedPurchaseData,
   seedRepairData,
@@ -23,6 +25,7 @@ async function clearAllTables(): Promise<void> {
   console.log('=== CLEARING ALL TABLES AND RESETTING SEQUENCES ===');
 
   // Clear tables in reverse order of seeding
+  await clearEducationData();
   await clearRepairData();
   await clearSalesData();
   await clearPurchaseData();
@@ -54,6 +57,7 @@ async function seedAllData(): Promise<void> {
     context = await seedPurchaseData(context);
     context = await seedSalesData(context);
     context = await seedRepairData(context);
+    context = await seedEducationData(context);
   } catch (error) {
     console.error('❌ SEEDING FAILED:', error);
     process.exit(1);
