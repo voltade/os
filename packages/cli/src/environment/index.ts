@@ -7,7 +7,7 @@ import { listEnvironments } from './list.ts';
 export const environmentCommand = new Command('environment')
   .alias('env')
   .description('Environment operations')
-  .option('--org <orgname>', 'Filter by organization name')
+  .option('--org <orgSlug>', 'Filter by organization slug')
   .addCommand(
     new Command('list')
       .description('List environments')

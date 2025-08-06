@@ -4,6 +4,9 @@
   "license": "AGPL-3.0-only",
   "version": "0.1.0",
   "type": "module",
+  "exports": {
+    "./drizzle": "./drizzle/index.ts"
+  },
   "scripts": {
     "auth:generate": "bun --bun cli generate --output drizzle/auth.ts --config server/lib/auth.ts && bun biome check --write --no-errors-on-unmatched --files-ignore-unknown=true drizzle/auth.ts --unsafe",
     "db:pre-push": "bun scripts/db-pre-push.ts",

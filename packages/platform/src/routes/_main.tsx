@@ -6,7 +6,6 @@ import {
   useRouterState,
 } from '@tanstack/react-router';
 
-import { EnvironmentNavbar } from '#src/components/ui/environment/Navbar';
 import { Header } from '#src/components/ui/Header';
 import { OrganizationNavbar } from '#src/components/ui/organization/Navbar';
 import { authClient } from '#src/lib/auth.ts';
