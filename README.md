@@ -37,7 +37,7 @@ Note: If `drizzle-kit` is stuck after outputting `Reading config file`, run `bun
 bun --cwd packages/platform dev
 ```
 
-This serves an `/environment` endpoint which tells ArgoCD to create a  database ("environment database") which corresponds to the row inserted.
+This serves an `/environment` endpoint which tells ArgoCD to create a CNPG cluster corresponding to the row inserted, which has one database (the "environment database").
 ## Apply the core schema to the environment database and seed it
 
 ```bash
