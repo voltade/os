@@ -208,17 +208,17 @@ supabase-meta:
     PG_META_DB_USER:
       valueFrom:
         secretKeyRef:
-          name: cnpg-cluster-app
+          name: cnpg-service-role
           key: username
     PG_META_DB_PASSWORD:
       valueFrom:
         secretKeyRef:
-          name: cnpg-cluster-app
+          name: cnpg-service-role
           key: password
     PG_META_DB_NAME:
       valueFrom:
         secretKeyRef:
-          name: cnpg-cluster-app
+          name: cnpg-service-role
           key: dbname
     PG_META_DB_SSL_MODE: disable
     PG_META_PORT: "8080"

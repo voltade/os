@@ -5168,21 +5168,25 @@ var journalTable = accountingSchema.table("journal", {
     foreignColumns: [accountTable.id]
   }),
   pgPolicy("journal_select_policy", {
+    to: "authenticated",
     as: "permissive",
     for: "select",
     using: checkExpression("can_view_invoice")
   }),
   pgPolicy("journal_insert_policy", {
+    to: "authenticated",
     as: "permissive",
     for: "insert",
     withCheck: checkExpression("can_create_invoice")
   }),
   pgPolicy("journal_update_policy", {
+    to: "authenticated",
     as: "permissive",
     for: "update",
     using: checkExpression("can_edit_invoice")
   }),
   pgPolicy("journal_delete_policy", {
+    to: "authenticated",
     as: "permissive",
     for: "delete",
     using: checkExpression("can_delete_invoice")
@@ -5228,21 +5232,25 @@ var journalEntryTable = accountingSchema.table("journal_entry", {
     foreignColumns: [currencyTable.id]
   }),
   pgPolicy("journal_entry_select_policy", {
+    to: "authenticated",
     as: "permissive",
     for: "select",
     using: checkExpression2("can_view_invoice")
   }),
   pgPolicy("journal_entry_insert_policy", {
+    to: "authenticated",
     as: "permissive",
     for: "insert",
     withCheck: checkExpression2("can_create_invoice")
   }),
   pgPolicy("journal_entry_update_policy", {
+    to: "authenticated",
     as: "permissive",
     for: "update",
     using: checkExpression2("can_edit_invoice")
   }),
   pgPolicy("journal_entry_delete_policy", {
+    to: "authenticated",
     as: "permissive",
     for: "delete",
     using: checkExpression2("can_delete_invoice")
@@ -5330,21 +5338,25 @@ var orderTable = salesSchema.table("order", {
     foreignColumns: [contactTable.id]
   }),
   pgPolicy("sales_order_select_policy", {
+    to: "authenticated",
     as: "permissive",
     for: "select",
     using: checkExpression3("can_view_order")
   }),
   pgPolicy("sales_order_insert_policy", {
+    to: "authenticated",
     as: "permissive",
     for: "insert",
     withCheck: checkExpression3("can_create_order")
   }),
   pgPolicy("sales_order_update_policy", {
+    to: "authenticated",
     as: "permissive",
     for: "update",
     using: checkExpression3("can_edit_order")
   }),
   pgPolicy("sales_order_delete_policy", {
+    to: "authenticated",
     as: "permissive",
     for: "delete",
     using: checkExpression3("can_delete_order")

@@ -5030,9 +5030,6 @@ class Plv8PreparedQuery extends PgPreparedQuery {
 var pgDialect = new PgDialect;
 var db = new Plv8Database(pgDialect, new Plv8Session(pgDialect), undefined);
 
-// schemas/schema.ts
-var stockSchema = pgSchema("stock");
-
 // schemas/utils.ts
 function enumToPgEnum(myEnum) {
   return Object.values(myEnum).map((value) => `${value}`);
@@ -5053,6 +5050,9 @@ var DEFAULT_COLUMNS = {
   updated_at,
   is_active
 };
+
+// schemas/stock/schema.ts
+var stockSchema = pgSchema("stock");
 
 // schemas/stock/enums.ts
 var StockOperationType;

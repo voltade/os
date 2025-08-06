@@ -38,21 +38,25 @@ export const productVariantCombinationTable = productSchema.table(
      * @see {@link openfga/inventory.fga}
      */
     pgPolicy('product_variant_combination_select_policy', {
+      to: 'authenticated',
       as: 'permissive',
       for: 'select',
       using: checkExpression('can_view_products'),
     }),
     pgPolicy('product_variant_combination_insert_policy', {
+      to: 'authenticated',
       as: 'permissive',
       for: 'insert',
       withCheck: checkExpression('can_create_products'),
     }),
     pgPolicy('product_variant_combination_update_policy', {
+      to: 'authenticated',
       as: 'permissive',
       for: 'update',
       using: checkExpression('can_edit_products'),
     }),
     pgPolicy('product_variant_combination_delete_policy', {
+      to: 'authenticated',
       as: 'permissive',
       for: 'delete',
       using: checkExpression('can_delete_products'),

@@ -37,21 +37,25 @@ export const productTemplateAttributeLineTable = productSchema.table(
      * @see {@link openfga/inventory.fga}
      */
     pgPolicy('template_attribute_line_select_policy', {
+      to: 'authenticated',
       as: 'permissive',
       for: 'select',
       using: checkExpression('can_view_products'),
     }),
     pgPolicy('template_attribute_line_insert_policy', {
+      to: 'authenticated',
       as: 'permissive',
       for: 'insert',
       withCheck: checkExpression('can_create_products'),
     }),
     pgPolicy('template_attribute_line_update_policy', {
+      to: 'authenticated',
       as: 'permissive',
       for: 'update',
       using: checkExpression('can_edit_products'),
     }),
     pgPolicy('template_attribute_line_delete_policy', {
+      to: 'authenticated',
       as: 'permissive',
       for: 'delete',
       using: checkExpression('can_delete_products'),

@@ -53,14 +53,22 @@ spec:
         inRoles:
           - authenticated
           - anon
-          - service_role
         passwordSecret:
           name: cnpg-authenticator
 
       - name: authenticated
       - name: anon
+
       - name: service_role
+        comment: |
+          For the Supabase Studio to connect to the database.
+        login: true
+        inRoles:
+          - authenticated
+          - anon
         bypassrls: true
+        passwordSecret:
+          name: cnpg-service-role
 
       - name: openfga_admin
         login: true
@@ -75,13 +83,9 @@ spec:
       postInitApplicationSQL:
         - create schema if not exists extensions;
         - create extension supabase_vault cascade;
-        - grant usage on schema vault to app;
-        - grant execute on all functions in schema vault to app;
-        - grant select on all tables in schema vault to app;
-        - grant references on all tables in schema vault to app;
+        - grant usage on schema vault to core_migrator;
+        - grant execute on all functions in schema vault to core_migrator;
+        - grant select on all tables in schema vault to core_migrator;
+        - grant references on all tables in schema vault to core_migrator;
 
-        # TODO: use core-schema migration
-        # - grant usage on schema public to anon, authenticated, service_role;
-        # - grant all on all tables in schema public to anon, authenticated, service_role;
-        # - grant all on all routines in schema public to anon, authenticated, service_role;
-        # - grant all on all sequences in schema public to anon, authenticated, service_role;
+        - grant create on database app to core_migrator;

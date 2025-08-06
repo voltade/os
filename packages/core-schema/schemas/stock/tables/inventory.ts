@@ -12,8 +12,8 @@ import { relations } from 'drizzle-orm/relations';
 
 import { productTable } from '../../product/tables/product.ts';
 import { productTemplateTable } from '../../product/tables/product_template.ts';
-import { stockSchema } from '../../schema.ts';
 import { DEFAULT_COLUMNS } from '../../utils.ts';
+import { stockSchema } from '../schema.ts';
 import { stockUnitTable } from '../tables/stock_unit.ts';
 import { warehouseTable } from '../tables/warehouse.ts';
 import { warehouseLocationTable } from '../tables/warehouse_location.ts';
@@ -124,21 +124,25 @@ export const inventoryTable = stockSchema.table(
      * @see {@link openfga/inventory.fga}
      */
     pgPolicy('inventory_select_policy', {
+      to: 'authenticated',
       as: 'permissive',
       for: 'select',
       using: checkExpression('can_view_stock'),
     }),
     pgPolicy('inventory_insert_policy', {
+      to: 'authenticated',
       as: 'permissive',
       for: 'insert',
       withCheck: checkExpression('can_edit_stock'),
     }),
     pgPolicy('inventory_update_policy', {
+      to: 'authenticated',
       as: 'permissive',
       for: 'update',
       using: checkExpression('can_edit_stock'),
     }),
     pgPolicy('inventory_delete_policy', {
+      to: 'authenticated',
       as: 'permissive',
       for: 'delete',
       using: checkExpression('can_edit_stock'),

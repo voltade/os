@@ -11,8 +11,8 @@ import {
 
 import { productTable } from '../../product/tables/product.ts';
 import { productTemplateTable } from '../../product/tables/product_template.ts';
-import { stockSchema } from '../../schema.ts';
 import { DEFAULT_COLUMNS } from '../../utils.ts';
+import { stockSchema } from '../schema.ts';
 import { warehouseTable } from './warehouse.ts';
 import { warehouseLocationTable } from './warehouse_location.ts';
 
@@ -112,21 +112,25 @@ export const stockUnitTable = stockSchema.table(
      * @see {@link openfga/inventory.fga}
      */
     pgPolicy('stock_unit_select_policy', {
+      to: 'authenticated',
       as: 'permissive',
       for: 'select',
       using: checkExpression('can_view_products'),
     }),
     pgPolicy('stock_unit_insert_policy', {
+      to: 'authenticated',
       as: 'permissive',
       for: 'insert',
       withCheck: checkExpression('can_create_products'),
     }),
     pgPolicy('stock_unit_update_policy', {
+      to: 'authenticated',
       as: 'permissive',
       for: 'update',
       using: checkExpression('can_edit_products'),
     }),
     pgPolicy('stock_unit_delete_policy', {
+      to: 'authenticated',
       as: 'permissive',
       for: 'delete',
       using: checkExpression('can_delete_products'),

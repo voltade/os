@@ -5272,21 +5272,25 @@ var journalTable = accountingSchema.table("journal", {
     foreignColumns: [accountTable.id]
   }),
   pgPolicy("journal_select_policy", {
+    to: "authenticated",
     as: "permissive",
     for: "select",
     using: checkExpression("can_view_invoice")
   }),
   pgPolicy("journal_insert_policy", {
+    to: "authenticated",
     as: "permissive",
     for: "insert",
     withCheck: checkExpression("can_create_invoice")
   }),
   pgPolicy("journal_update_policy", {
+    to: "authenticated",
     as: "permissive",
     for: "update",
     using: checkExpression("can_edit_invoice")
   }),
   pgPolicy("journal_delete_policy", {
+    to: "authenticated",
     as: "permissive",
     for: "delete",
     using: checkExpression("can_delete_invoice")
@@ -5332,21 +5336,25 @@ var journalEntryTable = accountingSchema.table("journal_entry", {
     foreignColumns: [currencyTable.id]
   }),
   pgPolicy("journal_entry_select_policy", {
+    to: "authenticated",
     as: "permissive",
     for: "select",
     using: checkExpression2("can_view_invoice")
   }),
   pgPolicy("journal_entry_insert_policy", {
+    to: "authenticated",
     as: "permissive",
     for: "insert",
     withCheck: checkExpression2("can_create_invoice")
   }),
   pgPolicy("journal_entry_update_policy", {
+    to: "authenticated",
     as: "permissive",
     for: "update",
     using: checkExpression2("can_edit_invoice")
   }),
   pgPolicy("journal_entry_delete_policy", {
+    to: "authenticated",
     as: "permissive",
     for: "delete",
     using: checkExpression2("can_delete_invoice")
@@ -5434,21 +5442,25 @@ var orderTable = salesSchema.table("order", {
     foreignColumns: [contactTable.id]
   }),
   pgPolicy("sales_order_select_policy", {
+    to: "authenticated",
     as: "permissive",
     for: "select",
     using: checkExpression3("can_view_order")
   }),
   pgPolicy("sales_order_insert_policy", {
+    to: "authenticated",
     as: "permissive",
     for: "insert",
     withCheck: checkExpression3("can_create_order")
   }),
   pgPolicy("sales_order_update_policy", {
+    to: "authenticated",
     as: "permissive",
     for: "update",
     using: checkExpression3("can_edit_order")
   }),
   pgPolicy("sales_order_delete_policy", {
+    to: "authenticated",
     as: "permissive",
     for: "delete",
     using: checkExpression3("can_delete_order")
@@ -5543,21 +5555,25 @@ var productTemplateTable = productSchema.table("template", {
   index("product_template_type_idx").on(table.type),
   index("product_template_category_idx").on(table.category),
   pgPolicy("product_template_select_policy", {
+    to: "authenticated",
     as: "permissive",
     for: "select",
     using: checkExpression4("can_view_products")
   }),
   pgPolicy("product_template_insert_policy", {
+    to: "authenticated",
     as: "permissive",
     for: "insert",
     withCheck: checkExpression4("can_create_products")
   }),
   pgPolicy("product_template_update_policy", {
+    to: "authenticated",
     as: "permissive",
     for: "update",
     using: checkExpression4("can_edit_products")
   }),
   pgPolicy("product_template_delete_policy", {
+    to: "authenticated",
     as: "permissive",
     for: "delete",
     using: checkExpression4("can_delete_products")
@@ -5599,21 +5615,25 @@ var productTable = productSchema.table("product", {
   uniqueIndex("product_mpn_idx").on(table.mpn).where(isNotNull(table.mpn)),
   uniqueIndex("product_asin_idx").on(table.asin).where(isNotNull(table.asin)),
   pgPolicy("product_select_policy", {
+    to: "authenticated",
     as: "permissive",
     for: "select",
     using: checkExpression5("can_view_products")
   }),
   pgPolicy("product_insert_policy", {
+    to: "authenticated",
     as: "permissive",
     for: "insert",
     withCheck: checkExpression5("can_create_products")
   }),
   pgPolicy("product_update_policy", {
+    to: "authenticated",
     as: "permissive",
     for: "update",
     using: checkExpression5("can_edit_products")
   }),
   pgPolicy("product_delete_policy", {
+    to: "authenticated",
     as: "permissive",
     for: "delete",
     using: checkExpression5("can_delete_products")
@@ -5648,21 +5668,25 @@ var comboProductTable = productSchema.table("combo_product", {
   }),
   uniqueIndex("combo_product_combo_id_product_id_key").on(table.combo_id, table.product_id),
   pgPolicy("combo_product_select_policy", {
+    to: "authenticated",
     as: "permissive",
     for: "select",
     using: checkExpression6("can_view_products")
   }),
   pgPolicy("combo_product_insert_policy", {
+    to: "authenticated",
     as: "permissive",
     for: "insert",
     withCheck: checkExpression6("can_create_products")
   }),
   pgPolicy("combo_product_update_policy", {
+    to: "authenticated",
     as: "permissive",
     for: "update",
     using: checkExpression6("can_edit_products")
   }),
   pgPolicy("combo_product_delete_policy", {
+    to: "authenticated",
     as: "permissive",
     for: "delete",
     using: checkExpression6("can_delete_products")
@@ -5719,21 +5743,25 @@ var orderLineTable = salesSchema.table("order_line", {
     foreignColumns: [comboProductTable.id]
   }),
   pgPolicy("order_line_select_policy", {
+    to: "authenticated",
     as: "permissive",
     for: "select",
     using: checkExpression7("can_view_order")
   }),
   pgPolicy("order_line_insert_policy", {
+    to: "authenticated",
     as: "permissive",
     for: "insert",
     withCheck: checkExpression7("can_create_order")
   }),
   pgPolicy("order_line_update_policy", {
+    to: "authenticated",
     as: "permissive",
     for: "update",
     using: checkExpression7("can_edit_order")
   }),
   pgPolicy("order_line_delete_policy", {
+    to: "authenticated",
     as: "permissive",
     for: "delete",
     using: checkExpression7("can_delete_order")

@@ -21,7 +21,7 @@ else
   read -p "Please select a namespace: " SELECTED_NAMESPACE
 fi
 
-DB_PASSWORD=$(kubectl get secret -n "$SELECTED_NAMESPACE" cnpg-cluster-app -o jsonpath="{.data.password}" | base64 -d)
+DB_PASSWORD=$(kubectl get secret -n "$SELECTED_NAMESPACE" cnpg-core-migrator -o jsonpath="{.data.password}" | base64 -d)
 
 sed -i '' "s/^DB_PASSWORD=.*/DB_PASSWORD=$DB_PASSWORD/" "$ENV_FILE"
 
@@ -46,8 +46,10 @@ kubectl cnpg psql cnpg-cluster \
   -c "
 create schema if not exists extensions;
 create extension supabase_vault cascade;
-grant usage on schema vault to app;
-grant execute on all functions in schema vault to app;
-grant select on all tables in schema vault to app;
-grant references on all tables in schema vault to app;
+grant usage on schema vault to core_migrator;
+grant execute on all functions in schema vault to core_migrator;
+grant select on all tables in schema vault to core_migrator;
+grant references on all tables in schema vault to core_migrator;
+
+grant create on database app to core_migrator;
 "

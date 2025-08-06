@@ -53,21 +53,25 @@ export const purchaseOrderItemTable = purchaseSchema.table(
      * @see {@link openfga/order.fga}
      */
     pgPolicy('purchase_order_item_select_policy', {
+      to: 'authenticated',
       as: 'permissive',
       for: 'select',
       using: checkExpression('can_view_order'),
     }),
     pgPolicy('purchase_order_item_insert_policy', {
+      to: 'authenticated',
       as: 'permissive',
       for: 'insert',
       withCheck: checkExpression('can_create_order'),
     }),
     pgPolicy('purchase_order_item_update_policy', {
+      to: 'authenticated',
       as: 'permissive',
       for: 'update',
       using: checkExpression('can_edit_order'),
     }),
     pgPolicy('purchase_order_item_delete_policy', {
+      to: 'authenticated',
       as: 'permissive',
       for: 'delete',
       using: checkExpression('can_delete_order'),

@@ -41,21 +41,25 @@ export const purchaseRequisitionQuotationTable = purchaseSchema.table(
      * @see {@link openfga/quotation.fga}
      */
     pgPolicy('purchase_requisition_quotation_select_policy', {
+      to: 'authenticated',
       as: 'permissive',
       for: 'select',
       using: checkExpression('can_view_quotation'),
     }),
     pgPolicy('purchase_requisition_quotation_insert_policy', {
+      to: 'authenticated',
       as: 'permissive',
       for: 'insert',
       withCheck: checkExpression('can_create_quotation'),
     }),
     pgPolicy('purchase_requisition_quotation_update_policy', {
+      to: 'authenticated',
       as: 'permissive',
       for: 'update',
       using: checkExpression('can_edit_quotation'),
     }),
     pgPolicy('purchase_requisition_quotation_delete_policy', {
+      to: 'authenticated',
       as: 'permissive',
       for: 'delete',
       using: checkExpression('can_delete_quotation'),

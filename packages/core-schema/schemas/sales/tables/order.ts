@@ -64,21 +64,25 @@ export const orderTable = salesSchema.table(
      * @see {@link openfga/order.fga}
      */
     pgPolicy('sales_order_select_policy', {
+      to: 'authenticated',
       as: 'permissive',
       for: 'select',
       using: checkExpression('can_view_order'),
     }),
     pgPolicy('sales_order_insert_policy', {
+      to: 'authenticated',
       as: 'permissive',
       for: 'insert',
       withCheck: checkExpression('can_create_order'),
     }),
     pgPolicy('sales_order_update_policy', {
+      to: 'authenticated',
       as: 'permissive',
       for: 'update',
       using: checkExpression('can_edit_order'),
     }),
     pgPolicy('sales_order_delete_policy', {
+      to: 'authenticated',
       as: 'permissive',
       for: 'delete',
       using: checkExpression('can_delete_order'),

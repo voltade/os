@@ -10,12 +10,12 @@ import {
 } from 'drizzle-orm/pg-core';
 
 import { uomTable } from '../../resource/tables/uom.ts';
-import { stockSchema } from '../../schema.ts';
 import { DEFAULT_COLUMNS } from '../../utils.ts';
 import {
   StockOperationLineStatus,
   stockOperationLineStatusEnum,
 } from '../enums.ts';
+import { stockSchema } from '../schema.ts';
 import { stockOperationTable } from '../tables/stock_operation.ts';
 import { stockOperationLineTable } from '../tables/stock_operation_line.ts';
 import { stockUnitTable } from '../tables/stock_unit.ts';
@@ -139,21 +139,25 @@ export const stockOperationLineItemTable = stockSchema.table(
      * @see {@link openfga/order.fga}
      */
     pgPolicy('stock_operation_line_item_select_policy', {
+      to: 'authenticated',
       as: 'permissive',
       for: 'select',
       using: checkExpression('can_view_order'),
     }),
     pgPolicy('stock_operation_line_item_insert_policy', {
+      to: 'authenticated',
       as: 'permissive',
       for: 'insert',
       withCheck: checkExpression('can_create_order'),
     }),
     pgPolicy('stock_operation_line_item_update_policy', {
+      to: 'authenticated',
       as: 'permissive',
       for: 'update',
       using: checkExpression('can_edit_order'),
     }),
     pgPolicy('stock_operation_line_item_delete_policy', {
+      to: 'authenticated',
       as: 'permissive',
       for: 'delete',
       using: checkExpression('can_delete_order'),

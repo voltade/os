@@ -1,5 +1,5 @@
-import { stockSchema } from '../schema.ts';
 import { enumToPgEnum } from '../utils.ts';
+import { stockSchema } from './schema.ts';
 
 /**
  * The type of stock operation.

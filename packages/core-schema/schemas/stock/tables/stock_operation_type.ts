@@ -1,8 +1,8 @@
 import { text } from 'drizzle-orm/pg-core';
 
-import { stockSchema } from '../../schema.ts';
 import { DEFAULT_COLUMNS } from '../../utils.ts';
 import { stockOperationTypeEnum } from '../enums.ts';
+import { stockSchema } from '../schema.ts';
 
 /**
  * The `stock_operation_type` table defines the types of stock operations

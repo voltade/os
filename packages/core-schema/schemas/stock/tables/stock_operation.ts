@@ -10,9 +10,9 @@ import {
   varchar,
 } from 'drizzle-orm/pg-core';
 
-import { stockSchema } from '../../schema.ts';
 import { DEFAULT_COLUMNS, priceCol, timestampCol } from '../../utils.ts';
 import { StockOperationStatus, stockOperationStatusEnum } from '../enums.ts';
+import { stockSchema } from '../schema.ts';
 import { stockOperationTypeTable } from './stock_operation_type.ts';
 import { warehouseTable } from './warehouse.ts';
 import { warehouseLocationTable } from './warehouse_location.ts';
@@ -141,21 +141,25 @@ export const stockOperationTable = stockSchema.table(
      * @see {@link openfga/order.fga}
      */
     pgPolicy('stock_operation_select_policy', {
+      to: 'authenticated',
       as: 'permissive',
       for: 'select',
       using: checkExpression('can_view_order'),
     }),
     pgPolicy('stock_operation_insert_policy', {
+      to: 'authenticated',
       as: 'permissive',
       for: 'insert',
       withCheck: checkExpression('can_create_order'),
     }),
     pgPolicy('stock_operation_update_policy', {
+      to: 'authenticated',
       as: 'permissive',
       for: 'update',
       using: checkExpression('can_edit_order'),
     }),
     pgPolicy('stock_operation_delete_policy', {
+      to: 'authenticated',
       as: 'permissive',
       for: 'delete',
       using: checkExpression('can_delete_order'),

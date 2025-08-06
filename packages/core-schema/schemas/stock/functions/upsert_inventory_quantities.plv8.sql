@@ -5186,21 +5186,25 @@ var productTemplateTable = productSchema.table("template", {
   index("product_template_type_idx").on(table.type),
   index("product_template_category_idx").on(table.category),
   pgPolicy("product_template_select_policy", {
+    to: "authenticated",
     as: "permissive",
     for: "select",
     using: checkExpression("can_view_products")
   }),
   pgPolicy("product_template_insert_policy", {
+    to: "authenticated",
     as: "permissive",
     for: "insert",
     withCheck: checkExpression("can_create_products")
   }),
   pgPolicy("product_template_update_policy", {
+    to: "authenticated",
     as: "permissive",
     for: "update",
     using: checkExpression("can_edit_products")
   }),
   pgPolicy("product_template_delete_policy", {
+    to: "authenticated",
     as: "permissive",
     for: "delete",
     using: checkExpression("can_delete_products")
@@ -5242,21 +5246,25 @@ var productTable = productSchema.table("product", {
   uniqueIndex("product_mpn_idx").on(table.mpn).where(isNotNull(table.mpn)),
   uniqueIndex("product_asin_idx").on(table.asin).where(isNotNull(table.asin)),
   pgPolicy("product_select_policy", {
+    to: "authenticated",
     as: "permissive",
     for: "select",
     using: checkExpression2("can_view_products")
   }),
   pgPolicy("product_insert_policy", {
+    to: "authenticated",
     as: "permissive",
     for: "insert",
     withCheck: checkExpression2("can_create_products")
   }),
   pgPolicy("product_update_policy", {
+    to: "authenticated",
     as: "permissive",
     for: "update",
     using: checkExpression2("can_edit_products")
   }),
   pgPolicy("product_delete_policy", {
+    to: "authenticated",
     as: "permissive",
     for: "delete",
     using: checkExpression2("can_delete_products")
@@ -5269,7 +5277,7 @@ var productRelations = relations(productTable, ({ one }) => ({
   })
 }));
 
-// schemas/schema.ts
+// schemas/stock/schema.ts
 var stockSchema = pgSchema("stock");
 
 // schemas/stock/tables/warehouse.ts
@@ -5344,21 +5352,25 @@ var stockUnitTable = stockSchema.table("unit", {
   uniqueIndex("stock_unit_serial_idx").on(table.serial_no).where(sql`serial_no IS NOT NULL`),
   index("stock_unit_batch_idx").on(table.batch_no).where(sql`batch_no IS NOT NULL`),
   pgPolicy("stock_unit_select_policy", {
+    to: "authenticated",
     as: "permissive",
     for: "select",
     using: checkExpression3("can_view_products")
   }),
   pgPolicy("stock_unit_insert_policy", {
+    to: "authenticated",
     as: "permissive",
     for: "insert",
     withCheck: checkExpression3("can_create_products")
   }),
   pgPolicy("stock_unit_update_policy", {
+    to: "authenticated",
     as: "permissive",
     for: "update",
     using: checkExpression3("can_edit_products")
   }),
   pgPolicy("stock_unit_delete_policy", {
+    to: "authenticated",
     as: "permissive",
     for: "delete",
     using: checkExpression3("can_delete_products")
@@ -5414,21 +5426,25 @@ var inventoryTable = stockSchema.table("inventory", {
   index("inventory_warehouse_idx").on(table.warehouse_id),
   index("inventory_composite_idx").on(table.warehouse_id, table.product_id),
   pgPolicy("inventory_select_policy", {
+    to: "authenticated",
     as: "permissive",
     for: "select",
     using: checkExpression4("can_view_stock")
   }),
   pgPolicy("inventory_insert_policy", {
+    to: "authenticated",
     as: "permissive",
     for: "insert",
     withCheck: checkExpression4("can_edit_stock")
   }),
   pgPolicy("inventory_update_policy", {
+    to: "authenticated",
     as: "permissive",
     for: "update",
     using: checkExpression4("can_edit_stock")
   }),
   pgPolicy("inventory_delete_policy", {
+    to: "authenticated",
     as: "permissive",
     for: "delete",
     using: checkExpression4("can_edit_stock")

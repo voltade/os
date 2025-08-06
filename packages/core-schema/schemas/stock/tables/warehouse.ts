@@ -1,8 +1,8 @@
 import { index, text } from 'drizzle-orm/pg-core';
 
 import type { productTable } from '../../product/tables/product.ts';
-import { stockSchema } from '../../schema.ts';
 import { DEFAULT_COLUMNS } from '../../utils.ts';
+import { stockSchema } from '../schema.ts';
 import type { inventoryTable } from './inventory.ts';
 /**
  * A warehouse represents a physical location with a set of {@link inventoryTable inventory}.

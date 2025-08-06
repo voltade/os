@@ -1,0 +1,30 @@
+apiVersion: external-secrets.io/v1
+kind: ExternalSecret
+metadata:
+  name: cnpg-service-role
+  labels: {{- include "environment.labels" . | nindent 4 }}
+  annotations:
+    argocd.argoproj.io/sync-wave: "-2"
+spec:
+  dataFrom:
+    - sourceRef:
+        generatorRef:
+          apiVersion: generators.external-secrets.io/v1alpha1
+          kind: ClusterGenerator
+          name: password-64-length
+  refreshPolicy: OnChange
+  target:
+    name: cnpg-service-role
+    template:
+      # https://external-secrets.io/latest/guides/templating/#examples
+      engineVersion: v2
+      type: kubernetes.io/basic-auth
+      data:
+        dbname: app
+        host: cnpg-cluster-rw
+        password: "{{ `{{ .password }}` }}"
+        port: "5432"
+        uri: "postgresql://service_role:{{ `{{ .password }}` }}@cnpg-cluster-rw:5432/app"
+        uri_openfga: "postgresql://service_role:{{ `{{ .password }}` }}@cnpg-cluster-rw:5432/app?search_path=openfga"
+        user: service_role
+        username: service_role

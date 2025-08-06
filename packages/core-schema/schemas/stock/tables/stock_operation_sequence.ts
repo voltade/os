@@ -1,8 +1,8 @@
 import { relations } from 'drizzle-orm';
 import { foreignKey, integer, uniqueIndex } from 'drizzle-orm/pg-core';
 
-import { stockSchema } from '../../schema.ts';
 import { DEFAULT_COLUMNS } from '../../utils.ts';
+import { stockSchema } from '../schema.ts';
 import { stockOperationTypeTable } from './stock_operation_type.ts';
 import { warehouseTable } from './warehouse.ts';
 

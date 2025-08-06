@@ -8,8 +8,8 @@ import {
 } from 'drizzle-orm/pg-core';
 import { relations } from 'drizzle-orm/relations';
 
-import { stockSchema } from '../../schema.ts';
 import { DEFAULT_COLUMNS } from '../../utils.ts';
+import { stockSchema } from '../schema.ts';
 import { warehouseTable } from './warehouse.ts';
 
 /**

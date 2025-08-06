@@ -5059,9 +5059,6 @@ class Plv8PreparedQuery extends PgPreparedQuery {
 var pgDialect = new PgDialect;
 var db = new Plv8Database(pgDialect, new Plv8Session(pgDialect), undefined);
 
-// schemas/schema.ts
-var stockSchema = pgSchema("stock");
-
 // schemas/utils.ts
 function priceCol(name) {
   return numeric(name, { precision: 18, scale: 2 });
@@ -5085,6 +5082,9 @@ var DEFAULT_COLUMNS = {
   updated_at,
   is_active
 };
+
+// schemas/stock/schema.ts
+var stockSchema = pgSchema("stock");
 
 // schemas/stock/enums.ts
 var StockOperationType;
@@ -5226,21 +5226,25 @@ var stockOperationTable = stockSchema.table("operation", {
   index("stock_operation_dest_location_idx").on(table.destination_location_id).where(sql`destination_location_id IS NOT NULL`),
   uniqueIndex("stock_operation_reference_id_idx").on(table.reference_id).where(sql`reference_id IS NOT NULL`),
   pgPolicy("stock_operation_select_policy", {
+    to: "authenticated",
     as: "permissive",
     for: "select",
     using: checkExpression("can_view_order")
   }),
   pgPolicy("stock_operation_insert_policy", {
+    to: "authenticated",
     as: "permissive",
     for: "insert",
     withCheck: checkExpression("can_create_order")
   }),
   pgPolicy("stock_operation_update_policy", {
+    to: "authenticated",
     as: "permissive",
     for: "update",
     using: checkExpression("can_edit_order")
   }),
   pgPolicy("stock_operation_delete_policy", {
+    to: "authenticated",
     as: "permissive",
     for: "delete",
     using: checkExpression("can_delete_order")
@@ -5354,21 +5358,25 @@ var productTemplateTable = productSchema.table("template", {
   index("product_template_type_idx").on(table.type),
   index("product_template_category_idx").on(table.category),
   pgPolicy("product_template_select_policy", {
+    to: "authenticated",
     as: "permissive",
     for: "select",
     using: checkExpression2("can_view_products")
   }),
   pgPolicy("product_template_insert_policy", {
+    to: "authenticated",
     as: "permissive",
     for: "insert",
     withCheck: checkExpression2("can_create_products")
   }),
   pgPolicy("product_template_update_policy", {
+    to: "authenticated",
     as: "permissive",
     for: "update",
     using: checkExpression2("can_edit_products")
   }),
   pgPolicy("product_template_delete_policy", {
+    to: "authenticated",
     as: "permissive",
     for: "delete",
     using: checkExpression2("can_delete_products")
@@ -5410,21 +5418,25 @@ var productTable = productSchema.table("product", {
   uniqueIndex("product_mpn_idx").on(table.mpn).where(isNotNull(table.mpn)),
   uniqueIndex("product_asin_idx").on(table.asin).where(isNotNull(table.asin)),
   pgPolicy("product_select_policy", {
+    to: "authenticated",
     as: "permissive",
     for: "select",
     using: checkExpression3("can_view_products")
   }),
   pgPolicy("product_insert_policy", {
+    to: "authenticated",
     as: "permissive",
     for: "insert",
     withCheck: checkExpression3("can_create_products")
   }),
   pgPolicy("product_update_policy", {
+    to: "authenticated",
     as: "permissive",
     for: "update",
     using: checkExpression3("can_edit_products")
   }),
   pgPolicy("product_delete_policy", {
+    to: "authenticated",
     as: "permissive",
     for: "delete",
     using: checkExpression3("can_delete_products")
@@ -5480,21 +5492,25 @@ var stockOperationLineTable = stockSchema.table("operation_line", {
   uniqueIndex("stock_operation_line_product_idx").on(table.stock_operation_id, table.product_id),
   uniqueIndex("stock_operation_line_reference_idx").on(table.reference_id).where(sql`reference_id IS NOT NULL`),
   pgPolicy("stock_operation_line_select_policy", {
+    to: "authenticated",
     as: "permissive",
     for: "select",
     using: checkExpression4("can_view_order")
   }),
   pgPolicy("stock_operation_line_insert_policy", {
+    to: "authenticated",
     as: "permissive",
     for: "insert",
     withCheck: checkExpression4("can_create_order")
   }),
   pgPolicy("stock_operation_line_update_policy", {
+    to: "authenticated",
     as: "permissive",
     for: "update",
     using: checkExpression4("can_edit_order")
   }),
   pgPolicy("stock_operation_line_delete_policy", {
+    to: "authenticated",
     as: "permissive",
     for: "delete",
     using: checkExpression4("can_delete_order")

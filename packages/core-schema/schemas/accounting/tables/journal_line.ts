@@ -41,21 +41,25 @@ export const journalLineTable = accountingSchema.table(
      * @see {@link openfga/invoice.fga}
      */
     pgPolicy('journal_line_select_policy', {
+      to: 'authenticated',
       as: 'permissive',
       for: 'select',
       using: checkExpression('can_view_invoice'),
     }),
     pgPolicy('journal_line_insert_policy', {
+      to: 'authenticated',
       as: 'permissive',
       for: 'insert',
       withCheck: checkExpression('can_create_invoice'),
     }),
     pgPolicy('journal_line_update_policy', {
+      to: 'authenticated',
       as: 'permissive',
       for: 'update',
       using: checkExpression('can_edit_invoice'),
     }),
     pgPolicy('journal_line_delete_policy', {
+      to: 'authenticated',
       as: 'permissive',
       for: 'delete',
       using: checkExpression('can_delete_invoice'),
