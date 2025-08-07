@@ -56,6 +56,19 @@ export const auth = betterAuth({
     oidcProvider({
       loginPage: '/signin',
       consentPage: '/oauth/consent',
+      trustedClients: [
+        {
+          clientId: 'cli',
+          type: 'web',
+          redirectURLs: ['http://localhost:8080/callback'],
+          skipConsent: true,
+          clientSecret: 'VvrMhfMJBjDHMDWNTetIQGkNykfrmPfb',
+          name: 'Voltade CLI',
+          metadata: {},
+          disabled: false,
+        },
+      ],
+      accessTokenExpiresIn: 60 * 60 * 24 * 30, // 30 days
     }),
     openAPI({
       path: '/docs',
@@ -78,6 +91,7 @@ export const auth = betterAuth({
         definePayload: () => ({
           role: 'authenticated',
         }),
+        expirationTime: Math.floor(Date.now() / 1000) + 60 * 60 * 24 * 30, // 30 days
       },
     }),
     organization(),

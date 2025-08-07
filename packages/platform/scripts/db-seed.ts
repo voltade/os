@@ -2,7 +2,7 @@ import { hashPassword } from 'better-auth/crypto';
 
 import { appTable } from '#drizzle/app.ts';
 import { account as accountTable, user as userTable } from '#drizzle/auth.ts';
-import { environmentTable, oauthApplication } from '#drizzle/index.ts';
+import { environmentTable } from '#drizzle/index.ts';
 import { auth } from '#server/lib/auth.ts';
 import { db } from '#server/lib/db.ts';
 
@@ -89,22 +89,6 @@ await db.transaction(async (tx) => {
       is_production: true,
       slug: 'main',
       name: 'Main',
-    })
-    .onConflictDoNothing();
-});
-
-await db.transaction(async (tx) => {
-  await tx
-    .insert(oauthApplication)
-    .values({
-      id: 'nS3fF8G3CXnkgxuMxTdPQonqrp0hzmZ2',
-      name: 'Voltade CLI',
-      clientId: 'cli',
-      clientSecret: 'VvrMhfMJBjDHMDWNTetIQGkNykfrmPfb', // DO NOT CHANGE THIS SECRET
-      redirectURLs: 'http://localhost:8080/callback',
-      type: 'cli',
-      disabled: false,
-      userId: 'admin',
     })
     .onConflictDoNothing();
 });

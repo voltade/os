@@ -174,7 +174,7 @@ function createCallbackServer() {
 
         res.writeHead(200, { 'Content-Type': 'text/html' });
         res.end(`
-          <h1>✅ Authentication Successful!</h1>
+          <h1>Authentication Successful!</h1>
           <p>You can close this window and return to the CLI.</p>
           <script>setTimeout(() => window.close(), 5000);</script>
         `);
