@@ -9,9 +9,15 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
+import { Route as RegistrationFormRouteImport } from './routes/registration-form'
 import { Route as ProductTemplatesRouteImport } from './routes/product-templates'
 import { Route as IndexRouteImport } from './routes/index'
 
+const RegistrationFormRoute = RegistrationFormRouteImport.update({
+  id: '/registration-form',
+  path: '/registration-form',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const ProductTemplatesRoute = ProductTemplatesRouteImport.update({
   id: '/product-templates',
   path: '/product-templates',
@@ -26,31 +32,42 @@ const IndexRoute = IndexRouteImport.update({
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/product-templates': typeof ProductTemplatesRoute
+  '/registration-form': typeof RegistrationFormRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/product-templates': typeof ProductTemplatesRoute
+  '/registration-form': typeof RegistrationFormRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
   '/product-templates': typeof ProductTemplatesRoute
+  '/registration-form': typeof RegistrationFormRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/product-templates'
+  fullPaths: '/' | '/product-templates' | '/registration-form'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/product-templates'
-  id: '__root__' | '/' | '/product-templates'
+  to: '/' | '/product-templates' | '/registration-form'
+  id: '__root__' | '/' | '/product-templates' | '/registration-form'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   ProductTemplatesRoute: typeof ProductTemplatesRoute
+  RegistrationFormRoute: typeof RegistrationFormRoute
 }
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
+    '/registration-form': {
+      id: '/registration-form'
+      path: '/registration-form'
+      fullPath: '/registration-form'
+      preLoaderRoute: typeof RegistrationFormRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/product-templates': {
       id: '/product-templates'
       path: '/product-templates'
@@ -71,6 +88,7 @@ declare module '@tanstack/react-router' {
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   ProductTemplatesRoute: ProductTemplatesRoute,
+  RegistrationFormRoute: RegistrationFormRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)

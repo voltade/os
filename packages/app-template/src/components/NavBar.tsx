@@ -7,7 +7,7 @@ import {
   Text,
   Tooltip,
 } from '@mantine/core';
-import { IconHome, IconTable } from '@tabler/icons-react';
+import { IconHome, IconTable, IconUserPlus } from '@tabler/icons-react';
 import { useNavigate } from '@tanstack/react-router';
 import type React from 'react';
 import { useCallback, useState } from 'react';
@@ -18,10 +18,12 @@ export const NAVBAR_COLLAPSED_WIDTH_PX = 60;
 // Define routes
 export const HOME_ROUTE = '/';
 export const PRODUCT_TEMPLATES_TABLE_ROUTE = '/product-templates';
+export const REGISTRATION_FORM_ROUTE = '/registration-form';
 
 // Define route display names
 const HOME_ROUTE_NAME = 'Home';
 const PRODUCT_TEMPLATES_TABLE_ROUTE_NAME = 'Product Templates';
+export const REGISTRATION_FORM_ROUTE_NAME = 'Registration Form';
 
 export interface NavBarProps {
   opened?: boolean;
@@ -89,6 +91,13 @@ const NavBar: React.FC<NavBarProps> = (props: NavBarProps) => {
                   handleSetActiveTab(PRODUCT_TEMPLATES_TABLE_ROUTE)
                 }
               />
+              <NavLink
+                label={<Text size="lg">{REGISTRATION_FORM_ROUTE_NAME}</Text>}
+                variant="light"
+                leftSection={<IconUserPlus size={24} stroke={1.5} />}
+                active={activeTab === REGISTRATION_FORM_ROUTE}
+                onClick={() => handleSetActiveTab(REGISTRATION_FORM_ROUTE)}
+              />
             </Stack>
           ) : (
             <Stack>
@@ -126,6 +135,27 @@ const NavBar: React.FC<NavBarProps> = (props: NavBarProps) => {
                     stroke={1.5}
                     color={
                       activeTab === PRODUCT_TEMPLATES_TABLE_ROUTE
+                        ? undefined
+                        : 'black'
+                    }
+                  />
+                </ActionIcon>
+              </Tooltip>
+              <Tooltip
+                label={REGISTRATION_FORM_ROUTE_NAME}
+                position="right"
+                withArrow
+                arrowSize={4}
+              >
+                <ActionIcon
+                  variant="transparent"
+                  onClick={() => handleSetActiveTab(REGISTRATION_FORM_ROUTE)}
+                >
+                  <IconUserPlus
+                    size={24}
+                    stroke={1.5}
+                    color={
+                      activeTab === REGISTRATION_FORM_ROUTE
                         ? undefined
                         : 'black'
                     }
