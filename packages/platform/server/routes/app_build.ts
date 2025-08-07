@@ -1,5 +1,5 @@
 import { zValidator } from '@hono/zod-validator';
-import { and, desc, eq } from 'drizzle-orm';
+import { and, eq } from 'drizzle-orm';
 import { z } from 'zod';
 
 import { appTable } from '#drizzle/app.ts';
@@ -12,75 +12,12 @@ import {
   createBuildJob,
 } from '#server/lib/kubernetes/build/job.ts';
 import { getK8sObjectClient } from '#server/lib/kubernetes/kubeapi.ts';
+import { s3Client } from '#server/lib/s3.ts';
 
 export const route = factory
   .createApp()
-  .get(
-    '/builds',
-    zValidator(
-      'query',
-      z.object({
-        appId: z.string(),
-        orgId: z.string(),
-        limit: z.coerce.number().min(1).max(100).default(20),
-        offset: z.coerce.number().min(0).default(0),
-      }),
-    ),
-    async (c) => {
-      const { appId, orgId, limit, offset } = c.req.valid('query');
-
-      const builds = await db
-        .select()
-        .from(appBuildTable)
-        .where(
-          and(
-            eq(appBuildTable.app_id, appId),
-            eq(appBuildTable.organization_id, orgId),
-          ),
-        )
-        .orderBy(desc(appBuildTable.created_at))
-        .limit(limit)
-        .offset(offset);
-
-      return c.json(builds);
-    },
-  )
-  .get(
-    '/builds/:buildId',
-    zValidator(
-      'param',
-      z.object({
-        buildId: z.string(),
-      }),
-    ),
-    zValidator(
-      'query',
-      z.object({
-        appId: z.string(),
-        orgId: z.string(),
-      }),
-    ),
-    async (c) => {
-      const { buildId } = c.req.valid('param');
-      const { appId, orgId } = c.req.valid('query');
-
-      const build = await db.query.appBuildTable.findFirst({
-        where: and(
-          eq(appBuildTable.id, buildId),
-          eq(appBuildTable.app_id, appId),
-          eq(appBuildTable.organization_id, orgId),
-        ),
-      });
-
-      if (!build) {
-        return c.json({ error: 'Build not found' }, 404);
-      }
-
-      return c.json(build);
-    },
-  )
   .post(
-    '/build',
+    '/git',
     zValidator(
       'json',
       z.object({
@@ -208,8 +145,80 @@ export const route = factory
       }
     },
   )
+  .post(
+    '/s3/signed_url',
+    zValidator(
+      'json',
+      z.object({
+        appId: z.string(),
+        orgId: z.string(),
+      }),
+    ),
+    async (c) => {
+      const { appId, orgId } = c.req.valid('json');
+
+      const appBuild = await db
+        .insert(appBuildTable)
+        .values({
+          app_id: appId,
+          organization_id: orgId,
+          status: 'pending',
+        })
+        .returning();
+
+      const buildId = appBuild[0].id;
+      if (!buildId) {
+        return c.json({ error: 'Failed to create build' }, 500);
+      }
+
+      const uploadUrl = s3Client.presign(
+        `source/${appId}/${orgId}/${buildId}.zip`,
+        {
+          method: 'PUT',
+          expiresIn: 3600,
+          type: 'application/zip',
+        },
+      );
+
+      return c.json({ uploadUrl, appBuild });
+    },
+  )
+  .post(
+    '/s3',
+    zValidator(
+      'json',
+      z.object({
+        orgId: z.string(),
+        appId: z.string(),
+        buildId: z.string(),
+      }),
+    ),
+    async (c) => {
+      const { appId, orgId, buildId } = c.req.valid('json');
+
+      const appBuild = await db.query.appBuildTable.findFirst({
+        where: and(
+          eq(appBuildTable.id, buildId),
+          eq(appBuildTable.app_id, appId),
+          eq(appBuildTable.organization_id, orgId),
+        ),
+      });
+      if (!appBuild) {
+        return c.json({ error: 'Build not found' }, 404);
+      }
+
+      await db
+        .update(appBuildTable)
+        .set({
+          status: 'building',
+        })
+        .where(eq(appBuildTable.id, buildId));
+
+      return c.json({ success: true });
+    },
+  )
   .patch(
-    '/builds/:buildId/status',
+    '/:buildId/status',
     zValidator(
       'param',
       z.object({
@@ -268,5 +277,39 @@ export const route = factory
         success: true,
         build: updatedBuild,
       });
+    },
+  )
+  .get(
+    '/:buildId',
+    zValidator(
+      'param',
+      z.object({
+        buildId: z.string(),
+      }),
+    ),
+    zValidator(
+      'query',
+      z.object({
+        appId: z.string(),
+        orgId: z.string(),
+      }),
+    ),
+    async (c) => {
+      const { buildId } = c.req.valid('param');
+      const { appId, orgId } = c.req.valid('query');
+
+      const build = await db.query.appBuildTable.findFirst({
+        where: and(
+          eq(appBuildTable.id, buildId),
+          eq(appBuildTable.app_id, appId),
+          eq(appBuildTable.organization_id, orgId),
+        ),
+      });
+
+      if (!build) {
+        return c.json({ error: 'Build not found' }, 404);
+      }
+
+      return c.json(build);
     },
   );

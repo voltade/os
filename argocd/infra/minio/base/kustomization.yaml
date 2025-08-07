@@ -11,6 +11,7 @@ helmCharts:
 
 resources:
   - httproute.yaml
+  - httproute-api.yaml
 
 patches:
   - target:

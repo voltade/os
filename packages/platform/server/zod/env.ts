@@ -24,6 +24,14 @@ export const appEnvVariablesSchema = z.object({
   SMTP_PASS: z.string().optional().default(''),
   SMTP_FROM: z.email(),
 
+  // S3
+  AWS_REGION: z.string(),
+  AWS_S3_ENDPOINT: z.string(),
+  AWS_S3_BUCKET: z.string(),
+  AWS_ACCESS_KEY_ID: z.string(),
+  AWS_SECRET_ACCESS_KEY: z.string(),
+  FORCE_PATH_STYLE: z.coerce.boolean().default(true),
+
   // Local Kubernetes
   CLUSTER_NAME: z.string().optional().default(''),
   CLUSTER_SERVER: z.string().optional().default(''),

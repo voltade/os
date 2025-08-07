@@ -28,6 +28,10 @@ import { $ } from 'bun';
     await $`kubectl get secret -n platform shared-secrets -o jsonpath="{.data.runnerSecretToken}" | base64 -d`.text();
   console.log('Retrieved RUNNER_SECRET_TOKEN');
 
+  const s3_secret_key =
+    await $`kubectl get secret -n platform s3-secrets -o jsonpath="{.data.secretAccessKey}" | base64 -d`.text();
+  console.log('Retrieved S3_SECRET_KEY');
+
   // Path to .env and .env.example
   const envPath = join(process.cwd(), '.env');
   const envExamplePath = join(process.cwd(), '.env.example');
@@ -74,6 +78,12 @@ import { $ } from 'bun';
       envContent,
       'RUNNER_SECRET_TOKEN',
       runner_token.trim(),
+    );
+
+    envContent = updateEnvVar(
+      envContent,
+      'AWS_SECRET_ACCESS_KEY',
+      s3_secret_key.trim(),
     );
 
     // Write the updated content back to the file
