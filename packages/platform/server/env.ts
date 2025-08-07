@@ -25,6 +25,7 @@ export type Variables = AppEnvVariables & {
   session: Session['session'] | null;
   user: Session['user'] | null;
   oauth2: Oauth2Payload | null;
+  authType: 'static' | 'jwt' | 'session' | 'none';
 };
 
 /*

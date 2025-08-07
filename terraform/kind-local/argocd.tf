@@ -37,6 +37,10 @@ resource "kubernetes_secret" "argocd_extra_secret" {
   metadata {
     name      = "argocd-extra-secret"
     namespace = "argocd"
+    labels = {
+      "app.kubernetes.io/name" = "argocd-extra-secret"
+      "app.kubernetes.io/part-of" = "argocd"
+    }
   }
   data = {
     "environment-generator.token" = random_password.argocd_environment_generator_token.result

@@ -15,7 +15,6 @@ export const route = factory.createApp().get(
     }),
   ),
   async (c) => {
-    console.log(c.req.raw.headers);
     const { org_id } = c.req.valid('query');
 
     const apps = await db.query.appTable.findMany({

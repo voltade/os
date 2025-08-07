@@ -32,6 +32,15 @@ import { $ } from 'bun';
     await $`kubectl get secret -n platform s3-secrets -o jsonpath="{.data.secretAccessKey}" | base64 -d`.text();
   console.log('Retrieved S3_SECRET_KEY');
 
+  const argocd_secret_key_b64 = (
+    await $`kubectl get secret -n argocd argocd-extra-secret -o json`.json()
+  ).data['environment-generator.token'];
+  const argocd_secret_key = Buffer.from(
+    argocd_secret_key_b64,
+    'base64',
+  ).toString('utf-8');
+  console.log('Retrieved ARGOCD_SECRET_KEY');
+
   // Path to .env and .env.example
   const envPath = join(process.cwd(), '.env');
   const envExamplePath = join(process.cwd(), '.env.example');
@@ -84,6 +93,12 @@ import { $ } from 'bun';
       envContent,
       'AWS_SECRET_ACCESS_KEY',
       s3_secret_key.trim(),
+    );
+
+    envContent = updateEnvVar(
+      envContent,
+      'ARGOCD_ENVIRONMENT_GENERATOR_TOKEN',
+      argocd_secret_key.trim(),
     );
 
     // Write the updated content back to the file

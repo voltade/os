@@ -132,11 +132,10 @@ export type Session = Auth['$Infer']['Session'];
 
 async function validateToken(token: string): Promise<Oauth2Payload> {
   try {
-    console.log('Validating token:', token);
     const JWKS = createRemoteJWKSet(new URL(`${BASE_URL}/jwks`));
     const { payload } = await jwtVerify(token, JWKS, {
       issuer: BASE_URL.replace('/api/auth', ''),
-      // audience: [BASE_URL, 'cli'],
+      audience: [BASE_URL, 'cli'],
     });
     return payload as Oauth2Payload;
   } catch (error) {
@@ -147,15 +146,34 @@ async function validateToken(token: string): Promise<Oauth2Payload> {
 
 export const authMiddleware = (force: boolean = false) =>
   factory.createMiddleware(async (c, next) => {
-    const token = c.req.raw.headers.get('Authorization')?.split(' ')[1];
-    if (token) {
-      try {
-        const payload = await validateToken(token);
-        console.log('Token validated:', JSON.stringify(payload, null, 2));
-        c.set('oauth2', payload);
+    const authHeader = c.req.raw.headers.get('Authorization') || '';
+    const maybeToken = authHeader.startsWith('Bearer ')
+      ? authHeader.slice('Bearer '.length).trim()
+      : undefined;
+
+    // 1) Static Bearer token(s)
+    if (maybeToken) {
+      const staticTokens = appEnvVariables.ARGOCD_ENVIRONMENT_GENERATOR_TOKEN
+        ? [appEnvVariables.ARGOCD_ENVIRONMENT_GENERATOR_TOKEN]
+        : [];
+      if (staticTokens.length > 0 && staticTokens.includes(maybeToken)) {
+        c.set('oauth2', null);
+        c.set('user', null);
+        c.set('session', null);
+        c.set('authType', 'static');
         return next();
-      } catch (error) {
-        console.error('Token validation failed:', error);
+      }
+    }
+
+    // 2) JWT Bearer token (OIDC/JWK verified)
+    if (maybeToken) {
+      try {
+        const payload = await validateToken(maybeToken);
+        c.set('oauth2', payload);
+        c.set('authType', 'jwt');
+        return next();
+      } catch {
+        console.log('Token validation failed:', maybeToken);
       }
     }
 
@@ -166,9 +184,11 @@ export const authMiddleware = (force: boolean = false) =>
     if (!session) {
       c.set('user', null);
       c.set('session', null);
+      c.set('authType', 'none');
       return next();
     }
     c.set('user', session.user);
     c.set('session', session.session);
+    c.set('authType', 'session');
     return next();
   });
