@@ -2,7 +2,7 @@ import { hashPassword } from 'better-auth/crypto';
 
 import { appTable } from '#drizzle/app.ts';
 import { account as accountTable, user as userTable } from '#drizzle/auth.ts';
-import { environmentTable } from '#drizzle/environment.ts';
+import { environmentTable, oauthApplication } from '#drizzle/index.ts';
 import { auth } from '#server/lib/auth.ts';
 import { db } from '#server/lib/db.ts';
 
@@ -41,34 +41,85 @@ const headers = new Headers({ Authorization: `Bearer ${res.token}` });
 // Trigger the generation of JWKS
 await auth.api.getToken({ headers });
 
-const organization = await auth.api.createOrganization({
-  headers,
-  body: {
-    name: 'Voltade',
-    slug: 'voltade',
-  },
-});
-if (!organization) {
-  throw new Error('Failed to create organization');
+let organizationId: string;
+
+try {
+  await auth.api.checkOrganizationSlug({
+    headers,
+    body: {
+      slug: 'admin-org',
+    },
+  });
+  console.log('Organization not found, creating...');
+  const organization = await auth.api.createOrganization({
+    headers,
+    body: {
+      name: 'Voltade',
+      slug: 'voltade',
+    },
+  });
+
+  if (!organization) {
+    throw new Error('Failed to create organization');
+  }
+
+  organizationId = organization.id;
+} catch {
+  console.log('Organization already exists, skipping...');
+
+  const organization = await auth.api.getFullOrganization({
+    headers,
+    query: {
+      organizationSlug: 'voltade',
+    },
+  });
+
+  if (!organization) {
+    throw new Error('Failed to get organization');
+  }
+
+  organizationId = organization.id;
 }
 
 await db.transaction(async (tx) => {
-  await tx.insert(environmentTable).values({
-    organization_id: organization.id,
-    is_production: true,
-    slug: 'main',
-    name: 'Main',
-  });
+  await tx
+    .insert(environmentTable)
+    .values({
+      organization_id: organizationId,
+      is_production: true,
+      slug: 'main',
+      name: 'Main',
+    })
+    .onConflictDoNothing();
 });
 
 await db.transaction(async (tx) => {
-  await tx.insert(appTable).values({
-    organization_id: organization.id,
-    name: 'Test App',
-    slug: 'test-app',
-    description: 'Test App',
-    git_repo_url: 'file://mnt/voltade-os.git',
-    git_repo_path: 'packages/app-template',
-    git_repo_branch: 'main',
-  });
+  await tx
+    .insert(oauthApplication)
+    .values({
+      id: 'nS3fF8G3CXnkgxuMxTdPQonqrp0hzmZ2',
+      name: 'Voltade CLI',
+      clientId: 'cli',
+      clientSecret: 'VvrMhfMJBjDHMDWNTetIQGkNykfrmPfb', // DO NOT CHANGE THIS SECRET
+      redirectURLs: 'http://localhost:8080/callback',
+      type: 'cli',
+      disabled: false,
+      userId: 'admin',
+    })
+    .onConflictDoNothing();
+});
+
+await db.transaction(async (tx) => {
+  await tx
+    .insert(appTable)
+    .values({
+      organization_id: organizationId,
+      name: 'Test App',
+      slug: 'test-app',
+      description: 'Test App',
+      git_repo_url: 'file://mnt/voltade-os.git',
+      git_repo_path: 'packages/app-template',
+      git_repo_branch: 'main',
+    })
+    .onConflictDoNothing();
 });

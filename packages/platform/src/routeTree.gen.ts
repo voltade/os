@@ -19,6 +19,7 @@ import { Route as MainProfileIndexRouteImport } from './routes/_main.profile.ind
 import { Route as MainEnvironmentsIndexRouteImport } from './routes/_main.environments.index'
 import { Route as MainProfileSecurityRouteImport } from './routes/_main.profile.security'
 import { Route as MainEnvironmentsEnvironmentSlugRouteImport } from './routes/_main.environments.$environmentSlug'
+import { Route as AuthOauthConsentRouteImport } from './routes/_auth.oauth.consent'
 import { Route as MainEnvironmentsEnvironmentSlugIndexRouteImport } from './routes/_main.environments.$environmentSlug.index'
 import { Route as MainEnvironmentsEnvironmentSlugEnvironment_variablesRouteImport } from './routes/_main.environments.$environmentSlug.environment_variables'
 
@@ -71,6 +72,11 @@ const MainEnvironmentsEnvironmentSlugRoute =
     path: '/environments/$environmentSlug',
     getParentRoute: () => MainRoute,
   } as any)
+const AuthOauthConsentRoute = AuthOauthConsentRouteImport.update({
+  id: '/oauth/consent',
+  path: '/oauth/consent',
+  getParentRoute: () => AuthRoute,
+} as any)
 const MainEnvironmentsEnvironmentSlugIndexRoute =
   MainEnvironmentsEnvironmentSlugIndexRouteImport.update({
     id: '/',
@@ -89,6 +95,7 @@ export interface FileRoutesByFullPath {
   '/signup': typeof AuthSignupRoute
   '/profile': typeof MainProfileRouteWithChildren
   '/': typeof MainIndexRoute
+  '/oauth/consent': typeof AuthOauthConsentRoute
   '/environments/$environmentSlug': typeof MainEnvironmentsEnvironmentSlugRouteWithChildren
   '/profile/security': typeof MainProfileSecurityRoute
   '/environments': typeof MainEnvironmentsIndexRoute
@@ -100,6 +107,7 @@ export interface FileRoutesByTo {
   '/signin': typeof AuthSigninRoute
   '/signup': typeof AuthSignupRoute
   '/': typeof MainIndexRoute
+  '/oauth/consent': typeof AuthOauthConsentRoute
   '/profile/security': typeof MainProfileSecurityRoute
   '/environments': typeof MainEnvironmentsIndexRoute
   '/profile': typeof MainProfileIndexRoute
@@ -114,6 +122,7 @@ export interface FileRoutesById {
   '/_auth/signup': typeof AuthSignupRoute
   '/_main/profile': typeof MainProfileRouteWithChildren
   '/_main/': typeof MainIndexRoute
+  '/_auth/oauth/consent': typeof AuthOauthConsentRoute
   '/_main/environments/$environmentSlug': typeof MainEnvironmentsEnvironmentSlugRouteWithChildren
   '/_main/profile/security': typeof MainProfileSecurityRoute
   '/_main/environments/': typeof MainEnvironmentsIndexRoute
@@ -128,6 +137,7 @@ export interface FileRouteTypes {
     | '/signup'
     | '/profile'
     | '/'
+    | '/oauth/consent'
     | '/environments/$environmentSlug'
     | '/profile/security'
     | '/environments'
@@ -139,6 +149,7 @@ export interface FileRouteTypes {
     | '/signin'
     | '/signup'
     | '/'
+    | '/oauth/consent'
     | '/profile/security'
     | '/environments'
     | '/profile'
@@ -152,6 +163,7 @@ export interface FileRouteTypes {
     | '/_auth/signup'
     | '/_main/profile'
     | '/_main/'
+    | '/_auth/oauth/consent'
     | '/_main/environments/$environmentSlug'
     | '/_main/profile/security'
     | '/_main/environments/'
@@ -237,6 +249,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof MainEnvironmentsEnvironmentSlugRouteImport
       parentRoute: typeof MainRoute
     }
+    '/_auth/oauth/consent': {
+      id: '/_auth/oauth/consent'
+      path: '/oauth/consent'
+      fullPath: '/oauth/consent'
+      preLoaderRoute: typeof AuthOauthConsentRouteImport
+      parentRoute: typeof AuthRoute
+    }
     '/_main/environments/$environmentSlug/': {
       id: '/_main/environments/$environmentSlug/'
       path: '/'
@@ -257,11 +276,13 @@ declare module '@tanstack/react-router' {
 interface AuthRouteChildren {
   AuthSigninRoute: typeof AuthSigninRoute
   AuthSignupRoute: typeof AuthSignupRoute
+  AuthOauthConsentRoute: typeof AuthOauthConsentRoute
 }
 
 const AuthRouteChildren: AuthRouteChildren = {
   AuthSigninRoute: AuthSigninRoute,
   AuthSignupRoute: AuthSignupRoute,
+  AuthOauthConsentRoute: AuthOauthConsentRoute,
 }
 
 const AuthRouteWithChildren = AuthRoute._addFileChildren(AuthRouteChildren)

@@ -6,6 +6,7 @@ import {
   bearer,
   emailOTP,
   jwt,
+  oidcProvider,
   openAPI,
   organization,
 } from 'better-auth/plugins';
@@ -51,6 +52,10 @@ export const auth = betterAuth({
           text: `Your verification code is: ${otp}`,
         });
       },
+    }),
+    oidcProvider({
+      loginPage: '/signin',
+      consentPage: '/oauth/consent',
     }),
     openAPI({
       path: '/docs',
