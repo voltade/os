@@ -1,4 +1,4 @@
-import { AppShell, Group, Title } from '@mantine/core';
+import { AppShell, Group, Image, Title } from '@mantine/core';
 import { IconCode } from '@tabler/icons-react';
 
 import { OrganizationSwitcher } from './OrganizationSwitcher.tsx';
@@ -9,8 +9,12 @@ export function Header() {
     <AppShell.Header>
       <Group h="100%" px="md" justify="space-between">
         <Group>
-          <IconCode />
-          <Title order={4}>Voltade-OS</Title>
+          <Image
+            src="https://voltade.com/images/Logo+typo.svg"
+            alt="Voltade Logo"
+            h={40}
+            fit="contain"
+          />
         </Group>
         <Group gap="md">
           <OrganizationSwitcher />
