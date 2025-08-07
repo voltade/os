@@ -65,7 +65,7 @@ export const route = factory
           and(
             eq(appInstallationTable.app_id, app_id),
             eq(appInstallationTable.environment_id, environment_id),
-            eq(appInstallationTable.org_id, org_id),
+            eq(appInstallationTable.organization_id, org_id),
           ),
         )
         .returning();

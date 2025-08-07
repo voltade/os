@@ -11,21 +11,24 @@ import {
   organization,
 } from 'better-auth/plugins';
 import { eq } from 'drizzle-orm';
+import { createRemoteJWKSet, jwtVerify } from 'jose';
 
 import {
   member as memberTable,
   organization as organizationTable,
 } from '#drizzle/auth.ts';
-import { appEnvVariables } from '#server/env.ts';
+import { appEnvVariables, type Oauth2Payload } from '#server/env.ts';
 import { factory } from '#server/factory.ts';
 import { db } from '#server/lib/db.ts';
 import { mailer } from '#server/lib/mailer.ts';
 import { nanoid } from '#server/lib/nanoid.ts';
 
+const BASE_URL = `${appEnvVariables.VITE_APP_URL}/api/auth`;
+
 // https://www.better-auth.com/docs/reference/options
 export const auth = betterAuth({
   appName: 'Voltade OS',
-  baseURL: `${appEnvVariables.VITE_APP_URL}/api/auth`,
+  baseURL: BASE_URL,
   trustedOrigins: [appEnvVariables.VITE_APP_URL],
   secret: appEnvVariables.AUTH_SECRET,
   database: drizzleAdapter(db, {
@@ -69,6 +72,7 @@ export const auth = betterAuth({
         },
       ],
       accessTokenExpiresIn: 60 * 60 * 24 * 30, // 30 days
+      useJWTPlugin: true,
     }),
     openAPI({
       path: '/docs',
@@ -126,8 +130,35 @@ export const auth = betterAuth({
 export type Auth = typeof auth;
 export type Session = Auth['$Infer']['Session'];
 
+async function validateToken(token: string): Promise<Oauth2Payload> {
+  try {
+    console.log('Validating token:', token);
+    const JWKS = createRemoteJWKSet(new URL(`${BASE_URL}/jwks`));
+    const { payload } = await jwtVerify(token, JWKS, {
+      issuer: BASE_URL.replace('/api/auth', ''),
+      // audience: [BASE_URL, 'cli'],
+    });
+    return payload as Oauth2Payload;
+  } catch (error) {
+    console.error('Token validation failed:', error);
+    throw error;
+  }
+}
+
 export const authMiddleware = (force: boolean = false) =>
   factory.createMiddleware(async (c, next) => {
+    const token = c.req.raw.headers.get('Authorization')?.split(' ')[1];
+    if (token) {
+      try {
+        const payload = await validateToken(token);
+        console.log('Token validated:', JSON.stringify(payload, null, 2));
+        c.set('oauth2', payload);
+        return next();
+      } catch (error) {
+        console.error('Token validation failed:', error);
+      }
+    }
+
     const session = await auth.api.getSession({ headers: c.req.raw.headers });
     if (force && !session) {
       return c.json({ error: 'Unauthorized' }, 401);

@@ -7,6 +7,7 @@ import { route as appInstallationRoute } from '#server/routes/app_installation.t
 import { route as authRoute } from '#server/routes/auth.ts';
 import { route as environmentRoute } from '#server/routes/environment.ts';
 import { route as environmentVariableRoute } from '#server/routes/environment_variable.ts';
+import { authMiddleware } from './lib/auth.ts';
 
 const app = factory.createApp();
 
@@ -21,6 +22,7 @@ app.get('/healthz', (c) => {
 export const apiRoutes = app
   .basePath('/api')
   .route('/auth', authRoute)
+  .use(authMiddleware(true))
   .route('/environment', environmentRoute)
   .route('/environment_variable', environmentVariableRoute)
   .route('/app', appRoute)
