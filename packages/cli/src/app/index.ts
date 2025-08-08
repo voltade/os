@@ -1,12 +1,18 @@
 import { Command } from 'commander';
 
+import type { GlobalOptions } from '#src/index.ts';
+import { buildApp } from './build.ts';
 import { listApps } from './list.ts';
 
 export const appCommand = new Command('app')
   .description('App operations')
-  .option('--org <orgSlug>', 'Filter by organization slug')
-  .addCommand(new Command('list').description('List apps').action(listApps));
+  .addCommand(new Command('list').description('List apps').action(listApps))
+  .addCommand(
+    new Command('build')
+      .description('Build and upload an app source bundle')
+      .argument('<folder>', 'Source folder path')
+      .option('--app <appId>', 'App ID to build')
+      .action(buildApp),
+  );
 
-export type AppOptions = {
-  org?: string;
-};
+export type AppOptions = GlobalOptions & {};

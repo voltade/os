@@ -29,7 +29,7 @@ import { $ } from 'bun';
   console.log('Retrieved RUNNER_SECRET_TOKEN');
 
   const s3_secret_key =
-    await $`kubectl get secret -n platform s3-secrets -o jsonpath="{.data.secretAccessKey}" | base64 -d`.text();
+    await $`kubectl get secret -n minio minio -o jsonpath="{.data.root-password}" | base64 -d`.text();
   console.log('Retrieved S3_SECRET_KEY');
 
   const argocd_secret_key_b64 = (

@@ -1,5 +1,6 @@
 import { Command } from 'commander';
 
+import type { GlobalOptions } from '#src/index.ts';
 import { databaseCommand } from './database/index.ts';
 import { getEnvironment } from './get.ts';
 import { listEnvironments } from './list.ts';
@@ -7,7 +8,6 @@ import { listEnvironments } from './list.ts';
 export const environmentCommand = new Command('environment')
   .alias('env')
   .description('Environment operations')
-  .option('--org <orgSlug>', 'Filter by organization slug')
   .addCommand(
     new Command('list')
       .description('List environments')
@@ -20,6 +20,4 @@ export const environmentCommand = new Command('environment')
   )
   .addCommand(databaseCommand);
 
-export type EnvironmentOptions = {
-  org?: string;
-};
+export type EnvironmentOptions = GlobalOptions & {};

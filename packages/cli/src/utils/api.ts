@@ -10,6 +10,7 @@ const config = await getConfig();
 export const { api } = hc<AppType>(baseUrl, {
   init: {
     headers: {
+      'Content-Type': 'application/json',
       Authorization: `Bearer ${config.auth.id_token}`,
     },
   },

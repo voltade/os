@@ -4,10 +4,14 @@ import { api } from '#src/utils/api.ts';
 import { getFinalOptions } from '#src/utils/index.ts';
 import type { AppOptions } from './index.ts';
 
-export async function listApps(command: Command) {
-  const options = getFinalOptions<AppOptions>(command);
+export async function listApps(this: Command) {
+  const options = getFinalOptions<AppOptions>(this);
 
-  const apps = await api.app.$get({ query: { org_id: options.org } });
+  console.log(options);
 
-  console.log(apps);
+  const res = await api.app.$get({ query: { org_id: options.org } });
+
+  const data = await res.json();
+
+  console.log(data);
 }

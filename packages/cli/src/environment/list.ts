@@ -3,8 +3,8 @@ import type { Command } from 'commander';
 import { getEnvironments, getFinalOptions } from '../utils/index.ts';
 import type { EnvironmentOptions } from './index.ts';
 
-export async function listEnvironments(_options: unknown, command: Command) {
-  const options = getFinalOptions<EnvironmentOptions>(command);
+export async function listEnvironments(this: Command) {
+  const options = getFinalOptions<EnvironmentOptions>(this);
   const environments = await getEnvironments();
 
   const filtered = options.org

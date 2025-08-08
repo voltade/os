@@ -8,8 +8,8 @@ import {
 } from '#src/utils/index.ts';
 import type { EnvironmentOptions } from './index.ts';
 
-export async function getEnvironment(command: Command) {
-  const options = getFinalOptions<EnvironmentOptions>(command);
+export async function getEnvironment(this: Command) {
+  const options = getFinalOptions<EnvironmentOptions>(this);
 
   const allEnvironments = await getEnvironments();
   const environments = options.org
