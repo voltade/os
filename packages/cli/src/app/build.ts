@@ -25,6 +25,12 @@ type PackageJson = {
   workspaces?: string[] | { packages?: string[] };
   dependencies?: Record<string, string>;
   devDependencies?: Record<string, string>;
+  resolutions?: Record<string, string>;
+  pnpm?: {
+    patchedDependencies?: Record<string, string>;
+  };
+  patches?: Record<string, string | string[]>;
+  scripts?: Record<string, string>;
 };
 
 const EXCLUDES = [
@@ -186,6 +192,129 @@ async function copyDirPreservingRelative(
   });
 }
 
+async function copyPathPreservingRelative(
+  rootDir: string,
+  absolutePath: string,
+  stagingRoot: string,
+) {
+  const rel = path.relative(rootDir, absolutePath);
+  const dest = path.join(stagingRoot, rel);
+  await ensureDir(path.dirname(dest));
+  await fsCp(absolutePath, dest, { recursive: true, force: true });
+}
+
+function extractPatchPathsFromDeps(pkg: PackageJson): string[] {
+  const result: string[] = [];
+  const check = (obj?: Record<string, string>) => {
+    for (const val of Object.values(obj ?? {})) {
+      if (!val) continue;
+      if (val.startsWith('patch:')) {
+        const hashIndex = val.indexOf('#');
+        if (hashIndex !== -1) {
+          const ref = val.slice(hashIndex + 1);
+          if (
+            ref.startsWith('.') ||
+            ref.startsWith('..') ||
+            ref.startsWith('/')
+          ) {
+            result.push(ref);
+          }
+        }
+      }
+    }
+  };
+  check(pkg.dependencies);
+  check(pkg.devDependencies);
+  check(pkg.resolutions);
+  return result;
+}
+
+async function includeRootPatches(
+  rootDir: string,
+  rootPkg: PackageJson,
+  stagingRoot: string,
+) {
+  // 1) Conventional directories
+  const conventionalDirs = [
+    path.join(rootDir, 'patches'),
+    path.join(rootDir, '.yarn', 'patches'),
+  ];
+  for (const dir of conventionalDirs) {
+    if (await exists(dir)) {
+      await copyPathPreservingRelative(rootDir, dir, stagingRoot);
+    }
+  }
+
+  // 2) pnpm.patchedDependencies
+  const pnpmPatches = rootPkg.pnpm?.patchedDependencies ?? {};
+  for (const relPath of Object.values(pnpmPatches)) {
+    const abs = path.resolve(rootDir, relPath);
+    if (await exists(abs)) {
+      await copyPathPreservingRelative(rootDir, abs, stagingRoot);
+    }
+  }
+
+  // 3) package.json "patches" field (Yarn Berry)
+  const pkgPatches = rootPkg.patches ?? {};
+  for (const val of Object.values(pkgPatches)) {
+    const items = Array.isArray(val) ? val : [val];
+    for (const rel of items) {
+      const abs = path.resolve(rootDir, rel);
+      if (await exists(abs)) {
+        await copyPathPreservingRelative(rootDir, abs, stagingRoot);
+      }
+    }
+  }
+
+  // 4) Dependencies that use patch: protocol with a local file reference
+  const depPatchRefs = extractPatchPathsFromDeps(rootPkg);
+  for (const rel of depPatchRefs) {
+    const abs = path.resolve(rootDir, rel);
+    if (await exists(abs)) {
+      await copyPathPreservingRelative(rootDir, abs, stagingRoot);
+    }
+  }
+}
+
+function sanitizeScriptsInPlace(pkg: PackageJson): PackageJson {
+  if (!pkg.scripts) return pkg;
+  const scripts = { ...pkg.scripts };
+  const removeIfContains = (key: string, needle: string) => {
+    const val = scripts?.[key];
+    if (val?.toLowerCase().includes(needle)) {
+      delete scripts[key];
+    }
+  };
+  // Remove git-hook installers which fail outside git worktrees
+  removeIfContains('prepare', 'lefthook');
+  removeIfContains('postinstall', 'lefthook');
+  removeIfContains('prepare', 'husky');
+  removeIfContains('postinstall', 'husky');
+  // Be conservative: drop prepare/postinstall entirely in build zips
+  if (scripts.prepare) delete scripts.prepare;
+  if (scripts.postinstall) delete scripts.postinstall;
+  pkg.scripts = scripts;
+  return pkg;
+}
+
+async function maybeSanitizePackageJsonAt(
+  rootDir: string,
+  absSourceDir: string,
+  stagingRoot: string,
+) {
+  const rel = path.relative(rootDir, absSourceDir);
+  const pkgPath = path.join(stagingRoot, rel, 'package.json');
+  if (await exists(pkgPath)) {
+    try {
+      const pkg = await readPackageJson(pkgPath);
+      const sanitized = sanitizeScriptsInPlace(pkg);
+      await writeFile(pkgPath, JSON.stringify(sanitized, null, 2));
+    } catch {
+      // ignore
+    }
+  }
+}
+
 async function zipDirectory(outputZipPath: string, cwd: string) {
   const args = [
     '-r',
@@ -247,24 +376,41 @@ export async function buildApp(this: Command, folderPathArg: string) {
     const stagingRoot = path.join(tmpRoot, 'staging');
     await ensureDir(stagingRoot);
 
-    // copy root package.json
+    // copy root package.json (sanitized to avoid git-hook installers)
+    const sanitizedRootPkg = sanitizeScriptsInPlace({ ...rootPkg });
     await writeFile(
       path.join(stagingRoot, 'package.json'),
-      JSON.stringify(rootPkg, null, 2),
+      JSON.stringify(sanitizedRootPkg, null, 2),
     );
 
     // copy app dir preserving relative path
     await copyDirPreservingRelative(rootDir, folderPath, stagingRoot);
+    await maybeSanitizePackageJsonAt(rootDir, folderPath, stagingRoot);
 
     // copy each needed workspace package
     for (const { absDir } of neededDirs) {
       await copyDirPreservingRelative(rootDir, absDir, stagingRoot);
+      await maybeSanitizePackageJsonAt(rootDir, absDir, stagingRoot);
     }
+
+    // include patch files referenced by the root package.json
+    await includeRootPatches(rootDir, rootPkg, stagingRoot);
 
     // zip from staging root
     await zipDirectory(zipPath, stagingRoot);
   } else {
-    await zipDirectory(zipPath, folderPath);
+    // Non-workspace: create staging with sanitized package.json
+    const stagingRoot = path.join(tmpRoot, 'staging');
+    await ensureDir(stagingRoot);
+    // Copy the entire folder into staging
+    await fsCp(folderPath, stagingRoot, { recursive: true, force: true });
+    // Sanitize package.json at staging root
+    await maybeSanitizePackageJsonAt(
+      path.dirname(folderPath),
+      folderPath,
+      stagingRoot,
+    );
+    await zipDirectory(zipPath, stagingRoot);
   }
 
   console.log('zipPath', zipPath);

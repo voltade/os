@@ -25,7 +25,9 @@
     "@mantine/core": "^8.2.2",
     "@mantine/dates": "^8.2.2",
     "@mantine/notifications": "^8.2.2",
+    "@tailwindcss/vite": "^4.1.11",
     "@tanstack/react-query": "^5.84.1",
+    "@vitejs/plugin-react-swc": "^3.11.0",
     "@voltade/core-schema": "workspace:*",
     "hono": "^4.8.12",
     "mantine-datatable": "^8.2.0",
@@ -54,6 +56,7 @@
     "react-dom": "^19.1.1",
     "tailwindcss": "^4.1.11",
     "tar": "^7.4.3",
+    "vite-tsconfig-paths": "^5.1.4",
     "wait-on": "^8.0.4"
   }
 }

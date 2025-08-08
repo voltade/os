@@ -3,3 +3,16 @@ kind: Kustomization
 
 resources:
   - ../../base
+
+patches:
+  - target:
+      kind: Secret
+      name: minio
+      namespace: minio
+    patch: |-
+      - op: add
+        path: /data/root-user
+        value: YWRtaW4= # admin
+      - op: add
+        path: /data/root-password
+        value: cGFzc3dvcmQ= # password
