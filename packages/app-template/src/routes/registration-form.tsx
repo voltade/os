@@ -53,6 +53,8 @@ function RouteComponent() {
       return res.json();
     },
     onSuccess: () => {
+      // NOTE: There is no need to invalidate the 'students' query key used by
+      // the students route because the QueryClient's stale time is the default 0.
       form.reset();
       notifications.show({
         title: 'Success',

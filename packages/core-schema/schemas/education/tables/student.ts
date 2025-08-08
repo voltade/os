@@ -12,9 +12,9 @@ import { educationClassTable } from './class.ts';
 export const educationStudentTable = educationSchema.table('student', {
   ...DEFAULT_COLUMNS,
   name: text('name').notNull(),
-  selected_class: integer('selected_class').references(
-    () => educationClassTable.id,
-  ),
+  selected_class: integer('selected_class')
+    .references(() => educationClassTable.id)
+    .notNull(),
 });
 
 export const educationStudentTableRelations = relations(

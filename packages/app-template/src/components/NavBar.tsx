@@ -19,11 +19,13 @@ export const NAVBAR_COLLAPSED_WIDTH_PX = 60;
 export const HOME_ROUTE = '/';
 export const PRODUCT_TEMPLATES_TABLE_ROUTE = '/product-templates';
 export const REGISTRATION_FORM_ROUTE = '/registration-form';
+export const STUDENTS_ROUTE = '/students';
 
 // Define route display names
 const HOME_ROUTE_NAME = 'Home';
 const PRODUCT_TEMPLATES_TABLE_ROUTE_NAME = 'Product Templates';
 export const REGISTRATION_FORM_ROUTE_NAME = 'Registration Form';
+export const STUDENTS_ROUTE_NAME = 'Students';
 
 export interface NavBarProps {
   opened?: boolean;
@@ -98,6 +100,13 @@ const NavBar: React.FC<NavBarProps> = (props: NavBarProps) => {
                 active={activeTab === REGISTRATION_FORM_ROUTE}
                 onClick={() => handleSetActiveTab(REGISTRATION_FORM_ROUTE)}
               />
+              <NavLink
+                label={<Text size="lg">{STUDENTS_ROUTE_NAME}</Text>}
+                variant="light"
+                leftSection={<IconTable size={24} stroke={1.5} />}
+                active={activeTab === STUDENTS_ROUTE}
+                onClick={() => handleSetActiveTab(STUDENTS_ROUTE)}
+              />
             </Stack>
           ) : (
             <Stack>
@@ -159,6 +168,23 @@ const NavBar: React.FC<NavBarProps> = (props: NavBarProps) => {
                         ? undefined
                         : 'black'
                     }
+                  />
+                </ActionIcon>
+              </Tooltip>
+              <Tooltip
+                label={STUDENTS_ROUTE_NAME}
+                position="right"
+                withArrow
+                arrowSize={4}
+              >
+                <ActionIcon
+                  variant="transparent"
+                  onClick={() => handleSetActiveTab(STUDENTS_ROUTE)}
+                >
+                  <IconTable
+                    size={24}
+                    stroke={1.5}
+                    color={activeTab === STUDENTS_ROUTE ? undefined : 'black'}
                   />
                 </ActionIcon>
               </Tooltip>
