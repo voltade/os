@@ -25,9 +25,9 @@ export function OrganizationNavbar() {
       path: '/applications',
     },
     {
-      label: 'Members',
+      label: 'Team',
       icon: IconUsers,
-      path: '/members',
+      path: '/team',
     },
   ];
 

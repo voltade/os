@@ -20,16 +20,21 @@ const inviteMemberSchema = z.object({
   role: z.enum(['admin', 'member', 'owner']).default('member'),
 });
 
+const updateRoleSchema = z.object({
+  memberId: z.string().min(1),
+  role: z.enum(['admin', 'member', 'owner']),
+});
+
 export const route = factory
   .createApp()
   .use(authMiddleware(true))
   .post('/invite', zValidator('json', inviteMemberSchema), async (c) => {
-    const { name, email, role } = c.req.valid('json');
-    const session = c.get('session')!;
-    const user = c.get('user')!;
-    const organizationId = session.activeOrganizationId!;
+    const { email, role } = c.req.valid('json');
+    const session = c.get('session');
+    const user = c.get('user');
+    const organizationId = session?.activeOrganizationId;
 
-    if (!organizationId) {
+    if (!session || !user || !organizationId) {
       return c.json({ error: 'No active organization' }, 400);
     }
 
@@ -189,4 +194,83 @@ export const route = factory
         500,
       );
     }
+  })
+  .patch('/role', zValidator('json', updateRoleSchema), async (c) => {
+    const { memberId, role } = c.req.valid('json');
+    const session = c.get('session');
+    const user = c.get('user');
+    const organizationId = session?.activeOrganizationId;
+
+    if (!session || !user || !organizationId) {
+      return c.json({ error: 'No active organization' }, 400);
+    }
+
+    // Ensure the requester is a member and has permission
+    const requester = await db
+      .select()
+      .from(memberTable)
+      .where(
+        and(
+          eq(memberTable.organizationId, organizationId),
+          eq(memberTable.userId, user.id),
+        ),
+      )
+      .limit(1);
+
+    if (requester.length === 0) {
+      return c.json(
+        { error: 'You are not a member of this organization' },
+        403,
+      );
+    }
+
+    if (requester[0].role !== 'owner') {
+      return c.json({ error: 'Only owners can update member roles' }, 403);
+    }
+
+    // Ensure the target member exists in this organization
+    const targetMembers = await db
+      .select()
+      .from(memberTable)
+      .where(eq(memberTable.id, memberId))
+      .limit(1);
+
+    if (targetMembers.length === 0) {
+      return c.json({ error: 'Member not found' }, 404);
+    }
+
+    const target = targetMembers[0];
+    if (target.organizationId !== organizationId) {
+      return c.json(
+        { error: 'Member does not belong to this organization' },
+        400,
+      );
+    }
+
+    // Prevent demoting the last owner
+    if (target.role === 'owner' && role !== 'owner') {
+      const owners = await db
+        .select()
+        .from(memberTable)
+        .where(
+          and(
+            eq(memberTable.organizationId, organizationId),
+            eq(memberTable.role, 'owner'),
+          ),
+        );
+      if (owners.length <= 1) {
+        return c.json(
+          { error: 'Cannot demote the last owner of the organization' },
+          400,
+        );
+      }
+    }
+
+    const [updated] = await db
+      .update(memberTable)
+      .set({ role })
+      .where(eq(memberTable.id, memberId))
+      .returning();
+
+    return c.json({ success: true, member: updated });
   });
