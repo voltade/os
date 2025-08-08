@@ -17,17 +17,7 @@
     "tofu:nuke": "cd terraform/kind-local && docker rm --force --volumes registry voltade-os-local-control-plane && rm -r certs/* terraform.tfstate* kubeconfig",
     "charts": "bun run scripts/charts.ts",
     "charts:patch": "bun run scripts/charts.ts --patch",
-    "setup:env": "bun run scripts/env.ts",
     "prepare": "lefthook install",
-    "template:dev": "bun run --filter @voltade/app-template dev",
-    "core:db:start": "bun run --filter @voltade/core-schema db:start",
-    "core:db:push": "bun run --filter @voltade/core-schema db:push",
-    "core:db:stop": "bun run --filter @voltade/core-schema db:stop",
-    "core:db:plv8ify": "bun run --filter @voltade/core-schema db:plv8ify",
-    "core:db:current": "bun run --filter @voltade/core-schema db:current",
-    "core:db:seed": "bun run --filter @voltade/core-schema db:seed",
-    "core:db:reset": "bun run --filter @voltade/core-schema db:reset",
-    "core:db:typegen": "bun run --filter @voltade/core-schema db:typegen",
     "clean": "git clean -xdf node_modules 'packages/*/node_modules'"
   },
   "devDependencies": {
