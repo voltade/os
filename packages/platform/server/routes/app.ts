@@ -21,6 +21,6 @@ export const route = factory.createApp().get(
       where: org_id ? eq(appTable.organization_id, org_id) : undefined,
     });
 
-    return c.json(apps);
+    return c.json<(typeof appTable.$inferSelect)[]>(apps);
   },
 );

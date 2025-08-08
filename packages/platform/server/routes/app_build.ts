@@ -95,7 +95,7 @@ export const route = factory
         const jobOptions: BuildJobOptions = {
           resources: {},
           enableS3Upload: true, // S3 config will be injected from secrets
-          // statusCallbackUrl: `http://socat.platform:5173/api/apps/builds/${buildId}/status`,
+          statusCallbackUrl: `http://socat.platform:5173/api/app_build/${buildId}/status`,
         };
 
         await createBuildJob(k8sClient, app, buildId, jobOptions);
@@ -214,7 +214,54 @@ export const route = factory
         })
         .where(eq(appBuildTable.id, buildId));
 
-      return c.json({ success: true });
+      // Find the app, needed for job
+      const app = await db.query.appTable.findFirst({
+        where: and(eq(appTable.id, appId), eq(appTable.organization_id, orgId)),
+      });
+      if (!app) {
+        return c.json({ error: 'App not found' }, 404);
+      }
+
+      // Prepare Kubernetes client (reuse config from /git route)
+      const k8sConfig = {
+        cluster: {
+          name: appEnvVariables.CLUSTER_NAME,
+          server: appEnvVariables.CLUSTER_SERVER,
+          skipTLSVerify: appEnvVariables.CLUSTER_SKIP_TLS_VERIFY,
+          caData: appEnvVariables.CLUSTER_CA_DATA,
+        },
+        user: {
+          name: appEnvVariables.USER_NAME,
+          token: appEnvVariables.USER_TOKEN,
+        },
+        context: {
+          name: 'default',
+          cluster: appEnvVariables.CLUSTER_NAME,
+          user: appEnvVariables.USER_NAME,
+        },
+      } as const;
+
+      const k8sClient = getK8sObjectClient({
+        env:
+          appEnvVariables.NODE_ENV === 'development'
+            ? 'development'
+            : 'production',
+        config: k8sConfig,
+      });
+
+      // Build will use S3 source zip we asked the client to upload earlier
+      const s3SourceKey = `source/${appId}/${orgId}/${buildId}.zip`;
+
+      const jobOptions: BuildJobOptions = {
+        resources: {},
+        enableS3Upload: true, // keep artifact upload
+        statusCallbackUrl: `http://socat.platform:5173/api/app_build/${buildId}/status`,
+        s3SourceKey,
+      };
+
+      await createBuildJob(k8sClient, app, buildId, jobOptions);
+
+      return c.json({ success: true, buildId });
     },
   )
   .patch(

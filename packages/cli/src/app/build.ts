@@ -8,16 +8,16 @@ import {
 } from 'node:fs/promises';
 import * as os from 'node:os';
 import * as path from 'node:path';
-import { input } from '@inquirer/prompts';
+import { confirm, input, select } from '@inquirer/prompts';
 import type { Command } from 'commander';
 
-import type { GlobalOptions } from '#src/index.ts';
 import { api } from '#src/utils/api.ts';
-import { getFinalOptions } from '#src/utils/index.ts';
+import { app as appUtils } from '#src/utils/app.ts';
+import { org } from '#src/utils/orgs.ts';
 
-type BuildOptions = GlobalOptions & {
-  app?: string;
-};
+// local shapes for selections
+type OrganizationItem = { id: string; slug: string; name?: string | null };
+type AppItem = { id: string; slug: string; name?: string | null };
 
 type PackageJson = {
   name?: string;
@@ -337,13 +337,6 @@ async function zipDirectory(outputZipPath: string, cwd: string) {
 }
 
 export async function buildApp(this: Command, folderPathArg: string) {
-  const options = getFinalOptions<BuildOptions>(this);
-  const orgId = options.org;
-  const appId = options.app;
-
-  if (!orgId) throw new Error('--org is required');
-  if (!appId) throw new Error('--app is required');
-
   const folderPath = ensureAbsolute(folderPathArg);
 
   if (!(await exists(folderPath)))
@@ -353,6 +346,52 @@ export async function buildApp(this: Command, folderPathArg: string) {
     throw new Error(`package.json not found in ${folderPath}`);
 
   const pkg = await readPackageJson(pkgJsonPath);
+
+  // Interactive selection: Organization (choose by slug, store id)
+  const orgsRes = await org.list();
+  const orgs = (
+    Array.isArray(orgsRes) ? orgsRes.filter(Boolean) : []
+  ) as OrganizationItem[];
+  if (orgs.length === 0) throw new Error('No organizations found');
+  const selectedOrgId = await select<string>({
+    message: 'Select organization',
+    choices: orgs.map((o) => ({
+      name: o.slug + (o.name ? ` — ${o.name}` : ''),
+      value: o.id as string,
+    })),
+  });
+  const selectedOrg = orgs.find((o) => o.id === selectedOrgId);
+  if (!selectedOrg) throw new Error('Selected organization not found');
+
+  // Interactive selection: App (choose by slug, store id)
+  const appsRes = await appUtils.list(selectedOrgId);
+  const apps = (
+    Array.isArray(appsRes) ? appsRes.filter(Boolean) : []
+  ) as AppItem[];
+  if (apps.length === 0)
+    throw new Error(`No apps found for org ${selectedOrg.slug}`);
+  const selectedAppId = await select<string>({
+    message: 'Select app',
+    choices: apps.map((a) => ({
+      name: a.slug + (a.name ? ` — ${a.name}` : ''),
+      value: a.id as string,
+    })),
+  });
+  const selectedApp = apps.find((a) => a.id === selectedAppId);
+  if (!selectedApp) throw new Error('Selected app not found');
+
+  // Confirmation
+  const proceed = await confirm({
+    message: `Proceed to build app '${selectedApp.slug}' for org '${selectedOrg.slug}' from path: ${folderPath}?`,
+    default: true,
+  });
+  if (!proceed) {
+    console.log('Aborted.');
+    return;
+  }
+
+  const orgId = selectedOrgId;
+  const appId = selectedAppId;
 
   // Prepare zip
   const tmpRoot = await mkdtempUnique('voltade-build-');
@@ -413,10 +452,6 @@ export async function buildApp(this: Command, folderPathArg: string) {
     await zipDirectory(zipPath, stagingRoot);
   }
 
-  console.log('zipPath', zipPath);
-  console.log('appId', appId);
-  console.log('orgId', orgId);
-
   // Request presigned URL
   const presignRes = await api.app_build.s3.signed_url.$post({
     json: { appId, orgId },
@@ -436,7 +471,6 @@ export async function buildApp(this: Command, folderPathArg: string) {
   const buildId = appBuild?.[0]?.id;
   if (!uploadUrl || !buildId) throw Error('Invalid presign response');
 
-  console.log('uploadUrl', uploadUrl);
   // Upload zip to S3
   const blob = Bun.file(zipPath);
   const uploadRes = await fetch(uploadUrl, {

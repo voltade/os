@@ -171,9 +171,10 @@ export const authMiddleware = (force: boolean = false) =>
 
     // 1) Static Bearer token(s)
     if (maybeToken) {
-      const staticTokens = appEnvVariables.ARGOCD_ENVIRONMENT_GENERATOR_TOKEN
-        ? [appEnvVariables.ARGOCD_ENVIRONMENT_GENERATOR_TOKEN]
-        : [];
+      const staticTokens = [
+        appEnvVariables.ARGOCD_ENVIRONMENT_GENERATOR_TOKEN,
+        appEnvVariables.RUNNER_SECRET_TOKEN,
+      ];
       if (staticTokens.length > 0 && staticTokens.includes(maybeToken)) {
         c.set('oauth2', null);
         c.set('user', null);

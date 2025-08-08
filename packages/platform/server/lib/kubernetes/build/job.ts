@@ -13,6 +13,8 @@ export interface BuildJobOptions {
   enableS3Upload?: boolean;
   /** Callback URL to notify when build completes */
   statusCallbackUrl?: string;
+  /** If provided, build will use S3 source zip instead of Git. Value is the S3 key under S3_BUCKET */
+  s3SourceKey?: string;
 }
 
 export function createBuildJob(
@@ -21,9 +23,15 @@ export function createBuildJob(
   buildId: string,
   options: BuildJobOptions = {},
 ) {
-  const { resources = {}, enableS3Upload = false, statusCallbackUrl } = options;
+  const {
+    resources = {},
+    enableS3Upload = false,
+    statusCallbackUrl,
+    s3SourceKey,
+  } = options;
 
-  // Build script that handles git clone, branch switch, path navigation, and build
+  // Build script that handles either S3 source download & extract or git clone,
+  // optional path navigation, and build
   const buildScript = `
 #!/bin/sh
 
@@ -36,14 +44,16 @@ report_status() {
     statusCallbackUrl
       ? `
   echo "Reporting status: \$status - \$message"
-  curl -X PATCH "${statusCallbackUrl}" \\
+  payload=$(jq -n \
+    --arg appId "${app.id}" \
+    --arg orgId "${app.organization_id}" \
+    --arg status "\$status" \
+    --arg logs "\$message" \
+    '{appId:$appId, orgId:$orgId, status:$status, logs:$logs}')
+  curl --globoff -sS -X PATCH "${statusCallbackUrl}" \\
     -H "Content-Type: application/json" \\
-    -d "{
-      \"appId\": \"${app.id}\",
-      \"orgId\": \"${app.organization_id}\",
-      \"status\": \"\$status\",
-      \"logs\": \"\$message\"
-    }" || echo "Failed to report status"
+    -H "Authorization: Bearer \$RUNNER_SECRET_TOKEN" \\
+    -d "\$payload" || echo "Failed to report status"
   `
       : 'echo "Status: $status - $message"'
   }
@@ -63,27 +73,46 @@ trap 'handle_error "Build script failed unexpectedly"' ERR
 echo "=== Starting build process ==="
 echo "App ID: ${app.id}"
 echo "Build ID: ${buildId}"
-echo "Repository: ${app.git_repo_url}"
-echo "Branch: ${app.git_repo_branch}"
+${
+  s3SourceKey
+    ? 'echo "Source: s3://$S3_BUCKET/' + s3SourceKey + '"'
+    : `echo "Repository: ${app.git_repo_url}"
+echo "Branch: ${app.git_repo_branch}"`
+}
 echo "Path: ${app.git_repo_path}"
 echo "Build Command: ${app.build_command}"
 
 report_status "building" "Starting build process"
 
-# Install git and other necessary tools
+# Install necessary tools
 echo "=== Installing dependencies ==="
-apk add --no-cache git openssh-client curl zip || handle_error "Failed to install system dependencies"
+apk add --no-cache ${s3SourceKey ? 'aws-cli unzip curl jq' : 'git openssh-client curl jq'} zip || handle_error "Failed to install system dependencies"
 
 # Create workspace
 mkdir -p /workspace
 cd /workspace
 
+${
+  s3SourceKey
+    ? `
+echo "=== Downloading source from S3 ==="
+if [ -z "$S3_BUCKET" ]; then
+  handle_error "S3_BUCKET env var not set"
+fi
+aws s3 cp "s3://$S3_BUCKET/${s3SourceKey}" /workspace/source.zip || handle_error "Failed to download source zip from S3"
+mkdir -p /workspace/src
+unzip -q /workspace/source.zip -d /workspace/src || handle_error "Failed to unzip source archive"
+cd /workspace/src
+`
+    : `
 echo "=== Cloning repository ==="
 git clone "${app.git_repo_url}" repo || handle_error "Failed to clone repository"
 cd repo
 
 echo "=== Switching to branch: ${app.git_repo_branch} ==="
 git checkout "${app.git_repo_branch}" || handle_error "Failed to checkout branch ${app.git_repo_branch}"
+`
+}
 
 # Navigate to specified path if provided
 if [ -n "${app.git_repo_path}" ] && [ "${app.git_repo_path}" != "" ]; then
@@ -181,14 +210,23 @@ echo "=== Build process completed ==="
                   name: 'NODE_ENV',
                   value: 'production',
                 },
+                {
+                  name: 'RUNNER_SECRET_TOKEN',
+                  valueFrom: {
+                    secretKeyRef: {
+                      name: 'shared-secrets',
+                      key: 'runnerSecretToken',
+                    },
+                  },
+                },
                 ...(enableS3Upload
                   ? [
                       {
                         name: 'AWS_ACCESS_KEY_ID',
                         valueFrom: {
                           secretKeyRef: {
-                            name: 'minio-secrets',
-                            key: 'root-user',
+                            name: 's3-secrets',
+                            key: 'accessKeyId',
                           },
                         },
                       },
@@ -196,8 +234,8 @@ echo "=== Build process completed ==="
                         name: 'AWS_SECRET_ACCESS_KEY',
                         valueFrom: {
                           secretKeyRef: {
-                            name: 'minio-secrets',
-                            key: 'root-password',
+                            name: 's3-secrets',
+                            key: 'secretAccessKey',
                           },
                         },
                       },

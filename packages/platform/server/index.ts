@@ -7,6 +7,7 @@ import { route as appInstallationRoute } from '#server/routes/app_installation.t
 import { route as authRoute } from '#server/routes/auth.ts';
 import { route as environmentRoute } from '#server/routes/environment.ts';
 import { route as environmentVariableRoute } from '#server/routes/environment_variable.ts';
+import { route as organizationRoute } from '#server/routes/organization.ts';
 import { authMiddleware } from './lib/auth.ts';
 
 const app = factory.createApp();
@@ -27,7 +28,8 @@ export const apiRoutes = app
   .route('/environment_variable', environmentVariableRoute)
   .route('/app', appRoute)
   .route('/app_build', appBuildRoute)
-  .route('/app_installation', appInstallationRoute);
+  .route('/app_installation', appInstallationRoute)
+  .route('/organization', organizationRoute);
 
 app
   .get('/*', serveStatic({ root: './dist/static' }))
