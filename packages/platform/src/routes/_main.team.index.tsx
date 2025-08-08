@@ -446,9 +446,9 @@ function RouteComponent() {
         </Tabs.List>
 
         <Tabs.Panel value="members" pt="md">
-          {/* Filters */}
-          <Card withBorder p="md">
-            <Group wrap="wrap" gap="md">
+          {/* Members Table (with header filters) */}
+          <Card withBorder p="0" radius="md" shadow="sm">
+            <Group wrap="wrap" gap="md" p="md">
               <TextInput
                 placeholder="Search members..."
                 leftSection={<IconSearch size={16} />}
@@ -480,10 +480,7 @@ function RouteComponent() {
                 ]}
               />
             </Group>
-          </Card>
-
-          {/* Members Table */}
-          <Card withBorder p="0" radius="md" shadow="sm">
+            <Divider />
             <Table highlightOnHover horizontalSpacing="md" verticalSpacing="md">
               <Table.Thead>
                 <Table.Tr>
