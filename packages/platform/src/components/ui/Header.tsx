@@ -1,6 +1,6 @@
-import { AppShell, Group, Image, Title } from '@mantine/core';
-import { IconCode } from '@tabler/icons-react';
+import { AppShell, Group, Image } from '@mantine/core';
 
+import { AppSelector } from './AppSelector.tsx';
 import { OrganizationSwitcher } from './OrganizationSwitcher.tsx';
 import { UserButton } from './UserButton.tsx';
 
@@ -17,6 +17,7 @@ export function Header() {
           />
         </Group>
         <Group gap="md">
+          <AppSelector />
           <OrganizationSwitcher />
           <UserButton />
         </Group>

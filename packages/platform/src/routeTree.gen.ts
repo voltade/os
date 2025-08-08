@@ -16,9 +16,11 @@ import { Route as MainProfileRouteImport } from './routes/_main.profile'
 import { Route as AuthSignupRouteImport } from './routes/_auth.signup'
 import { Route as AuthSigninRouteImport } from './routes/_auth.signin'
 import { Route as MainProfileIndexRouteImport } from './routes/_main.profile.index'
+import { Route as MainMembersIndexRouteImport } from './routes/_main.members.index'
 import { Route as MainEnvironmentsIndexRouteImport } from './routes/_main.environments.index'
 import { Route as MainProfileSecurityRouteImport } from './routes/_main.profile.security'
 import { Route as MainEnvironmentsEnvironmentSlugRouteImport } from './routes/_main.environments.$environmentSlug'
+import { Route as MainAcceptInvitationInvitationIdRouteImport } from './routes/_main.accept-invitation.$invitationId'
 import { Route as AuthOauthConsentRouteImport } from './routes/_auth.oauth.consent'
 import { Route as MainEnvironmentsEnvironmentSlugIndexRouteImport } from './routes/_main.environments.$environmentSlug.index'
 import { Route as MainEnvironmentsEnvironmentSlugEnvironment_variablesRouteImport } from './routes/_main.environments.$environmentSlug.environment_variables'
@@ -56,6 +58,11 @@ const MainProfileIndexRoute = MainProfileIndexRouteImport.update({
   path: '/',
   getParentRoute: () => MainProfileRoute,
 } as any)
+const MainMembersIndexRoute = MainMembersIndexRouteImport.update({
+  id: '/members/',
+  path: '/members/',
+  getParentRoute: () => MainRoute,
+} as any)
 const MainEnvironmentsIndexRoute = MainEnvironmentsIndexRouteImport.update({
   id: '/environments/',
   path: '/environments/',
@@ -70,6 +77,12 @@ const MainEnvironmentsEnvironmentSlugRoute =
   MainEnvironmentsEnvironmentSlugRouteImport.update({
     id: '/environments/$environmentSlug',
     path: '/environments/$environmentSlug',
+    getParentRoute: () => MainRoute,
+  } as any)
+const MainAcceptInvitationInvitationIdRoute =
+  MainAcceptInvitationInvitationIdRouteImport.update({
+    id: '/accept-invitation/$invitationId',
+    path: '/accept-invitation/$invitationId',
     getParentRoute: () => MainRoute,
   } as any)
 const AuthOauthConsentRoute = AuthOauthConsentRouteImport.update({
@@ -96,9 +109,11 @@ export interface FileRoutesByFullPath {
   '/profile': typeof MainProfileRouteWithChildren
   '/': typeof MainIndexRoute
   '/oauth/consent': typeof AuthOauthConsentRoute
+  '/accept-invitation/$invitationId': typeof MainAcceptInvitationInvitationIdRoute
   '/environments/$environmentSlug': typeof MainEnvironmentsEnvironmentSlugRouteWithChildren
   '/profile/security': typeof MainProfileSecurityRoute
   '/environments': typeof MainEnvironmentsIndexRoute
+  '/members': typeof MainMembersIndexRoute
   '/profile/': typeof MainProfileIndexRoute
   '/environments/$environmentSlug/environment_variables': typeof MainEnvironmentsEnvironmentSlugEnvironment_variablesRoute
   '/environments/$environmentSlug/': typeof MainEnvironmentsEnvironmentSlugIndexRoute
@@ -108,8 +123,10 @@ export interface FileRoutesByTo {
   '/signup': typeof AuthSignupRoute
   '/': typeof MainIndexRoute
   '/oauth/consent': typeof AuthOauthConsentRoute
+  '/accept-invitation/$invitationId': typeof MainAcceptInvitationInvitationIdRoute
   '/profile/security': typeof MainProfileSecurityRoute
   '/environments': typeof MainEnvironmentsIndexRoute
+  '/members': typeof MainMembersIndexRoute
   '/profile': typeof MainProfileIndexRoute
   '/environments/$environmentSlug/environment_variables': typeof MainEnvironmentsEnvironmentSlugEnvironment_variablesRoute
   '/environments/$environmentSlug': typeof MainEnvironmentsEnvironmentSlugIndexRoute
@@ -123,9 +140,11 @@ export interface FileRoutesById {
   '/_main/profile': typeof MainProfileRouteWithChildren
   '/_main/': typeof MainIndexRoute
   '/_auth/oauth/consent': typeof AuthOauthConsentRoute
+  '/_main/accept-invitation/$invitationId': typeof MainAcceptInvitationInvitationIdRoute
   '/_main/environments/$environmentSlug': typeof MainEnvironmentsEnvironmentSlugRouteWithChildren
   '/_main/profile/security': typeof MainProfileSecurityRoute
   '/_main/environments/': typeof MainEnvironmentsIndexRoute
+  '/_main/members/': typeof MainMembersIndexRoute
   '/_main/profile/': typeof MainProfileIndexRoute
   '/_main/environments/$environmentSlug/environment_variables': typeof MainEnvironmentsEnvironmentSlugEnvironment_variablesRoute
   '/_main/environments/$environmentSlug/': typeof MainEnvironmentsEnvironmentSlugIndexRoute
@@ -138,9 +157,11 @@ export interface FileRouteTypes {
     | '/profile'
     | '/'
     | '/oauth/consent'
+    | '/accept-invitation/$invitationId'
     | '/environments/$environmentSlug'
     | '/profile/security'
     | '/environments'
+    | '/members'
     | '/profile/'
     | '/environments/$environmentSlug/environment_variables'
     | '/environments/$environmentSlug/'
@@ -150,8 +171,10 @@ export interface FileRouteTypes {
     | '/signup'
     | '/'
     | '/oauth/consent'
+    | '/accept-invitation/$invitationId'
     | '/profile/security'
     | '/environments'
+    | '/members'
     | '/profile'
     | '/environments/$environmentSlug/environment_variables'
     | '/environments/$environmentSlug'
@@ -164,9 +187,11 @@ export interface FileRouteTypes {
     | '/_main/profile'
     | '/_main/'
     | '/_auth/oauth/consent'
+    | '/_main/accept-invitation/$invitationId'
     | '/_main/environments/$environmentSlug'
     | '/_main/profile/security'
     | '/_main/environments/'
+    | '/_main/members/'
     | '/_main/profile/'
     | '/_main/environments/$environmentSlug/environment_variables'
     | '/_main/environments/$environmentSlug/'
@@ -228,6 +253,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof MainProfileIndexRouteImport
       parentRoute: typeof MainProfileRoute
     }
+    '/_main/members/': {
+      id: '/_main/members/'
+      path: '/members'
+      fullPath: '/members'
+      preLoaderRoute: typeof MainMembersIndexRouteImport
+      parentRoute: typeof MainRoute
+    }
     '/_main/environments/': {
       id: '/_main/environments/'
       path: '/environments'
@@ -247,6 +279,13 @@ declare module '@tanstack/react-router' {
       path: '/environments/$environmentSlug'
       fullPath: '/environments/$environmentSlug'
       preLoaderRoute: typeof MainEnvironmentsEnvironmentSlugRouteImport
+      parentRoute: typeof MainRoute
+    }
+    '/_main/accept-invitation/$invitationId': {
+      id: '/_main/accept-invitation/$invitationId'
+      path: '/accept-invitation/$invitationId'
+      fullPath: '/accept-invitation/$invitationId'
+      preLoaderRoute: typeof MainAcceptInvitationInvitationIdRouteImport
       parentRoute: typeof MainRoute
     }
     '/_auth/oauth/consent': {
@@ -322,16 +361,20 @@ const MainEnvironmentsEnvironmentSlugRouteWithChildren =
 interface MainRouteChildren {
   MainProfileRoute: typeof MainProfileRouteWithChildren
   MainIndexRoute: typeof MainIndexRoute
+  MainAcceptInvitationInvitationIdRoute: typeof MainAcceptInvitationInvitationIdRoute
   MainEnvironmentsEnvironmentSlugRoute: typeof MainEnvironmentsEnvironmentSlugRouteWithChildren
   MainEnvironmentsIndexRoute: typeof MainEnvironmentsIndexRoute
+  MainMembersIndexRoute: typeof MainMembersIndexRoute
 }
 
 const MainRouteChildren: MainRouteChildren = {
   MainProfileRoute: MainProfileRouteWithChildren,
   MainIndexRoute: MainIndexRoute,
+  MainAcceptInvitationInvitationIdRoute: MainAcceptInvitationInvitationIdRoute,
   MainEnvironmentsEnvironmentSlugRoute:
     MainEnvironmentsEnvironmentSlugRouteWithChildren,
   MainEnvironmentsIndexRoute: MainEnvironmentsIndexRoute,
+  MainMembersIndexRoute: MainMembersIndexRoute,
 }
 
 const MainRouteWithChildren = MainRoute._addFileChildren(MainRouteChildren)

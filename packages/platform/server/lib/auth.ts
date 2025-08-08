@@ -98,7 +98,25 @@ export const auth = betterAuth({
         expirationTime: Math.floor(Date.now() / 1000) + 60 * 60 * 24 * 30, // 30 days
       },
     }),
-    organization(),
+    organization({
+      async sendInvitationEmail(data) {
+        if (import.meta.env.NODE_ENV === 'development') {
+          console.log(
+            `Sending invitation email to ${data.email} for organization ${data.organization.name}`,
+          );
+        }
+        const inviteLink = `${appEnvVariables.VITE_APP_URL}/accept-invitation/${data.id}`;
+        console.log(`Invite link: ${inviteLink}`);
+        await mailer.sendMail({
+          to: data.email,
+          subject: `Invitation to join ${data.organization.name}`,
+          html: `
+            <p>You've been invited to join ${data.organization.name}.</p>
+            <p><a href="${inviteLink}">Accept Invitation</a></p>
+          `,
+        });
+      },
+    }),
   ],
   user: {
     additionalFields: {},
