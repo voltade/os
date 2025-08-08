@@ -46,6 +46,7 @@
     "pgxs",
     "plpgsql",
     "postgrest",
+    "qiankun",
     "selfsigned",
     "socat",
     "sslip",

@@ -5,6 +5,8 @@ import { defineConfig } from 'vite';
 import qiankun from 'vite-plugin-qiankun-lite';
 import tsconfigPaths from 'vite-tsconfig-paths';
 
+import { name } from './package.json';
+
 // https://vite.dev/config/
 export default defineConfig({
   base: './',
@@ -15,9 +17,10 @@ export default defineConfig({
     },
   },
   server: {
-    host: 'localhost',
+    host: '0.0.0.0',
+    allowedHosts: ['app-template.127.0.0.1.nip.io'],
     port: 51733,
-    open: true,
+    open: false,
     proxy: {
       '/api': {
         target: 'http://localhost:30000',
@@ -33,7 +36,7 @@ export default defineConfig({
     tanstackRouter({ target: 'react', autoCodeSplitting: true }),
     tsconfigPaths(),
     react(),
-    qiankun({ name: 'bun-fullstack-app', sandbox: false }),
+    qiankun({ name, sandbox: true }),
     tailwindcss(),
   ],
 });

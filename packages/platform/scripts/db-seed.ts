@@ -107,3 +107,5 @@ await db.transaction(async (tx) => {
     })
     .onConflictDoNothing();
 });
+
+console.log('Database seeded successfully!');
