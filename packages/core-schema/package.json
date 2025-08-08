@@ -4,9 +4,6 @@
   "license": "AGPL-3.0-only",
   "version": "0.1.0",
   "type": "module",
-  "publishConfig": {
-    "registry": "https://npm.pkg.github.com"
-  },
   "module": "index.ts",
   "description": "Voltade OS database schema and API definitions",
   "author": "Voltade Team",
