@@ -716,9 +716,7 @@ function RouteComponent() {
                       <Table.Td>
                         <Text size="sm" c="dimmed">
                           {inv.expiresAt
-                            ? formatDate(
-                                new Date(inv.expiresAt as any).toString(),
-                              )
+                            ? formatDate(new Date(inv.expiresAt).toString())
                             : '—'}
                         </Text>
                       </Table.Td>
