@@ -42,6 +42,11 @@ import {
 import { createFileRoute } from '@tanstack/react-router';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 
+import { InviteMemberModal } from '#src/components/team/InviteMemberModal';
+import { InvitesTable } from '#src/components/team/InvitesTable';
+import { MembersFilters } from '#src/components/team/MembersFilters';
+import { MembersTable } from '#src/components/team/MembersTable';
+import { RemoveMemberModal } from '#src/components/team/RemoveMemberModal';
 import { authClient } from '#src/lib/auth.ts';
 
 export const Route = createFileRoute('/_main/team/')({
@@ -110,15 +115,13 @@ function RouteComponent() {
     return [];
   };
 
-  // Form for inviting members
+  // Form for inviting members (no name required)
   const form = useForm({
     initialValues: {
-      name: '',
       email: '',
       role: 'member',
     },
     validate: {
-      name: (value) => (!value ? 'Name is required' : null),
       email: (value) => {
         if (!value) return 'Email is required';
         if (!/^\S+@\S+$/.test(value)) return 'Invalid email';
@@ -448,181 +451,21 @@ function RouteComponent() {
         <Tabs.Panel value="members" pt="md">
           {/* Members Table (with header filters) */}
           <Card withBorder p="0" radius="md" shadow="sm">
-            <Group wrap="wrap" gap="md" p="md">
-              <TextInput
-                placeholder="Search members..."
-                leftSection={<IconSearch size={16} />}
-                value={searchQuery}
-                onChange={(e) => handleSearchChange(e.target.value)}
-                style={{ flex: 1, minWidth: 260 }}
-                rightSection={
-                  searchQuery ? (
-                    <ActionIcon
-                      variant="subtle"
-                      color="gray"
-                      onClick={() => handleSearchChange('')}
-                    >
-                      <IconX size={14} />
-                    </ActionIcon>
-                  ) : null
-                }
-              />
-              <SegmentedControl
-                value={roleFilter ?? 'all'}
-                onChange={(val) =>
-                  handleRoleFilterChange(val === 'all' ? null : val)
-                }
-                data={[
-                  { value: 'all', label: 'All' },
-                  { value: 'owner', label: 'Owner' },
-                  { value: 'admin', label: 'Admin' },
-                  { value: 'member', label: 'Member' },
-                ]}
-              />
-            </Group>
+            <MembersFilters
+              searchQuery={searchQuery}
+              onSearchChange={handleSearchChange}
+              roleFilter={roleFilter}
+              onRoleFilterChange={handleRoleFilterChange}
+            />
             <Divider />
-            <Table highlightOnHover horizontalSpacing="md" verticalSpacing="md">
-              <Table.Thead>
-                <Table.Tr>
-                  <Table.Th>Member</Table.Th>
-                  <Table.Th>Joined</Table.Th>
-                  <Table.Th style={{ width: 220 }}>Role</Table.Th>
-                  <Table.Th style={{ width: 60 }}></Table.Th>
-                </Table.Tr>
-              </Table.Thead>
-              <Table.Tbody>
-                {paginatedMembers.map((member) => (
-                  <Table.Tr key={member.id}>
-                    <Table.Td>
-                      <Group>
-                        <Avatar
-                          src={member.user.image}
-                          name={member.user.name}
-                          color="initials"
-                        />
-                        <div>
-                          <Group gap="xs" align="center">
-                            <Text fw={500}>{member.user.name}</Text>
-                            {member.userId === session?.user?.id && (
-                              <Badge size="xs" variant="light">
-                                You
-                              </Badge>
-                            )}
-                          </Group>
-                          <Group gap={6} align="center">
-                            <IconMail
-                              size={14}
-                              color="var(--mantine-color-gray-6)"
-                            />
-                            <Text size="sm" c="dimmed">
-                              {member.user.email}
-                            </Text>
-                            <CopyButton
-                              value={member.user.email}
-                              timeout={1200}
-                            >
-                              {({ copied, copy }) => (
-                                <Tooltip
-                                  label={copied ? 'Copied' : 'Copy email'}
-                                  withArrow
-                                >
-                                  <ActionIcon
-                                    size="sm"
-                                    variant="subtle"
-                                    color={copied ? 'green' : 'gray'}
-                                    onClick={copy}
-                                  >
-                                    <IconCopy size={14} />
-                                  </ActionIcon>
-                                </Tooltip>
-                              )}
-                            </CopyButton>
-                          </Group>
-                        </div>
-                      </Group>
-                    </Table.Td>
-                    <Table.Td>
-                      <Text size="sm" c="dimmed">
-                        {new Date(member.createdAt).toLocaleDateString(
-                          'en-US',
-                          {
-                            year: 'numeric',
-                            month: 'short',
-                            day: 'numeric',
-                          },
-                        )}
-                      </Text>
-                    </Table.Td>
-                    <Table.Td>
-                      <Select
-                        disabled={
-                          !canEditRoles || member.userId === session?.user?.id
-                        }
-                        data={[
-                          { value: 'owner', label: 'Owner' },
-                          { value: 'admin', label: 'Admin' },
-                          { value: 'member', label: 'Member' },
-                        ]}
-                        value={member.role}
-                        allowDeselect={false}
-                        onChange={(val) =>
-                          val &&
-                          handleUpdateRole(
-                            member.id,
-                            val as 'owner' | 'admin' | 'member',
-                          )
-                        }
-                        rightSection={
-                          roleUpdateMemberId === member.id ? (
-                            <Loader size={16} />
-                          ) : null
-                        }
-                      />
-                    </Table.Td>
-                    <Table.Td>
-                      <Menu shadow="md" width={220}>
-                        <Menu.Target>
-                          <Tooltip label="Actions" withArrow>
-                            <ActionIcon variant="subtle" color="gray">
-                              <IconDots size={16} />
-                            </ActionIcon>
-                          </Tooltip>
-                        </Menu.Target>
-                        <Menu.Dropdown>
-                          <Menu.Item
-                            leftSection={<IconEdit size={14} />}
-                            disabled
-                          >
-                            Edit Member
-                          </Menu.Item>
-                          <Menu.Item
-                            leftSection={<IconMail size={14} />}
-                            disabled
-                          >
-                            Send Message
-                          </Menu.Item>
-                          <Menu.Divider />
-                          {member.userId !== session?.user?.id && (
-                            <Menu.Item
-                              onClick={() =>
-                                handleRemoveMemberClick({
-                                  id: member.id,
-                                  name: member.user.name,
-                                })
-                              }
-                              color="red"
-                              leftSection={<IconTrash size={14} />}
-                            >
-                              Remove Member
-                            </Menu.Item>
-                          )}
-                        </Menu.Dropdown>
-                      </Menu>
-                    </Table.Td>
-                  </Table.Tr>
-                ))}
-              </Table.Tbody>
-            </Table>
+            <MembersTable
+              rows={paginatedMembers}
+              currentUserId={session?.user?.id}
+              canEditRoles={canEditRoles}
+              onChangeRole={handleUpdateRole}
+              roleLoadingMemberId={roleUpdateMemberId}
+              onRemove={(id, name) => handleRemoveMemberClick({ id, name })}
+            />
           </Card>
 
           {paginatedMembers.length === 0 && !isPending && (
@@ -670,168 +513,34 @@ function RouteComponent() {
               </ActionIcon>
             </Group>
             <Divider />
-            <Table highlightOnHover horizontalSpacing="md" verticalSpacing="md">
-              <Table.Thead>
-                <Table.Tr>
-                  <Table.Th>Email</Table.Th>
-                  <Table.Th>Role</Table.Th>
-                  <Table.Th>Expires</Table.Th>
-                  <Table.Th style={{ width: 120 }}>Actions</Table.Th>
-                </Table.Tr>
-              </Table.Thead>
-              <Table.Tbody>
-                {invitesLoading ? (
-                  <Table.Tr>
-                    <Table.Td colSpan={4}>
-                      <Center p="lg">
-                        <Loader size="sm" />
-                      </Center>
-                    </Table.Td>
-                  </Table.Tr>
-                ) : invites.length === 0 ? (
-                  <Table.Tr>
-                    <Table.Td colSpan={4}>
-                      <Center p="lg">
-                        <Text c="dimmed">No pending invitations</Text>
-                      </Center>
-                    </Table.Td>
-                  </Table.Tr>
-                ) : (
-                  invites.map((inv) => (
-                    <Table.Tr key={inv.id}>
-                      <Table.Td>
-                        <Group gap={6} align="center">
-                          <IconMail size={14} />
-                          <Text>{inv.email}</Text>
-                        </Group>
-                      </Table.Td>
-                      <Table.Td>
-                        <Badge size="sm" color={getRoleBadgeColor(inv.role)}>
-                          {capitalizeRole(inv.role)}
-                        </Badge>
-                      </Table.Td>
-                      <Table.Td>
-                        <Text size="sm" c="dimmed">
-                          {inv.expiresAt
-                            ? formatDate(new Date(inv.expiresAt).toString())
-                            : '—'}
-                        </Text>
-                      </Table.Td>
-                      <Table.Td>
-                        <Group gap="xs" justify="flex-start">
-                          <Button
-                            size="xs"
-                            variant="subtle"
-                            onClick={() =>
-                              handleResendInvite(inv.email, inv.role)
-                            }
-                          >
-                            Resend
-                          </Button>
-                          <Button
-                            size="xs"
-                            color="red"
-                            variant="light"
-                            onClick={() => handleCancelInvite(inv.id)}
-                          >
-                            Cancel
-                          </Button>
-                        </Group>
-                      </Table.Td>
-                    </Table.Tr>
-                  ))
-                )}
-              </Table.Tbody>
-            </Table>
+            <InvitesTable
+              invites={invites}
+              invitesLoading={invitesLoading}
+              onCancelInvite={handleCancelInvite}
+              onResendInvite={handleResendInvite}
+            />
           </Card>
         </Tabs.Panel>
       </Tabs>
 
       {/* Invite Member Modal */}
-      <Modal opened={opened} onClose={close} title="Invite New Member" centered>
-        <form onSubmit={form.onSubmit(handleInviteMember)}>
-          <Stack gap="md">
-            <Text c="dimmed" size="sm">
-              We’ll email an invitation to this person. They’ll be able to join
-              your organization with the selected role.
-            </Text>
-
-            <TextInput
-              label="Full Name"
-              placeholder="Enter member's full name"
-              withAsterisk
-              {...form.getInputProps('name')}
-            />
-
-            <TextInput
-              label="Email Address"
-              placeholder="Enter member's email"
-              type="email"
-              withAsterisk
-              {...form.getInputProps('email')}
-            />
-
-            <Select
-              label="Role"
-              placeholder="Select member role"
-              data={getAllowedRoles()}
-              withAsterisk
-              {...form.getInputProps('role')}
-            />
-
-            <Divider my="xs" />
-            <Group justify="flex-end" mt="md">
-              <Button variant="light" onClick={close} disabled={isInviting}>
-                Cancel
-              </Button>
-              <Button
-                type="submit"
-                leftSection={<IconPlus size={16} />}
-                loading={isInviting}
-              >
-                Send Invitation
-              </Button>
-            </Group>
-          </Stack>
-        </form>
-      </Modal>
+      <InviteMemberModal
+        opened={opened}
+        onClose={close}
+        form={form}
+        roleOptions={getAllowedRoles()}
+        isInviting={isInviting}
+        onSubmit={handleInviteMember}
+      />
 
       {/* Remove Member Confirmation Modal */}
-      <Modal
+      <RemoveMemberModal
         opened={removeModalOpened}
         onClose={closeRemoveModal}
-        title="Remove Member"
-        centered
-      >
-        <Stack gap="md">
-          <Text>
-            Are you sure you want to remove{' '}
-            <strong>{memberToRemove?.name}</strong> from this organization?
-          </Text>
-          <Text size="sm" c="dimmed">
-            This action cannot be undone. The member will lose access to all
-            organization resources.
-          </Text>
-
-          <Group justify="flex-end" mt="md">
-            <Button
-              variant="light"
-              onClick={closeRemoveModal}
-              disabled={isRemoving}
-            >
-              Cancel
-            </Button>
-            <Button
-              color="red"
-              onClick={handleConfirmRemoveMember}
-              leftSection={<IconTrash size={16} />}
-              loading={isRemoving}
-            >
-              Remove Member
-            </Button>
-          </Group>
-        </Stack>
-      </Modal>
+        memberName={memberToRemove?.name ?? null}
+        isRemoving={isRemoving}
+        onConfirm={handleConfirmRemoveMember}
+      />
     </Stack>
   );
 }

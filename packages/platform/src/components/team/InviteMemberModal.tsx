@@ -38,13 +38,6 @@ export function InviteMemberModal<T>({
           </Text>
 
           <TextInput
-            label="Full Name"
-            placeholder="Enter member's full name"
-            withAsterisk
-            {...(form.getInputProps as any)('name')}
-          />
-
-          <TextInput
             label="Email Address"
             placeholder="Enter member's email"
             type="email"

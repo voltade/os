@@ -27,7 +27,7 @@ export interface MemberRow {
   createdAt: string | Date;
 }
 
-interface MembersTableProps {
+export interface MembersTableProps {
   rows: MemberRow[];
   currentUserId?: string;
   canEditRoles: boolean;

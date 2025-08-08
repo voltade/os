@@ -17,22 +17,18 @@ export interface InviteRow {
   status?: string;
 }
 
-interface InvitesTableProps {
+export interface InvitesTableProps {
   invites: InviteRow[];
-  loading?: boolean;
-  onResend: (email: string, role: string) => void;
-  onCancel: (invitationId: string) => void;
-  getRoleBadgeColor: (role: string) => string;
-  formatDate: (s: string) => string;
+  invitesLoading?: boolean;
+  onResendInvite: (email: string, role: string) => void;
+  onCancelInvite: (invitationId: string) => void;
 }
 
 export function InvitesTable({
   invites,
-  loading,
-  onResend,
-  onCancel,
-  getRoleBadgeColor,
-  formatDate,
+  invitesLoading,
+  onResendInvite,
+  onCancelInvite,
 }: InvitesTableProps) {
   return (
     <Table highlightOnHover horizontalSpacing="md" verticalSpacing="md">
@@ -45,7 +41,7 @@ export function InvitesTable({
         </Table.Tr>
       </Table.Thead>
       <Table.Tbody>
-        {loading ? (
+        {invitesLoading ? (
           <Table.Tr>
             <Table.Td colSpan={4}>
               <Center p="lg">
@@ -71,14 +67,18 @@ export function InvitesTable({
                 </Group>
               </Table.Td>
               <Table.Td>
-                <Badge size="sm" color={getRoleBadgeColor(inv.role)}>
+                <Badge size="sm" color="gray">
                   {inv.role.charAt(0).toUpperCase() + inv.role.slice(1)}
                 </Badge>
               </Table.Td>
               <Table.Td>
                 <Text size="sm" c="dimmed">
                   {inv.expiresAt
-                    ? formatDate(new Date(inv.expiresAt).toString())
+                    ? new Date(inv.expiresAt).toLocaleDateString('en-US', {
+                        year: 'numeric',
+                        month: 'short',
+                        day: 'numeric',
+                      })
                     : '—'}
                 </Text>
               </Table.Td>
@@ -87,7 +87,7 @@ export function InvitesTable({
                   <Button
                     size="xs"
                     variant="subtle"
-                    onClick={() => onResend(inv.email, inv.role)}
+                    onClick={() => onResendInvite(inv.email, inv.role)}
                   >
                     Resend
                   </Button>
@@ -95,7 +95,7 @@ export function InvitesTable({
                     size="xs"
                     color="red"
                     variant="light"
-                    onClick={() => onCancel(inv.id)}
+                    onClick={() => onCancelInvite(inv.id)}
                   >
                     Cancel
                   </Button>
