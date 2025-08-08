@@ -1,13 +1,10 @@
 import '@mantine/core/styles.css';
-import '@mantine/core/styles.layer.css';
 import '@mantine/dates/styles.css';
 import '@mantine/notifications/styles.css';
-import 'mantine-datatable/styles.css';
 import './main.css';
 import { MantineProvider } from '@mantine/core';
 import { ModalsProvider } from '@mantine/modals';
 import { Notifications } from '@mantine/notifications';
-import type { SupabaseClient } from '@supabase/supabase-js';
 import { ReactQueryDevtools } from '@tanstack/react-query-devtools';
 import {
   createHashHistory,
@@ -18,7 +15,6 @@ import { StrictMode } from 'react';
 import ReactDOM from 'react-dom/client';
 
 import type { Database } from '#src/database.gen.ts';
-import theme from '#src/theme.ts';
 import type { RuntimeEnv } from '#utils/get-runtime-env.ts';
 import { name } from '../package.json';
 import * as TanstackQuery from './integrations/tanstack-query/root-provider.tsx';
@@ -69,18 +65,17 @@ let root: ReactDOM.Root;
 
 const render = (props?: Props) => {
   const container = props?.container
-    ? props.container.querySelector('#root')
-    : document.getElementById('root');
+    ? props.container.querySelector('#app-root')
+    : document.getElementById('app-root');
   // biome-ignore lint/style/noNonNullAssertion: false positive
   root = ReactDOM.createRoot(container!);
   root.render(
     <StrictMode>
-      <MantineProvider theme={theme}>
+      <MantineProvider>
         <TanstackQuery.Provider>
           <ModalsProvider>
             <RouterProvider router={router} />
             <ReactQueryDevtools initialIsOpen={false} />
-
             <Notifications position="top-right" limit={5} />
           </ModalsProvider>
         </TanstackQuery.Provider>
@@ -91,6 +86,10 @@ const render = (props?: Props) => {
 
 if (!window.__POWERED_BY_QIANKUN__) {
   render();
+  // If you want to start measuring performance in your app, pass a function
+  // to log results (for example: reportWebVitals(console.log))
+  // or send to an analytics endpoint. Learn more: https://bit.ly/CRA-vitals
+  reportWebVitals();
 }
 
 export async function bootstrap() {
@@ -103,10 +102,6 @@ export async function mount(props: Props) {
   if (props?.baseUrl) {
     window.__BASE_URL__ = props.baseUrl;
   }
-  // Set supabaseClient to global so components can access it without props drilling
-  if (props?.supabaseClient) {
-    window.supabaseClient = props.supabaseClient;
-  }
   render(props);
 }
 
@@ -118,8 +113,3 @@ export async function unmount(props: Props) {
 export async function update(props: Props) {
   console.log(`${name} update`, props);
 }
-
-// If you want to start measuring performance in your app, pass a function
-// to log results (for example: reportWebVitals(console.log))
-// or send to an analytics endpoint. Learn more: https://bit.ly/CRA-vitals
-reportWebVitals();

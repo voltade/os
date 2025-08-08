@@ -4,7 +4,6 @@ import {
   Group,
   NavLink,
   Stack,
-  Text,
   Tooltip,
 } from '@mantine/core';
 import { IconHome, IconTable, IconUserPlus } from '@tabler/icons-react';
@@ -74,36 +73,34 @@ const NavBar: React.FC<NavBarProps> = (props: NavBarProps) => {
 
         <Stack gap={opened ? 'sm' : 'md'}>
           {opened ? (
-            <Stack>
+            <Stack gap={0}>
               <NavLink
-                label={<Text size="lg">{HOME_ROUTE_NAME}</Text>}
+                label={HOME_ROUTE_NAME}
                 variant="light"
-                leftSection={<IconHome size={24} stroke={1.5} />}
+                leftSection={<IconHome size={18} stroke={1.5} />}
                 active={activeTab === HOME_ROUTE}
                 onClick={() => handleSetActiveTab(HOME_ROUTE)}
               />
               <NavLink
-                label={
-                  <Text size="lg">{PRODUCT_TEMPLATES_TABLE_ROUTE_NAME}</Text>
-                }
+                label={PRODUCT_TEMPLATES_TABLE_ROUTE_NAME}
                 variant="light"
-                leftSection={<IconTable size={24} stroke={1.5} />}
+                leftSection={<IconTable size={18} stroke={1.5} />}
                 active={activeTab === PRODUCT_TEMPLATES_TABLE_ROUTE}
                 onClick={() =>
                   handleSetActiveTab(PRODUCT_TEMPLATES_TABLE_ROUTE)
                 }
               />
               <NavLink
-                label={<Text size="lg">{REGISTRATION_FORM_ROUTE_NAME}</Text>}
+                label={REGISTRATION_FORM_ROUTE_NAME}
                 variant="light"
-                leftSection={<IconUserPlus size={24} stroke={1.5} />}
+                leftSection={<IconUserPlus size={18} stroke={1.5} />}
                 active={activeTab === REGISTRATION_FORM_ROUTE}
                 onClick={() => handleSetActiveTab(REGISTRATION_FORM_ROUTE)}
               />
               <NavLink
-                label={<Text size="lg">{STUDENTS_ROUTE_NAME}</Text>}
+                label={STUDENTS_ROUTE_NAME}
                 variant="light"
-                leftSection={<IconTable size={24} stroke={1.5} />}
+                leftSection={<IconTable size={18} stroke={1.5} />}
                 active={activeTab === STUDENTS_ROUTE}
                 onClick={() => handleSetActiveTab(STUDENTS_ROUTE)}
               />
