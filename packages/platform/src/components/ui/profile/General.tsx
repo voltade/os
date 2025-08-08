@@ -1,9 +1,9 @@
 import {
   Avatar,
   Button,
-  Container,
+  Card,
+  Divider,
   Group,
-  Paper,
   Stack,
   Text,
   TextInput,
@@ -42,7 +42,6 @@ export function ProfileGeneral() {
   const handleSubmit = async (values: typeof form.values) => {
     setIsLoading(true);
     try {
-      // Update user profile using BetterAuth (only whitelisted fields)
       const { data, error } = await authClient.updateUser({
         name: values.name,
         image: values.image,
@@ -78,64 +77,67 @@ export function ProfileGeneral() {
   }
 
   return (
-    <Container size="sm" py="md">
-      <Stack gap="md">
-        <Title order={2}>General</Title>
+    <Stack gap="md">
+      <Card withBorder p="0" radius="md" shadow="sm">
+        <Stack p="md" gap="xs">
+          <Title order={3}>Profile</Title>
+          <Text size="sm" c="dimmed">
+            Manage your personal information.
+          </Text>
+        </Stack>
+        <Divider />
+        <Stack p="md" gap="lg">
+          <Group align="center">
+            <Avatar src={sessionData.user.image} size="xl" radius="md">
+              {sessionData.user.name?.charAt(0).toUpperCase()}
+            </Avatar>
+            <Stack gap={4}>
+              <Text fw={500}>{sessionData.user.name}</Text>
+              <Text size="sm" c="dimmed">
+                {sessionData.user.email}
+              </Text>
+            </Stack>
+          </Group>
 
-        <Paper p="md" withBorder>
-          <Stack gap="md">
-            <Group>
-              <Avatar src={sessionData.user.image} size="xl" radius="md">
-                {sessionData.user.name?.charAt(0).toUpperCase()}
-              </Avatar>
-              <Stack gap={4}>
-                <Text fw={500}>{sessionData.user.name}</Text>
-                <Text size="sm" c="dimmed">
-                  {sessionData.user.email}
-                </Text>
-              </Stack>
-            </Group>
+          <form onSubmit={form.onSubmit(handleSubmit)}>
+            <Stack gap="md">
+              <TextInput
+                label="Name"
+                placeholder="Enter your name"
+                key={form.key('name')}
+                {...form.getInputProps('name')}
+              />
 
-            <form onSubmit={form.onSubmit(handleSubmit)}>
-              <Stack gap="md">
-                <TextInput
-                  label="Name"
-                  placeholder="Enter your name"
-                  key={form.key('name')}
-                  {...form.getInputProps('name')}
-                />
+              <TextInput
+                label="Profile Image URL"
+                placeholder="Enter image URL (optional)"
+                key={form.key('image')}
+                {...form.getInputProps('image')}
+                description="Provide a URL to your profile image"
+              />
 
-                <TextInput
-                  label="Profile Image URL"
-                  placeholder="Enter image URL (optional)"
-                  key={form.key('image')}
-                  {...form.getInputProps('image')}
-                  description="Provide a URL to your profile image"
-                />
+              <TextInput
+                label="Email"
+                placeholder="Enter your email"
+                disabled
+                key={form.key('email')}
+                {...form.getInputProps('email')}
+                description="Email is managed by your authentication provider and cannot be changed here."
+              />
 
-                <TextInput
-                  label="Email"
-                  placeholder="Enter your email"
-                  disabled
-                  key={form.key('email')}
-                  {...form.getInputProps('email')}
-                  description="Email changes require verification and are handled in Security settings"
-                />
-
-                <Group justify="flex-end">
-                  <Button
-                    type="submit"
-                    loading={isLoading}
-                    disabled={!form.isDirty()}
-                  >
-                    Save Changes
-                  </Button>
-                </Group>
-              </Stack>
-            </form>
-          </Stack>
-        </Paper>
-      </Stack>
-    </Container>
+              <Group justify="flex-end">
+                <Button
+                  type="submit"
+                  loading={isLoading}
+                  disabled={!form.isDirty()}
+                >
+                  Save Changes
+                </Button>
+              </Group>
+            </Stack>
+          </form>
+        </Stack>
+      </Card>
+    </Stack>
   );
 }

@@ -18,7 +18,6 @@ import { Route as AuthSigninRouteImport } from './routes/_auth.signin'
 import { Route as MainTeamIndexRouteImport } from './routes/_main.team.index'
 import { Route as MainProfileIndexRouteImport } from './routes/_main.profile.index'
 import { Route as MainEnvironmentsIndexRouteImport } from './routes/_main.environments.index'
-import { Route as MainProfileSecurityRouteImport } from './routes/_main.profile.security'
 import { Route as MainEnvironmentsEnvironmentSlugRouteImport } from './routes/_main.environments.$environmentSlug'
 import { Route as MainAcceptInvitationInvitationIdRouteImport } from './routes/_main.accept-invitation.$invitationId'
 import { Route as AuthOauthConsentRouteImport } from './routes/_auth.oauth.consent'
@@ -68,11 +67,6 @@ const MainEnvironmentsIndexRoute = MainEnvironmentsIndexRouteImport.update({
   path: '/environments/',
   getParentRoute: () => MainRoute,
 } as any)
-const MainProfileSecurityRoute = MainProfileSecurityRouteImport.update({
-  id: '/security',
-  path: '/security',
-  getParentRoute: () => MainProfileRoute,
-} as any)
 const MainEnvironmentsEnvironmentSlugRoute =
   MainEnvironmentsEnvironmentSlugRouteImport.update({
     id: '/environments/$environmentSlug',
@@ -111,7 +105,6 @@ export interface FileRoutesByFullPath {
   '/oauth/consent': typeof AuthOauthConsentRoute
   '/accept-invitation/$invitationId': typeof MainAcceptInvitationInvitationIdRoute
   '/environments/$environmentSlug': typeof MainEnvironmentsEnvironmentSlugRouteWithChildren
-  '/profile/security': typeof MainProfileSecurityRoute
   '/environments': typeof MainEnvironmentsIndexRoute
   '/profile/': typeof MainProfileIndexRoute
   '/team': typeof MainTeamIndexRoute
@@ -124,7 +117,6 @@ export interface FileRoutesByTo {
   '/': typeof MainIndexRoute
   '/oauth/consent': typeof AuthOauthConsentRoute
   '/accept-invitation/$invitationId': typeof MainAcceptInvitationInvitationIdRoute
-  '/profile/security': typeof MainProfileSecurityRoute
   '/environments': typeof MainEnvironmentsIndexRoute
   '/profile': typeof MainProfileIndexRoute
   '/team': typeof MainTeamIndexRoute
@@ -142,7 +134,6 @@ export interface FileRoutesById {
   '/_auth/oauth/consent': typeof AuthOauthConsentRoute
   '/_main/accept-invitation/$invitationId': typeof MainAcceptInvitationInvitationIdRoute
   '/_main/environments/$environmentSlug': typeof MainEnvironmentsEnvironmentSlugRouteWithChildren
-  '/_main/profile/security': typeof MainProfileSecurityRoute
   '/_main/environments/': typeof MainEnvironmentsIndexRoute
   '/_main/profile/': typeof MainProfileIndexRoute
   '/_main/team/': typeof MainTeamIndexRoute
@@ -159,7 +150,6 @@ export interface FileRouteTypes {
     | '/oauth/consent'
     | '/accept-invitation/$invitationId'
     | '/environments/$environmentSlug'
-    | '/profile/security'
     | '/environments'
     | '/profile/'
     | '/team'
@@ -172,7 +162,6 @@ export interface FileRouteTypes {
     | '/'
     | '/oauth/consent'
     | '/accept-invitation/$invitationId'
-    | '/profile/security'
     | '/environments'
     | '/profile'
     | '/team'
@@ -189,7 +178,6 @@ export interface FileRouteTypes {
     | '/_auth/oauth/consent'
     | '/_main/accept-invitation/$invitationId'
     | '/_main/environments/$environmentSlug'
-    | '/_main/profile/security'
     | '/_main/environments/'
     | '/_main/profile/'
     | '/_main/team/'
@@ -267,13 +255,6 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof MainEnvironmentsIndexRouteImport
       parentRoute: typeof MainRoute
     }
-    '/_main/profile/security': {
-      id: '/_main/profile/security'
-      path: '/security'
-      fullPath: '/profile/security'
-      preLoaderRoute: typeof MainProfileSecurityRouteImport
-      parentRoute: typeof MainProfileRoute
-    }
     '/_main/environments/$environmentSlug': {
       id: '/_main/environments/$environmentSlug'
       path: '/environments/$environmentSlug'
@@ -327,12 +308,10 @@ const AuthRouteChildren: AuthRouteChildren = {
 const AuthRouteWithChildren = AuthRoute._addFileChildren(AuthRouteChildren)
 
 interface MainProfileRouteChildren {
-  MainProfileSecurityRoute: typeof MainProfileSecurityRoute
   MainProfileIndexRoute: typeof MainProfileIndexRoute
 }
 
 const MainProfileRouteChildren: MainProfileRouteChildren = {
-  MainProfileSecurityRoute: MainProfileSecurityRoute,
   MainProfileIndexRoute: MainProfileIndexRoute,
 }
 
