@@ -11,7 +11,8 @@ export const { api } = hc<AppType>(baseUrl, {
   init: {
     headers: {
       'Content-Type': 'application/json',
-      Authorization: `Bearer ${config.auth.id_token}`,
+      // Use cookie-based session for server to accept Better Auth session
+      Cookie: `better-auth.session_token=${config.auth.session_token}`,
     },
   },
 });

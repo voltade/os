@@ -5,19 +5,15 @@ export const CONFIG_FILE = '.voltade.yaml';
 
 export const DEFAULT_CONFIG: Config = {
   auth: {
-    access_token: '',
-    expires_in: 0,
-    expires_at: 0,
-    id_token: '',
+    session_token: '',
+    session_expires_at: 0,
   },
 };
 
 export const configSchema = z.object({
   auth: z.object({
-    access_token: z.string(),
-    expires_in: z.number(),
-    expires_at: z.number(),
-    id_token: z.string(),
+    session_token: z.string(),
+    session_expires_at: z.number(),
   }),
 });
 
@@ -41,12 +37,7 @@ export async function setConfig(config: PartialConfig) {
   await Bun.write(CONFIG_FILE, yaml.dump(validatedConfig));
 }
 
-export async function setAuthData(authData: {
-  access_token: string;
-  expires_in: number;
-  expires_at: number;
-  id_token: string;
-}) {
+export async function setAuthData(authData: Config['auth']) {
   await setConfig({ auth: authData });
 }
 
@@ -54,7 +45,8 @@ export async function isTokenValid(): Promise<boolean> {
   try {
     const config = await getConfig();
     return (
-      config.auth.access_token !== '' && config.auth.expires_at > Date.now()
+      config.auth.session_token !== '' &&
+      config.auth.session_expires_at > Date.now()
     );
   } catch {
     return false;
