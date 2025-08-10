@@ -81,11 +81,12 @@ spec:
       owner: app
       dataChecksums: true
       postInitApplicationSQL:
-        - create schema if not exists extensions;
+        - create role core_migrator;
+        - grant create on database app to core_migrator;
+
+        - create schema extensions;
         - create extension supabase_vault cascade;
         - grant usage on schema vault to core_migrator;
         - grant execute on all functions in schema vault to core_migrator;
         - grant select on all tables in schema vault to core_migrator;
         - grant references on all tables in schema vault to core_migrator;
-
-        - grant create on database app to core_migrator;
