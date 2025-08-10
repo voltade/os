@@ -162,6 +162,7 @@ export const authMiddleware = (force: boolean = false) =>
       const staticTokens = [
         appEnvVariables.ARGOCD_ENVIRONMENT_GENERATOR_TOKEN,
         appEnvVariables.RUNNER_SECRET_TOKEN,
+        appEnvVariables.PROXY_SECRET_TOKEN,
       ];
       if (staticTokens.length > 0 && staticTokens.includes(maybeToken)) {
         c.set('oauth2', null);

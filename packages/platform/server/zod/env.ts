@@ -49,6 +49,10 @@ export const appEnvVariablesSchema = z.object({
   // Runner Communication
   RUNNER_SECRET_TOKEN: z.string(),
 
+  // Drizzle Proxy
+  DRIZZLE_GATEWAY_URL: z.url(),
+  PROXY_SECRET_TOKEN: z.string(),
+
   ENVIRONMENT_CHART_VERSION: z.string().optional(),
 });
 

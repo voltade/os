@@ -5,6 +5,7 @@ import { route as appRoute } from '#server/routes/app.ts';
 import { route as appBuildRoute } from '#server/routes/app_build.ts';
 import { route as appInstallationRoute } from '#server/routes/app_installation.ts';
 import { route as authRoute } from '#server/routes/auth.ts';
+import { route as drizzleProxyRoute } from '#server/routes/drizzle-proxy.ts';
 import { route as environmentRoute } from '#server/routes/environment.ts';
 import { route as environmentVariableRoute } from '#server/routes/environment_variable.ts';
 import { route as organizationRoute } from '#server/routes/organization.ts';
@@ -19,6 +20,8 @@ app.get('/', (c) => {
 app.get('/healthz', (c) => {
   return c.json({ message: 'Ok', time: new Date().toISOString() });
 });
+
+app.route('/drizzle', drizzleProxyRoute);
 
 export const apiRoutes = app
   .basePath('/api')
