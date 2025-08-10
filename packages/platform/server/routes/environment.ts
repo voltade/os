@@ -171,4 +171,37 @@ export const route = factory
       return c.json({ error: 'Environment not found' }, 404);
     }
     return c.json(environment[0]);
+  })
+  .delete('/:environmentSlug', authMiddleware(true), async (c) => {
+    // biome-ignore lint/style/noNonNullAssertion: session is guaranteed to be set by the authMiddleware
+    const { activeOrganizationId } = c.get('session')!;
+    if (!activeOrganizationId) {
+      return c.json({ error: 'No active organization' }, 400);
+    }
+    const { environmentSlug } = c.req.param();
+    const [environment] = await db
+      .delete(environmentTable)
+      .where(
+        and(
+          eq(environmentTable.slug, environmentSlug),
+          eq(environmentTable.organization_id, activeOrganizationId),
+        ),
+      )
+      .returning();
+    if (!environment) {
+      return c.json({ error: 'Environment not found' }, 404);
+    }
+    await fetch(`${appEnvVariables.DRIZZLE_GATEWAY_URL}`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        type: 'slots:delete',
+        data: {
+          id: `org-${environment.organization_id}-${environment.id}`,
+        },
+      }),
+    });
+    return c.json({ success: true });
   });
