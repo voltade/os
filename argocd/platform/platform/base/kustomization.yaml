@@ -10,3 +10,8 @@ helmCharts:
     version: 0.1.9
     releaseName: platform
     namespace: platform
+  - repo: oci://registry.127.0.0.1.nip.io
+    name: drizzle-gateway
+    version: 0.1.2
+    releaseName: drizzle-gateway
+    namespace: platform

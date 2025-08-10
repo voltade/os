@@ -82,3 +82,6 @@ kubeconfig
 #supabase
 supabase/.branches
 supabase/.temp
+
+# drizzle-gateway
+store.json
