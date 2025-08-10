@@ -34,6 +34,10 @@ export const Route = createFileRoute('/_main')({
       localStorage.removeItem('voltade-jwt');
       return redirect({ to: '/signin' });
     }
+    // If the user has not completed onboarding (no name), redirect to onboarding
+    if (!data.user?.name || data.user.name.trim().length === 0) {
+      return redirect({ to: '/onboarding' });
+    }
   },
   component: RouteComponent,
 });

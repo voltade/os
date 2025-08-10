@@ -67,7 +67,7 @@ export function EmailForm({ onEmailSent }: Props) {
           <Stack gap="xs">
             <Text className="text-sm font-medium text-gray-700">E-mail</Text>
             <TextInput
-              placeholder="samlee@content-mobbin.com"
+              placeholder="john@voltade.com"
               type="email"
               autoComplete="email"
               required

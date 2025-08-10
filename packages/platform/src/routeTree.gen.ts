@@ -16,6 +16,7 @@ import { Route as MainProfileRouteImport } from './routes/_main.profile'
 import { Route as MainApplicationsRouteImport } from './routes/_main.applications'
 import { Route as AuthSignupRouteImport } from './routes/_auth.signup'
 import { Route as AuthSigninRouteImport } from './routes/_auth.signin'
+import { Route as AuthOnboardingRouteImport } from './routes/_auth.onboarding'
 import { Route as MainTeamIndexRouteImport } from './routes/_main.team.index'
 import { Route as MainProfileIndexRouteImport } from './routes/_main.profile.index'
 import { Route as MainEnvironmentsIndexRouteImport } from './routes/_main.environments.index'
@@ -56,6 +57,11 @@ const AuthSignupRoute = AuthSignupRouteImport.update({
 const AuthSigninRoute = AuthSigninRouteImport.update({
   id: '/signin',
   path: '/signin',
+  getParentRoute: () => AuthRoute,
+} as any)
+const AuthOnboardingRoute = AuthOnboardingRouteImport.update({
+  id: '/onboarding',
+  path: '/onboarding',
   getParentRoute: () => AuthRoute,
 } as any)
 const MainTeamIndexRoute = MainTeamIndexRouteImport.update({
@@ -104,6 +110,7 @@ const MainEnvironmentsEnvironmentSlugEnvironment_variablesRoute =
   } as any)
 
 export interface FileRoutesByFullPath {
+  '/onboarding': typeof AuthOnboardingRoute
   '/signin': typeof AuthSigninRoute
   '/signup': typeof AuthSignupRoute
   '/applications': typeof MainApplicationsRoute
@@ -119,6 +126,7 @@ export interface FileRoutesByFullPath {
   '/environments/$environmentSlug/': typeof MainEnvironmentsEnvironmentSlugIndexRoute
 }
 export interface FileRoutesByTo {
+  '/onboarding': typeof AuthOnboardingRoute
   '/signin': typeof AuthSigninRoute
   '/signup': typeof AuthSignupRoute
   '/applications': typeof MainApplicationsRoute
@@ -135,6 +143,7 @@ export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/_auth': typeof AuthRouteWithChildren
   '/_main': typeof MainRouteWithChildren
+  '/_auth/onboarding': typeof AuthOnboardingRoute
   '/_auth/signin': typeof AuthSigninRoute
   '/_auth/signup': typeof AuthSignupRoute
   '/_main/applications': typeof MainApplicationsRoute
@@ -152,6 +161,7 @@ export interface FileRoutesById {
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
   fullPaths:
+    | '/onboarding'
     | '/signin'
     | '/signup'
     | '/applications'
@@ -167,6 +177,7 @@ export interface FileRouteTypes {
     | '/environments/$environmentSlug/'
   fileRoutesByTo: FileRoutesByTo
   to:
+    | '/onboarding'
     | '/signin'
     | '/signup'
     | '/applications'
@@ -182,6 +193,7 @@ export interface FileRouteTypes {
     | '__root__'
     | '/_auth'
     | '/_main'
+    | '/_auth/onboarding'
     | '/_auth/signin'
     | '/_auth/signup'
     | '/_main/applications'
@@ -253,6 +265,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthSigninRouteImport
       parentRoute: typeof AuthRoute
     }
+    '/_auth/onboarding': {
+      id: '/_auth/onboarding'
+      path: '/onboarding'
+      fullPath: '/onboarding'
+      preLoaderRoute: typeof AuthOnboardingRouteImport
+      parentRoute: typeof AuthRoute
+    }
     '/_main/team/': {
       id: '/_main/team/'
       path: '/team'
@@ -313,12 +332,14 @@ declare module '@tanstack/react-router' {
 }
 
 interface AuthRouteChildren {
+  AuthOnboardingRoute: typeof AuthOnboardingRoute
   AuthSigninRoute: typeof AuthSigninRoute
   AuthSignupRoute: typeof AuthSignupRoute
   AuthOauthConsentRoute: typeof AuthOauthConsentRoute
 }
 
 const AuthRouteChildren: AuthRouteChildren = {
+  AuthOnboardingRoute: AuthOnboardingRoute,
   AuthSigninRoute: AuthSigninRoute,
   AuthSignupRoute: AuthSignupRoute,
   AuthOauthConsentRoute: AuthOauthConsentRoute,

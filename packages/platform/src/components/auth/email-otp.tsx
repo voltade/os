@@ -32,7 +32,12 @@ export function EmailOtp({ email, setEmail }: Props) {
             otp: values.otp,
           });
           if (!result.error) {
-            navigate({ to: '/' });
+            // After successful sign-in, check if onboarding is needed
+            const session = await authClient.getSession();
+            const needsOnboarding =
+              !session.data?.user?.name ||
+              session.data.user.name.trim().length === 0;
+            navigate({ to: needsOnboarding ? '/onboarding' : '/' });
           } else {
             notifications.show({
               title: 'Error',
