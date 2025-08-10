@@ -28,6 +28,10 @@ import { $ } from 'bun';
     await $`kubectl get secret -n platform shared-secrets -o jsonpath="{.data.runnerSecretToken}" | base64 -d`.text();
   console.log('Retrieved RUNNER_SECRET_TOKEN');
 
+  const proxy_token =
+    await $`kubectl get secret -n platform shared-secrets -o jsonpath="{.data.proxySecretToken}" | base64 -d`.text();
+  console.log('Retrieved PROXY_SECRET_TOKEN');
+
   const s3_secret_key =
     await $`kubectl get secret -n minio minio -o jsonpath="{.data.root-password}" | base64 -d`.text();
   console.log('Retrieved S3_SECRET_KEY');
@@ -99,6 +103,12 @@ import { $ } from 'bun';
       envContent,
       'ARGOCD_ENVIRONMENT_GENERATOR_TOKEN',
       argocd_secret_key.trim(),
+    );
+
+    envContent = updateEnvVar(
+      envContent,
+      'PROXY_SECRET_TOKEN',
+      proxy_token.trim(),
     );
 
     // Write the updated content back to the file

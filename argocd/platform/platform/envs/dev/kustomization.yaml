@@ -5,3 +5,4 @@ resources:
   - ../../base
   - ./s3-secrets.yaml
   - ./shared-secrets.yaml
+  - ./drizzle-gateway-httproute.yaml

@@ -79,6 +79,11 @@ spec:
                 secretKeyRef:
                   name: shared-secrets
                   key: runnerSecretToken
+            - name: PROXY_SECRET_TOKEN
+              valueFrom:
+                secretKeyRef:
+                  name: shared-secrets
+                  key: proxySecretToken
             - name: FORCE_PATH_STYLE
               valueFrom:
                 secretKeyRef:

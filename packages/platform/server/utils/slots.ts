@@ -30,20 +30,48 @@ export async function slots({
     });
     const result = await res.json();
 
-    console.log(JSON.stringify(result, null, 2));
-
     const databases = result.data.filter((database: any) =>
       database.id.startsWith(`org-`),
     );
 
     return {
       data: databases,
+      success: true,
+    };
+  }
+
+  if (type === 'slots:get') {
+    const res = await fetch(appEnvVariables.DRIZZLE_GATEWAY_URL, {
+      method,
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        type: 'slots:get',
+        data: data,
+      }),
+    });
+    const result = await res.json();
+    return {
+      data: result.data,
+      success: true,
     };
   }
 
   if (!isAdmin) {
     throw new Error('Unauthorized');
   }
+
+  console.log(
+    JSON.stringify(
+      {
+        type,
+        data,
+      },
+      null,
+      2,
+    ),
+  );
 
   const res = await fetch(appEnvVariables.DRIZZLE_GATEWAY_URL, {
     method,

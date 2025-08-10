@@ -39,8 +39,9 @@ export const route = factory
     }
 
     const body = await c.req.json();
-    const session = c.get('session');
-    const user = c.get('user');
+
+    // biome-ignore lint/style/noNonNullAssertion: This is guaranteed by the auth middleware
+    const session = c.get('session')!;
 
     if (body.type.startsWith('slots')) {
       const auth = c.req.raw.headers.get('Authorization');
@@ -62,9 +63,6 @@ export const route = factory
     }
 
     if (body.type === 'init') {
-      if (!session || !user) {
-        return c.json({ error: 'Unauthorized' }, 401);
-      }
       return c.json({
         success: true,
         data: {
