@@ -35,7 +35,7 @@ variable "traefik_helm_version" {
 # https://artifacthub.io/packages/helm/argo/argo-cd
 variable "argocd_helm_version" {
   type    = string
-  default = "8.2.5"
+  default = "8.2.7"
 }
 
 # https://argo-cd.readthedocs.io/en/stable/user-guide/directory/#including-only-certain-file
