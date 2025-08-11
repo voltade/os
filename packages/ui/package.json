@@ -4,6 +4,7 @@
   "license": "AGPL-3.0-only",
   "version": "0.1.0",
   "type": "module",
+  "module": "src/index.ts",
   "scripts": {
     "add:all": "shadcn add --all && biome check --write --unsafe --no-errors-on-unmatched components/*"
   },
