@@ -5,10 +5,13 @@ import { Command, Option } from 'commander';
 import { appCommand } from './app/index.ts';
 import { authCommand } from './auth.ts';
 import { environmentCommand } from './environment/index.ts';
+import { initConfig } from './utils/config.js';
 
 export type GlobalOptions = {
   org?: string;
 };
+
+await initConfig();
 
 const program = new Command();
 

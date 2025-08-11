@@ -22,10 +22,18 @@ export const partialConfigSchema = configSchema.partial();
 export type Config = z.infer<typeof configSchema>;
 export type PartialConfig = z.infer<typeof partialConfigSchema>;
 
-export async function getConfig() {
-  if (!Bun.file(CONFIG_FILE).exists()) {
+export async function initConfig() {
+  if (!(await Bun.file(CONFIG_FILE).exists())) {
+    console.log(
+      'Config file not found, creating default config to:',
+      CONFIG_FILE,
+    );
     await Bun.write(CONFIG_FILE, yaml.dump(DEFAULT_CONFIG));
   }
+}
+
+export async function getConfig() {
+  await initConfig(); // Ensure config file exists
   try {
     const config = await Bun.file(CONFIG_FILE).text();
     const parsedConfig = yaml.load(config) as Config;

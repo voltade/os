@@ -9,7 +9,6 @@
     "packages/*"
   ],
   "scripts": {
-    "voltade": "bun run --filter @voltade/cli voltade",
     "ncu": "ncu --packageManager bun --workspaces --format group -i",
     "tofu:init": "cd terraform/kind-local && tofu init -upgrade",
     "tofu:apply": "cd terraform/kind-local && tofu apply && ./post-apply.sh",
@@ -25,6 +24,7 @@
     "@inquirer/prompts": "^7.8.1",
     "@types/bun": "latest",
     "@types/semver": "^7.7.0",
+    "@voltade/cli": "workspace:*",
     "concurrently": "^9.2.0",
     "lefthook": "^1.12.2",
     "npm-check-updates": "^18.0.2",
