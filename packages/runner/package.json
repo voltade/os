@@ -10,13 +10,13 @@
     "docker": "docker build -t registry.127.0.0.1.nip.io/runner:latest . && docker image push registry.127.0.0.1.nip.io/runner:latest"
   },
   "devDependencies": {
-    "@hono/zod-validator": "^0.7.2",
     "@types/bun": "latest"
   },
   "peerDependencies": {
     "typescript": "^5"
   },
   "dependencies": {
+    "@hono/zod-validator": "^0.7.2",
     "@kubernetes/client-node": "^1.3.0",
     "hono": "^4.9.0",
     "tar": "^7.4.3",
