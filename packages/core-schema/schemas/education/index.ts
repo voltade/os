@@ -4,10 +4,10 @@
 
 export * from './enums.ts';
 export * from './tables/class.ts';
-export * from './tables/class_join_level.ts';
-export * from './tables/class_join_subject.ts';
 export * from './tables/lesson.ts';
 export * from './tables/level.ts';
+export * from './tables/level_group.ts';
+export * from './tables/level_group_join_level.ts';
 export * from './tables/student.ts';
 export * from './tables/subject.ts';
 export * from './views/class_view.ts';

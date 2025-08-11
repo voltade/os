@@ -3,7 +3,7 @@ import { text } from 'drizzle-orm/pg-core';
 
 import { DEFAULT_COLUMNS } from '../../utils.ts';
 import { educationSchema } from '../schema.ts';
-import { educationClassTable } from './class.ts';
+import { educationLevelGroupJoinLevelTable } from './level_group_join_level.ts';
 
 export const educationLevelTable = educationSchema.table('level', {
   ...DEFAULT_COLUMNS,
@@ -13,6 +13,6 @@ export const educationLevelTable = educationSchema.table('level', {
 export const educationLevelTableRelations = relations(
   educationLevelTable,
   ({ many }) => ({
-    classes: many(educationClassTable),
+    level_groups: many(educationLevelGroupJoinLevelTable),
   }),
 );
