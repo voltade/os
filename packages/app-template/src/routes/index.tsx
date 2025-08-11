@@ -1,40 +1,42 @@
 import { createFileRoute } from '@tanstack/react-router';
+import { SidebarInset, SidebarProvider } from '@voltade/ui/sidebar';
 
-import { APITester } from '#components/APITester';
-import logo from '#src/logo.svg';
-import reactLogo from '#src/react.svg';
+import data from '#src/app/dashboard/data.json';
+import { AppSidebar } from '#src/components/app-sidebar';
+import { ChartAreaInteractive } from '#src/components/chart-area-interactive';
+import { DataTable } from '#src/components/data-table';
+import { SectionCards } from '#src/components/section-cards';
+import { SiteHeader } from '#src/components/site-header';
 
 export const Route = createFileRoute('/')({
-  component: App,
+  component: RouteComponent,
 });
 
-function App() {
+function RouteComponent() {
   return (
-    <div className="max-w-7xl mx-auto p-8 text-center relative z-10">
-      <div className="flex justify-center items-center gap-8 mb-8">
-        <img
-          src={logo}
-          alt="Bun Logo"
-          className="h-24 p-6 transition-all duration-300 hover:drop-shadow-[0_0_2em_#646cffaa] scale-120"
-        />
-        <img
-          src={reactLogo}
-          alt="React Logo"
-          className="h-24 p-6 transition-all duration-300 hover:drop-shadow-[0_0_2em_#61dafbaa] animate-[spin_20s_linear_infinite]"
-        />
-      </div>
-
-      <h1 className="text-5xl font-bold my-4 leading-tight">Bun + React</h1>
-      <p>
-        Edit{' '}
-        <code className="bg-[#1a1a1a] text-[#fbf0df] px-2 py-1 rounded font-mono">
-          src/routes/index.tsx
-        </code>{' '}
-        and save to test HMR
-      </p>
-      <APITester />
-    </div>
+    <SidebarProvider
+      style={
+        {
+          '--sidebar-width': 'calc(var(--spacing) * 72)',
+          '--header-height': 'calc(var(--spacing) * 12)',
+        } as React.CSSProperties
+      }
+    >
+      <AppSidebar variant="inset" />
+      <SidebarInset>
+        <SiteHeader />
+        <div className="flex flex-1 flex-col">
+          <div className="@container/main flex flex-1 flex-col gap-2">
+            <div className="flex flex-col gap-4 py-4 md:gap-6 md:py-6">
+              <SectionCards />
+              <div className="px-4 lg:px-6">
+                <ChartAreaInteractive />
+              </div>
+              <DataTable data={data} />
+            </div>
+          </div>
+        </div>
+      </SidebarInset>
+    </SidebarProvider>
   );
 }
-
-export default App;

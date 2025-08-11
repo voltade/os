@@ -1,10 +1,5 @@
-import '@mantine/core/styles.css';
-import '@mantine/dates/styles.css';
-import '@mantine/notifications/styles.css';
-import './main.css';
-import { MantineProvider } from '@mantine/core';
-import { ModalsProvider } from '@mantine/modals';
-import { Notifications } from '@mantine/notifications';
+import '@voltade/ui/styles/globals.css';
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { ReactQueryDevtools } from '@tanstack/react-query-devtools';
 import {
   createHashHistory,
@@ -14,21 +9,19 @@ import {
 import { StrictMode } from 'react';
 import ReactDOM from 'react-dom/client';
 
-import type { Database } from '#src/database.gen.ts';
-import type { RuntimeEnv } from '#utils/get-runtime-env.ts';
 import { name } from '../package.json';
-import * as TanstackQuery from './integrations/tanstack-query/root-provider.tsx';
+import type { RuntimeEnv } from './lib/get-runtime-env.ts';
 import reportWebVitals from './reportWebVitals.ts';
 // Import the generated route tree
 import { routeTree } from './routeTree.gen.ts';
 
-// Create a new router instance
-const hashHistory = createHashHistory();
+const queryClient = new QueryClient();
 
+const hashHistory = createHashHistory();
 const router = createRouter({
   routeTree,
   context: {
-    ...TanstackQuery.getContext(),
+    queryClient,
   },
   defaultPreload: 'intent',
   scrollRestoration: true,
@@ -48,7 +41,6 @@ declare global {
   interface Window {
     __POWERED_BY_QIANKUN__?: boolean;
     __BASE_URL__?: string;
-    supabaseClient: SupabaseClient<Database>;
     __env: {
       [key: string]: RuntimeEnv;
     };
@@ -58,7 +50,6 @@ declare global {
 interface Props {
   container?: HTMLElement;
   baseUrl?: string;
-  supabaseClient?: SupabaseClient<Database>;
 }
 
 let root: ReactDOM.Root;
@@ -71,15 +62,10 @@ const render = (props?: Props) => {
   root = ReactDOM.createRoot(container!);
   root.render(
     <StrictMode>
-      <MantineProvider>
-        <TanstackQuery.Provider>
-          <ModalsProvider>
-            <RouterProvider router={router} />
-            <ReactQueryDevtools initialIsOpen={false} />
-            <Notifications position="top-right" limit={5} />
-          </ModalsProvider>
-        </TanstackQuery.Provider>
-      </MantineProvider>
+      <QueryClientProvider client={queryClient}>
+        <RouterProvider router={router} />
+        <ReactQueryDevtools initialIsOpen={false} />
+      </QueryClientProvider>
     </StrictMode>,
   );
 };

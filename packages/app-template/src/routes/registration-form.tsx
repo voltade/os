@@ -4,8 +4,8 @@ import { notifications } from '@mantine/notifications';
 import { useMutation, useQuery } from '@tanstack/react-query';
 import { createFileRoute } from '@tanstack/react-router';
 
-import { api } from '#lib/api.ts';
-import { pgRest } from '#lib/pg-rest.ts';
+import { api } from '#src/lib/api.ts';
+import { pgRest } from '#src/lib/pg-rest.ts';
 
 export const Route = createFileRoute('/registration-form')({
   component: RouteComponent,
