@@ -6,83 +6,84 @@ import {
   Text,
   UnstyledButton,
 } from '@mantine/core';
-import {
-  IconBook,
-  IconCoin,
-  IconGridDots,
-  IconPackage,
-  IconShoppingCart as IconSales,
-  IconSettings,
-  IconShoppingCart,
-  IconTool,
-  IconUsers,
-} from '@tabler/icons-react';
+import { IconGridDots } from '@tabler/icons-react';
+import { useNavigate } from '@tanstack/react-router';
 import { useState } from 'react';
 
-const apps = [
-  {
-    id: 'accounting',
-    name: 'Accounting',
-    icon: IconCoin,
-    color: '#4285f4',
-  },
-  {
-    id: 'hr',
-    name: 'HR',
-    icon: IconUsers,
-    color: '#ea4335',
-  },
-  {
-    id: 'purchase',
-    name: 'Purchase',
-    icon: IconShoppingCart,
-    color: '#34a853',
-  },
-  {
-    id: 'sales',
-    name: 'Sales',
-    icon: IconSales,
-    color: '#fbbc04',
-  },
-  {
-    id: 'service',
-    name: 'Service',
-    icon: IconTool,
-    color: '#9aa0a6',
-  },
-  {
-    id: 'inventory',
-    name: 'Inventory',
-    icon: IconPackage,
-    color: '#f439a0',
-  },
-  {
-    id: 'education',
-    name: 'Education',
-    icon: IconBook,
-    color: '#ab47bc',
-  },
-  {
-    id: 'hr2',
-    name: 'HR',
-    icon: IconUsers,
-    color: '#00acc1',
-  },
-  {
-    id: 'settings',
-    name: 'Settings',
-    icon: IconSettings,
-    color: '#ff7043',
-  },
-];
+import { useAppInstallations } from '#src/hooks/app_installation.ts';
+import { ENVIRONMENT_ID } from '#src/main.tsx';
+
+// const apps = [
+//   {
+//     id: 'accounting',
+//     name: 'Accounting',
+//     icon: IconCoin,
+//     color: '#4285f4',
+//   },
+//   {
+//     id: 'hr',
+//     name: 'HR',
+//     icon: IconUsers,
+//     color: '#ea4335',
+//   },
+//   {
+//     id: 'purchase',
+//     name: 'Purchase',
+//     icon: IconShoppingCart,
+//     color: '#34a853',
+//   },
+//   {
+//     id: 'sales',
+//     name: 'Sales',
+//     icon: IconSales,
+//     color: '#fbbc04',
+//   },
+//   {
+//     id: 'service',
+//     name: 'Service',
+//     icon: IconTool,
+//     color: '#9aa0a6',
+//   },
+//   {
+//     id: 'inventory',
+//     name: 'Inventory',
+//     icon: IconPackage,
+//     color: '#f439a0',
+//   },
+//   {
+//     id: 'education',
+//     name: 'Education',
+//     icon: IconBook,
+//     color: '#ab47bc',
+//   },
+//   {
+//     id: 'hr2',
+//     name: 'HR',
+//     icon: IconUsers,
+//     color: '#00acc1',
+//   },
+//   {
+//     id: 'settings',
+//     name: 'Settings',
+//     icon: IconSettings,
+//     color: '#ff7043',
+//   },
+// ];
 
 export function AppSelector() {
+  const navigate = useNavigate();
   const [opened, setOpened] = useState(false);
+  const { data: appInstallations } = useAppInstallations(ENVIRONMENT_ID);
 
   const handleAppClick = (appId: string) => {
     console.log(`Clicked app: ${appId}`);
     setOpened(false);
-    // Add navigation logic here
+    navigate({
+      to: '/$appId',
+      params: {
+        appId,
+      },
+    });
   };
 
   return (
@@ -109,12 +110,12 @@ export function AppSelector() {
 
       <Popover.Dropdown p="md" w={280}>
         <Grid gutter="xs">
-          {apps.map((app) => {
-            const Icon = app.icon;
+          {appInstallations?.map((app) => {
+            // const Icon = app.icon;
             return (
-              <Grid.Col span={4} key={app.id}>
+              <Grid.Col span={4} key={app.app.id}>
                 <UnstyledButton
-                  onClick={() => handleAppClick(app.id)}
+                  onClick={() => handleAppClick(app.app.id)}
                   p="md"
                   style={{
                     borderRadius: '8px',
@@ -140,10 +141,17 @@ export function AppSelector() {
                       width: '40px',
                       height: '40px',
                       borderRadius: '50%',
-                      backgroundColor: app.color,
+                      backgroundColor: '#4285f4',
                     }}
                   >
-                    <Icon size={20} color="white" />
+                    <Text
+                      size="md"
+                      color="white"
+                      fw="bold"
+                      style={{ textTransform: 'uppercase' }}
+                    >
+                      {app.app.name?.charAt(0) ?? 'A'}
+                    </Text>
                   </Box>
                   <Text
                     size="xs"
@@ -151,7 +159,7 @@ export function AppSelector() {
                     ta="center"
                     style={{ lineHeight: 1.2 }}
                   >
-                    {app.name}
+                    {app.app.name}
                   </Text>
                 </UnstyledButton>
               </Grid.Col>
