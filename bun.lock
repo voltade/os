@@ -143,6 +143,7 @@
         "@vitejs/plugin-react-swc": "^4.0.0",
         "@voltade/qiankun": "3.0.0-rc.19",
         "@voltade/qiankun-react": "0.0.1-rc.14",
+        "@voltade/ui": "workspace:*",
         "concurrently": "^9.2.0",
         "jose": "^6.0.12",
         "postcss": "^8.5.6",
