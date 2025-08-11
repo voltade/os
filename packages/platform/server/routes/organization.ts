@@ -3,37 +3,25 @@ import { eq } from 'drizzle-orm';
 import {
   member as memberTable,
   organization as organizationTable,
-  user as userTable,
 } from '#drizzle/auth.ts';
 import { factory } from '#server/factory.ts';
+import { authMiddleware } from '#server/lib/auth/index.ts';
 import { db } from '#server/lib/db.ts';
 
-export const route = factory.createApp().get('/', async (c) => {
-  const oauth2Data = c.get('oauth2');
-  if (!oauth2Data) {
-    return c.json({ error: 'No oauth2 data' }, 400);
-  }
+export const route = factory
+  .createApp()
+  .get('/', authMiddleware(true), async (c) => {
+    // biome-ignore lint/style/noNonNullAssertion: this is guaranteed by the auth middleware
+    const { id: userId } = c.get('user')!;
 
-  const { email } = oauth2Data;
-  const user = await db
-    .select()
-    .from(userTable)
-    .where(eq(userTable.email, email));
+    const memberships = await db
+      .select()
+      .from(memberTable)
+      .where(eq(memberTable.userId, userId))
+      .leftJoin(
+        organizationTable,
+        eq(memberTable.organizationId, organizationTable.id),
+      );
 
-  if (user.length === 0) {
-    return c.json({ error: 'User not found' }, 400);
-  }
-
-  const { id: userId } = user[0];
-
-  const memberships = await db
-    .select()
-    .from(memberTable)
-    .where(eq(memberTable.userId, userId))
-    .leftJoin(
-      organizationTable,
-      eq(memberTable.organizationId, organizationTable.id),
-    );
-
-  return c.json(memberships.map((m) => m.organization));
-});
+    return c.json(memberships.map((m) => m.organization));
+  });

@@ -1,5 +1,6 @@
 import { existsSync, readdirSync } from 'node:fs';
 import { zValidator } from '@hono/zod-validator';
+import { cors } from 'hono/cors';
 import { z } from 'zod';
 
 import { factory } from '#server/factory.ts';
@@ -9,6 +10,7 @@ import { createWorker, getWorker } from '#server/utils/worker/index.ts';
 
 export const routes = factory.createApp().all(
   '/:appId/:releaseId/*',
+  cors(),
   zValidator(
     'param',
     z.object({
@@ -20,6 +22,8 @@ export const routes = factory.createApp().all(
     const { appId, releaseId } = c.req.valid('param');
     const truncatedReleaseId = releaseId.slice(0, 8);
     const workerPath = `${c.env.NODE_ENV === 'development' ? process.cwd() : '/tmp'}/data/${appId}-${truncatedReleaseId}`;
+
+    console.log(workerPath);
 
     let worker = getWorker(appId, truncatedReleaseId);
 
@@ -46,10 +50,16 @@ export const routes = factory.createApp().all(
           platformUrl: c.env.PLATFORM_URL,
         },
       );
-      worker = await createWorker(appId, truncatedReleaseId, workerPath, envs);
+
+      console.log(c.req.raw.headers.get('origin'));
+
+      worker = await createWorker(appId, truncatedReleaseId, workerPath, {
+        VITE_APP_URL: `${c.req.raw.headers.get('origin')}/${appId}/${releaseId}`,
+        ...envs,
+      });
     }
 
-    const reqUrl = c.req.url.replace(`/api/apps/${appId}/${releaseId}`, '');
+    const reqUrl = c.req.url.replace(`/apps/${appId}/${releaseId}`, '');
 
     try {
       const response = await fetch(reqUrl, {

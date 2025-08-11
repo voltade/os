@@ -26,7 +26,7 @@ function RouteComponent() {
     const microApp = loadMicroApp(
       {
         name: '@voltade/app-template',
-        entry: '//app-template.127.0.0.1.nip.io',
+        entry: '//voltade-main.127.0.0.1.nip.io/apps/cloy9whxn/o1flp5jtgh9j5fq',
         container: appContainerRef.current,
       },
       { sandbox: false },

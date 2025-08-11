@@ -28,6 +28,8 @@ declare module '@tanstack/react-router' {
   }
 }
 
+export const ENVIRONMENT_ID = '58itgeka';
+
 // biome-ignore lint/style/noNonNullAssertion: root element is there
 createRoot(document.getElementById('root')!).render(
   <StrictMode>

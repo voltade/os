@@ -14,6 +14,7 @@ import { Route as AuthRouteImport } from './routes/_auth'
 import { Route as MainIndexRouteImport } from './routes/_main.index'
 import { Route as MainProfileRouteImport } from './routes/_main.profile'
 import { Route as MainDevRouteImport } from './routes/_main.dev'
+import { Route as MainAppIdRouteImport } from './routes/_main.$appId'
 import { Route as AuthSignupRouteImport } from './routes/_auth.signup'
 import { Route as AuthSigninRouteImport } from './routes/_auth.signin'
 import { Route as AuthOnboardingRouteImport } from './routes/_auth.onboarding'
@@ -49,6 +50,11 @@ const MainProfileRoute = MainProfileRouteImport.update({
 const MainDevRoute = MainDevRouteImport.update({
   id: '/dev',
   path: '/dev',
+  getParentRoute: () => MainRoute,
+} as any)
+const MainAppIdRoute = MainAppIdRouteImport.update({
+  id: '/$appId',
+  path: '/$appId',
   getParentRoute: () => MainRoute,
 } as any)
 const AuthSignupRoute = AuthSignupRouteImport.update({
@@ -126,6 +132,7 @@ export interface FileRoutesByFullPath {
   '/onboarding': typeof AuthOnboardingRoute
   '/signin': typeof AuthSigninRoute
   '/signup': typeof AuthSignupRoute
+  '/$appId': typeof MainAppIdRoute
   '/dev': typeof MainDevRouteWithChildren
   '/profile': typeof MainProfileRouteWithChildren
   '/': typeof MainIndexRoute
@@ -144,6 +151,7 @@ export interface FileRoutesByTo {
   '/onboarding': typeof AuthOnboardingRoute
   '/signin': typeof AuthSigninRoute
   '/signup': typeof AuthSignupRoute
+  '/$appId': typeof MainAppIdRoute
   '/dev': typeof MainDevRouteWithChildren
   '/': typeof MainIndexRoute
   '/oauth/consent': typeof AuthOauthConsentRoute
@@ -163,6 +171,7 @@ export interface FileRoutesById {
   '/_auth/onboarding': typeof AuthOnboardingRoute
   '/_auth/signin': typeof AuthSigninRoute
   '/_auth/signup': typeof AuthSignupRoute
+  '/_main/$appId': typeof MainAppIdRoute
   '/_main/dev': typeof MainDevRouteWithChildren
   '/_main/profile': typeof MainProfileRouteWithChildren
   '/_main/': typeof MainIndexRoute
@@ -183,6 +192,7 @@ export interface FileRouteTypes {
     | '/onboarding'
     | '/signin'
     | '/signup'
+    | '/$appId'
     | '/dev'
     | '/profile'
     | '/'
@@ -201,6 +211,7 @@ export interface FileRouteTypes {
     | '/onboarding'
     | '/signin'
     | '/signup'
+    | '/$appId'
     | '/dev'
     | '/'
     | '/oauth/consent'
@@ -219,6 +230,7 @@ export interface FileRouteTypes {
     | '/_auth/onboarding'
     | '/_auth/signin'
     | '/_auth/signup'
+    | '/_main/$appId'
     | '/_main/dev'
     | '/_main/profile'
     | '/_main/'
@@ -274,6 +286,13 @@ declare module '@tanstack/react-router' {
       path: '/dev'
       fullPath: '/dev'
       preLoaderRoute: typeof MainDevRouteImport
+      parentRoute: typeof MainRoute
+    }
+    '/_main/$appId': {
+      id: '/_main/$appId'
+      path: '/$appId'
+      fullPath: '/$appId'
+      preLoaderRoute: typeof MainAppIdRouteImport
       parentRoute: typeof MainRoute
     }
     '/_auth/signup': {
@@ -435,6 +454,7 @@ const MainProfileRouteWithChildren = MainProfileRoute._addFileChildren(
 )
 
 interface MainRouteChildren {
+  MainAppIdRoute: typeof MainAppIdRoute
   MainDevRoute: typeof MainDevRouteWithChildren
   MainProfileRoute: typeof MainProfileRouteWithChildren
   MainIndexRoute: typeof MainIndexRoute
@@ -443,6 +463,7 @@ interface MainRouteChildren {
 }
 
 const MainRouteChildren: MainRouteChildren = {
+  MainAppIdRoute: MainAppIdRoute,
   MainDevRoute: MainDevRouteWithChildren,
   MainProfileRoute: MainProfileRouteWithChildren,
   MainIndexRoute: MainIndexRoute,

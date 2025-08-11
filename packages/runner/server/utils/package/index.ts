@@ -12,11 +12,34 @@ export const downloadPackage = async (
   },
   outputPath: string,
 ) => {
-  const s3file = s3Client.file(
-    `builds/${packageDetails.orgId}/${packageDetails.appId}/${packageDetails.releaseId}/artifact.tar.gz`,
+  const s3Key = `builds/${packageDetails.orgId}/${packageDetails.appId}/${packageDetails.releaseId}/artifact.tar.gz`;
+  console.info(
+    packageDetails.appId,
+    'info',
+    `Downloading artifact from S3: ${s3Key}`,
   );
 
-  const buffer = await s3file.arrayBuffer();
+  const s3file = s3Client.file(s3Key);
+
+  let buffer: ArrayBuffer;
+  try {
+    buffer = await s3file.arrayBuffer();
+    console.info(
+      packageDetails.appId,
+      'info',
+      `Successfully downloaded artifact: ${s3Key}`,
+    );
+  } catch (error) {
+    console.error(
+      packageDetails.appId,
+      'error',
+      `Failed to download artifact from S3: ${s3Key}`,
+      error,
+    );
+    throw new Error(
+      `Failed to download artifact from S3: ${s3Key}. Error: ${error}`,
+    );
+  }
 
   await mkdir(outputPath, { recursive: true });
 

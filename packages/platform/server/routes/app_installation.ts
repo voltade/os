@@ -2,6 +2,7 @@ import { zValidator } from '@hono/zod-validator';
 import { and, eq } from 'drizzle-orm';
 import { z } from 'zod';
 
+import { appTable } from '#drizzle/app.ts';
 import {
   appInstallationSchema,
   appInstallationTable,
@@ -23,25 +24,31 @@ export const route = factory
   })
   .get(
     '/',
-    zValidator('query', appInstallationSchema.select.partial()),
+    zValidator(
+      'query',
+      z.object({
+        environment_id: z.string(),
+      }),
+    ),
     async (c) => {
-      const selectObj = c.req.valid('query');
+      const query = c.req.valid('query');
+      // biome-ignore lint/style/noNonNullAssertion: this is guaranteed by the auth middleware
+      const { activeOrganizationId } = c.get('session')!;
+
+      if (!activeOrganizationId) {
+        return c.json({ error: 'No active organization' }, 400);
+      }
 
       const appInstallation = await db
         .select()
         .from(appInstallationTable)
         .where(
           and(
-            ...Object.entries(selectObj).map(([key, value]) =>
-              eq(
-                appInstallationTable[
-                  key as keyof typeof appInstallationTable.$inferSelect
-                ],
-                value,
-              ),
-            ),
+            eq(appInstallationTable.environment_id, query.environment_id),
+            eq(appInstallationTable.organization_id, activeOrganizationId),
           ),
-        );
+        )
+        .innerJoin(appTable, eq(appInstallationTable.app_id, appTable.id));
 
       return c.json(appInstallation);
     },
