@@ -1,6 +1,6 @@
 import type { UseFormReturnType } from '@mantine/form';
 import { IconPlus } from '@tabler/icons-react';
-import { Button } from '@voltade/ui/src/components/button';
+import { Button } from '@voltade/ui/button.tsx';
 import {
   Dialog,
   DialogContent,
@@ -8,17 +8,17 @@ import {
   DialogFooter,
   DialogHeader,
   DialogTitle,
-} from '@voltade/ui/src/components/dialog';
-import { Input } from '@voltade/ui/src/components/input';
-import { Label } from '@voltade/ui/src/components/label';
+} from '@voltade/ui/dialog.tsx';
+import { Input } from '@voltade/ui/input.tsx';
+import { Label } from '@voltade/ui/label.tsx';
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from '@voltade/ui/src/components/select';
-import { Separator } from '@voltade/ui/src/components/separator';
+} from '@voltade/ui/select.tsx';
+import { Separator } from '@voltade/ui/separator.tsx';
 
 interface InviteFormValues {
   email: string;

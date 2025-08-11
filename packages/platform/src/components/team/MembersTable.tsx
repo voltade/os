@@ -1,24 +1,20 @@
 import { IconDots, IconEdit, IconMail, IconTrash } from '@tabler/icons-react';
-import {
-  Avatar,
-  AvatarFallback,
-  AvatarImage,
-} from '@voltade/ui/src/components/avatar';
-import { Badge as ShadcnBadge } from '@voltade/ui/src/components/badge';
+import { Avatar, AvatarFallback, AvatarImage } from '@voltade/ui/avatar.tsx';
+import { Badge as ShadcnBadge } from '@voltade/ui/badge.tsx';
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuSeparator,
   DropdownMenuTrigger,
-} from '@voltade/ui/src/components/dropdown-menu';
+} from '@voltade/ui/dropdown-menu.tsx';
 import {
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
   Select as ShadcnSelect,
-} from '@voltade/ui/src/components/select';
+} from '@voltade/ui/select.tsx';
 import {
   Table,
   TableBody,
@@ -26,8 +22,8 @@ import {
   TableHead,
   TableHeader,
   TableRow,
-} from '@voltade/ui/src/components/table';
-import { Tooltip } from '@voltade/ui/src/components/tooltip';
+} from '@voltade/ui/table.tsx';
+import { Tooltip } from '@voltade/ui/tooltip.tsx';
 
 interface UserRef {
   id: string;

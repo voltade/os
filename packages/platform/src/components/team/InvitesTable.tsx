@@ -1,6 +1,6 @@
 import { IconMail } from '@tabler/icons-react';
-import { Badge } from '@voltade/ui/src/components/badge';
-import { Button } from '@voltade/ui/src/components/button';
+import { Badge } from '@voltade/ui/badge.tsx';
+import { Button } from '@voltade/ui/button.tsx';
 import {
   Table,
   TableBody,
@@ -8,7 +8,7 @@ import {
   TableHead,
   TableHeader,
   TableRow,
-} from '@voltade/ui/src/components/table';
+} from '@voltade/ui/table.tsx';
 
 export interface InviteRow {
   id: string;

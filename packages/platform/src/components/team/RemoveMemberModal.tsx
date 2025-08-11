@@ -1,5 +1,5 @@
 import { IconTrash } from '@tabler/icons-react';
-import { Button } from '@voltade/ui/src/components/button';
+import { Button } from '@voltade/ui/button.tsx';
 import {
   Dialog,
   DialogContent,
@@ -7,7 +7,7 @@ import {
   DialogFooter,
   DialogHeader,
   DialogTitle,
-} from '@voltade/ui/src/components/dialog';
+} from '@voltade/ui/dialog.tsx';
 
 interface RemoveMemberModalProps {
   opened: boolean;

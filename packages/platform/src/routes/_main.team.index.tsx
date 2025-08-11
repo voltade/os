@@ -16,14 +16,14 @@ import {
   IconX,
 } from '@tabler/icons-react';
 import { createFileRoute } from '@tanstack/react-router';
-import { Button } from '@voltade/ui/src/components/button';
+import { Button } from '@voltade/ui/button.tsx';
 import {
   Card,
   CardContent,
   CardDescription,
   CardHeader,
   CardTitle,
-} from '@voltade/ui/src/components/card';
+} from '@voltade/ui/card.tsx';
 import {
   Pagination,
   PaginationContent,
@@ -31,14 +31,9 @@ import {
   PaginationLink,
   PaginationNext,
   PaginationPrevious,
-} from '@voltade/ui/src/components/pagination';
-import { Separator } from '@voltade/ui/src/components/separator';
-import {
-  Tabs,
-  TabsContent,
-  TabsList,
-  TabsTrigger,
-} from '@voltade/ui/src/components/tabs';
+} from '@voltade/ui/pagination.tsx';
+import { Separator } from '@voltade/ui/separator.tsx';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@voltade/ui/tabs.tsx';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 
 import { InviteMemberModal } from '#src/components/team/InviteMemberModal';

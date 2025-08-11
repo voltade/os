@@ -1,13 +1,13 @@
 import { Group } from '@mantine/core';
 import { IconSearch, IconX } from '@tabler/icons-react';
-import { Input } from '@voltade/ui/src/components/input';
+import { Input } from '@voltade/ui/input.tsx';
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from '@voltade/ui/src/components/select';
+} from '@voltade/ui/select.tsx';
 
 interface MembersFiltersProps {
   searchQuery: string;
