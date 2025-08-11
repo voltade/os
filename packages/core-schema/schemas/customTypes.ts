@@ -8,3 +8,11 @@ export const tstzrange = customType<{
     return 'tstzrange';
   },
 });
+
+export const daterange = customType<{
+  data: string;
+}>({
+  dataType() {
+    return 'daterange';
+  },
+});

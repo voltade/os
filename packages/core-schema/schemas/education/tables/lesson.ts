@@ -7,6 +7,7 @@ import { educationSchema } from '../schema.ts';
 import { educationClassTable } from './class.ts';
 import { educationLevelGroupTable } from './level_group.ts';
 import { educationSubjectTable } from './subject.ts';
+import { educationTermTable } from './term.ts';
 
 export const educationLessonTable = educationSchema.table('lesson', {
   ...DEFAULT_COLUMNS,
@@ -17,6 +18,11 @@ export const educationLessonTable = educationSchema.table('lesson', {
   subject_id: integer('subject_id')
     .notNull()
     .references(() => educationSubjectTable.id, { onDelete: 'restrict' }),
+  term_id: integer('term_id')
+    .notNull()
+    .references(() => educationTermTable.id, {
+      onDelete: 'set null',
+    }),
   class_id: integer('class_id').references(() => educationClassTable.id, {
     onDelete: 'set null',
   }),
@@ -36,6 +42,10 @@ export const educationLessonTableRelations = relations(
     subject: one(educationSubjectTable, {
       fields: [educationLessonTable.subject_id],
       references: [educationSubjectTable.id],
+    }),
+    term: one(educationTermTable, {
+      fields: [educationLessonTable.term_id],
+      references: [educationTermTable.id],
     }),
   }),
 );

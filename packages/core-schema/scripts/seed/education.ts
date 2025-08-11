@@ -21,7 +21,7 @@ async function seedClasses(): Promise<ClassIds> {
   const classData: InferInsertModel<typeof educationClassTable>[] = [
     { temporary_name: 'Pri 5 English (Thu, 5–7 P.M.)' },
     { temporary_name: 'Sec 3 Math (Mon, 3–5 P.M.)' },
-    { temporary_name: 'Upper Sec English (Sat, 10 A.M.–12 P.M.)' },
+    { temporary_name: 'Upper Sec English (Sat, 7–9 A.M.)' },
   ];
 
   const classes = await db
