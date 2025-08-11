@@ -10,7 +10,7 @@
     "dev": "conc bun:dev:*",
     "start": "VITE_NODE_ENV=production bun server/index.ts",
     "build:server": "bun build --minify --sourcemap --target=bun --outdir=dist server/index.ts",
-    "build": "rm -rf dist && bun build:server && vite build && bun run scripts/post-build.ts",
+    "build": "rm -rf dist && bun build:server && vite build",
     "serve": "VITE_NODE_ENV=production bun run dist/index.js",
     "format": "biome format --write .",
     "db:generate": "echo 'DO NOT USE THIS COMMAND' && echo 'Use `bun run db:pull` instead.'",
@@ -35,6 +35,7 @@
   },
   "devDependencies": {
     "@biomejs/biome": "^2.1.4",
+    "@mantine/notifications": "^8.2.4",
     "@tailwindcss/postcss": "^4.1.11",
     "@tailwindcss/vite": "^4.1.11",
     "@tanstack/react-query": "^5.84.2",

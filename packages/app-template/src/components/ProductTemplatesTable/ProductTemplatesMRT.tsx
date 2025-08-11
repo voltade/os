@@ -16,7 +16,7 @@ import {
 } from 'mantine-react-table';
 import { useEffect, useState } from 'react';
 
-import { pgRest } from '#lib/pg-rest';
+import { pgRest } from '#src/lib/pg-rest';
 
 type ProductTemplate =
   Database['public']['Views']['product_template_view']['Row'];

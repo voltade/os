@@ -20,17 +20,19 @@ function RouteComponent() {
   console.log(buildId);
 
   useEffect(() => {
-    if (!appContainerRef.current || !buildId) return;
+    if (!appContainerRef.current || !buildId) {
+      return;
+    }
     const microApp = loadMicroApp(
       {
         name: '@voltade/app-template',
-        entry: `//voltade-main.127.0.0.1.nip.io/apps/${appId}/${buildId}`,
+        entry: `//voltade-main.127.0.0.1.nip.io/apps/${appId}/${buildId}/index.html`,
         container: appContainerRef.current,
-        props: {
+        /* props: {
           baseUrl: `${window.location.origin}/${appId}`,
-        },
+        }, */
       },
-      { sandbox: true },
+      { sandbox: false },
     );
     return () => {
       microApp.unmount();
@@ -38,6 +40,9 @@ function RouteComponent() {
   }, [appId, buildId]);
 
   return (
-    <div ref={appContainerRef} style={{ width: '100%', height: '100%' }} />
+    <>
+      test
+      <div ref={appContainerRef} style={{ width: '100%', height: '100%' }} />
+    </>
   );
 }

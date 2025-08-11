@@ -15,7 +15,8 @@
   },
   "devDependencies": {
     "@types/bun": "latest",
-    "shadcn": "^2.10.0"
+    "shadcn": "^2.10.0",
+    "tailwind-merge": "^3.3.1"
   },
   "peerDependencies": {
     "typescript": "^5"

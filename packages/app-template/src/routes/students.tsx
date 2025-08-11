@@ -3,7 +3,7 @@ import { useQuery } from '@tanstack/react-query';
 import { createFileRoute } from '@tanstack/react-router';
 import { useMemo } from 'react';
 
-import { pgRest } from '#lib/pg-rest';
+import { pgRest } from '#src/lib/pg-rest.ts';
 
 export const Route = createFileRoute('/students')({
   component: RouteComponent,

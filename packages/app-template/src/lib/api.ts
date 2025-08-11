@@ -1,7 +1,7 @@
 import { hc } from 'hono/client';
 
 import type { ApiRoutes } from '#server/index.ts';
-import { getApiUrl } from '#utils/get-urls';
+import { getApiUrl } from '#src/lib/get-urls.ts';
 
 // import { supabase, supabaseAnonKey } from './supabase.ts';
 
