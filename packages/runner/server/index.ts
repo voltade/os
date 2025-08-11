@@ -23,7 +23,7 @@ async function initializeDrizzleConnection() {
             name: appEnvVariables.ENVIRONMENT_ID,
             dialect: 'postgresql',
             credentials: {
-              url: `postgres://${username}:${password}@cnpg-cluster-rw.${namespace}:5432/platform`,
+              url: `postgres://${username}:${password}@cnpg-cluster-rw.${namespace}:5432/app`,
             },
           },
         },
