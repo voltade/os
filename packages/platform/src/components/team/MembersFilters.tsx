@@ -1,4 +1,4 @@
-import { ActionIcon, Group, SegmentedControl, TextInput } from '@mantine/core';
+import { ActionIcon, Group, Select, TextInput } from '@mantine/core';
 import { IconSearch, IconX } from '@tabler/icons-react';
 
 interface MembersFiltersProps {
@@ -34,16 +34,19 @@ export function MembersFilters({
           ) : null
         }
       />
-      <SegmentedControl
-        value={roleFilter ?? 'all'}
-        onChange={(val) => onRoleFilterChange(val === 'all' ? null : val)}
+
+      <Select
+        placeholder="All roles"
         data={[
-          { value: 'all', label: 'All' },
           { value: 'owner', label: 'Owner' },
           { value: 'admin', label: 'Admin' },
           { value: 'developer', label: 'Developer' },
           { value: 'member', label: 'Member' },
         ]}
+        value={roleFilter}
+        clearable
+        onChange={(val) => onRoleFilterChange(val)}
+        style={{ minWidth: 200 }}
       />
     </Group>
   );

@@ -476,11 +476,6 @@ function RouteComponent() {
                 >
                   Clear Filters
                 </Button>
-                {canInviteMembers && (
-                  <Button leftSection={<IconPlus size={16} />} onClick={open}>
-                    Invite Member
-                  </Button>
-                )}
               </Stack>
             </Center>
           )}
