@@ -13,6 +13,7 @@ import { Route as MainRouteImport } from './routes/_main'
 import { Route as AuthRouteImport } from './routes/_auth'
 import { Route as MainIndexRouteImport } from './routes/_main.index'
 import { Route as MainProfileRouteImport } from './routes/_main.profile'
+import { Route as MainDevRouteImport } from './routes/_main.dev'
 import { Route as MainApplicationsRouteImport } from './routes/_main.applications'
 import { Route as AuthSignupRouteImport } from './routes/_auth.signup'
 import { Route as AuthSigninRouteImport } from './routes/_auth.signin'
@@ -42,6 +43,11 @@ const MainIndexRoute = MainIndexRouteImport.update({
 const MainProfileRoute = MainProfileRouteImport.update({
   id: '/profile',
   path: '/profile',
+  getParentRoute: () => MainRoute,
+} as any)
+const MainDevRoute = MainDevRouteImport.update({
+  id: '/dev',
+  path: '/dev',
   getParentRoute: () => MainRoute,
 } as any)
 const MainApplicationsRoute = MainApplicationsRouteImport.update({
@@ -114,6 +120,7 @@ export interface FileRoutesByFullPath {
   '/signin': typeof AuthSigninRoute
   '/signup': typeof AuthSignupRoute
   '/applications': typeof MainApplicationsRoute
+  '/dev': typeof MainDevRoute
   '/profile': typeof MainProfileRouteWithChildren
   '/': typeof MainIndexRoute
   '/oauth/consent': typeof AuthOauthConsentRoute
@@ -130,6 +137,7 @@ export interface FileRoutesByTo {
   '/signin': typeof AuthSigninRoute
   '/signup': typeof AuthSignupRoute
   '/applications': typeof MainApplicationsRoute
+  '/dev': typeof MainDevRoute
   '/': typeof MainIndexRoute
   '/oauth/consent': typeof AuthOauthConsentRoute
   '/accept-invitation/$invitationId': typeof MainAcceptInvitationInvitationIdRoute
@@ -147,6 +155,7 @@ export interface FileRoutesById {
   '/_auth/signin': typeof AuthSigninRoute
   '/_auth/signup': typeof AuthSignupRoute
   '/_main/applications': typeof MainApplicationsRoute
+  '/_main/dev': typeof MainDevRoute
   '/_main/profile': typeof MainProfileRouteWithChildren
   '/_main/': typeof MainIndexRoute
   '/_auth/oauth/consent': typeof AuthOauthConsentRoute
@@ -165,6 +174,7 @@ export interface FileRouteTypes {
     | '/signin'
     | '/signup'
     | '/applications'
+    | '/dev'
     | '/profile'
     | '/'
     | '/oauth/consent'
@@ -181,6 +191,7 @@ export interface FileRouteTypes {
     | '/signin'
     | '/signup'
     | '/applications'
+    | '/dev'
     | '/'
     | '/oauth/consent'
     | '/accept-invitation/$invitationId'
@@ -197,6 +208,7 @@ export interface FileRouteTypes {
     | '/_auth/signin'
     | '/_auth/signup'
     | '/_main/applications'
+    | '/_main/dev'
     | '/_main/profile'
     | '/_main/'
     | '/_auth/oauth/consent'
@@ -242,6 +254,13 @@ declare module '@tanstack/react-router' {
       path: '/profile'
       fullPath: '/profile'
       preLoaderRoute: typeof MainProfileRouteImport
+      parentRoute: typeof MainRoute
+    }
+    '/_main/dev': {
+      id: '/_main/dev'
+      path: '/dev'
+      fullPath: '/dev'
+      preLoaderRoute: typeof MainDevRouteImport
       parentRoute: typeof MainRoute
     }
     '/_main/applications': {
@@ -379,6 +398,7 @@ const MainEnvironmentsEnvironmentSlugRouteWithChildren =
 
 interface MainRouteChildren {
   MainApplicationsRoute: typeof MainApplicationsRoute
+  MainDevRoute: typeof MainDevRoute
   MainProfileRoute: typeof MainProfileRouteWithChildren
   MainIndexRoute: typeof MainIndexRoute
   MainAcceptInvitationInvitationIdRoute: typeof MainAcceptInvitationInvitationIdRoute
@@ -389,6 +409,7 @@ interface MainRouteChildren {
 
 const MainRouteChildren: MainRouteChildren = {
   MainApplicationsRoute: MainApplicationsRoute,
+  MainDevRoute: MainDevRoute,
   MainProfileRoute: MainProfileRouteWithChildren,
   MainIndexRoute: MainIndexRoute,
   MainAcceptInvitationInvitationIdRoute: MainAcceptInvitationInvitationIdRoute,

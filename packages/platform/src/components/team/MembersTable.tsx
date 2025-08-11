@@ -23,7 +23,7 @@ export interface MemberRow {
   id: string;
   userId: string;
   user: UserRef;
-  role: 'owner' | 'admin' | 'member' | string;
+  role: 'owner' | 'admin' | 'developer' | 'member' | string;
   createdAt: string | Date;
 }
 
@@ -32,7 +32,10 @@ export interface MembersTableProps {
   currentUserId?: string;
   canEditRoles: boolean;
   roleLoadingMemberId?: string | null;
-  onChangeRole: (memberId: string, role: 'owner' | 'admin' | 'member') => void;
+  onChangeRole: (
+    memberId: string,
+    role: 'owner' | 'admin' | 'developer' | 'member',
+  ) => void;
   onRemove: (memberId: string, memberName: string) => void;
 }
 
@@ -97,13 +100,17 @@ export function MembersTable({
                 data={[
                   { value: 'owner', label: 'Owner' },
                   { value: 'admin', label: 'Admin' },
+                  { value: 'developer', label: 'Developer' },
                   { value: 'member', label: 'Member' },
                 ]}
                 value={member.role}
                 allowDeselect={false}
                 onChange={(val) =>
                   val &&
-                  onChangeRole(member.id, val as 'owner' | 'admin' | 'member')
+                  onChangeRole(
+                    member.id,
+                    val as 'owner' | 'admin' | 'developer' | 'member',
+                  )
                 }
                 rightSection={
                   roleLoadingMemberId === member.id ? (

@@ -41,6 +41,7 @@ export function MembersFilters({
           { value: 'all', label: 'All' },
           { value: 'owner', label: 'Owner' },
           { value: 'admin', label: 'Admin' },
+          { value: 'developer', label: 'Developer' },
           { value: 'member', label: 'Member' },
         ]}
       />

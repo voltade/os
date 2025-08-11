@@ -47,6 +47,7 @@ import { InvitesTable } from '#src/components/team/InvitesTable';
 import { MembersFilters } from '#src/components/team/MembersFilters';
 import { MembersTable } from '#src/components/team/MembersTable';
 import { RemoveMemberModal } from '#src/components/team/RemoveMemberModal';
+import { AccessDenied } from '#src/components/utils/access-denied';
 import { authClient } from '#src/lib/auth.ts';
 
 export const Route = createFileRoute('/_main/team/')({
@@ -105,12 +106,16 @@ function RouteComponent() {
     if (currentUserRole === 'owner') {
       return [
         { value: 'member', label: 'Member' },
+        { value: 'developer', label: 'Developer' },
         { value: 'admin', label: 'Admin' },
         { value: 'owner', label: 'Owner' },
       ];
     }
     if (currentUserRole === 'admin') {
-      return [{ value: 'member', label: 'Member' }];
+      return [
+        { value: 'member', label: 'Member' },
+        { value: 'developer', label: 'Developer' },
+      ];
     }
     return [];
   };
@@ -207,13 +212,13 @@ function RouteComponent() {
 
   const handleUpdateRole = async (
     memberId: string,
-    newRole: 'member' | 'admin' | 'owner',
+    newRole: 'member' | 'admin' | 'owner' | 'developer',
   ) => {
     setRoleUpdateMemberId(memberId);
     try {
       const { error } = await authClient.organization.updateMemberRole({
         memberId,
-        role: newRole,
+        role: newRole as any,
         organizationId: organisation?.id || undefined,
       });
       if (error) throw new Error(error.message);
@@ -388,20 +393,7 @@ function RouteComponent() {
 
   // If user can't view members, show access denied
   if (!canViewMembers) {
-    return (
-      <Stack justify="center" align="center" h="60vh">
-        <div className="text-center">
-          <Title order={2} className="text-xl font-bold text-gray-900 mb-4">
-            Access Denied
-          </Title>
-          <Text className="text-gray-600 mb-6">
-            You don't have permission to view the members page. Only admins and
-            owners can access member management.
-          </Text>
-          <Button onClick={() => window.history.back()}>Go Back</Button>
-        </div>
-      </Stack>
-    );
+    return <AccessDenied />;
   }
 
   return (
