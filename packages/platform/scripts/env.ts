@@ -3,10 +3,8 @@ import { join } from 'node:path';
 import { $ } from 'bun';
 
 (async () => {
-  const [user_name, namespace] = process.env.USER_NAME?.split('-') ?? [
-    'platform',
-    'platform',
-  ];
+  const user_name = 'platform';
+  const namespace = 'platform';
 
   const user_token =
     await $`kubectl create token ${user_name} -n ${namespace}`.text();
