@@ -2,7 +2,8 @@ import tailwindcss from '@tailwindcss/vite';
 import { tanstackRouter } from '@tanstack/router-plugin/vite';
 import react from '@vitejs/plugin-react-swc';
 import { defineConfig } from 'vite';
-import qiankun from 'vite-plugin-qiankun-lite';
+// import qiankun from 'vite-plugin-qiankun-lite';
+import qiankun from 'vite-plugin-qiankun-x';
 import tsconfigPaths from 'vite-tsconfig-paths';
 
 import { name } from './package.json';
@@ -36,7 +37,8 @@ export default defineConfig({
     tanstackRouter({ target: 'react', autoCodeSplitting: true }),
     tsconfigPaths(),
     react(),
-    qiankun({ name, sandbox: true }),
+    // qiankun({ name, sandbox: true }),
+    qiankun(name),
     tailwindcss(),
   ],
 });
