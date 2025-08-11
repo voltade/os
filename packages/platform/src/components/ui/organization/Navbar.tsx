@@ -12,17 +12,17 @@ export function OrganizationNavbar() {
     {
       label: 'Environments',
       icon: IconServer,
-      path: '/environments',
+      path: '/dev/environments',
     },
     {
       label: 'Git Providers',
       icon: IconGitBranch,
-      path: '/git-providers',
+      path: '/dev/git-providers',
     },
     {
       label: 'Applications',
       icon: IconApps,
-      path: '/applications',
+      path: '/dev/applications',
     },
     {
       label: 'Team',

@@ -1,5 +1,5 @@
-import { Center, Loader, Stack, Text, Title } from '@mantine/core';
-import { createFileRoute } from '@tanstack/react-router';
+import { Center, Loader } from '@mantine/core';
+import { createFileRoute, Outlet } from '@tanstack/react-router';
 
 import { AccessDenied } from '#src/components/utils/access-denied';
 import { authClient } from '#src/lib/auth.ts';
@@ -31,19 +31,5 @@ function RouteComponent() {
     return <AccessDenied />;
   }
 
-  return (
-    <Stack gap="md">
-      <div>
-        <Title order={2}>Developer Tools</Title>
-        <Text c="dimmed">
-          Internal tools and debug utilities for developers.
-        </Text>
-      </div>
-
-      {/* Content placeholder */}
-      <Stack>
-        <Text>Coming soon...</Text>
-      </Stack>
-    </Stack>
-  );
+  return <Outlet />;
 }

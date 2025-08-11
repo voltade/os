@@ -7,32 +7,39 @@ import {
 
 import { SettingsNavbar } from '../common/index.ts';
 
-export function EnvironmentNavbar({ envSlug }: { envSlug: string }) {
+export function EnvironmentNavbar({
+  envSlug,
+  basePathPrefix = '/environments',
+}: {
+  envSlug: string;
+  basePathPrefix?: string;
+}) {
+  const base = `${basePathPrefix}/${envSlug}`;
   const navItems = [
     {
       label: 'General',
       icon: IconSettings,
-      path: `/environments/${envSlug}`,
+      path: `${base}`,
     },
     {
       label: 'Database',
       icon: IconDatabase,
-      path: `/environments/${envSlug}/database`,
+      path: `${base}/database`,
     },
     {
       label: 'Environment Variables',
       icon: IconVariable,
-      path: `/environments/${envSlug}/environment_variables`,
+      path: `${base}/environment_variables`,
     },
     {
       label: 'App Installations',
       icon: IconApps,
-      path: `/environments/${envSlug}/app-installations`,
+      path: `${base}/app-installations`,
     },
   ];
 
   const environmentPathMatcher = (currentPath: string, itemPath: string) => {
-    const baseEnvPath = `/environments/${envSlug}`;
+    const baseEnvPath = `${base}`;
     if (itemPath === baseEnvPath) {
       return currentPath === itemPath;
     }
@@ -43,7 +50,7 @@ export function EnvironmentNavbar({ envSlug }: { envSlug: string }) {
     <SettingsNavbar
       title="Environment Settings"
       navItems={navItems}
-      pathPrefix={`/environments/${envSlug}`}
+      pathPrefix={base}
       isActivePathMatcher={environmentPathMatcher}
     />
   );

@@ -19,9 +19,11 @@ import {
 import { createFileRoute, useNavigate } from '@tanstack/react-router';
 import { useMemo, useState } from 'react';
 
+import { AccessDenied } from '#src/components/utils/access-denied';
 import { useEnvironments } from '#src/hooks/environment.ts';
+import { authClient } from '#src/lib/auth.ts';
 
-export const Route = createFileRoute('/_main/environments/')({
+export const Route = createFileRoute('/_main/dev/environments/')({
   component: RouteComponent,
 });
 
@@ -29,6 +31,14 @@ function RouteComponent() {
   const { data: environments, isLoading } = useEnvironments();
   const [searchQuery, setSearchQuery] = useState('');
   const navigate = useNavigate();
+  const { data: organisation } = authClient.useActiveOrganization();
+  const { data: session } = authClient.useSession();
+
+  const currentUserMember = organisation?.members?.find(
+    (m) => m.userId === session?.user?.id,
+  );
+  const role = currentUserMember?.role;
+  const isAllowed = role === 'owner' || role === 'developer';
 
   const filteredEnvironments = useMemo(() => {
     if (!environments) return [];
@@ -41,6 +51,8 @@ function RouteComponent() {
         env.description?.toLowerCase().includes(searchQuery.toLowerCase()),
     );
   }, [environments, searchQuery]);
+
+  if (!isAllowed) return <AccessDenied />;
 
   if (isLoading) {
     return (
@@ -151,7 +163,7 @@ function RouteComponent() {
                   fullWidth
                   onClick={() =>
                     navigate({
-                      to: '/environments/$environmentSlug',
+                      to: '/dev/environments/$environmentSlug',
                       params: { environmentSlug: environment.slug },
                     })
                   }
