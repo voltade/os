@@ -1,7 +1,7 @@
 import { proxy } from 'hono/proxy';
 
 import { factory } from '#server/factory.ts';
-import { authMiddleware } from '#server/lib/auth.ts';
+import { authMiddleware } from '#server/lib/auth';
 import { slots } from '#server/utils/slots.ts';
 
 export const route = factory

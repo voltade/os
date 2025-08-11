@@ -6,7 +6,7 @@ import { z } from 'zod';
 import { environmentVariableTable } from '#drizzle/environment_variable';
 import { appEnvVariables } from '#server/env.ts';
 import { factory } from '#server/factory.ts';
-import { authMiddleware } from '#server/lib/auth.ts';
+import { authMiddleware } from '#server/lib/auth';
 import { db } from '#server/lib/db.ts';
 import { Vault } from '#server/lib/vault.ts';
 

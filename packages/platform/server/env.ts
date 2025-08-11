@@ -1,4 +1,4 @@
-import type { Session } from '#server/lib/auth.ts';
+import type { Session } from '#server/lib/auth';
 import {
   type AppEnvVariables,
   appEnvVariablesSchema,

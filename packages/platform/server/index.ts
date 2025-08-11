@@ -9,7 +9,7 @@ import { route as drizzleProxyRoute } from '#server/routes/drizzle-proxy.ts';
 import { route as environmentRoute } from '#server/routes/environment.ts';
 import { route as environmentVariableRoute } from '#server/routes/environment_variable.ts';
 import { route as organizationRoute } from '#server/routes/organization.ts';
-import { authMiddleware } from './lib/auth.ts';
+import { authMiddleware } from './lib/auth/index.ts';
 
 const app = factory.createApp();
 

@@ -1,7 +1,8 @@
+import path from 'node:path';
 import yaml from 'js-yaml';
 import { z } from 'zod';
 
-export const CONFIG_FILE = '.voltade.yaml';
+export const CONFIG_FILE = path.join(process.env.HOME ?? '~', '.voltade');
 
 export const DEFAULT_CONFIG: Config = {
   auth: {
@@ -22,6 +23,9 @@ export type Config = z.infer<typeof configSchema>;
 export type PartialConfig = z.infer<typeof partialConfigSchema>;
 
 export async function getConfig() {
+  if (!Bun.file(CONFIG_FILE).exists()) {
+    await Bun.write(CONFIG_FILE, yaml.dump(DEFAULT_CONFIG));
+  }
   try {
     const config = await Bun.file(CONFIG_FILE).text();
     const parsedConfig = yaml.load(config) as Config;

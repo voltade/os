@@ -12,7 +12,7 @@ import {
 import { environmentTable } from '#drizzle/environment';
 import { appEnvVariables } from '#server/env.ts';
 import { factory } from '#server/factory.ts';
-import { authMiddleware } from '#server/lib/auth.ts';
+import { authMiddleware } from '#server/lib/auth';
 import { db } from '#server/lib/db.ts';
 import { signJwt } from '#server/lib/jwk.ts';
 

@@ -22,6 +22,7 @@ import { factory } from '#server/factory.ts';
 import { db } from '#server/lib/db.ts';
 import { mailer } from '#server/lib/mailer.ts';
 import { nanoid } from '#server/lib/nanoid.ts';
+import { ac, roles } from './permissions.ts';
 
 const BASE_URL = `${appEnvVariables.VITE_APP_URL}/api/auth`;
 
@@ -104,6 +105,8 @@ export const auth = betterAuth({
           `,
         });
       },
+      ac,
+      roles,
     }),
   ],
   user: {
