@@ -29,7 +29,7 @@ function RouteComponent() {
         entry: '//app-template.127.0.0.1.nip.io',
         container: appContainerRef.current,
       },
-      { sandbox: true },
+      { sandbox: false },
     );
     return () => {
       microApp.unmount();
