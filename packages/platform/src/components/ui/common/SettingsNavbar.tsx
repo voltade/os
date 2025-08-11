@@ -1,4 +1,4 @@
-import { AppShell, NavLink, Stack, Text } from '@mantine/core';
+import { NavLink, Stack, Text } from '@mantine/core';
 import type { Icon } from '@tabler/icons-react';
 import { useLocation, useNavigate } from '@tanstack/react-router';
 
@@ -25,10 +25,8 @@ function defaultIsActivePathMatcher(
   pathPrefix?: string,
 ): boolean {
   if (pathPrefix && itemPath === pathPrefix) {
-    // For the base path (like /environments/envSlug), exact match
     return currentPath === itemPath;
   }
-  // For sub-paths, check if current path starts with item path
   return currentPath.startsWith(itemPath);
 }
 
@@ -42,8 +40,8 @@ export function SettingsNavbar({
   const navigate = useNavigate();
 
   return (
-    <AppShell.Navbar>
-      <AppShell.Section>
+    <aside className="h-full w-full">
+      <div className="p-2">
         <Stack gap="xs" p="xs">
           <Text fw={600} size="sm" c="dimmed">
             {title}
@@ -72,7 +70,7 @@ export function SettingsNavbar({
             />
           ))}
         </Stack>
-      </AppShell.Section>
-    </AppShell.Navbar>
+      </div>
+    </aside>
   );
 }

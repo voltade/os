@@ -1,4 +1,3 @@
-import type { UseFormReturnType } from '@mantine/form';
 import { IconPlus } from '@tabler/icons-react';
 import { Button } from '@voltade/ui/button.tsx';
 import {
@@ -19,6 +18,7 @@ import {
   SelectValue,
 } from '@voltade/ui/select.tsx';
 import { Separator } from '@voltade/ui/separator.tsx';
+import { useForm } from 'react-hook-form';
 
 interface InviteFormValues {
   email: string;
@@ -28,7 +28,6 @@ interface InviteFormValues {
 interface InviteMemberModalProps {
   opened: boolean;
   onClose: () => void;
-  form: UseFormReturnType<InviteFormValues>;
   roleOptions: { value: string; label: string }[];
   isInviting: boolean;
   onSubmit: (values: InviteFormValues) => void | Promise<void>;
@@ -37,11 +36,17 @@ interface InviteMemberModalProps {
 export function InviteMemberModal({
   opened,
   onClose,
-  form,
   roleOptions,
   isInviting,
   onSubmit,
 }: InviteMemberModalProps) {
+  const form = useForm<InviteFormValues>({
+    defaultValues: {
+      email: '',
+      role: roleOptions[0]?.value ?? 'member',
+    },
+  });
+
   return (
     <Dialog open={opened} onOpenChange={(o) => (!o ? onClose() : null)}>
       <DialogContent>
@@ -54,7 +59,9 @@ export function InviteMemberModal({
         </DialogHeader>
 
         <form
-          onSubmit={form.onSubmit(onSubmit)}
+          onSubmit={form.handleSubmit(async (vals) => {
+            await onSubmit(vals);
+          })}
           className="flex flex-col gap-4"
         >
           <div className="flex flex-col gap-2">
@@ -64,16 +71,17 @@ export function InviteMemberModal({
               type="email"
               placeholder="Enter member's email"
               required
-              value={form.values.email}
-              onChange={(e) => form.setFieldValue('email', e.target.value)}
+              {...form.register('email', { required: true })}
             />
           </div>
 
           <div className="flex flex-col gap-2">
             <Label htmlFor="invite-role">Role</Label>
             <Select
-              value={form.values.role}
-              onValueChange={(val) => form.setFieldValue('role', val)}
+              value={form.getValues('role')}
+              onValueChange={(val) =>
+                form.setValue('role', val, { shouldDirty: true })
+              }
             >
               <SelectTrigger id="invite-role">
                 <SelectValue placeholder="Select member role" />

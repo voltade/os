@@ -1,19 +1,17 @@
-import { AppShell } from '@mantine/core';
 import {
   createFileRoute,
   Outlet,
   redirect,
   useRouterState,
 } from '@tanstack/react-router';
+import { SidebarProvider } from '@voltade/ui/sidebar.js';
 
 import { Header } from '#src/components/ui/Header';
-import { OrganizationNavbar } from '#src/components/ui/organization/Navbar';
 import { authClient } from '#src/lib/auth.ts';
 import { isJWTExpired } from '#src/lib/isJWTExpired';
 
 export const Route = createFileRoute('/_main')({
   beforeLoad: async () => {
-    // Check if existing JWT is expired
     const existingJwt = localStorage.getItem('voltade-jwt');
     if (existingJwt && isJWTExpired(existingJwt)) {
       localStorage.removeItem('voltade-jwt');
@@ -34,7 +32,6 @@ export const Route = createFileRoute('/_main')({
       localStorage.removeItem('voltade-jwt');
       return redirect({ to: '/signin' });
     }
-    // If the user has not completed onboarding (no name), redirect to onboarding
     if (!data.user?.name || data.user.name.trim().length === 0) {
       return redirect({ to: '/onboarding' });
     }
@@ -43,21 +40,21 @@ export const Route = createFileRoute('/_main')({
 });
 
 function RouteComponent() {
-  const location = useRouterState({ select: (s) => s.location });
-  return (
-    <AppShell
-      padding="md"
-      header={{ height: 48 }}
-      navbar={{ width: 200, breakpoint: 'sm' }}
-    >
-      <Header />
+  useRouterState({ select: (s) => s.location });
 
-      {!location.pathname.startsWith('/environments/') && (
-        <OrganizationNavbar />
-      )}
-      <AppShell.Main>
-        <Outlet />
-      </AppShell.Main>
-    </AppShell>
+  return (
+    <SidebarProvider>
+      <div className="min-h-screen w-full">
+        <div className="flex min-h-screen flex-col">
+          <Header />
+
+          <main className="flex-1 min-w-0">
+            <div className="container mx-auto max-w-6xl px-4 py-6">
+              <Outlet />
+            </div>
+          </main>
+        </div>
+      </div>
+    </SidebarProvider>
   );
 }

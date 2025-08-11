@@ -1,15 +1,32 @@
-import { Avatar, Box, Button, Menu, Skeleton, Text } from '@mantine/core';
-import { IconCheck, IconChevronDown, IconSettings } from '@tabler/icons-react';
+import { Avatar, AvatarFallback, AvatarImage } from '@voltade/ui/avatar.tsx';
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from '@voltade/ui/dropdown-menu.tsx';
+import {
+  SidebarMenu,
+  SidebarMenuButton,
+  SidebarMenuItem,
+} from '@voltade/ui/sidebar.tsx';
+import { Check, ChevronsUpDown } from 'lucide-react';
 
 import { authClient } from '#src/lib/auth.ts';
+
+type Org = {
+  id: string;
+  name: string;
+  imageUrl?: string | null;
+};
+
+type OrgSource = { id: string; name?: string | null; logo?: string | null };
 
 export function OrganizationSwitcher() {
   const { data: organizations, isPending } = authClient.useListOrganizations();
   const { data: activeOrganization } = authClient.useActiveOrganization();
-
-  if (isPending) {
-    return <Skeleton height={32} width={120} radius="md" />;
-  }
 
   const handleSwitchOrganization = async (orgId: string) => {
     await authClient.organization.setActive({
@@ -17,90 +34,126 @@ export function OrganizationSwitcher() {
     });
   };
 
-  const currentOrg = activeOrganization;
+  if (isPending) {
+    return (
+      <SidebarMenu>
+        <SidebarMenuItem>
+          <SidebarMenuButton
+            size="lg"
+            className="animate-pulse opacity-70"
+            disabled
+          >
+            <div className="mr-2 aspect-square size-8 rounded-lg bg-muted" />
+            <div className="grid flex-1 text-left leading-tight">
+              <div className="h-4 w-24 rounded bg-muted" />
+              <div className="mt-1 h-3 w-16 rounded bg-muted" />
+            </div>
+            <ChevronsUpDown className="ml-auto" />
+          </SidebarMenuButton>
+        </SidebarMenuItem>
+      </SidebarMenu>
+    );
+  }
+
+  const orgs: Org[] = (organizations ?? []).map((o: OrgSource) => ({
+    id: o.id,
+    name: o.name ?? 'Untitled',
+    imageUrl: o.logo ?? null,
+  }));
+
+  const activeOrg: Org | undefined = activeOrganization
+    ? {
+        id: activeOrganization.id,
+        name: activeOrganization.name ?? 'Untitled',
+        imageUrl: activeOrganization.logo ?? null,
+      }
+    : orgs[0];
+
+  if (!activeOrg) return null;
 
   return (
-    <Menu shadow="md" position="bottom-end">
-      <Menu.Target>
-        <Button
-          variant="subtle"
-          justify="flex-end"
-          leftSection={
-            <Avatar size="sm" radius="md" src={currentOrg?.logo}>
-              {!currentOrg?.logo && currentOrg?.name && (
-                <Text size="xs" fw={600}>
-                  {currentOrg.name.charAt(0).toUpperCase()}
-                </Text>
-              )}
-            </Avatar>
-          }
-          rightSection={<IconChevronDown size={12} />}
-        >
-          <Text size="sm" fw={500}>
-            {currentOrg?.name || 'Select Organization'}
-          </Text>
-        </Button>
-      </Menu.Target>
-
-      {!organizations?.length ? (
-        <Menu.Dropdown miw={200}>
-          <Menu.Label>Organization Required</Menu.Label>
-
-          <Box p="sm">
-            <Text size="sm" c="dimmed" ta="center">
-              You need to be part of an organization to continue.
-            </Text>
-          </Box>
-        </Menu.Dropdown>
-      ) : (
-        <Menu.Dropdown miw={200}>
-          <Menu.Label>Switch Organization</Menu.Label>
-
-          {organizations.map((org) => (
-            <Menu.Item
-              key={org.id}
-              onClick={() => handleSwitchOrganization(org.id)}
-              leftSection={
-                <Avatar size="sm" radius="md" src={org.logo}>
-                  {!org.logo && (
-                    <Text size="sm" fw={600}>
-                      {org.name.charAt(0).toUpperCase()}
-                    </Text>
-                  )}
-                </Avatar>
-              }
-              rightSection={
-                currentOrg?.id === org.id ? (
-                  <IconCheck
-                    size={16}
-                    color="var(--mantine-primary-color-filled)"
-                  />
-                ) : null
-              }
+    <SidebarMenu>
+      <SidebarMenuItem>
+        <DropdownMenu>
+          <DropdownMenuTrigger asChild>
+            <SidebarMenuButton
+              size="lg"
+              className="data-[state=open]:bg-sidebar-accent data-[state=open]:text-sidebar-accent-foreground"
             >
-              <Box>
-                <Text size="sm" fw={currentOrg?.id === org.id ? 600 : 400}>
-                  {org.name}
-                </Text>
-                <Text size="xs" c="dimmed">
-                  {org.slug}
-                </Text>
-              </Box>
-            </Menu.Item>
-          ))}
-          {currentOrg && (
-            <>
-              <Menu.Divider />
-              <Menu.Item
-                leftSection={<IconSettings size={16} />}
-                onClick={() => console.log('Organization settings')}
-              >
-                <Text size="sm">Settings</Text>
-              </Menu.Item>
-            </>
-          )}
-        </Menu.Dropdown>
-      )}
-    </Menu>
+              <TriggerBadge org={activeOrg} />
+              <div className="grid flex-1 text-left text-sm leading-tight">
+                <span className="truncate font-medium">{activeOrg.name}</span>
+              </div>
+              <ChevronsUpDown className="ml-auto" />
+            </SidebarMenuButton>
+          </DropdownMenuTrigger>
+
+          <DropdownMenuContent
+            className="w-(--radix-dropdown-menu-trigger-width) min-w-56 rounded-lg"
+            align="start"
+            sideOffset={4}
+          >
+            <DropdownMenuLabel className="text-xs text-muted-foreground">
+              Organizations
+            </DropdownMenuLabel>
+
+            {orgs.map((org) => {
+              const isActive = org.id === activeOrg.id;
+              return (
+                <DropdownMenuItem
+                  key={org.id}
+                  className="gap-2 p-2"
+                  onClick={() => handleSwitchOrganization(org.id)}
+                >
+                  <div className="flex size-6 items-center justify-center rounded-md border">
+                    <MenuLogo org={org} />
+                  </div>
+                  <span className="flex-1 truncate">{org.name}</span>
+                  {isActive ? <Check className="size-4" /> : null}
+                </DropdownMenuItem>
+              );
+            })}
+
+            <DropdownMenuSeparator />
+            <DropdownMenuItem disabled className="p-2 text-muted-foreground">
+              Manage organizations in account settings
+            </DropdownMenuItem>
+          </DropdownMenuContent>
+        </DropdownMenu>
+      </SidebarMenuItem>
+    </SidebarMenu>
   );
+}
+
+function TriggerBadge({ org }: { org: Org }) {
+  return (
+    <div className="mr-2">
+      <Avatar className="size-8 rounded-lg">
+        {org.imageUrl ? (
+          <AvatarImage src={org.imageUrl} alt={org.name} />
+        ) : null}
+        <AvatarFallback className="rounded-lg">
+          {initials(org.name)}
+        </AvatarFallback>
+      </Avatar>
+    </div>
+  );
+}
+
+function MenuLogo({ org }: { org: Org }) {
+  return (
+    <Avatar className="size-5">
+      {org.imageUrl ? <AvatarImage src={org.imageUrl} alt={org.name} /> : null}
+      <AvatarFallback className="text-[10px]">
+        {initials(org.name)}
+      </AvatarFallback>
+    </Avatar>
+  );
+}
+
+function initials(name: string) {
+  const parts = name.trim().split(/\s+/);
+  const a = parts[0]?.[0] ?? '';
+  const b = parts.length > 1 ? (parts[parts.length - 1][0] ?? '') : '';
+  return (a + b).toUpperCase();
 }

@@ -1,4 +1,4 @@
-import { AppShell, Group, Image } from '@mantine/core';
+import { IconBolt } from '@tabler/icons-react';
 
 import { AppSelector } from './AppSelector.tsx';
 import { OrganizationSwitcher } from './OrganizationSwitcher.tsx';
@@ -6,22 +6,23 @@ import { UserButton } from './UserButton.tsx';
 
 export function Header() {
   return (
-    <AppShell.Header>
-      <Group h="100%" px="md" justify="space-between">
-        <Group>
-          <Image
+    <header className="sticky top-0 z-40 border-b bg-background">
+      <div className="container mx-auto max-w-6xl px-4 h-12 flex items-center justify-between">
+        <div className="flex items-center gap-2 text-sm">
+          <img
             src="https://voltade.com/images/Logo+typo.svg"
             alt="Voltade Logo"
-            h={40}
-            fit="contain"
+            className="h-6 w-auto" // ~24px tall
           />
-        </Group>
-        <Group gap="md">
-          <AppSelector />
+          <span className="text-muted-foreground">/</span>
           <OrganizationSwitcher />
+        </div>
+
+        <div className="flex items-center gap-3">
+          <AppSelector />
           <UserButton />
-        </Group>
-      </Group>
-    </AppShell.Header>
+        </div>
+      </div>
+    </header>
   );
 }

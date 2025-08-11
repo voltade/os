@@ -1,143 +1,141 @@
-import {
-  Avatar,
-  Button,
-  Card,
-  Divider,
-  Group,
-  Stack,
-  Text,
-  TextInput,
-  Title,
-} from '@mantine/core';
-import { useForm } from '@mantine/form';
-import { notifications } from '@mantine/notifications';
-import { useState } from 'react';
+import { Avatar, AvatarFallback, AvatarImage } from '@voltade/ui/avatar.tsx';
+import { Button } from '@voltade/ui/button.tsx';
+import { Card, CardContent, CardHeader, CardTitle } from '@voltade/ui/card.tsx';
+import { Input } from '@voltade/ui/input.tsx';
+import { Label } from '@voltade/ui/label.tsx';
+import { useEffect, useState } from 'react';
+import { useForm } from 'react-hook-form';
 
 import { authClient } from '#src/lib/auth';
+
+interface ProfileFormValues {
+  name: string;
+  email: string;
+  image: string;
+}
 
 export function ProfileGeneral() {
   const { data: sessionData } = authClient.useSession();
   const [isLoading, setIsLoading] = useState(false);
 
-  const form = useForm({
-    mode: 'uncontrolled',
-    initialValues: {
-      name: sessionData?.user?.name || '',
-      email: sessionData?.user?.email || '',
-      image: sessionData?.user?.image || '',
-    },
-    validate: {
-      name: (value) =>
-        value.length < 2 ? 'Name must be at least 2 characters' : null,
-      email: (value) => (/^\S+@\S+$/.test(value) ? null : 'Invalid email'),
-      image: (value) => {
-        if (value && !value.startsWith('http')) {
-          return 'Image must be a valid URL';
-        }
-        return null;
-      },
-    },
+  const form = useForm<ProfileFormValues>({
+    defaultValues: { name: '', email: '', image: '' },
   });
 
-  const handleSubmit = async (values: typeof form.values) => {
+  useEffect(() => {
+    if (sessionData?.user) {
+      form.reset({
+        name: sessionData.user.name || '',
+        email: sessionData.user.email || '',
+        image: sessionData.user.image || '',
+      });
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [sessionData?.user, form]);
+
+  const onSubmit = async (values: ProfileFormValues) => {
     setIsLoading(true);
     try {
-      const { data, error } = await authClient.updateUser({
+      const { error } = await authClient.updateUser({
         name: values.name,
         image: values.image,
       });
-
-      if (error) {
-        notifications.show({
-          title: 'Error',
-          message: 'Failed to update profile',
-          color: 'red',
-        });
-        return;
-      }
-
-      notifications.show({
-        title: 'Success',
-        message: 'Profile updated successfully',
-        color: 'green',
-      });
-    } catch (error) {
-      notifications.show({
-        title: 'Error',
-        message: 'Failed to update profile',
-        color: 'red',
-      });
+      if (error) console.error('Failed to update profile');
     } finally {
       setIsLoading(false);
     }
   };
 
   if (!sessionData?.user) {
-    return <Text>Loading...</Text>;
+    return <div className="text-sm text-muted-foreground">Loading...</div>;
   }
 
   return (
-    <Stack gap="md">
-      <Card withBorder p="0" radius="md" shadow="sm">
-        <Stack p="md" gap="xs">
-          <Title order={3}>Profile</Title>
-          <Text size="sm" c="dimmed">
-            Manage your personal information.
-          </Text>
-        </Stack>
-        <Divider />
-        <Stack p="md" gap="lg">
-          <Group align="center">
-            <Avatar src={sessionData.user.image} size="xl" radius="md">
-              {sessionData.user.name?.charAt(0).toUpperCase()}
+    <div className="space-y-4 w-full">
+      {' '}
+      {/* ensure container is full width */}
+      <Card className="w-full gap-0">
+        {' '}
+        {/* make card span full width */}
+        <CardHeader className="pb-0 px-4 pt-4">
+          <CardTitle className="text-sm font-medium text-muted-foreground">
+            Profile
+          </CardTitle>
+        </CardHeader>
+        <CardContent className="w-full p-6">
+          {' '}
+          {/* give content the full width + comfy padding */}
+          <div className="mb-4 flex items-center gap-3">
+            <Avatar className="size-12 rounded-md">
+              {sessionData.user.image ? (
+                <AvatarImage
+                  src={sessionData.user.image}
+                  alt={sessionData.user.name ?? 'User'}
+                />
+              ) : null}
+              <AvatarFallback className="rounded-md">
+                {(sessionData.user.name ?? 'U').charAt(0).toUpperCase()}
+              </AvatarFallback>
             </Avatar>
-            <Stack gap={4}>
-              <Text fw={500}>{sessionData.user.name}</Text>
-              <Text size="sm" c="dimmed">
+            <div className="min-w-0">
+              <div className="truncate font-medium">
+                {sessionData.user.name}
+              </div>
+              <div className="truncate text-sm text-muted-foreground">
                 {sessionData.user.email}
-              </Text>
-            </Stack>
-          </Group>
-
-          <form onSubmit={form.onSubmit(handleSubmit)}>
-            <Stack gap="md">
-              <TextInput
-                label="Name"
+              </div>
+            </div>
+          </div>
+          {/* remove max-w-xl so inputs can use full card width */}
+          <form
+            onSubmit={form.handleSubmit(onSubmit)}
+            className="space-y-4 w-full"
+          >
+            <div className="space-y-2">
+              <Label htmlFor="name">Name</Label>
+              <Input
+                id="name"
+                className="w-full"
                 placeholder="Enter your name"
-                key={form.key('name')}
-                {...form.getInputProps('name')}
+                {...form.register('name', { minLength: 2 })}
               />
+            </div>
 
-              <TextInput
-                label="Profile Image URL"
+            <div className="space-y-2">
+              <Label htmlFor="image">Profile Image URL</Label>
+              <Input
+                id="image"
+                className="w-full"
                 placeholder="Enter image URL (optional)"
-                key={form.key('image')}
-                {...form.getInputProps('image')}
-                description="Provide a URL to your profile image"
+                {...form.register('image')}
               />
+              <p className="text-xs text-muted-foreground">
+                Provide a URL to your profile image
+              </p>
+            </div>
 
-              <TextInput
-                label="Email"
-                placeholder="Enter your email"
+            <div className="space-y-2">
+              <Label htmlFor="email">Email</Label>
+              <Input
+                id="email"
+                className="w-full"
                 disabled
-                key={form.key('email')}
-                {...form.getInputProps('email')}
-                description="Email is managed by your authentication provider and cannot be changed here."
+                {...form.register('email')}
               />
+              <p className="text-xs text-muted-foreground">
+                Email is managed by your authentication provider and cannot be
+                changed here.
+              </p>
+            </div>
 
-              <Group justify="flex-end">
-                <Button
-                  type="submit"
-                  loading={isLoading}
-                  disabled={!form.isDirty()}
-                >
-                  Save Changes
-                </Button>
-              </Group>
-            </Stack>
+            <div className="flex justify-end">
+              <Button type="submit" disabled={isLoading}>
+                {isLoading ? 'Saving...' : 'Save Changes'}
+              </Button>
+            </div>
           </form>
-        </Stack>
+        </CardContent>
       </Card>
-    </Stack>
+    </div>
   );
 }

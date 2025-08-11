@@ -5,5 +5,13 @@ export const Route = createFileRoute('/_main/profile')({
 });
 
 function RouteComponent() {
-  return <Outlet />;
+  return (
+    <>
+      <div className="mb-4">
+        <h2 className="text-xl font-semibold">Settings</h2>
+        <p className="text-muted-foreground">Manage your settings</p>
+      </div>
+      <Outlet />
+    </>
+  );
 }

@@ -86,16 +86,15 @@ export function InvitesTable({
               <TableCell>
                 <div className="flex items-center gap-2">
                   <Button
-                    variant="ghost"
+                    variant="outline"
                     size="sm"
                     onClick={() => onResendInvite(inv.email, inv.role)}
                   >
                     Resend
                   </Button>
                   <Button
-                    variant="outline"
+                    variant="destructive"
                     size="sm"
-                    className="text-red-600 border-red-200 hover:bg-red-50"
                     onClick={() => onCancelInvite(inv.id)}
                   >
                     Cancel
