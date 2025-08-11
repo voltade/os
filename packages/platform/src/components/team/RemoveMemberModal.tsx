@@ -1,5 +1,13 @@
-import { Button, Group, Modal, Stack, Text } from '@mantine/core';
 import { IconTrash } from '@tabler/icons-react';
+import { Button } from '@voltade/ui/src/components/button';
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from '@voltade/ui/src/components/dialog';
 
 interface RemoveMemberModalProps {
   opened: boolean;
@@ -17,31 +25,29 @@ export function RemoveMemberModal({
   onConfirm,
 }: RemoveMemberModalProps) {
   return (
-    <Modal opened={opened} onClose={onClose} title="Remove Member" centered>
-      <Stack gap="md">
-        <Text>
-          Are you sure you want to remove <strong>{memberName}</strong> from
-          this organization?
-        </Text>
-        <Text size="sm" c="dimmed">
-          This action cannot be undone. The member will lose access to all
-          organization resources.
-        </Text>
+    <Dialog open={opened} onOpenChange={(o) => (!o ? onClose() : null)}>
+      <DialogContent>
+        <DialogHeader>
+          <DialogTitle>Remove Member</DialogTitle>
+          <DialogDescription>
+            Are you sure you want to remove <strong>{memberName}</strong> from
+            this organization? This action cannot be undone.
+          </DialogDescription>
+        </DialogHeader>
 
-        <Group justify="flex-end" mt="md">
-          <Button variant="light" onClick={onClose} disabled={isRemoving}>
+        <DialogFooter>
+          <Button variant="outline" onClick={onClose} disabled={isRemoving}>
             Cancel
           </Button>
           <Button
-            color="red"
             onClick={onConfirm}
-            leftSection={<IconTrash size={16} />}
-            loading={isRemoving}
+            disabled={isRemoving}
+            variant="destructive"
           >
-            Remove Member
+            <IconTrash className="mr-1" size={16} /> Remove Member
           </Button>
-        </Group>
-      </Stack>
-    </Modal>
+        </DialogFooter>
+      </DialogContent>
+    </Dialog>
   );
 }

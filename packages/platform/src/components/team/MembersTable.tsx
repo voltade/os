@@ -1,16 +1,33 @@
-import {
-  ActionIcon,
-  Avatar,
-  Badge,
-  Group,
-  Loader,
-  Menu,
-  Select,
-  Table,
-  Text,
-  Tooltip,
-} from '@mantine/core';
 import { IconDots, IconEdit, IconMail, IconTrash } from '@tabler/icons-react';
+import {
+  Avatar,
+  AvatarFallback,
+  AvatarImage,
+} from '@voltade/ui/src/components/avatar';
+import { Badge as ShadcnBadge } from '@voltade/ui/src/components/badge';
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from '@voltade/ui/src/components/dropdown-menu';
+import {
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+  Select as ShadcnSelect,
+} from '@voltade/ui/src/components/select';
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from '@voltade/ui/src/components/table';
+import { Tooltip } from '@voltade/ui/src/components/tooltip';
 
 interface UserRef {
   id: string;
@@ -48,109 +65,124 @@ export function MembersTable({
   onRemove,
 }: MembersTableProps) {
   return (
-    <Table highlightOnHover horizontalSpacing="md" verticalSpacing="md">
-      <Table.Thead>
-        <Table.Tr>
-          <Table.Th>Member</Table.Th>
-          <Table.Th>Joined</Table.Th>
-          <Table.Th style={{ width: 220 }}>Role</Table.Th>
-          <Table.Th style={{ width: 60 }}></Table.Th>
-        </Table.Tr>
-      </Table.Thead>
-      <Table.Tbody>
-        {rows.map((member) => (
-          <Table.Tr key={member.id}>
-            <Table.Td>
-              <Group>
-                <Avatar
-                  src={member.user.image || undefined}
-                  name={member.user.name}
-                  color="initials"
-                />
-                <div>
-                  <Group gap="xs" align="center">
-                    <Text fw={500}>{member.user.name}</Text>
-                    {member.userId === currentUserId && (
-                      <Badge size="xs" variant="light">
-                        You
-                      </Badge>
+    <Table>
+      <TableHeader>
+        <TableRow>
+          <TableHead>Member</TableHead>
+          <TableHead>Joined</TableHead>
+          <TableHead className="w-[220px]">Role</TableHead>
+          <TableHead className="w-[60px]" />
+        </TableRow>
+      </TableHeader>
+      <TableBody>
+        {rows.map((member) => {
+          const isYou = member.userId === currentUserId;
+          const canEditThis = canEditRoles && !isYou;
+          return (
+            <TableRow key={member.id}>
+              <TableCell>
+                <div className="flex items-center gap-3">
+                  <Avatar>
+                    {member.user.image ? (
+                      <AvatarImage
+                        src={member.user.image}
+                        alt={member.user.name}
+                      />
+                    ) : (
+                      <AvatarFallback>
+                        {member.user.name?.charAt(0).toUpperCase()}
+                      </AvatarFallback>
                     )}
-                  </Group>
-                  <Group gap={6} align="center">
-                    <IconMail size={14} color="var(--mantine-color-gray-6)" />
-                    <Text size="sm" c="dimmed">
-                      {member.user.email}
-                    </Text>
-                  </Group>
+                  </Avatar>
+                  <div>
+                    <div className="flex items-center gap-2">
+                      <span className="font-medium">{member.user.name}</span>
+                      {isYou && (
+                        <ShadcnBadge variant="secondary">You</ShadcnBadge>
+                      )}
+                    </div>
+                    <div className="flex items-center gap-1 text-sm text-muted-foreground">
+                      <IconMail size={14} />
+                      <span>{member.user.email}</span>
+                    </div>
+                  </div>
                 </div>
-              </Group>
-            </Table.Td>
-            <Table.Td>
-              <Text size="sm" c="dimmed">
-                {new Date(member.createdAt).toLocaleDateString('en-US', {
-                  year: 'numeric',
-                  month: 'short',
-                  day: 'numeric',
-                })}
-              </Text>
-            </Table.Td>
-            <Table.Td>
-              <Select
-                disabled={!canEditRoles || member.userId === currentUserId}
-                data={[
-                  { value: 'owner', label: 'Owner' },
-                  { value: 'admin', label: 'Admin' },
-                  { value: 'developer', label: 'Developer' },
-                  { value: 'member', label: 'Member' },
-                ]}
-                value={member.role}
-                allowDeselect={false}
-                onChange={(val) =>
-                  val &&
-                  onChangeRole(
-                    member.id,
-                    val as 'owner' | 'admin' | 'developer' | 'member',
-                  )
-                }
-                rightSection={
-                  roleLoadingMemberId === member.id ? (
-                    <Loader size={16} />
-                  ) : null
-                }
-              />
-            </Table.Td>
-            <Table.Td>
-              <Menu shadow="md" width={220}>
-                <Menu.Target>
-                  <Tooltip label="Actions" withArrow>
-                    <ActionIcon variant="subtle" color="gray">
-                      <IconDots size={16} />
-                    </ActionIcon>
-                  </Tooltip>
-                </Menu.Target>
-                <Menu.Dropdown>
-                  <Menu.Item leftSection={<IconEdit size={14} />} disabled>
-                    Edit Member
-                  </Menu.Item>
-                  <Menu.Item leftSection={<IconMail size={14} />} disabled>
-                    Send Message
-                  </Menu.Item>
-                  <Menu.Divider />
-                  {member.userId !== currentUserId && (
-                    <Menu.Item
-                      onClick={() => onRemove(member.id, member.user.name)}
-                      color="red"
-                      leftSection={<IconTrash size={14} />}
-                    >
-                      Remove Member
-                    </Menu.Item>
+              </TableCell>
+              <TableCell>
+                <span className="text-sm text-muted-foreground">
+                  {new Date(member.createdAt).toLocaleDateString('en-US', {
+                    year: 'numeric',
+                    month: 'short',
+                    day: 'numeric',
+                  })}
+                </span>
+              </TableCell>
+              <TableCell>
+                <div className="flex items-center">
+                  <ShadcnSelect
+                    value={member.role}
+                    onValueChange={(val) =>
+                      onChangeRole(
+                        member.id,
+                        val as 'owner' | 'admin' | 'developer' | 'member',
+                      )
+                    }
+                    disabled={!canEditThis}
+                  >
+                    <SelectTrigger>
+                      <SelectValue />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="owner">Owner</SelectItem>
+                      <SelectItem value="admin">Admin</SelectItem>
+                      <SelectItem value="developer">Developer</SelectItem>
+                      <SelectItem value="member">Member</SelectItem>
+                    </SelectContent>
+                  </ShadcnSelect>
+                  {roleLoadingMemberId === member.id && (
+                    <span className="ml-2 inline-block size-4 animate-spin rounded-full border-2 border-muted border-t-foreground" />
                   )}
-                </Menu.Dropdown>
-              </Menu>
-            </Table.Td>
-          </Table.Tr>
-        ))}
-      </Table.Tbody>
+                </div>
+              </TableCell>
+              <TableCell>
+                <DropdownMenu>
+                  <DropdownMenuTrigger asChild>
+                    <button
+                      type="button"
+                      className="text-muted-foreground hover:text-foreground inline-flex items-center justify-center rounded-md p-1"
+                    >
+                      <Tooltip>
+                        <IconDots size={16} />
+                      </Tooltip>
+                    </button>
+                  </DropdownMenuTrigger>
+                  <DropdownMenuContent align="end" className="w-56">
+                    <DropdownMenuItem disabled>
+                      <IconEdit size={14} className="mr-2" /> Edit Member
+                    </DropdownMenuItem>
+                    <DropdownMenuItem disabled>
+                      <IconMail size={14} className="mr-2" /> Send Message
+                    </DropdownMenuItem>
+                    <DropdownMenuSeparator />
+                    {!isYou && (
+                      <DropdownMenuItem
+                        className="text-red-600 focus:text-red-700"
+                        onClick={() => onRemove(member.id, member.user.name)}
+                      >
+                        <IconTrash
+                          size={14}
+                          className="mr-2 text-red-600 focus:text-red-700"
+                        />{' '}
+                        Remove Member
+                      </DropdownMenuItem>
+                    )}
+                  </DropdownMenuContent>
+                </DropdownMenu>
+              </TableCell>
+            </TableRow>
+          );
+        })}
+      </TableBody>
     </Table>
   );
 }

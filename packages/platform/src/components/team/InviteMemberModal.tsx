@@ -1,73 +1,109 @@
-import {
-  Button,
-  Divider,
-  Group,
-  Modal,
-  Select,
-  Stack,
-  Text,
-  TextInput,
-} from '@mantine/core';
 import type { UseFormReturnType } from '@mantine/form';
 import { IconPlus } from '@tabler/icons-react';
+import { Button } from '@voltade/ui/src/components/button';
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from '@voltade/ui/src/components/dialog';
+import { Input } from '@voltade/ui/src/components/input';
+import { Label } from '@voltade/ui/src/components/label';
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@voltade/ui/src/components/select';
+import { Separator } from '@voltade/ui/src/components/separator';
 
-interface InviteMemberModalProps<T> {
-  opened: boolean;
-  onClose: () => void;
-  form: UseFormReturnType<T>;
-  roleOptions: { value: string; label: string }[];
-  isInviting: boolean;
-  onSubmit: (values: T) => void | Promise<void>;
+interface InviteFormValues {
+  email: string;
+  role: string;
 }
 
-export function InviteMemberModal<T>({
+interface InviteMemberModalProps {
+  opened: boolean;
+  onClose: () => void;
+  form: UseFormReturnType<InviteFormValues>;
+  roleOptions: { value: string; label: string }[];
+  isInviting: boolean;
+  onSubmit: (values: InviteFormValues) => void | Promise<void>;
+}
+
+export function InviteMemberModal({
   opened,
   onClose,
   form,
   roleOptions,
   isInviting,
   onSubmit,
-}: InviteMemberModalProps<T>) {
+}: InviteMemberModalProps) {
   return (
-    <Modal opened={opened} onClose={onClose} title="Invite New Member" centered>
-      <form onSubmit={form.onSubmit(onSubmit as any)}>
-        <Stack gap="md">
-          <Text c="dimmed" size="sm">
+    <Dialog open={opened} onOpenChange={(o) => (!o ? onClose() : null)}>
+      <DialogContent>
+        <DialogHeader>
+          <DialogTitle>Invite New Member</DialogTitle>
+          <DialogDescription>
             We’ll email an invitation to this person. They’ll be able to join
             your organization with the selected role.
-          </Text>
+          </DialogDescription>
+        </DialogHeader>
 
-          <TextInput
-            label="Email Address"
-            placeholder="Enter member's email"
-            type="email"
-            withAsterisk
-            {...(form.getInputProps as any)('email')}
-          />
+        <form
+          onSubmit={form.onSubmit(onSubmit)}
+          className="flex flex-col gap-4"
+        >
+          <div className="flex flex-col gap-2">
+            <Label htmlFor="invite-email">Email Address</Label>
+            <Input
+              id="invite-email"
+              type="email"
+              placeholder="Enter member's email"
+              required
+              value={form.values.email}
+              onChange={(e) => form.setFieldValue('email', e.target.value)}
+            />
+          </div>
 
-          <Select
-            label="Role"
-            placeholder="Select member role"
-            data={roleOptions}
-            withAsterisk
-            {...(form.getInputProps as any)('role')}
-          />
+          <div className="flex flex-col gap-2">
+            <Label htmlFor="invite-role">Role</Label>
+            <Select
+              value={form.values.role}
+              onValueChange={(val) => form.setFieldValue('role', val)}
+            >
+              <SelectTrigger id="invite-role">
+                <SelectValue placeholder="Select member role" />
+              </SelectTrigger>
+              <SelectContent>
+                {roleOptions.map((opt) => (
+                  <SelectItem key={opt.value} value={opt.value}>
+                    {opt.label}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+          </div>
 
-          <Divider my="xs" />
-          <Group justify="flex-end" mt="md">
-            <Button variant="light" onClick={onClose} disabled={isInviting}>
+          <Separator />
+          <DialogFooter>
+            <Button
+              type="button"
+              variant="outline"
+              onClick={onClose}
+              disabled={isInviting}
+            >
               Cancel
             </Button>
-            <Button
-              type="submit"
-              leftSection={<IconPlus size={16} />}
-              loading={isInviting}
-            >
-              Send Invitation
+            <Button type="submit" disabled={isInviting}>
+              <IconPlus className="mr-1" size={16} /> Send Invitation
             </Button>
-          </Group>
-        </Stack>
-      </form>
-    </Modal>
+          </DialogFooter>
+        </form>
+      </DialogContent>
+    </Dialog>
   );
 }

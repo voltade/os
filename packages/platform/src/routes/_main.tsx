@@ -51,6 +51,7 @@ function RouteComponent() {
       navbar={{ width: 200, breakpoint: 'sm' }}
     >
       <Header />
+
       {!location.pathname.startsWith('/environments/') && (
         <OrganizationNavbar />
       )}

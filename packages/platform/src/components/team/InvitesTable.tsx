@@ -1,13 +1,14 @@
-import {
-  Badge,
-  Button,
-  Center,
-  Group,
-  Loader,
-  Table,
-  Text,
-} from '@mantine/core';
 import { IconMail } from '@tabler/icons-react';
+import { Badge } from '@voltade/ui/src/components/badge';
+import { Button } from '@voltade/ui/src/components/button';
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from '@voltade/ui/src/components/table';
 
 export interface InviteRow {
   id: string;
@@ -31,48 +32,48 @@ export function InvitesTable({
   onCancelInvite,
 }: InvitesTableProps) {
   return (
-    <Table highlightOnHover horizontalSpacing="md" verticalSpacing="md">
-      <Table.Thead>
-        <Table.Tr>
-          <Table.Th>Email</Table.Th>
-          <Table.Th>Role</Table.Th>
-          <Table.Th>Expires</Table.Th>
-          <Table.Th style={{ width: 120 }}>Actions</Table.Th>
-        </Table.Tr>
-      </Table.Thead>
-      <Table.Tbody>
+    <Table>
+      <TableHeader>
+        <TableRow>
+          <TableHead>Email</TableHead>
+          <TableHead>Role</TableHead>
+          <TableHead>Expires</TableHead>
+          <TableHead className="w-[120px]">Actions</TableHead>
+        </TableRow>
+      </TableHeader>
+      <TableBody>
         {invitesLoading ? (
-          <Table.Tr>
-            <Table.Td colSpan={4}>
-              <Center p="lg">
-                <Loader size="sm" />
-              </Center>
-            </Table.Td>
-          </Table.Tr>
+          <TableRow>
+            <TableCell colSpan={4}>
+              <div className="flex items-center justify-center p-4">
+                <span className="inline-block size-4 animate-spin rounded-full border-2 border-muted border-t-foreground" />
+              </div>
+            </TableCell>
+          </TableRow>
         ) : invites.length === 0 ? (
-          <Table.Tr>
-            <Table.Td colSpan={4}>
-              <Center p="lg">
-                <Text c="dimmed">No pending invitations</Text>
-              </Center>
-            </Table.Td>
-          </Table.Tr>
+          <TableRow>
+            <TableCell colSpan={4}>
+              <div className="flex items-center justify-center p-4 text-muted-foreground">
+                No pending invitations
+              </div>
+            </TableCell>
+          </TableRow>
         ) : (
           invites.map((inv) => (
-            <Table.Tr key={inv.id}>
-              <Table.Td>
-                <Group gap={6} align="center">
+            <TableRow key={inv.id}>
+              <TableCell>
+                <div className="flex items-center gap-2">
                   <IconMail size={14} />
-                  <Text>{inv.email}</Text>
-                </Group>
-              </Table.Td>
-              <Table.Td>
-                <Badge size="sm" color="gray">
+                  <span>{inv.email}</span>
+                </div>
+              </TableCell>
+              <TableCell>
+                <Badge variant="secondary">
                   {inv.role.charAt(0).toUpperCase() + inv.role.slice(1)}
                 </Badge>
-              </Table.Td>
-              <Table.Td>
-                <Text size="sm" c="dimmed">
+              </TableCell>
+              <TableCell>
+                <span className="text-sm text-muted-foreground">
                   {inv.expiresAt
                     ? new Date(inv.expiresAt).toLocaleDateString('en-US', {
                         year: 'numeric',
@@ -80,31 +81,31 @@ export function InvitesTable({
                         day: 'numeric',
                       })
                     : '—'}
-                </Text>
-              </Table.Td>
-              <Table.Td>
-                <Group gap="xs" justify="flex-start">
+                </span>
+              </TableCell>
+              <TableCell>
+                <div className="flex items-center gap-2">
                   <Button
-                    size="xs"
-                    variant="subtle"
+                    variant="ghost"
+                    size="sm"
                     onClick={() => onResendInvite(inv.email, inv.role)}
                   >
                     Resend
                   </Button>
                   <Button
-                    size="xs"
-                    color="red"
-                    variant="light"
+                    variant="outline"
+                    size="sm"
+                    className="text-red-600 border-red-200 hover:bg-red-50"
                     onClick={() => onCancelInvite(inv.id)}
                   >
                     Cancel
                   </Button>
-                </Group>
-              </Table.Td>
-            </Table.Tr>
+                </div>
+              </TableCell>
+            </TableRow>
           ))
         )}
-      </Table.Tbody>
+      </TableBody>
     </Table>
   );
 }

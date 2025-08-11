@@ -1,5 +1,13 @@
-import { ActionIcon, Group, Select, TextInput } from '@mantine/core';
+import { Group } from '@mantine/core';
 import { IconSearch, IconX } from '@tabler/icons-react';
+import { Input } from '@voltade/ui/src/components/input';
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@voltade/ui/src/components/select';
 
 interface MembersFiltersProps {
   searchQuery: string;
@@ -16,38 +24,44 @@ export function MembersFilters({
 }: MembersFiltersProps) {
   return (
     <Group wrap="wrap" gap="md" p="md">
-      <TextInput
-        placeholder="Search members..."
-        leftSection={<IconSearch size={16} />}
-        value={searchQuery}
-        onChange={(e) => onSearchChange(e.target.value)}
-        style={{ flex: 1, minWidth: 260 }}
-        rightSection={
-          searchQuery ? (
-            <ActionIcon
-              variant="subtle"
-              color="gray"
+      <div className="flex-1 min-w-[260px]">
+        <div className="relative">
+          <IconSearch className="absolute left-2 top-1/2 -translate-y-1/2 size-4 text-gray-500" />
+          <Input
+            className="pl-8 w-full"
+            placeholder="Search members..."
+            value={searchQuery}
+            onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
+              onSearchChange(e.target.value)
+            }
+          />
+          {searchQuery && (
+            <button
+              type="button"
+              className="absolute right-2 top-1/2 -translate-y-1/2 text-gray-500"
               onClick={() => onSearchChange('')}
             >
-              <IconX size={14} />
-            </ActionIcon>
-          ) : null
-        }
-      />
+              <IconX className="size-4" />
+            </button>
+          )}
+        </div>
+      </div>
 
       <Select
-        placeholder="All roles"
-        data={[
-          { value: 'owner', label: 'Owner' },
-          { value: 'admin', label: 'Admin' },
-          { value: 'developer', label: 'Developer' },
-          { value: 'member', label: 'Member' },
-        ]}
-        value={roleFilter}
-        clearable
-        onChange={(val) => onRoleFilterChange(val)}
-        style={{ minWidth: 200 }}
-      />
+        value={roleFilter ?? 'all'}
+        onValueChange={(val) => onRoleFilterChange(val === 'all' ? null : val)}
+      >
+        <SelectTrigger>
+          <SelectValue placeholder="All roles" />
+        </SelectTrigger>
+        <SelectContent>
+          <SelectItem value="all">All</SelectItem>
+          <SelectItem value="owner">Owner</SelectItem>
+          <SelectItem value="admin">Admin</SelectItem>
+          <SelectItem value="developer">Developer</SelectItem>
+          <SelectItem value="member">Member</SelectItem>
+        </SelectContent>
+      </Select>
     </Group>
   );
 }

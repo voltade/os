@@ -1,27 +1,3 @@
-import {
-  ActionIcon,
-  Avatar,
-  Badge,
-  Button,
-  Card,
-  Center,
-  CopyButton,
-  Divider,
-  Group,
-  Loader,
-  Menu,
-  Modal,
-  Pagination,
-  SegmentedControl,
-  Select,
-  Stack,
-  Table,
-  Tabs,
-  Text,
-  TextInput,
-  Title,
-  Tooltip,
-} from '@mantine/core';
 import { useForm } from '@mantine/form';
 import { useDisclosure } from '@mantine/hooks';
 import { notifications } from '@mantine/notifications';
@@ -40,6 +16,29 @@ import {
   IconX,
 } from '@tabler/icons-react';
 import { createFileRoute } from '@tanstack/react-router';
+import { Button } from '@voltade/ui/src/components/button';
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from '@voltade/ui/src/components/card';
+import {
+  Pagination,
+  PaginationContent,
+  PaginationItem,
+  PaginationLink,
+  PaginationNext,
+  PaginationPrevious,
+} from '@voltade/ui/src/components/pagination';
+import { Separator } from '@voltade/ui/src/components/separator';
+import {
+  Tabs,
+  TabsContent,
+  TabsList,
+  TabsTrigger,
+} from '@voltade/ui/src/components/tabs';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 
 import { InviteMemberModal } from '#src/components/team/InviteMemberModal';
@@ -371,23 +370,11 @@ function RouteComponent() {
     }
   };
 
-  const formatDate = (dateString: string) => {
-    return new Date(dateString).toLocaleDateString('en-US', {
-      year: 'numeric',
-      month: 'short',
-      day: 'numeric',
-    });
-  };
-
-  const capitalizeRole = (role: string) => {
-    return role.charAt(0).toUpperCase() + role.slice(1);
-  };
-
   if (isPending) {
     return (
-      <Center h={200}>
-        <Loader />
-      </Center>
+      <div className="flex h-[200px] items-center justify-center">
+        <span className="inline-block size-6 animate-spin rounded-full border-2 border-muted border-t-foreground" />
+      </div>
     );
   }
 
@@ -397,77 +384,86 @@ function RouteComponent() {
   }
 
   return (
-    <Stack gap="lg">
+    <div className="flex flex-col gap-4">
       {/* Header */}
-      <Group justify="space-between">
+      <div className="flex items-start justify-between">
         <div>
-          <Title order={2}>Team</Title>
-          <Text c="dimmed">
+          <h2 className="text-xl font-semibold">Team</h2>
+          <p className="text-muted-foreground">
             Manage members and invitations for {organisation?.name}
-          </Text>
+          </p>
         </div>
         {canInviteMembers && (
-          <Button
-            leftSection={<IconPlus size={16} />}
-            variant="filled"
-            onClick={open}
-          >
-            Invite Member
+          <Button onClick={open}>
+            <IconPlus size={16} />
+            <span className="ml-1">Invite Member</span>
           </Button>
         )}
-      </Group>
+      </div>
 
       <Tabs
         value={activeTab}
-        onChange={(v) => setActiveTab(v as 'members' | 'invites')}
+        onValueChange={(v) => setActiveTab(v as 'members' | 'invites')}
       >
-        <Tabs.List>
-          <Tabs.Tab value="members">
-            Members{' '}
+        <TabsList>
+          <TabsTrigger value="members">
+            Members
             {totalFilteredMembers > 0 && (
-              <Badge ml="xs" variant="light">
+              <span className="ml-2 inline-flex h-5 min-w-5 items-center justify-center rounded-full bg-muted px-1.5 text-xs font-medium text-muted-foreground">
                 {totalFilteredMembers}
-              </Badge>
+              </span>
             )}
-          </Tabs.Tab>
-          <Tabs.Tab value="invites">
-            Invites{' '}
+          </TabsTrigger>
+          <TabsTrigger value="invites">
+            Invites
             {invites.length > 0 && (
-              <Badge ml="xs" variant="light">
+              <span className="ml-2 inline-flex h-5 min-w-5 items-center justify-center rounded-full bg-muted px-1.5 text-xs font-medium text-muted-foreground">
                 {invites.length}
-              </Badge>
+              </span>
             )}
-          </Tabs.Tab>
-        </Tabs.List>
+          </TabsTrigger>
+        </TabsList>
 
-        <Tabs.Panel value="members" pt="md">
-          {/* Members Table (with header filters) */}
-          <Card withBorder p="0" radius="md" shadow="sm">
-            <MembersFilters
-              searchQuery={searchQuery}
-              onSearchChange={handleSearchChange}
-              roleFilter={roleFilter}
-              onRoleFilterChange={handleRoleFilterChange}
-            />
-            <Divider />
-            <MembersTable
-              rows={paginatedMembers}
-              currentUserId={session?.user?.id}
-              canEditRoles={canEditRoles}
-              onChangeRole={handleUpdateRole}
-              roleLoadingMemberId={roleUpdateMemberId}
-              onRemove={(id, name) => handleRemoveMemberClick({ id, name })}
-            />
+        <TabsContent value="members">
+          <Card className="gap-0 py-0">
+            <CardHeader className="pb-0">
+              <CardTitle className="sr-only">Members</CardTitle>
+              <CardDescription className="sr-only">
+                Filters and table
+              </CardDescription>
+            </CardHeader>
+            <CardContent className="p-0">
+              <div className="px-4 pb-0">
+                <MembersFilters
+                  searchQuery={searchQuery}
+                  onSearchChange={handleSearchChange}
+                  roleFilter={roleFilter}
+                  onRoleFilterChange={handleRoleFilterChange}
+                />
+              </div>
+              <Separator />
+              <div className="p-4 pt-2">
+                <MembersTable
+                  rows={paginatedMembers}
+                  currentUserId={session?.user?.id}
+                  canEditRoles={canEditRoles}
+                  onChangeRole={handleUpdateRole}
+                  roleLoadingMemberId={roleUpdateMemberId}
+                  onRemove={(id, name) => handleRemoveMemberClick({ id, name })}
+                />
+              </div>
+            </CardContent>
           </Card>
 
           {paginatedMembers.length === 0 && !isPending && (
-            <Center py="xl">
-              <Stack align="center" gap="xs">
-                <IconUser size={48} color="var(--mantine-color-gray-5)" />
-                <Text c="dimmed">No members found matching your criteria</Text>
+            <div className="flex justify-center py-10">
+              <div className="flex flex-col items-center gap-2">
+                <IconUser size={48} className="text-muted-foreground" />
+                <p className="text-muted-foreground">
+                  No members found matching your criteria
+                </p>
                 <Button
-                  variant="light"
-                  size="sm"
+                  variant="outline"
                   onClick={() => {
                     setSearchQuery('');
                     setRoleFilter(null);
@@ -476,38 +472,85 @@ function RouteComponent() {
                 >
                   Clear Filters
                 </Button>
-              </Stack>
-            </Center>
+              </div>
+            </div>
           )}
 
           {totalPages > 1 && (
-            <Group justify="center">
-              <Pagination
-                value={activePage}
-                onChange={setActivePage}
-                total={totalPages}
-              />
-            </Group>
+            <Pagination className="mt-4">
+              <PaginationContent>
+                <PaginationItem>
+                  <PaginationPrevious
+                    size="icon"
+                    href="#"
+                    onClick={(e) => {
+                      e.preventDefault();
+                      setActivePage(Math.max(1, activePage - 1));
+                    }}
+                  />
+                </PaginationItem>
+                {Array.from({ length: totalPages }, (_, i) => i + 1).map(
+                  (p) => (
+                    <PaginationItem key={p}>
+                      <PaginationLink
+                        size="icon"
+                        href="#"
+                        isActive={p === activePage}
+                        onClick={(e) => {
+                          e.preventDefault();
+                          setActivePage(p);
+                        }}
+                      >
+                        {p}
+                      </PaginationLink>
+                    </PaginationItem>
+                  ),
+                )}
+                <PaginationItem>
+                  <PaginationNext
+                    size="icon"
+                    href="#"
+                    onClick={(e) => {
+                      e.preventDefault();
+                      setActivePage(Math.min(totalPages, activePage + 1));
+                    }}
+                  />
+                </PaginationItem>
+              </PaginationContent>
+            </Pagination>
           )}
-        </Tabs.Panel>
+        </TabsContent>
 
-        <Tabs.Panel value="invites" pt="md">
-          <Card withBorder p="0" radius="md" shadow="sm">
-            <Group justify="space-between" p="md">
-              <Text fw={500}>Pending invitations</Text>
-              <ActionIcon onClick={fetchInvites} variant="subtle">
-                <IconRefresh size={16} />
-              </ActionIcon>
-            </Group>
-            <Divider />
-            <InvitesTable
-              invites={invites}
-              invitesLoading={invitesLoading}
-              onCancelInvite={handleCancelInvite}
-              onResendInvite={handleResendInvite}
-            />
+        <TabsContent value="invites">
+          <Card className="gap-0 py-0">
+            <CardHeader className="pb-0">
+              <div className="flex items-center justify-between px-4 pt-4">
+                <CardTitle className="text-sm font-medium text-muted-foreground">
+                  Pending invitations
+                </CardTitle>
+                <Button
+                  variant="ghost"
+                  size="icon"
+                  className="text-muted-foreground hover:text-foreground"
+                  onClick={fetchInvites}
+                >
+                  <IconRefresh size={16} />
+                </Button>
+              </div>
+            </CardHeader>
+            <Separator />
+            <CardContent className="p-0">
+              <div className="p-4 pt-2">
+                <InvitesTable
+                  invites={invites}
+                  invitesLoading={invitesLoading}
+                  onCancelInvite={handleCancelInvite}
+                  onResendInvite={handleResendInvite}
+                />
+              </div>
+            </CardContent>
           </Card>
-        </Tabs.Panel>
+        </TabsContent>
       </Tabs>
 
       {/* Invite Member Modal */}
@@ -528,6 +571,6 @@ function RouteComponent() {
         isRemoving={isRemoving}
         onConfirm={handleConfirmRemoveMember}
       />
-    </Stack>
+    </div>
   );
 }
