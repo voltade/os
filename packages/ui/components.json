@@ -14,7 +14,7 @@
     "lib": "#lib",
     "utils": "#lib/utils.ts",
     "components": "#components",
-    "ui": "#components",
+    "ui": "#components/base",
     "hooks": "#hooks"
   },
   "iconLibrary": "lucide"

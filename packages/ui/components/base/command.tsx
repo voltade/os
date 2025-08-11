@@ -10,7 +10,7 @@ import {
   DialogDescription,
   DialogHeader,
   DialogTitle,
-} from '#components/dialog';
+} from '#components/base/dialog';
 import { cn } from '#lib/utils.ts';
 
 function Command({
