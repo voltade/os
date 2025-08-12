@@ -15,8 +15,10 @@ export function AppSelector() {
 
   const handleAppClick = (appId: string) => {
     navigate({
-      to: '/$appId',
-      params: { appId },
+      to: '/apps/$appId',
+      params: {
+        appId,
+      },
     });
   };
 

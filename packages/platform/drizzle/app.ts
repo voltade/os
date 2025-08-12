@@ -29,13 +29,7 @@ export const appTable = pgTable(
     git_repo_branch: text().notNull().default('main'),
     git_repo_path: text().notNull().default(''),
   },
-  (table) => [
-    check(
-      'app_slug_format_chk',
-      sql`${table.slug}::text ~ '^(?![0-9]+$)(?!-)[a-z0-9-]{3,31}(?<!-)$'`,
-    ),
-    unique('app_slug_unq').on(table.organization_id, table.slug),
-  ],
+  (table) => [unique('app_slug_unq').on(table.organization_id, table.slug)],
 );
 
 export const appSchema = zodSchemaFactory(appTable);
