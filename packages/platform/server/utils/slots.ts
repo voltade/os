@@ -1,3 +1,4 @@
+/** biome-ignore-all lint/suspicious/noExplicitAny: TO DO typecheck drizzle gateway inputs and outputs */
 import { appEnvVariables } from '#server/env.ts';
 
 export async function slots({
@@ -31,7 +32,7 @@ export async function slots({
     const result = await res.json();
 
     const databases = result.data.filter((database: any) =>
-      database.id.startsWith(`org-`),
+      database.id.startsWith(`org-${orgId}`),
     );
 
     return {
@@ -61,17 +62,6 @@ export async function slots({
   if (!isAdmin) {
     throw new Error('Unauthorized');
   }
-
-  console.log(
-    JSON.stringify(
-      {
-        type,
-        data,
-      },
-      null,
-      2,
-    ),
-  );
 
   const res = await fetch(appEnvVariables.DRIZZLE_GATEWAY_URL, {
     method,

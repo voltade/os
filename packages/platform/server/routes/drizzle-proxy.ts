@@ -75,6 +75,20 @@ export const route = factory
       });
     }
 
+    if (
+      body.type === 'proxy' &&
+      !body.data.slotId.startsWith(
+        `org-${session?.activeOrganizationId ?? 'undefined'}`,
+      )
+    ) {
+      return c.json(
+        {
+          error: 'Unauthorized',
+        },
+        401,
+      );
+    }
+
     return proxy(c.env.DRIZZLE_GATEWAY_URL, {
       method: c.req.method,
       body: JSON.stringify(body),
