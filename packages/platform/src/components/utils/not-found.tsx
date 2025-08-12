@@ -1,5 +1,3 @@
-import { Group } from '@mantine/core';
-
 export function NotFoundComponent({ message }: { message?: string }) {
   return (
     <div className="flex min-h-screen flex-col items-center justify-center p-4 text-center">
@@ -9,7 +7,7 @@ export function NotFoundComponent({ message }: { message?: string }) {
           {message}
         </pre>
       )}
-      <Group>
+      <div className="flex items-center gap-3">
         <button
           type="button"
           onClick={() => {
@@ -25,7 +23,7 @@ export function NotFoundComponent({ message }: { message?: string }) {
         >
           Back to Home
         </a>
-      </Group>
+      </div>
     </div>
   );
 }

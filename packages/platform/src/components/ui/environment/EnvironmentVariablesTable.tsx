@@ -1,4 +1,3 @@
-import { useForm } from '@mantine/form';
 import {
   IconCheck,
   IconDots,
@@ -59,46 +58,52 @@ export function EnvironmentVariablesTable({
   const updateMutation = useUpdateEnvironmentVariable();
   const deleteMutation = useDeleteEnvironmentVariable();
 
-  const newVariableForm = useForm({
-    initialValues: {
-      name: '',
-      description: '',
-      value: '',
-    },
-    validate: {
-      name: (value) =>
-        /^[A-Z_][A-Z0-9_]*$/.test(value)
-          ? null
-          : 'Name must contain only uppercase letters, numbers, and underscores, starting with a letter or underscore',
-      value: (value) => (value.trim() ? null : 'Value is required'),
-    },
-  });
+  // Local state to replace useForm
+  const [newName, setNewName] = useState('');
+  const [newDescription, setNewDescription] = useState('');
+  const [newValue, setNewValue] = useState('');
 
-  const editForm = useForm({
-    initialValues: {
-      name: '',
-      description: '',
-      value: '',
-    },
-    validate: {
-      name: (value) =>
-        /^[A-Z_][A-Z0-9_]*$/.test(value)
-          ? null
-          : 'Name must contain only uppercase letters, numbers, and underscores, starting with a letter or underscore',
-      value: (value) => (value.trim() ? null : 'Value is required'),
-    },
-  });
+  const [editName, setEditName] = useState('');
+  const [editDescription, setEditDescription] = useState('');
+  const [editValue, setEditValue] = useState('');
 
-  const handleCreate = async (values: typeof newVariableForm.values) => {
+  const resetCreate = () => {
+    setNewName('');
+    setNewDescription('');
+    setNewValue('');
+  };
+
+  const resetEdit = () => {
+    setEditName('');
+    setEditDescription('');
+    setEditValue('');
+  };
+
+  const validateVar = (name: string, value: string): string | null => {
+    if (!/^[A-Z_][A-Z0-9_]*$/.test(name)) {
+      return 'Name must contain only uppercase letters, numbers, and underscores, starting with a letter or underscore';
+    }
+    if (!value.trim()) {
+      return 'Value is required';
+    }
+    return null;
+  };
+
+  const handleCreate = async () => {
+    const errorMsg = validateVar(newName, newValue);
+    if (errorMsg) {
+      showError(errorMsg);
+      return;
+    }
     try {
       await createMutation.mutateAsync({
         environment_id: environmentId,
-        name: values.name,
-        description: values.description || null,
-        value: values.value,
+        name: newName,
+        description: newDescription || null,
+        value: newValue,
       });
       showSuccess('Environment variable created successfully');
-      newVariableForm.reset();
+      resetCreate();
       setIsCreating(false);
       refetch();
     } catch (error) {
@@ -106,16 +111,22 @@ export function EnvironmentVariablesTable({
     }
   };
 
-  const handleUpdate = async (id: string, values: typeof editForm.values) => {
+  const handleUpdate = async (id: string) => {
+    const errorMsg = validateVar(editName, editValue);
+    if (errorMsg) {
+      showError(errorMsg);
+      return;
+    }
     try {
       await updateMutation.mutateAsync({
         id,
-        name: values.name,
-        description: values.description || null,
-        value: values.value,
+        name: editName,
+        description: editDescription || null,
+        value: editValue,
       });
       showSuccess('Environment variable updated successfully');
       setEditingId(null);
+      resetEdit();
       refetch();
     } catch (error) {
       showError(`Failed to update environment variable: ${error}`);
@@ -134,38 +145,33 @@ export function EnvironmentVariablesTable({
 
   const startEditing = (variable: EnvironmentVariable) => {
     setEditingId(variable.id);
-    editForm.setValues({
-      name: variable.name,
-      description: variable.description || '',
-      value: '', // Will be set when secrets are loaded
-    });
+    setEditName(variable.name);
+    setEditDescription(variable.description || '');
+    setEditValue(''); // Will be set when secrets are loaded
   };
 
-  // Update edit form when secrets are loaded
-  // biome-ignore lint/correctness/useExhaustiveDependencies: to prevent infinite re-renders
+  // Update edit state when secrets are loaded
   useEffect(() => {
     if (editingId && environmentVariablesWithSecrets) {
       const variableWithSecret = environmentVariablesWithSecrets.find(
         (v) => v.id === editingId,
       );
       if (variableWithSecret) {
-        editForm.setValues({
-          name: variableWithSecret.name,
-          description: variableWithSecret.description || '',
-          value: variableWithSecret.value,
-        });
+        setEditName(variableWithSecret.name);
+        setEditDescription(variableWithSecret.description || '');
+        setEditValue(variableWithSecret.value);
       }
     }
   }, [editingId, environmentVariablesWithSecrets]);
 
   const cancelEditing = () => {
     setEditingId(null);
-    editForm.reset();
+    resetEdit();
   };
 
   const cancelCreating = () => {
     setIsCreating(false);
-    newVariableForm.reset();
+    resetCreate();
   };
 
   return (
@@ -242,19 +248,16 @@ export function EnvironmentVariablesTable({
                   <input
                     placeholder="VARIABLE_NAME"
                     className="w-full rounded-md border bg-background px-2 py-1 font-mono text-sm outline-none ring-0 focus:border-ring"
-                    {...newVariableForm.getInputProps('name')}
+                    value={newName}
+                    onChange={(e) => setNewName(e.target.value)}
                   />
-                  {newVariableForm.errors.name && (
-                    <p className="mt-1 text-xs text-red-600">
-                      {newVariableForm.errors.name}
-                    </p>
-                  )}
                 </td>
                 <td className="px-3 py-2 align-top">
                   <input
                     placeholder="Description (optional)"
                     className="w-full rounded-md border bg-background px-2 py-1 text-sm outline-none ring-0 focus:border-ring"
-                    {...newVariableForm.getInputProps('description')}
+                    value={newDescription}
+                    onChange={(e) => setNewDescription(e.target.value)}
                   />
                 </td>
                 <td className="px-3 py-2 align-top">
@@ -262,24 +265,16 @@ export function EnvironmentVariablesTable({
                     placeholder="Variable value"
                     className="w-full rounded-md border bg-background px-2 py-1 text-sm outline-none ring-0 focus:border-ring"
                     rows={1}
-                    {...newVariableForm.getInputProps('value')}
+                    value={newValue}
+                    onChange={(e) => setNewValue(e.target.value)}
                   />
-                  {newVariableForm.errors.value && (
-                    <p className="mt-1 text-xs text-red-600">
-                      {newVariableForm.errors.value}
-                    </p>
-                  )}
                 </td>
                 <td className="px-3 py-2 align-top">
                   <div className="flex items-center gap-2">
                     <button
                       type="button"
                       title="Save"
-                      onClick={() => {
-                        if (newVariableForm.isValid()) {
-                          handleCreate(newVariableForm.values);
-                        }
-                      }}
+                      onClick={handleCreate}
                       className="inline-flex items-center justify-center rounded-md border border-green-600 bg-green-50 p-1 text-green-700 hover:bg-green-100"
                     >
                       {createMutation.isPending ? (
@@ -306,7 +301,8 @@ export function EnvironmentVariablesTable({
                   {editingId === variable.id ? (
                     <input
                       className="w-full rounded-md border bg-background px-2 py-1 font-mono text-sm outline-none ring-0 focus:border-ring"
-                      {...editForm.getInputProps('name')}
+                      value={editName}
+                      onChange={(e) => setEditName(e.target.value)}
                     />
                   ) : (
                     <span className="font-mono">{variable.name}</span>
@@ -316,7 +312,8 @@ export function EnvironmentVariablesTable({
                   {editingId === variable.id ? (
                     <input
                       className="w-full rounded-md border bg-background px-2 py-1 text-sm outline-none ring-0 focus:border-ring"
-                      {...editForm.getInputProps('description')}
+                      value={editDescription}
+                      onChange={(e) => setEditDescription(e.target.value)}
                     />
                   ) : (
                     variable.description || '—'
@@ -327,7 +324,8 @@ export function EnvironmentVariablesTable({
                     <textarea
                       className="w-full rounded-md border bg-background px-2 py-1 text-sm outline-none ring-0 focus:border-ring"
                       rows={1}
-                      {...editForm.getInputProps('value')}
+                      value={editValue}
+                      onChange={(e) => setEditValue(e.target.value)}
                     />
                   ) : (
                     <span className="font-mono text-gray-500">••••••••</span>
@@ -340,11 +338,7 @@ export function EnvironmentVariablesTable({
                         <button
                           type="button"
                           title="Save"
-                          onClick={() => {
-                            if (editForm.isValid()) {
-                              handleUpdate(variable.id, editForm.values);
-                            }
-                          }}
+                          onClick={() => handleUpdate(variable.id)}
                           className="inline-flex items-center justify-center rounded-md border border-green-600 bg-green-50 p-1 text-green-700 hover:bg-green-100"
                         >
                           {updateMutation.isPending ? (

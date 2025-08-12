@@ -1,5 +1,3 @@
-import { useForm } from '@mantine/form';
-import { useDisclosure } from '@mantine/hooks';
 import {
   IconCrown,
   IconPlus,
@@ -110,21 +108,7 @@ function RouteComponent() {
     return [];
   };
 
-  // Form for inviting members (no name required)
-  const form = useForm({
-    initialValues: {
-      email: '',
-      role: 'member',
-    },
-    validate: {
-      email: (value) => {
-        if (!value) return 'Email is required';
-        if (!/^\S+@\S+$/.test(value)) return 'Invalid email';
-        return null;
-      },
-      role: (value) => (!value ? 'Role is required' : null),
-    },
-  });
+  // Invite values are collected via modal; no form hook needed
 
   const handleRemoveMemberClick = (member: { id: string; name: string }) => {
     setMemberToRemove(member);
@@ -155,7 +139,10 @@ function RouteComponent() {
     }
   };
 
-  const handleInviteMember = async (values: typeof form.values) => {
+  const handleInviteMember = async (values: {
+    email: string;
+    role: string;
+  }) => {
     setIsInviting(true);
 
     try {
@@ -167,7 +154,6 @@ function RouteComponent() {
 
       if (!error) {
         showSuccess(`We’ve sent an invite to ${values.email}`);
-        form.reset();
         close();
         // refresh invites list if on invites tab
         if (activeTab === 'invites') await fetchInvites();

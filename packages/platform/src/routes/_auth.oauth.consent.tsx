@@ -1,18 +1,4 @@
 import {
-  Alert,
-  Avatar,
-  Button,
-  Card,
-  Checkbox,
-  Container,
-  Group,
-  Loader,
-  Paper,
-  Stack,
-  Text,
-  Title,
-} from '@mantine/core';
-import {
   IconAlertTriangle,
   IconBuilding,
   IconMail,
@@ -20,6 +6,11 @@ import {
   IconUser,
 } from '@tabler/icons-react';
 import { createFileRoute, redirect } from '@tanstack/react-router';
+import { Avatar, AvatarFallback, AvatarImage } from '@voltade/ui/avatar.tsx';
+import { Button } from '@voltade/ui/button.tsx';
+import { Card, CardContent } from '@voltade/ui/card.tsx';
+import { Checkbox } from '@voltade/ui/checkbox.tsx';
+import type React from 'react';
 import { useEffect, useState } from 'react';
 
 import { authClient } from '#src/lib/auth.ts';
@@ -27,14 +18,11 @@ import { authClient } from '#src/lib/auth.ts';
 export const Route = createFileRoute('/_auth/oauth/consent')({
   component: RouteComponent,
   beforeLoad: async () => {
-    // Check if user is authenticated
     const session = await authClient.getSession();
     if (!session.data) {
       throw redirect({
         to: '/signin',
-        search: {
-          redirect: window.location.href,
-        },
+        search: { redirect: window.location.href },
       });
     }
   },
@@ -54,7 +42,7 @@ interface ConsentRequest {
 interface ScopeInfo {
   name: string;
   description: string;
-  icon: React.ComponentType<{ size?: number }>;
+  icon: (props: { size?: number }) => React.ReactNode;
   required?: boolean;
 }
 
@@ -62,29 +50,29 @@ const SCOPE_DEFINITIONS: Record<string, ScopeInfo> = {
   openid: {
     name: 'Identity',
     description: 'Access your basic identity information',
-    icon: IconUser,
+    icon: (p) => <IconUser size={p.size ?? 20} />,
     required: true,
   },
   profile: {
     name: 'Profile Information',
     description: 'Access your profile information such as name and picture',
-    icon: IconUser,
+    icon: (p) => <IconUser size={p.size ?? 20} />,
   },
   email: {
     name: 'Email Address',
     description: 'Access your email address',
-    icon: IconMail,
+    icon: (p) => <IconMail size={p.size ?? 20} />,
   },
   offline_access: {
     name: 'Offline Access',
     description:
       "Maintain access when you're not actively using the application",
-    icon: IconShieldCheck,
+    icon: (p) => <IconShieldCheck size={p.size ?? 20} />,
   },
   organization: {
     name: 'Organization Access',
     description: 'Access your organization information and membership',
-    icon: IconBuilding,
+    icon: (p) => <IconBuilding size={p.size ?? 20} />,
   },
 };
 
@@ -101,7 +89,6 @@ function RouteComponent() {
   useEffect(() => {
     const loadConsentRequest = async () => {
       try {
-        // Parse consent request from URL parameters
         const urlParams = new URLSearchParams(window.location.search);
         const clientId = urlParams.get('client_id');
         const scopes = urlParams.get('scope')?.split(' ') || [];
@@ -116,8 +103,6 @@ function RouteComponent() {
           return;
         }
 
-        // In a real implementation, you would fetch client information from the backend
-        // For now, use the provided parameters to construct the request
         const request: ConsentRequest = {
           client_id: clientId,
           client_name:
@@ -129,10 +114,8 @@ function RouteComponent() {
         };
 
         setConsentRequest(request);
-
-        // Auto-select required scopes
         const requiredScopes = scopes.filter(
-          (scope) => SCOPE_DEFINITIONS[scope]?.required,
+          (s) => SCOPE_DEFINITIONS[s]?.required,
         );
         setSelectedScopes(requiredScopes);
         setIsLoading(false);
@@ -142,14 +125,12 @@ function RouteComponent() {
         setIsLoading(false);
       }
     };
-
     loadConsentRequest();
   }, []);
 
   const handleScopeToggle = (scope: string) => {
     const scopeInfo = SCOPE_DEFINITIONS[scope];
-    if (scopeInfo?.required) return; // Can't toggle required scopes
-
+    if (scopeInfo?.required) return;
     setSelectedScopes((prev) =>
       prev.includes(scope) ? prev.filter((s) => s !== scope) : [...prev, scope],
     );
@@ -157,13 +138,9 @@ function RouteComponent() {
 
   const handleApprove = async () => {
     if (!consentRequest) return;
-
     setIsSubmitting(true);
     try {
-      const response = await authClient.oauth2.consent({
-        accept: true,
-      });
-
+      const response = await authClient.oauth2.consent({ accept: true });
       window.location.href = response.data?.redirectURI ?? '/';
     } catch (err) {
       console.error('Failed to process consent:', err);
@@ -174,17 +151,14 @@ function RouteComponent() {
 
   const handleDeny = () => {
     if (!consentRequest) return;
-
     const params = new URLSearchParams({
       error: 'access_denied',
       error_description: 'User denied the consent request',
       ...(consentRequest.state && { state: consentRequest.state }),
     });
-
     if (consentRequest.redirect_uri) {
       window.location.href = `${consentRequest.redirect_uri}?${params.toString()}`;
     } else {
-      // If no redirect URI, go back to the application
       const returnUrl =
         new URLSearchParams(window.location.search).get('return_to') || '/';
       window.location.href = returnUrl;
@@ -193,181 +167,163 @@ function RouteComponent() {
 
   if (isLoading) {
     return (
-      <Container size="sm" py="xl">
-        <Stack align="center" gap="md">
-          <Loader size="lg" />
-          <Text>Loading consent request...</Text>
-        </Stack>
-      </Container>
+      <div className="mx-auto max-w-2xl p-6">
+        <div className="flex flex-col items-center gap-3">
+          <span className="inline-block size-8 animate-spin rounded-full border-2 border-muted border-t-foreground" />
+          <p className="text-sm text-muted-foreground">
+            Loading consent request...
+          </p>
+        </div>
+      </div>
     );
   }
 
   if (error || !consentRequest) {
     return (
-      <Container size="sm" py="xl">
-        <Alert color="red" icon={<IconAlertTriangle size={16} />} title="Error">
-          {error || 'Invalid consent request'}
-        </Alert>
-      </Container>
+      <div className="mx-auto max-w-2xl p-6">
+        <div className="flex items-start gap-2 rounded-md border border-red-200 bg-red-50 p-3 text-sm text-red-900">
+          <IconAlertTriangle size={16} />
+          <span>{error || 'Invalid consent request'}</span>
+        </div>
+      </div>
     );
   }
 
   return (
-    <Container size="sm" py="xl">
-      <Stack gap="xl">
-        {/* Header */}
-        <Stack align="center" gap="md">
-          <div
-            className="h-12 w-auto"
-            style={{
-              backgroundImage: 'url(https://voltade.com/images/Logo+typo.svg)',
-              backgroundSize: 'contain',
-              backgroundRepeat: 'no-repeat',
-              backgroundPosition: 'center',
-            }}
-          />
-          <Title
-            order={1}
-            ta="center"
-            className="text-3xl font-bold text-gray-900"
-            style={{ fontFamily: 'Inter, system-ui, sans-serif' }}
-          >
-            Authorize Application
-          </Title>
-        </Stack>
+    <div className="mx-auto max-w-2xl p-6">
+      <div className="mb-6 flex flex-col items-center gap-3">
+        <img
+          src="https://voltade.com/images/Logo+typo.svg"
+          alt="Voltade Logo"
+          className="h-12 w-auto"
+        />
+        <h1 className="text-3xl font-bold text-gray-900">
+          Authorize Application
+        </h1>
+      </div>
 
-        {/* Main consent card */}
-        <Paper p="xl" withBorder radius="md" shadow="sm">
-          <Stack gap="lg">
-            {/* Application info */}
-            <Stack gap="sm">
-              <Group align="center" gap="md">
-                <Avatar size="lg" color="blue">
-                  {consentRequest.client_name?.charAt(0).toUpperCase() || 'A'}
+      <Card>
+        <CardContent className="space-y-5 p-4 sm:p-6">
+          {/* Application info */}
+          <div className="flex items-center gap-3">
+            <div className="flex size-10 items-center justify-center rounded-full bg-blue-500 text-white">
+              <span className="text-sm font-bold uppercase">
+                {consentRequest.client_name?.charAt(0).toUpperCase() || 'A'}
+              </span>
+            </div>
+            <div className="min-w-0">
+              <p className="text-lg font-semibold">
+                {consentRequest.client_name || consentRequest.client_id}
+              </p>
+              <p className="text-sm text-muted-foreground">
+                wants to access your Voltade OS account
+              </p>
+            </div>
+          </div>
+
+          {/* User info */}
+          {session?.user && (
+            <div className="rounded-md border bg-muted/30 p-3">
+              <div className="flex items-center gap-3">
+                <Avatar className="size-8">
+                  {session.user.image ? (
+                    <AvatarImage
+                      src={session.user.image}
+                      alt={session.user.name ?? 'User'}
+                    />
+                  ) : (
+                    <AvatarFallback>
+                      {session.user.name?.charAt(0).toUpperCase()}
+                    </AvatarFallback>
+                  )}
                 </Avatar>
-                <Stack gap={4}>
-                  <Text fw={600} size="lg">
-                    {consentRequest.client_name || consentRequest.client_id}
-                  </Text>
-                  <Text size="sm" c="dimmed">
-                    wants to access your Voltade OS account
-                  </Text>
-                </Stack>
-              </Group>
-            </Stack>
+                <div className="min-w-0">
+                  <p className="text-sm font-medium">
+                    Signed in as {session.user.name}
+                  </p>
+                  <p className="text-xs text-muted-foreground">
+                    {session.user.email}
+                  </p>
+                </div>
+              </div>
+            </div>
+          )}
 
-            {/* User info */}
-            {session?.user && (
-              <Card withBorder radius="sm" p="md" bg="gray.0">
-                <Group gap="sm">
-                  <Avatar src={session.user.image} size="sm">
-                    {session.user.name?.charAt(0).toUpperCase()}
-                  </Avatar>
-                  <Stack gap={2}>
-                    <Text size="sm" fw={500}>
-                      Signed in as {session.user.name}
-                    </Text>
-                    <Text size="xs" c="dimmed">
-                      {session.user.email}
-                    </Text>
-                  </Stack>
-                </Group>
-              </Card>
-            )}
+          {/* Permissions */}
+          <div className="space-y-2">
+            <p className="text-sm font-medium">
+              This application would like to:
+            </p>
+            <div className="space-y-2">
+              {consentRequest.scopes.map((scope) => {
+                const scopeInfo = SCOPE_DEFINITIONS[scope];
+                if (!scopeInfo) return null;
+                const isSelected = selectedScopes.includes(scope);
+                const isRequired = scopeInfo.required;
+                const IconComp = scopeInfo.icon;
+                return (
+                  <div key={scope} className="rounded-md border p-2">
+                    <div className="flex items-start gap-3">
+                      <Checkbox
+                        checked={isSelected}
+                        onCheckedChange={() => handleScopeToggle(scope)}
+                        disabled={isRequired}
+                      />
+                      <IconComp size={20} />
+                      <div className="min-w-0 flex-1">
+                        <div className="flex items-center gap-2">
+                          <p className="text-sm font-medium">
+                            {scopeInfo.name}
+                          </p>
+                          {isRequired && (
+                            <span className="text-xs font-medium text-orange-600">
+                              Required
+                            </span>
+                          )}
+                        </div>
+                        <p className="text-xs text-muted-foreground">
+                          {scopeInfo.description}
+                        </p>
+                      </div>
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
+          </div>
 
-            {/* Permissions */}
-            <Stack gap="md">
-              <Text fw={600} size="md">
-                This application would like to:
-              </Text>
+          {/* Security notice */}
+          <div className="flex items-start gap-2 rounded-md border border-blue-200 bg-blue-50 p-3 text-sm text-blue-900">
+            <IconAlertTriangle size={16} />
+            <span>
+              Only approve access for applications you trust. You can revoke
+              access at any time in your account settings.
+            </span>
+          </div>
 
-              <Stack gap="xs">
-                {consentRequest.scopes.map((scope) => {
-                  const scopeInfo = SCOPE_DEFINITIONS[scope];
-                  if (!scopeInfo) return null;
+          {/* Actions */}
+          <div className="grid grid-cols-2 gap-3">
+            <Button
+              variant="outline"
+              onClick={handleDeny}
+              disabled={isSubmitting}
+            >
+              Deny
+            </Button>
+            <Button
+              onClick={handleApprove}
+              disabled={selectedScopes.length === 0 || isSubmitting}
+            >
+              Allow Access
+            </Button>
+          </div>
+        </CardContent>
+      </Card>
 
-                  const IconComponent = scopeInfo.icon;
-                  const isSelected = selectedScopes.includes(scope);
-                  const isRequired = scopeInfo.required;
-
-                  return (
-                    <Card
-                      key={scope}
-                      withBorder={isSelected}
-                      p="sm"
-                      radius="sm"
-                    >
-                      <Group gap="sm" wrap="nowrap">
-                        <Checkbox
-                          checked={isSelected}
-                          onChange={() => handleScopeToggle(scope)}
-                          disabled={isRequired}
-                          size="sm"
-                        />
-                        <IconComponent size={20} />
-                        <Stack gap={2} style={{ flex: 1 }}>
-                          <Group gap="xs">
-                            <Text size="sm" fw={500}>
-                              {scopeInfo.name}
-                            </Text>
-                            {isRequired && (
-                              <Text size="xs" c="orange" fw={500}>
-                                Required
-                              </Text>
-                            )}
-                          </Group>
-                          <Text size="xs" c="dimmed">
-                            {scopeInfo.description}
-                          </Text>
-                        </Stack>
-                      </Group>
-                    </Card>
-                  );
-                })}
-              </Stack>
-            </Stack>
-
-            {/* Security notice */}
-            <Alert color="blue" variant="light" radius="sm">
-              <Text size="sm">
-                Only approve access for applications you trust. You can revoke
-                access at any time in your account settings.
-              </Text>
-            </Alert>
-
-            {/* Action buttons */}
-            <Group grow>
-              <Button
-                variant="outline"
-                color="gray"
-                onClick={handleDeny}
-                disabled={isSubmitting}
-                size="md"
-              >
-                Deny
-              </Button>
-              <Button
-                onClick={handleApprove}
-                loading={isSubmitting}
-                disabled={selectedScopes.length === 0}
-                size="md"
-                style={{
-                  backgroundColor: '#7c3aed',
-                  borderColor: '#7c3aed',
-                }}
-              >
-                Allow Access
-              </Button>
-            </Group>
-          </Stack>
-        </Paper>
-
-        {/* Footer */}
-        <Text ta="center" size="xs" c="dimmed">
-          By clicking "Allow Access", you agree to share the selected
-          information with this application.
-        </Text>
-      </Stack>
-    </Container>
+      <p className="mt-4 text-center text-xs text-muted-foreground">
+        By clicking "Allow Access", you agree to share the selected information
+        with this application.
+      </p>
+    </div>
   );
 }

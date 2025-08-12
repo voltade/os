@@ -1,16 +1,15 @@
-import {
-  Alert,
-  Button,
-  Checkbox,
-  Group,
-  Modal,
-  Radio,
-  Stack,
-  Text,
-  Textarea,
-} from '@mantine/core';
-import { useForm } from '@mantine/form';
 import { IconDownload, IconInfoCircle } from '@tabler/icons-react';
+import { Button } from '@voltade/ui/button.tsx';
+import { Checkbox } from '@voltade/ui/checkbox.tsx';
+import {
+  Dialog,
+  DialogContent,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from '@voltade/ui/dialog.tsx';
+import { RadioGroup, RadioGroupItem } from '@voltade/ui/radio-group.tsx';
+import { Textarea } from '@voltade/ui/textarea.tsx';
 import { useEffect, useState } from 'react';
 
 import { showSuccess } from '#src/components/utils/notifications.tsx';
@@ -30,38 +29,31 @@ export function BulkExportModal({
   onClose,
 }: BulkExportModalProps) {
   const [selectedVariables, setSelectedVariables] = useState<string[]>([]);
+  const [format, setFormat] = useState<ExportFormat>('env');
+  const [includeComments, setIncludeComments] = useState(true);
 
   const { data: environmentVariables = [], isLoading } =
     useEnvironmentVariablesWithSecrets(environmentId, { enabled: opened });
 
-  // Update selected variables when data loads
   useEffect(() => {
     if (environmentVariables.length > 0 && selectedVariables.length === 0) {
       setSelectedVariables(environmentVariables.map((v) => v.id));
     }
   }, [environmentVariables, selectedVariables.length]);
 
-  const form = useForm({
-    initialValues: {
-      format: 'env' as ExportFormat,
-      includeComments: true,
-    },
-  });
-
   const generateExportContent = (): string => {
     const selectedVars = environmentVariables.filter((v) =>
       selectedVariables.includes(v.id),
     );
 
-    switch (form.values.format) {
+    switch (format) {
       case 'env':
         return selectedVars
           .map((v) => {
             let content = '';
-            if (form.values.includeComments && v.description) {
+            if (includeComments && v.description) {
               content += `# ${v.description}\n`;
             }
-            // Escape values that contain spaces or special characters
             const needsQuotes = /[\s"'\\$`]/.test(v.value);
             const escapedValue = needsQuotes
               ? `"${v.value.replace(/"/g, '\\"')}"`
@@ -70,7 +62,6 @@ export function BulkExportModal({
             return content;
           })
           .join('\n');
-
       case 'json': {
         const jsonObj = selectedVars.reduce(
           (acc, v) => {
@@ -81,15 +72,13 @@ export function BulkExportModal({
         );
         return JSON.stringify(jsonObj, null, 2);
       }
-
       case 'yaml':
         return selectedVars
           .map((v) => {
             let content = '';
-            if (form.values.includeComments && v.description) {
+            if (includeComments && v.description) {
               content += `# ${v.description}\n`;
             }
-            // YAML string escaping
             const needsQuotes =
               /[:\-?[\]{},'"|>*&!%@`]/.test(v.value) ||
               v.value.trim() !== v.value;
@@ -100,7 +89,6 @@ export function BulkExportModal({
             return content;
           })
           .join('\n');
-
       default:
         return '';
     }
@@ -108,8 +96,7 @@ export function BulkExportModal({
 
   const handleDownload = () => {
     const content = generateExportContent();
-    const fileExtension =
-      form.values.format === 'env' ? '.env' : `.${form.values.format}`;
+    const fileExtension = format === 'env' ? '.env' : `.${format}`;
     const fileName = `environment-variables${fileExtension}`;
 
     const blob = new Blob([content], { type: 'text/plain' });
@@ -157,113 +144,139 @@ export function BulkExportModal({
   const exportContent = generateExportContent();
 
   return (
-    <Modal
-      opened={opened}
-      onClose={onClose}
-      title="Export Environment Variables"
-      size="lg"
-    >
-      <Stack>
-        {isLoading && (
-          <Text size="sm" c="dimmed">
-            Loading environment variables...
-          </Text>
-        )}
+    <Dialog open={opened} onOpenChange={(o) => (!o ? onClose() : null)}>
+      <DialogContent className="sm:max-w-lg">
+        <DialogHeader>
+          <DialogTitle>Export Environment Variables</DialogTitle>
+        </DialogHeader>
 
-        <div>
-          <Text size="sm" fw={500} mb="xs">
-            Export Format
-          </Text>
-          <Radio.Group {...form.getInputProps('format')}>
-            <Stack gap="xs">
-              <Radio value="env" label=".env file format" />
-              <Radio value="json" label="JSON format" />
-              <Radio value="yaml" label="YAML format" />
-            </Stack>
-          </Radio.Group>
-        </div>
+        <div className="space-y-4">
+          {isLoading && (
+            <p className="text-sm text-muted-foreground">
+              Loading environment variables...
+            </p>
+          )}
 
-        {form.values.format !== 'json' && (
-          <Checkbox
-            label="Include descriptions as comments"
-            {...form.getInputProps('includeComments', { type: 'checkbox' })}
-          />
-        )}
+          <div className="space-y-2">
+            <p className="text-sm font-medium">Export Format</p>
+            <RadioGroup
+              value={format}
+              onValueChange={(v) => setFormat(v as ExportFormat)}
+            >
+              <div className="flex flex-col gap-2">
+                <div className="flex items-center gap-2 text-sm">
+                  <RadioGroupItem id="fmt-env" value="env" />
+                  <label htmlFor="fmt-env">.env file format</label>
+                </div>
+                <div className="flex items-center gap-2 text-sm">
+                  <RadioGroupItem id="fmt-json" value="json" />
+                  <label htmlFor="fmt-json">JSON format</label>
+                </div>
+                <div className="flex items-center gap-2 text-sm">
+                  <RadioGroupItem id="fmt-yaml" value="yaml" />
+                  <label htmlFor="fmt-yaml">YAML format</label>
+                </div>
+              </div>
+            </RadioGroup>
+          </div>
 
-        <div>
-          <Group justify="space-between" mb="xs">
-            <Text size="sm" fw={500}>
-              Select Variables
-            </Text>
-            <Button variant="subtle" size="xs" onClick={toggleAll}>
-              {selectedVariables.length === environmentVariables.length
-                ? 'Deselect All'
-                : 'Select All'}
-            </Button>
-          </Group>
-          <Stack gap="xs" mah={200} style={{ overflow: 'auto' }}>
-            {environmentVariables.map((variable) => (
+          {format !== 'json' && (
+            <div className="flex items-center gap-2 text-sm">
               <Checkbox
-                key={variable.id}
-                label={
-                  <div>
-                    <Text size="sm" className="font-mono">
-                      {variable.name}
-                    </Text>
+                id="include-comments"
+                checked={includeComments}
+                onCheckedChange={(v) => setIncludeComments(Boolean(v))}
+              />
+              <label htmlFor="include-comments">
+                Include descriptions as comments
+              </label>
+            </div>
+          )}
+
+          <div>
+            <div className="mb-2 flex items-center justify-between">
+              <p className="text-sm font-medium">Select Variables</p>
+              <button
+                type="button"
+                className="text-xs text-muted-foreground hover:underline"
+                onClick={toggleAll}
+              >
+                {selectedVariables.length === environmentVariables.length
+                  ? 'Deselect All'
+                  : 'Select All'}
+              </button>
+            </div>
+            <div className="max-h-56 space-y-2 overflow-auto pr-1">
+              {environmentVariables.map((variable) => {
+                const id = `var-${variable.id}`;
+                return (
+                  <div
+                    key={variable.id}
+                    className="flex flex-col gap-1 rounded-md p-1.5 hover:bg-accent"
+                  >
+                    <div className="flex items-center gap-2">
+                      <Checkbox
+                        id={id}
+                        checked={selectedVariables.includes(variable.id)}
+                        onCheckedChange={() => toggleVariable(variable.id)}
+                      />
+                      <label htmlFor={id} className="font-mono text-sm">
+                        {variable.name}
+                      </label>
+                    </div>
                     {variable.description && (
-                      <Text size="xs" c="dimmed">
+                      <span className="text-xs text-muted-foreground">
                         {variable.description}
-                      </Text>
+                      </span>
                     )}
                   </div>
-                }
-                checked={selectedVariables.includes(variable.id)}
-                onChange={() => toggleVariable(variable.id)}
+                );
+              })}
+            </div>
+          </div>
+
+          {selectedVariables.length > 0 && (
+            <div className="space-y-2 rounded-md border p-3">
+              <div className="flex items-center gap-2 text-sm">
+                <IconInfoCircle size={16} />
+                <span>
+                  Preview of exported content ({selectedVariables.length}{' '}
+                  variables):
+                </span>
+              </div>
+              <Textarea
+                value={exportContent}
+                readOnly
+                rows={8}
+                className="font-mono text-xs"
               />
-            ))}
-          </Stack>
+            </div>
+          )}
         </div>
 
-        {selectedVariables.length > 0 && (
-          <>
-            <Alert icon={<IconInfoCircle size={16} />} color="blue">
-              <Text size="sm">
-                Preview of exported content ({selectedVariables.length}{' '}
-                variables):
-              </Text>
-            </Alert>
-
-            <Textarea
-              value={exportContent}
-              readOnly
-              minRows={8}
-              maxRows={15}
-              className="font-mono text-xs"
-            />
-          </>
-        )}
-
-        <Group justify="flex-end">
-          <Button variant="light" onClick={onClose}>
-            Cancel
-          </Button>
-          <Button
-            variant="light"
-            onClick={handleCopyToClipboard}
-            disabled={selectedVariables.length === 0 || isLoading}
-          >
-            Copy to Clipboard
-          </Button>
-          <Button
-            leftSection={<IconDownload size={16} />}
-            onClick={handleDownload}
-            disabled={selectedVariables.length === 0 || isLoading}
-            loading={isLoading}
-          >
-            Download File
-          </Button>
-        </Group>
-      </Stack>
-    </Modal>
+        <DialogFooter className="sm:justify-end">
+          <div className="flex items-center gap-2">
+            <Button variant="outline" onClick={onClose} type="button">
+              Cancel
+            </Button>
+            <Button
+              variant="outline"
+              onClick={handleCopyToClipboard}
+              disabled={selectedVariables.length === 0 || isLoading}
+              type="button"
+            >
+              Copy to Clipboard
+            </Button>
+            <Button
+              onClick={handleDownload}
+              disabled={selectedVariables.length === 0 || isLoading}
+              type="button"
+            >
+              <IconDownload size={16} className="mr-2" /> Download File
+            </Button>
+          </div>
+        </DialogFooter>
+      </DialogContent>
+    </Dialog>
   );
 }
