@@ -1,5 +1,3 @@
-import { IconBolt } from '@tabler/icons-react';
-
 import { AppSelector } from './AppSelector.tsx';
 import { OrganizationSwitcher } from './OrganizationSwitcher.tsx';
 import { UserButton } from './UserButton.tsx';
