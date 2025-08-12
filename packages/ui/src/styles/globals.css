@@ -1,4 +1,5 @@
 @import "tailwindcss";
+
 @import "tw-animate-css";
 
 /* https://github.com/tailwindlabs/tailwindcss/issues/13136#issuecomment-2614243243 */
@@ -6,9 +7,6 @@
 
 @custom-variant dark (&:is(.dark *));
 
-/* =========================
-   Base tokens (Voltade purple, low-ink)
-   ========================= */
 :root {
   --background: oklch(1 0 0);
   --foreground: oklch(0.145 0 0);
@@ -111,9 +109,7 @@
   --sidebar-ring: oklch(0.56 0.16 307.79);
 }
 
-/* =========================
-   Tailwind theme mapping
-   ========================= */
+
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
@@ -139,12 +135,10 @@
   --color-chart-3: var(--chart-3);
   --color-chart-4: var(--chart-4);
   --color-chart-5: var(--chart-5);
-
   --radius-sm: calc(var(--radius) - 4px);
   --radius-md: calc(var(--radius) - 2px);
   --radius-lg: var(--radius);
   --radius-xl: calc(var(--radius) + 4px);
-
   --color-sidebar: var(--sidebar);
   --color-sidebar-foreground: var(--sidebar-foreground);
   --color-sidebar-primary: var(--sidebar-primary);
@@ -155,71 +149,11 @@
   --color-sidebar-ring: var(--sidebar-ring);
 }
 
-/* =========================
-   Base
-   ========================= */
 @layer base {
-  * { @apply border-border outline-ring/50; }
-  body { @apply bg-background text-foreground; }
-}
-
-/* =========================
-   Interaction polish (no extra classes; works with shadcn/Radix)
-   Placed in utilities so these load after Tailwind utilities.
-   ========================= */
-@layer utilities {
-  /* Global focus ring */
-  :where(button, a, input, textarea, select, [role="tab"], [role="menuitem"], [role="option"], [role="switch"], [role="checkbox"], [role="radio"])
-  :where(:not([data-state=disabled])):focus-visible {
-    outline-color: var(--ring);
-    box-shadow: 0 0 0 3px color-mix(in oklch, var(--ring) 35%, transparent);
+  * {
+    @apply border-border outline-ring/50;
   }
-
-  /* Primary Button (shadcn adds .bg-primary and hover:bg-primary/90) */
-  .bg-primary:hover {
-    background-color: color-mix(in oklch, var(--primary) 90%, white / 0); /* gentle shift */
-  }
-  .bg-primary:active {
-    background-color: color-mix(in oklch, var(--primary) 84%, black / 0);
-  }
-
-  /* Outline & Ghost Buttons (shadcn uses hover:bg-accent + hover:text-accent-foreground) */
-  /* Our accent already has a faint purple tint. Add subtle border pop on hover. */
-  .hover\\:bg-accent:hover {
-    border-color: color-mix(in oklch, var(--ring) 30%, var(--border));
-  }
-
-  /* Tabs (Radix data-state) */
-  [role="tab"][data-state="active"] {
-    background: color-mix(in oklch, var(--primary) 12%, transparent);
-    border-color: color-mix(in oklch, var(--ring) 45%, var(--border));
-  }
-  [role="tab"]:hover:not([data-state="active"]) {
-    background: color-mix(in oklch, var(--primary) 7%, transparent);
-  }
-
-  /* Switch / Checkbox / Radio — Radix adds data-state attributes and shadcn maps to bg-primary/text-primary-foreground */
-  [role="switch"][data-state="checked"],
-  [role="checkbox"][data-state="checked"],
-  [role="radio"][data-state="checked"] {
-    box-shadow: 0 0 0 2px color-mix(in oklch, var(--ring) 35%, transparent);
-  }
-
-  /* Menus / Select / Combobox highlight */
-  [role="menuitem"][data-highlighted],
-  [role="option"][data-highlighted] {
-    background: color-mix(in oklch, var(--primary) 12%, transparent);
-    color: var(--foreground);
-  }
-
-  /* Generic current-page affordance (works for link/button with aria-current attr) */
-  [aria-current="page"] {
-    background: color-mix(in oklch, var(--primary) 14%, transparent);
-    border-color: color-mix(in oklch, var(--ring) 45%, var(--border));
-  }
-
-  /* Subtle hover affordance for bordered rows/cards without touching component code */
-  .border:hover {
-    border-color: color-mix(in oklch, var(--ring) 45%, var(--border));
+  body {
+    @apply bg-background text-foreground;
   }
 }
