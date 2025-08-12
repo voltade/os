@@ -38,6 +38,19 @@ import {
 } from '#src/components/utils/notifications.tsx';
 import { authClient } from '#src/lib/auth.ts';
 
+function useDisclosure(initial: boolean = false) {
+  const [opened, setOpened] = useState<boolean>(initial);
+  const handlers = useMemo(
+    () => ({
+      open: () => setOpened(true),
+      close: () => setOpened(false),
+      toggle: () => setOpened((v) => !v),
+    }),
+    [],
+  );
+  return [opened, handlers] as const;
+}
+
 export const Route = createFileRoute('/_main/team/')({
   component: RouteComponent,
 });
