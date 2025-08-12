@@ -9,13 +9,26 @@ import {
   DropdownMenuTrigger,
 } from '@voltade/ui/dropdown-menu.tsx';
 import { Skeleton } from '@voltade/ui/skeleton.tsx';
-import { CircleUser, Code, LogOut, Settings, User, Users } from 'lucide-react';
+import { useTheme } from '@voltade/ui/theme-provider.tsx';
+import { ToggleGroup, ToggleGroupItem } from '@voltade/ui/toggle-group.tsx';
+import {
+  CircleUser,
+  Code,
+  Laptop,
+  LogOut,
+  Moon,
+  Settings,
+  Sun,
+  User,
+  Users,
+} from 'lucide-react';
 
 import { authClient } from '#src/lib/auth.ts';
 
 export function UserButton() {
   const navigate = useNavigate();
   const { data: sessionData, isPending } = authClient.useSession();
+  const { theme, setTheme } = useTheme();
 
   if (isPending) {
     return <Skeleton className="size-8 rounded-full" />;
@@ -92,6 +105,45 @@ export function UserButton() {
         <DropdownMenuItem onClick={handleSettings} className="cursor-pointer">
           <User className="mr-2 size-4" /> Settings
         </DropdownMenuItem>
+        <DropdownMenuSeparator />
+        <DropdownMenuLabel>Appearance</DropdownMenuLabel>
+        <div className="px-2 py-1.5">
+          <ToggleGroup
+            type="single"
+            variant="outline"
+            size="sm"
+            value={theme}
+            onValueChange={(v) =>
+              v && setTheme(v as 'light' | 'dark' | 'system')
+            }
+            className="w-full"
+          >
+            <ToggleGroupItem
+              value="light"
+              aria-label="Light mode"
+              className="flex-1"
+            >
+              <Sun className="size-4" />
+              <span className="sr-only">Light</span>
+            </ToggleGroupItem>
+            <ToggleGroupItem
+              value="dark"
+              aria-label="Dark mode"
+              className="flex-1"
+            >
+              <Moon className="size-4" />
+              <span className="sr-only">Dark</span>
+            </ToggleGroupItem>
+            <ToggleGroupItem
+              value="system"
+              aria-label="System mode"
+              className="flex-1"
+            >
+              <Laptop className="size-4" />
+              <span className="sr-only">System</span>
+            </ToggleGroupItem>
+          </ToggleGroup>
+        </div>
         <DropdownMenuSeparator />
         <DropdownMenuLabel>Organization</DropdownMenuLabel>
         <DropdownMenuItem onClick={handleTeam} className="cursor-pointer">

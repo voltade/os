@@ -1,5 +1,4 @@
 @import "tailwindcss";
-
 @import "tw-animate-css";
 
 /* https://github.com/tailwindlabs/tailwindcss/issues/13136#issuecomment-2614243243 */
@@ -7,6 +6,9 @@
 
 @custom-variant dark (&:is(.dark *));
 
+/* =========================
+   Base tokens (Voltade purple, low-ink)
+   ========================= */
 :root {
   --background: oklch(1 0 0);
   --foreground: oklch(0.145 0 0);
@@ -71,17 +73,18 @@
   --popover: oklch(0.145 0 0);
   --popover-foreground: oklch(0.985 0 0);
 
-  /* In dark, keep text light; purple shows up on surfaces and rings */
-  --primary: oklch(0.985 0 0);
-  --primary-foreground: oklch(0.205 0 0);
+  /* Keep primary as Voltade purple in dark too — fixes black-ish hover */
+  --primary: oklch(0.54 0.214 307.79);
+  --primary-foreground: oklch(0.985 0 0);
 
-  --secondary: oklch(0.23 0.03 307.79);
+  /* Lighten these so hover:bg-accent / secondary surfaces are visible on dark */
+  --secondary: oklch(0.28 0.035 307.79);
   --secondary-foreground: oklch(0.985 0 0);
 
   --muted: oklch(0.22 0.025 307.79);
   --muted-foreground: oklch(0.708 0.005 0);
 
-  --accent: oklch(0.24 0.04 307.79);
+  --accent: oklch(0.30 0.045 307.79);
   --accent-foreground: oklch(0.985 0 0);
 
   --destructive: oklch(0.396 0.141 25.723);
@@ -103,13 +106,15 @@
   --sidebar-foreground: oklch(0.985 0 0);
   --sidebar-primary: oklch(0.50 0.20 307.79);
   --sidebar-primary-foreground: oklch(0.985 0 0);
-  --sidebar-accent: oklch(0.23 0.035 307.79);
+  --sidebar-accent: oklch(0.26 0.04 307.79);
   --sidebar-accent-foreground: oklch(0.985 0 0);
   --sidebar-border: oklch(0.26 0.02 307.79);
   --sidebar-ring: oklch(0.56 0.16 307.79);
 }
 
-
+/* =========================
+   Tailwind theme mapping
+   ========================= */
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
@@ -135,10 +140,12 @@
   --color-chart-3: var(--chart-3);
   --color-chart-4: var(--chart-4);
   --color-chart-5: var(--chart-5);
+
   --radius-sm: calc(var(--radius) - 4px);
   --radius-md: calc(var(--radius) - 2px);
   --radius-lg: var(--radius);
   --radius-xl: calc(var(--radius) + 4px);
+
   --color-sidebar: var(--sidebar);
   --color-sidebar-foreground: var(--sidebar-foreground);
   --color-sidebar-primary: var(--sidebar-primary);
@@ -149,11 +156,57 @@
   --color-sidebar-ring: var(--sidebar-ring);
 }
 
+/* =========================
+   Base
+   ========================= */
 @layer base {
-  * {
-    @apply border-border outline-ring/50;
+  * { @apply border-border outline-ring/50; }
+  body { @apply bg-background text-foreground; }
+}
+
+/* =========================
+   Interaction polish (no extra classes; works with shadcn/Radix)
+   Placed in utilities so these load after Tailwind utilities.
+   ========================= */
+@layer utilities {
+  /* Global focus ring */
+  :where(button, a, input, textarea, select, [role="tab"], [role="menuitem"], [role="option"], [role="switch"], [role="checkbox"], [role="radio"])
+  :where(:not([data-state=disabled])):focus-visible {
+    outline-color: var(--ring);
+    box-shadow: 0 0 0 3px color-mix(in oklch, var(--ring) 35%, transparent);
   }
-  body {
-    @apply bg-background text-foreground;
+
+  /* Tabs (Radix data-state) */
+  [role="tab"][data-state="active"] {
+    background: color-mix(in oklch, var(--primary) 12%, transparent);
+    border-color: color-mix(in oklch, var(--ring) 45%, var(--border));
+  }
+  [role="tab"]:hover:not([data-state="active"]) {
+    background: color-mix(in oklch, var(--primary) 7%, transparent);
+  }
+
+  /* Switch / Checkbox / Radio — Radix emits data-state, shadcn maps colors via tokens */
+  [role="switch"][data-state="checked"],
+  [role="checkbox"][data-state="checked"],
+  [role="radio"][data-state="checked"] {
+    box-shadow: 0 0 0 2px color-mix(in oklch, var(--ring) 35%, transparent);
+  }
+
+  /* Menus / Select / Combobox highlight */
+  [role="menuitem"][data-highlighted],
+  [role="option"][data-highlighted] {
+    background: color-mix(in oklch, var(--primary) 12%, transparent);
+    color: var(--foreground);
+  }
+
+  /* Current-page affordance for nav links/buttons using aria-current */
+  [aria-current="page"] {
+    background: color-mix(in oklch, var(--primary) 14%, transparent);
+    border-color: color-mix(in oklch, var(--ring) 45%, var(--border));
+  }
+
+  /* Subtle hover affordance for bordered rows/cards (keeps low-ink) */
+  .border:hover {
+    border-color: color-mix(in oklch, var(--ring) 45%, var(--border));
   }
 }
