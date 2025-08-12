@@ -5,6 +5,7 @@ import {
 } from '@tanstack/react-router';
 
 import { DevSidebar } from '#src/components/ui/dev/Sidebar';
+import { EnvironmentSettingsSidebar } from '#src/components/ui/environment/SettingsSidebar';
 import { AccessDenied } from '#src/components/utils/access-denied';
 import { authClient } from '#src/lib/auth.ts';
 
@@ -36,11 +37,19 @@ function RouteComponent() {
     return <AccessDenied />;
   }
 
-  const isEnvironmentDetail = pathname.startsWith('/dev/environments/');
+  const envMatch = pathname.match(/^\/dev\/environments\/([^/]+)(?:\/|$)/);
+  const environmentSlug = envMatch?.[1] ?? null;
 
   return (
     <div className="flex min-h-[calc(100dvh-theme(spacing.24))] gap-6">
-      {!isEnvironmentDetail && <DevSidebar />}
+      {environmentSlug ? (
+        <EnvironmentSettingsSidebar
+          envSlug={environmentSlug}
+          basePathPrefix="/dev/environments"
+        />
+      ) : (
+        <DevSidebar />
+      )}
       <div className="min-w-0 flex-1">
         <Outlet />
       </div>

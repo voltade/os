@@ -4,7 +4,6 @@ import {
   IconSettings,
   IconVariable,
 } from '@tabler/icons-react';
-import { Link, useLocation } from '@tanstack/react-router';
 
 import { SettingsNavbar } from '../common/index.ts';
 
@@ -42,25 +41,12 @@ export function EnvironmentSettingsSidebar({
   return (
     <aside className="w-52 shrink-0 border-r bg-background">
       <div className="px-4 py-5">
-        <div className="mb-3">
-          <div className="text-xs font-medium uppercase tracking-wide text-muted-foreground">
-            Environment Settings
-          </div>
-          <div className="mt-1 text-xs text-muted-foreground">
-            <Link to={'/dev/environments'} className="hover:underline">
-              Environments
-            </Link>
-            <span className="mx-1">/</span>
-            <span className="truncate align-middle" title={envSlug}>
-              {envSlug}
-            </span>
-          </div>
-        </div>
         <SettingsNavbar
-          title=""
+          title="Environment Settings"
           navItems={navItems}
           pathPrefix={base}
           isActivePathMatcher={isActive}
+          showIcons={false}
         />
       </div>
     </aside>

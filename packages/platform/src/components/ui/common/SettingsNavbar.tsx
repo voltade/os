@@ -3,14 +3,15 @@ import { useLocation, useNavigate } from '@tanstack/react-router';
 
 interface NavItem {
   label: string;
-  icon: Icon;
   path: string;
+  icon?: Icon;
 }
 
 interface SettingsNavbarProps {
-  title: string;
+  title?: string;
   navItems: NavItem[];
   pathPrefix?: string;
+  showIcons?: boolean;
   isActivePathMatcher?: (
     currentPath: string,
     itemPath: string,
@@ -33,6 +34,7 @@ export function SettingsNavbar({
   title,
   navItems,
   pathPrefix,
+  showIcons = false,
   isActivePathMatcher = defaultIsActivePathMatcher,
 }: SettingsNavbarProps) {
   const location = useLocation();
@@ -43,11 +45,11 @@ export function SettingsNavbar({
       <div className="p-2">
         <div className="space-y-2 p-2">
           {title ? (
-            <p className="text-sm font-semibold text-muted-foreground">
+            <p className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">
               {title}
             </p>
           ) : null}
-          <nav className="space-y-1">
+          <nav className="space-y-2">
             {navItems.map((item) => {
               const active = isActivePathMatcher(
                 location.pathname,
@@ -61,15 +63,17 @@ export function SettingsNavbar({
                   type="button"
                   onClick={() => navigate({ to: item.path })}
                   className={[
-                    'group flex w-full items-center gap-2 rounded-md px-2 py-1.5 text-left text-sm transition-colors',
+                    'group flex w-full items-center gap-1.5 rounded-md px-1.5 py-0.5 text-left text-[11px] transition-colors whitespace-nowrap',
                     active
                       ? 'bg-accent text-accent-foreground'
                       : 'text-muted-foreground hover:bg-accent hover:text-accent-foreground',
                   ].join(' ')}
                 >
-                  <span className="inline-flex size-5 items-center justify-center rounded-md bg-muted text-muted-foreground group-hover:bg-background group-hover:text-foreground">
-                    <IconComp size={14} />
-                  </span>
+                  {showIcons && IconComp ? (
+                    <span className="inline-flex size-4 items-center justify-center rounded-md bg-muted text-muted-foreground group-hover:bg-background group-hover:text-foreground">
+                      <IconComp size={12} />
+                    </span>
+                  ) : null}
                   <span>{item.label}</span>
                 </button>
               );

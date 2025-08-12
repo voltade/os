@@ -1,6 +1,6 @@
-import { createFileRoute, Outlet } from '@tanstack/react-router';
+import { IconArrowLeft } from '@tabler/icons-react';
+import { createFileRoute, Link, Outlet } from '@tanstack/react-router';
 
-import { EnvironmentSettingsSidebar } from '#src/components/ui/environment/SettingsSidebar';
 import { AccessDenied } from '#src/components/utils/access-denied';
 import { Loading } from '#src/components/utils/loading';
 import { authClient } from '#src/lib/auth.ts';
@@ -27,19 +27,16 @@ function RouteComponent() {
   if (!isAllowed) return <AccessDenied />;
 
   return (
-    <div className="flex gap-6">
-      <EnvironmentSettingsSidebar
-        envSlug={environmentSlug}
-        basePathPrefix="/dev/environments"
-      />
-      <div className="min-w-0 flex-1">
-        <div className="mb-4 text-sm text-muted-foreground">
-          <span>Environments</span>
-          <span className="mx-1">/</span>
-          <span className="font-medium text-foreground">{environmentSlug}</span>
-        </div>
-        <Outlet />
+    <div className="min-w-0 flex-1">
+      <div className="mb-3">
+        <Link
+          to={'/dev/environments'}
+          className="inline-flex items-center gap-2 rounded-md border bg-background px-2 py-1.5 text-sm text-muted-foreground transition-colors hover:bg-accent hover:text-accent-foreground"
+        >
+          <IconArrowLeft size={16} /> Back
+        </Link>
       </div>
+      <Outlet />
     </div>
   );
 }
