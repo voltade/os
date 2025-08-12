@@ -16,6 +16,7 @@
     "tofu:nuke": "cd terraform/kind-local && docker rm --force --volumes registry voltade-os-local-control-plane && rm -r certs/* terraform.tfstate* kubeconfig",
     "charts": "bun run scripts/charts.ts",
     "charts:patch": "bun run scripts/charts.ts --patch",
+    "voltade": "bun packages/cli/src/index.ts",
     "prepare": "lefthook install",
     "clean": "rm -rf node_modules packages/*/node_modules"
   },
@@ -24,7 +25,6 @@
     "@inquirer/prompts": "^7.8.1",
     "@types/bun": "latest",
     "@types/semver": "^7.7.0",
-    "@voltade/cli": "workspace:*",
     "concurrently": "^9.2.0",
     "lefthook": "^1.12.2",
     "npm-check-updates": "^18.0.2",
