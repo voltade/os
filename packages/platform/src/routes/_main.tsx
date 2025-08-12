@@ -50,8 +50,10 @@ function RouteComponent() {
         <Header />
 
         <main className="flex-1 min-w-0">
-          <div className="container mx-auto max-w-6xl px-4 py-4">
-            <Outlet />
+          <div className="container min-w-screen">
+            <div className="px-15 py-4">
+              <Outlet />
+            </div>
           </div>
         </main>
       </div>
