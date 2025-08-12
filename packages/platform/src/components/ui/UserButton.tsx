@@ -9,7 +9,7 @@ import {
   DropdownMenuTrigger,
 } from '@voltade/ui/dropdown-menu.tsx';
 import { Skeleton } from '@voltade/ui/skeleton.tsx';
-import { CircleUser, LogOut, Settings, User, Users } from 'lucide-react';
+import { CircleUser, Code, LogOut, Settings, User, Users } from 'lucide-react';
 
 import { authClient } from '#src/lib/auth.ts';
 
@@ -39,6 +39,10 @@ export function UserButton() {
 
   const handleTeam = () => {
     navigate({ to: '/team' });
+  };
+
+  const handleDev = () => {
+    navigate({ to: '/dev' });
   };
 
   const handleProfile = () => {
@@ -99,6 +103,9 @@ export function UserButton() {
         <DropdownMenuLabel>Organization</DropdownMenuLabel>
         <DropdownMenuItem onClick={handleTeam} className="cursor-pointer">
           <Users className="mr-2 size-4" /> Team
+        </DropdownMenuItem>
+        <DropdownMenuItem onClick={handleDev} className="cursor-pointer">
+          <Code className="mr-2 size-4" /> Developer
         </DropdownMenuItem>
         <DropdownMenuSeparator />
         <DropdownMenuItem

@@ -1,14 +1,3 @@
-import {
-  ActionIcon,
-  Button,
-  Group,
-  Menu,
-  Stack,
-  Table,
-  Textarea,
-  TextInput,
-  Tooltip,
-} from '@mantine/core';
 import { useForm } from '@mantine/form';
 import {
   IconCheck,
@@ -58,6 +47,7 @@ export function EnvironmentVariablesTable({
   const [isCreating, setIsCreating] = useState(false);
   const [bulkImportOpen, setBulkImportOpen] = useState(false);
   const [bulkExportOpen, setBulkExportOpen] = useState(false);
+  const [bulkMenuOpen, setBulkMenuOpen] = useState(false);
 
   const { data: environmentVariables = [], refetch } =
     useEnvironmentVariables(environmentId);
@@ -179,196 +169,233 @@ export function EnvironmentVariablesTable({
   };
 
   return (
-    <Stack>
-      <Group justify="space-between">
-        <h2>Environment Variables</h2>
-        <Group>
-          <Menu>
-            <Menu.Target>
-              <Button variant="light" leftSection={<IconDots size={16} />}>
-                Bulk Actions
-              </Button>
-            </Menu.Target>
-            <Menu.Dropdown>
-              <Menu.Item
-                leftSection={<IconUpload size={16} />}
-                onClick={() => setBulkImportOpen(true)}
-              >
-                Import Variables
-              </Menu.Item>
-              <Menu.Item
-                leftSection={<IconDownload size={16} />}
-                onClick={() => setBulkExportOpen(true)}
-                disabled={environmentVariables.length === 0}
-              >
-                Export Variables
-              </Menu.Item>
-            </Menu.Dropdown>
-          </Menu>
-          <Button
-            leftSection={<IconPlus size={16} />}
+    <div className="space-y-4">
+      <div className="flex items-center justify-between">
+        <h2 className="text-xl font-semibold">Environment Variables</h2>
+        <div className="flex items-center gap-2">
+          <div className="relative">
+            <button
+              type="button"
+              onClick={() => setBulkMenuOpen((v) => !v)}
+              className="inline-flex items-center gap-2 rounded-md border bg-background px-3 py-2 text-sm hover:bg-accent"
+            >
+              <IconDots size={16} />
+              Bulk Actions
+            </button>
+            {bulkMenuOpen && (
+              <div className="absolute right-0 z-10 mt-2 w-44 overflow-hidden rounded-md border bg-popover text-popover-foreground shadow">
+                <button
+                  type="button"
+                  className="block w-full px-3 py-2 text-left text-sm hover:bg-accent"
+                  onClick={() => {
+                    setBulkImportOpen(true);
+                    setBulkMenuOpen(false);
+                  }}
+                >
+                  <span className="inline-flex items-center gap-2">
+                    <IconUpload size={16} /> Import Variables
+                  </span>
+                </button>
+                <button
+                  type="button"
+                  className="block w-full px-3 py-2 text-left text-sm hover:bg-accent disabled:opacity-50"
+                  disabled={environmentVariables.length === 0}
+                  onClick={() => {
+                    setBulkExportOpen(true);
+                    setBulkMenuOpen(false);
+                  }}
+                >
+                  <span className="inline-flex items-center gap-2">
+                    <IconDownload size={16} /> Export Variables
+                  </span>
+                </button>
+              </div>
+            )}
+          </div>
+          <button
+            type="button"
             onClick={() => setIsCreating(true)}
             disabled={isCreating}
+            className="inline-flex items-center gap-2 rounded-md bg-primary px-3 py-2 text-sm font-medium text-primary-foreground shadow hover:opacity-90 disabled:opacity-50"
           >
-            Add Variable
-          </Button>
-        </Group>
-      </Group>
+            <IconPlus size={16} /> Add Variable
+          </button>
+        </div>
+      </div>
 
-      <Table>
-        <Table.Thead>
-          <Table.Tr>
-            <Table.Th>Name</Table.Th>
-            <Table.Th>Description</Table.Th>
-            <Table.Th>Value</Table.Th>
-            <Table.Th style={{ width: 100 }}>Actions</Table.Th>
-          </Table.Tr>
-        </Table.Thead>
-        <Table.Tbody>
-          {isCreating && (
-            <Table.Tr>
-              <Table.Td>
-                <TextInput
-                  placeholder="VARIABLE_NAME"
-                  {...newVariableForm.getInputProps('name')}
-                  size="sm"
-                />
-              </Table.Td>
-              <Table.Td>
-                <TextInput
-                  placeholder="Description (optional)"
-                  {...newVariableForm.getInputProps('description')}
-                  size="sm"
-                />
-              </Table.Td>
-              <Table.Td>
-                <Textarea
-                  placeholder="Variable value"
-                  {...newVariableForm.getInputProps('value')}
-                  size="sm"
-                  autosize
-                  minRows={1}
-                />
-              </Table.Td>
-              <Table.Td>
-                <Group gap="xs">
-                  <Tooltip label="Save">
-                    <ActionIcon
-                      color="green"
-                      variant="light"
+      <div className="overflow-hidden rounded-md border">
+        <table className="w-full text-left text-sm">
+          <thead className="bg-muted/40">
+            <tr>
+              <th className="px-3 py-2 font-medium">Name</th>
+              <th className="px-3 py-2 font-medium">Description</th>
+              <th className="px-3 py-2 font-medium">Value</th>
+              <th className="px-3 py-2 font-medium" style={{ width: 120 }}>
+                Actions
+              </th>
+            </tr>
+          </thead>
+          <tbody>
+            {isCreating && (
+              <tr>
+                <td className="px-3 py-2 align-top">
+                  <input
+                    placeholder="VARIABLE_NAME"
+                    className="w-full rounded-md border bg-background px-2 py-1 font-mono text-sm outline-none ring-0 focus:border-ring"
+                    {...newVariableForm.getInputProps('name')}
+                  />
+                  {newVariableForm.errors.name && (
+                    <p className="mt-1 text-xs text-red-600">
+                      {newVariableForm.errors.name}
+                    </p>
+                  )}
+                </td>
+                <td className="px-3 py-2 align-top">
+                  <input
+                    placeholder="Description (optional)"
+                    className="w-full rounded-md border bg-background px-2 py-1 text-sm outline-none ring-0 focus:border-ring"
+                    {...newVariableForm.getInputProps('description')}
+                  />
+                </td>
+                <td className="px-3 py-2 align-top">
+                  <textarea
+                    placeholder="Variable value"
+                    className="w-full rounded-md border bg-background px-2 py-1 text-sm outline-none ring-0 focus:border-ring"
+                    rows={1}
+                    {...newVariableForm.getInputProps('value')}
+                  />
+                  {newVariableForm.errors.value && (
+                    <p className="mt-1 text-xs text-red-600">
+                      {newVariableForm.errors.value}
+                    </p>
+                  )}
+                </td>
+                <td className="px-3 py-2 align-top">
+                  <div className="flex items-center gap-2">
+                    <button
+                      type="button"
+                      title="Save"
                       onClick={() => {
                         if (newVariableForm.isValid()) {
                           handleCreate(newVariableForm.values);
                         }
                       }}
-                      loading={createMutation.isPending}
+                      className="inline-flex items-center justify-center rounded-md border border-green-600 bg-green-50 p-1 text-green-700 hover:bg-green-100"
                     >
-                      <IconCheck size={16} />
-                    </ActionIcon>
-                  </Tooltip>
-                  <Tooltip label="Cancel">
-                    <ActionIcon
-                      color="gray"
-                      variant="light"
+                      {createMutation.isPending ? (
+                        <span className="h-4 w-4 animate-spin rounded-full border-2 border-green-600 border-t-transparent" />
+                      ) : (
+                        <IconCheck size={16} />
+                      )}
+                    </button>
+                    <button
+                      type="button"
+                      title="Cancel"
                       onClick={cancelCreating}
+                      className="inline-flex items-center justify-center rounded-md border p-1 hover:bg-accent"
                     >
                       <IconX size={16} />
-                    </ActionIcon>
-                  </Tooltip>
-                </Group>
-              </Table.Td>
-            </Table.Tr>
-          )}
-          {environmentVariables.map((variable) => (
-            <Table.Tr key={variable.id}>
-              <Table.Td>
-                {editingId === variable.id ? (
-                  <TextInput {...editForm.getInputProps('name')} size="sm" />
-                ) : (
-                  <span className="font-mono">{variable.name}</span>
-                )}
-              </Table.Td>
-              <Table.Td>
-                {editingId === variable.id ? (
-                  <TextInput
-                    {...editForm.getInputProps('description')}
-                    size="sm"
-                  />
-                ) : (
-                  variable.description || '—'
-                )}
-              </Table.Td>
-              <Table.Td>
-                {editingId === variable.id ? (
-                  <Textarea
-                    {...editForm.getInputProps('value')}
-                    size="sm"
-                    autosize
-                    minRows={1}
-                  />
-                ) : (
-                  <span className="font-mono text-gray-500">••••••••</span>
-                )}
-              </Table.Td>
-              <Table.Td>
-                <Group gap="xs">
+                    </button>
+                  </div>
+                </td>
+              </tr>
+            )}
+            {environmentVariables.map((variable) => (
+              <tr key={variable.id}>
+                <td className="px-3 py-2 align-top">
                   {editingId === variable.id ? (
-                    <>
-                      <Tooltip label="Save">
-                        <ActionIcon
-                          color="green"
-                          variant="light"
+                    <input
+                      className="w-full rounded-md border bg-background px-2 py-1 font-mono text-sm outline-none ring-0 focus:border-ring"
+                      {...editForm.getInputProps('name')}
+                    />
+                  ) : (
+                    <span className="font-mono">{variable.name}</span>
+                  )}
+                </td>
+                <td className="px-3 py-2 align-top">
+                  {editingId === variable.id ? (
+                    <input
+                      className="w-full rounded-md border bg-background px-2 py-1 text-sm outline-none ring-0 focus:border-ring"
+                      {...editForm.getInputProps('description')}
+                    />
+                  ) : (
+                    variable.description || '—'
+                  )}
+                </td>
+                <td className="px-3 py-2 align-top">
+                  {editingId === variable.id ? (
+                    <textarea
+                      className="w-full rounded-md border bg-background px-2 py-1 text-sm outline-none ring-0 focus:border-ring"
+                      rows={1}
+                      {...editForm.getInputProps('value')}
+                    />
+                  ) : (
+                    <span className="font-mono text-gray-500">••••••••</span>
+                  )}
+                </td>
+                <td className="px-3 py-2 align-top">
+                  <div className="flex items-center gap-2">
+                    {editingId === variable.id ? (
+                      <>
+                        <button
+                          type="button"
+                          title="Save"
                           onClick={() => {
                             if (editForm.isValid()) {
                               handleUpdate(variable.id, editForm.values);
                             }
                           }}
-                          loading={updateMutation.isPending}
+                          className="inline-flex items-center justify-center rounded-md border border-green-600 bg-green-50 p-1 text-green-700 hover:bg-green-100"
                         >
-                          <IconCheck size={16} />
-                        </ActionIcon>
-                      </Tooltip>
-                      <Tooltip label="Cancel">
-                        <ActionIcon
-                          color="gray"
-                          variant="light"
+                          {updateMutation.isPending ? (
+                            <span className="h-4 w-4 animate-spin rounded-full border-2 border-green-600 border-t-transparent" />
+                          ) : (
+                            <IconCheck size={16} />
+                          )}
+                        </button>
+                        <button
+                          type="button"
+                          title="Cancel"
                           onClick={cancelEditing}
+                          className="inline-flex items-center justify-center rounded-md border p-1 hover:bg-accent"
                         >
                           <IconX size={16} />
-                        </ActionIcon>
-                      </Tooltip>
-                    </>
-                  ) : (
-                    <>
-                      <Tooltip label="Edit">
-                        <ActionIcon
-                          variant="light"
+                        </button>
+                      </>
+                    ) : (
+                      <>
+                        <button
+                          type="button"
+                          title="Edit"
                           onClick={() => startEditing(variable)}
+                          className="inline-flex items-center justify-center rounded-md border p-1 hover:bg-accent"
                         >
                           <IconEdit size={16} />
-                        </ActionIcon>
-                      </Tooltip>
-                      <Tooltip label="Delete">
-                        <ActionIcon
-                          color="red"
-                          variant="light"
+                        </button>
+                        <button
+                          type="button"
+                          title="Delete"
                           onClick={() => handleDelete(variable.id)}
-                          loading={deleteMutation.isPending}
+                          className="inline-flex items-center justify-center rounded-md border border-red-600 bg-red-50 p-1 text-red-700 hover:bg-red-100"
                         >
-                          <IconTrash size={16} />
-                        </ActionIcon>
-                      </Tooltip>
-                    </>
-                  )}
-                </Group>
-              </Table.Td>
-            </Table.Tr>
-          ))}
-        </Table.Tbody>
-      </Table>
+                          {deleteMutation.isPending ? (
+                            <span className="h-4 w-4 animate-spin rounded-full border-2 border-red-600 border-t-transparent" />
+                          ) : (
+                            <IconTrash size={16} />
+                          )}
+                        </button>
+                      </>
+                    )}
+                  </div>
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
 
       {environmentVariables.length === 0 && !isCreating && (
-        <div className="text-center py-8 text-gray-500">
+        <div className="py-8 text-center text-gray-500">
           No environment variables found. Click "Add Variable" to create one.
         </div>
       )}
@@ -388,6 +415,6 @@ export function EnvironmentVariablesTable({
         opened={bulkExportOpen}
         onClose={() => setBulkExportOpen(false)}
       />
-    </Stack>
+    </div>
   );
 }

@@ -4,8 +4,7 @@ import {
   IconSettings,
   IconVariable,
 } from '@tabler/icons-react';
-
-import { SettingsNavbar } from '../common/index.ts';
+import { Link, useLocation } from '@tanstack/react-router';
 
 export function EnvironmentNavbar({
   envSlug,
@@ -15,6 +14,8 @@ export function EnvironmentNavbar({
   basePathPrefix?: string;
 }) {
   const base = `${basePathPrefix}/${envSlug}`;
+  const location = useLocation();
+
   const navItems = [
     {
       label: 'General',
@@ -38,20 +39,40 @@ export function EnvironmentNavbar({
     },
   ];
 
-  const environmentPathMatcher = (currentPath: string, itemPath: string) => {
-    const baseEnvPath = `${base}`;
-    if (itemPath === baseEnvPath) {
-      return currentPath === itemPath;
-    }
-    return currentPath.startsWith(itemPath);
+  const isActive = (itemPath: string) => {
+    // Treat exact match for base tab, startsWith for nested tabs
+    if (itemPath === base) return location.pathname === itemPath;
+    return location.pathname.startsWith(itemPath);
   };
 
   return (
-    <SettingsNavbar
-      title="Environment Settings"
-      navItems={navItems}
-      pathPrefix={base}
-      isActivePathMatcher={environmentPathMatcher}
-    />
+    <div className="mb-6 border-b">
+      <div className="flex flex-wrap items-center gap-2">
+        <p className="mr-2 text-sm font-semibold text-muted-foreground">
+          Environment Settings
+        </p>
+        <nav className="-mb-px flex flex-wrap items-center gap-1">
+          {navItems.map((item) => {
+            const IconComp = item.icon;
+            const active = isActive(item.path);
+            return (
+              <Link
+                key={item.path}
+                to={item.path}
+                className={[
+                  'inline-flex items-center gap-2 rounded-t-md px-3 py-2 text-sm transition-colors',
+                  active
+                    ? 'border-b-2 border-primary text-foreground'
+                    : 'text-muted-foreground hover:text-foreground',
+                ].join(' ')}
+              >
+                <IconComp size={16} />
+                {item.label}
+              </Link>
+            );
+          })}
+        </nav>
+      </div>
+    </div>
   );
 }

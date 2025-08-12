@@ -1,14 +1,3 @@
-import {
-  Alert,
-  Button,
-  Group,
-  List,
-  Modal,
-  Progress,
-  Stack,
-  Text,
-  Textarea,
-} from '@mantine/core';
 import { useForm } from '@mantine/form';
 import { IconInfoCircle, IconUpload } from '@tabler/icons-react';
 import { useState } from 'react';
@@ -133,93 +122,136 @@ export function BulkImportModal({
     onClose();
   };
 
+  if (!opened) return null;
+
+  const textareaId = 'bulk-import-textarea';
+
   return (
-    <Modal
-      opened={opened}
-      onClose={handleClose}
-      title="Bulk Import Environment Variables"
-      size="lg"
+    <div
+      className="fixed inset-0 z-50 flex items-center justify-center"
+      role="dialog"
+      aria-modal="true"
+      onKeyDown={(e) => {
+        if (e.key === 'Escape') handleClose();
+      }}
     >
-      <Stack>
-        <Alert icon={<IconInfoCircle size={16} />} color="blue">
-          <Text size="sm">Paste your environment variables in the format:</Text>
-          <Text size="sm" className="font-mono mt-2">
-            VARIABLE_NAME=value
-            <br />
-            ANOTHER_VAR="value with spaces"
-            <br /># Comments are ignored
-          </Text>
-        </Alert>
-
-        <Textarea
-          label="Environment Variables"
-          placeholder={`DATABASE_URL=postgresql://user:pass@localhost:5432/db
-API_KEY=your_api_key_here
-DEBUG=true
-# This is a comment`}
-          minRows={8}
-          {...form.getInputProps('content')}
-        />
-
-        <Group>
-          <Button
-            variant="light"
-            onClick={handlePreview}
-            disabled={!form.values.content.trim()}
+      <button
+        type="button"
+        aria-label="Close modal"
+        onClick={handleClose}
+        className="absolute inset-0 bg-black/40"
+      />
+      <div className="relative z-10 w-full max-w-2xl rounded-lg border bg-background p-4 shadow-lg">
+        <div className="flex items-center justify-between pb-2">
+          <h3 className="text-lg font-semibold">
+            Bulk Import Environment Variables
+          </h3>
+          <button
+            type="button"
+            className="rounded p-1 text-muted-foreground hover:bg-accent"
+            onClick={handleClose}
+            aria-label="Close"
           >
-            Preview
-          </Button>
-        </Group>
+            ×
+          </button>
+        </div>
 
-        {parseErrors.length > 0 && (
-          <Alert color="red" title="Parse Errors">
-            <List size="sm">
-              {parseErrors.map((error) => (
-                <List.Item key={error}>{error}</List.Item>
-              ))}
-            </List>
-          </Alert>
-        )}
+        <div className="space-y-4">
+          <div className="rounded-md border bg-blue-50 p-3 text-sm text-blue-900">
+            <div className="mb-1 inline-flex items-center gap-2 font-medium">
+              <IconInfoCircle size={16} /> Instructions
+            </div>
+            <p>Paste your environment variables in the format:</p>
+            <pre className="mt-2 rounded bg-white/70 p-2 font-mono text-xs text-blue-950">
+              {`VARIABLE_NAME=value
+ANOTHER_VAR="value with spaces"
+# Comments are ignored`}
+            </pre>
+          </div>
 
-        {parsedVariables.length > 0 && (
-          <Alert
-            color="green"
-            title={`Found ${parsedVariables.length} variables`}
-          >
-            <List size="sm">
-              {parsedVariables.slice(0, 5).map((variable) => (
-                <List.Item key={variable.name} className="font-mono">
-                  {variable.name}={variable.value.substring(0, 20)}
-                  {variable.value.length > 20 ? '...' : ''}
-                </List.Item>
-              ))}
-              {parsedVariables.length > 5 && (
-                <List.Item key="more-items">
-                  ... and {parsedVariables.length - 5} more
-                </List.Item>
-              )}
-            </List>
-          </Alert>
-        )}
+          <div className="space-y-2">
+            <label className="text-sm font-medium" htmlFor={textareaId}>
+              Environment Variables
+            </label>
+            <textarea
+              id={textareaId}
+              placeholder={`DATABASE_URL=postgresql://user:pass@localhost:5432/db\nAPI_KEY=your_api_key_here\nDEBUG=true\n# This is a comment`}
+              rows={10}
+              className="w-full rounded-md border bg-background p-2 font-mono text-sm outline-none ring-0 focus:border-ring"
+              {...form.getInputProps('content')}
+            />
+            <div>
+              <button
+                type="button"
+                className="inline-flex items-center rounded-md border bg-background px-3 py-1.5 text-sm hover:bg-accent disabled:opacity-50"
+                onClick={handlePreview}
+                disabled={!form.values.content.trim()}
+              >
+                Preview
+              </button>
+            </div>
+          </div>
 
-        {importProgress > 0 && importProgress < 100 && (
-          <Progress value={importProgress} animated />
-        )}
+          {parseErrors.length > 0 && (
+            <div className="rounded-md border border-red-200 bg-red-50 p-3 text-sm text-red-900">
+              <p className="mb-2 font-medium">Parse Errors</p>
+              <ul className="list-disc space-y-1 pl-5">
+                {parseErrors.map((error) => (
+                  <li key={error}>{error}</li>
+                ))}
+              </ul>
+            </div>
+          )}
 
-        <Group justify="flex-end">
-          <Button variant="light" onClick={handleClose}>
-            Cancel
-          </Button>
-          <Button
-            leftSection={<IconUpload size={16} />}
-            onClick={handleImport}
-            disabled={parsedVariables.length === 0 || parseErrors.length > 0}
-            loading={bulkCreateMutation.isPending}
-          >
-            Import {parsedVariables.length} Variables
-          </Button>
-        </Group>
-      </Stack>
-    </Modal>
+          {parsedVariables.length > 0 && (
+            <div className="rounded-md border border-green-200 bg-green-50 p-3 text-sm text-green-900">
+              <p className="mb-2 font-medium">
+                Found {parsedVariables.length} variables
+              </p>
+              <ul className="space-y-1">
+                {parsedVariables.slice(0, 5).map((variable) => (
+                  <li key={variable.name} className="font-mono text-xs">
+                    {variable.name}={variable.value.substring(0, 20)}
+                    {variable.value.length > 20 ? '...' : ''}
+                  </li>
+                ))}
+                {parsedVariables.length > 5 && (
+                  <li className="font-mono text-xs">
+                    ... and {parsedVariables.length - 5} more
+                  </li>
+                )}
+              </ul>
+            </div>
+          )}
+
+          {importProgress > 0 && importProgress < 100 && (
+            <div className="h-2 w-full overflow-hidden rounded bg-muted">
+              <div
+                className="h-full bg-primary transition-all"
+                style={{ width: `${importProgress}%` }}
+              />
+            </div>
+          )}
+
+          <div className="flex items-center justify-end gap-2 pt-1">
+            <button
+              type="button"
+              className="inline-flex items-center rounded-md border bg-background px-3 py-1.5 text-sm hover:bg-accent"
+              onClick={handleClose}
+            >
+              Cancel
+            </button>
+            <button
+              type="button"
+              className="inline-flex items-center gap-2 rounded-md bg-primary px-3 py-1.5 text-sm font-medium text-primary-foreground shadow hover:opacity-90 disabled:opacity-50"
+              onClick={handleImport}
+              disabled={parsedVariables.length === 0 || parseErrors.length > 0}
+            >
+              <IconUpload size={16} /> Import {parsedVariables.length} Variables
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
   );
 }

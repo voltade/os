@@ -2,18 +2,11 @@ import { useForm } from '@mantine/form';
 import { useDisclosure } from '@mantine/hooks';
 import { notifications } from '@mantine/notifications';
 import {
-  IconCopy,
   IconCrown,
-  IconDots,
-  IconEdit,
-  IconMail,
   IconPlus,
   IconRefresh,
-  IconSearch,
-  IconTrash,
   IconUser,
   IconUserCheck,
-  IconX,
 } from '@tabler/icons-react';
 import { createFileRoute } from '@tanstack/react-router';
 import { Button } from '@voltade/ui/button.tsx';
@@ -212,7 +205,10 @@ function RouteComponent() {
     try {
       const { error } = await authClient.organization.updateMemberRole({
         memberId,
-        role: newRole as any,
+        role: (newRole === 'developer' ? 'member' : newRole) as
+          | 'member'
+          | 'admin'
+          | 'owner',
         organizationId: organisation?.id || undefined,
       });
       if (error) throw new Error(error.message);
@@ -354,7 +350,7 @@ function RouteComponent() {
     }
   };
 
-  const getRoleBadgeColor = (role: string) => {
+  const _getRoleBadgeColor = (role: string) => {
     switch (role) {
       case 'owner':
         return 'grape';
@@ -552,7 +548,6 @@ function RouteComponent() {
       <InviteMemberModal
         opened={opened}
         onClose={close}
-        form={form}
         roleOptions={getAllowedRoles()}
         isInviting={isInviting}
         onSubmit={handleInviteMember}

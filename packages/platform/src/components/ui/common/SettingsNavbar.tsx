@@ -1,4 +1,3 @@
-import { NavLink, Stack, Text } from '@mantine/core';
 import type { Icon } from '@tabler/icons-react';
 import { useLocation, useNavigate } from '@tanstack/react-router';
 
@@ -42,34 +41,35 @@ export function SettingsNavbar({
   return (
     <aside className="h-full w-full">
       <div className="p-2">
-        <Stack gap="xs" p="xs">
-          <Text fw={600} size="sm" c="dimmed">
-            {title}
-          </Text>
-          {navItems.map((item) => (
-            <NavLink
-              styles={{
-                root: {
-                  padding: '0.25rem 0.5rem 0.25rem 0.5rem',
-                  borderRadius: '0.5rem',
-                  '&:hover': {
-                    backgroundColor: 'var(--mantine-color-gray-0)',
-                  },
-                },
-              }}
-              key={item.path}
-              label={item.label}
-              leftSection={<item.icon size={18} />}
-              active={isActivePathMatcher(
+        <div className="space-y-2 p-2">
+          <p className="text-sm font-semibold text-muted-foreground">{title}</p>
+          <nav className="space-y-1">
+            {navItems.map((item) => {
+              const active = isActivePathMatcher(
                 location.pathname,
                 item.path,
                 pathPrefix,
-              )}
-              onClick={() => navigate({ to: item.path })}
-              style={{ cursor: 'pointer' }}
-            />
-          ))}
-        </Stack>
+              );
+              const IconComp = item.icon;
+              return (
+                <button
+                  key={item.path}
+                  type="button"
+                  onClick={() => navigate({ to: item.path })}
+                  className={[
+                    'flex w-full items-center gap-2 rounded-md px-2 py-1.5 text-left text-sm transition-colors',
+                    active
+                      ? 'bg-accent text-accent-foreground'
+                      : 'text-muted-foreground hover:bg-accent hover:text-accent-foreground',
+                  ].join(' ')}
+                >
+                  <IconComp size={18} />
+                  <span>{item.label}</span>
+                </button>
+              );
+            })}
+          </nav>
+        </div>
       </div>
     </aside>
   );

@@ -15,7 +15,12 @@ function RouteComponent() {
   const { data: organisation, isPending } = authClient.useActiveOrganization();
   const { data: session } = authClient.useSession();
 
-  if (isPending) return null;
+  if (isPending)
+    return (
+      <div className="flex h-24 items-center justify-center">
+        <div className="h-5 w-5 animate-spin rounded-full border-2 border-muted-foreground border-t-transparent" />
+      </div>
+    );
 
   const currentUserMember = organisation?.members?.find(
     (m) => m.userId === session?.user?.id,

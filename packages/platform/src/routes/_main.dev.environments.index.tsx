@@ -1,16 +1,4 @@
 import {
-  Badge,
-  Button,
-  Card,
-  Group,
-  Loader,
-  SimpleGrid,
-  Stack,
-  Text,
-  TextInput,
-  Title,
-} from '@mantine/core';
-import {
   IconDatabase,
   IconPlus,
   IconSearch,
@@ -56,111 +44,104 @@ function RouteComponent() {
 
   if (isLoading) {
     return (
-      <Stack align="center" justify="center" h="50vh">
-        <Loader size="lg" />
-        <Text c="dimmed">Loading environments...</Text>
-      </Stack>
+      <div className="flex h-[50vh] flex-col items-center justify-center gap-2">
+        <div className="h-6 w-6 animate-spin rounded-full border-2 border-muted-foreground border-t-transparent" />
+        <p className="text-sm text-muted-foreground">Loading environments...</p>
+      </div>
     );
   }
 
   return (
-    <Stack gap="lg">
-      <Group justify="space-between" align="center">
-        <Title order={2}>Environments</Title>
-        <Button leftSection={<IconPlus size={16} />} variant="filled">
+    <div className="flex flex-col gap-6">
+      <div className="flex items-center justify-between">
+        <h2 className="text-2xl font-semibold tracking-tight">Environments</h2>
+        <button
+          type="button"
+          className="inline-flex items-center gap-2 rounded-md bg-primary px-3 py-2 text-sm font-medium text-primary-foreground shadow hover:opacity-90"
+        >
+          <IconPlus size={16} />
           Add New Environment
-        </Button>
-      </Group>
+        </button>
+      </div>
 
-      <TextInput
-        placeholder="Search environments..."
-        leftSection={<IconSearch size={16} />}
-        value={searchQuery}
-        onChange={(event) => setSearchQuery(event.currentTarget.value)}
-        size="md"
-        style={{ maxWidth: 400 }}
-      />
+      <div className="max-w-md">
+        <div className="relative">
+          <IconSearch
+            size={16}
+            className="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground"
+          />
+          <input
+            type="text"
+            placeholder="Search environments..."
+            className="w-full rounded-md border bg-background pl-9 pr-3 py-2 text-sm outline-none ring-0 focus:border-ring"
+            value={searchQuery}
+            onChange={(e) => setSearchQuery(e.currentTarget.value)}
+          />
+        </div>
+      </div>
 
       {filteredEnvironments.length === 0 ? (
-        <Card padding="xl" style={{ textAlign: 'center' }}>
-          <Stack align="center" gap="md">
-            <IconServer size={48} stroke={1} style={{ opacity: 0.5 }} />
-            <Text size="lg" fw={500}>
-              {searchQuery ? 'No environments found' : 'No environments yet'}
-            </Text>
-            <Text c="dimmed">
-              {searchQuery
-                ? 'Try adjusting your search terms'
-                : 'Create your first environment to get started'}
-            </Text>
-          </Stack>
-        </Card>
+        <div className="rounded-lg border p-10 text-center">
+          <div className="mx-auto mb-2 flex size-12 items-center justify-center rounded-full bg-muted/50">
+            <IconServer size={28} className="opacity-60" />
+          </div>
+          <p className="text-lg font-medium">
+            {searchQuery ? 'No environments found' : 'No environments yet'}
+          </p>
+          <p className="text-sm text-muted-foreground">
+            {searchQuery
+              ? 'Try adjusting your search terms'
+              : 'Create your first environment to get started'}
+          </p>
+        </div>
       ) : (
-        <SimpleGrid cols={{ base: 1, sm: 2, lg: 3, xl: 4 }} spacing="md">
+        <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
           {filteredEnvironments.map((environment) => (
-            <Card key={environment.id} padding="lg" radius="md" withBorder>
-              <Stack gap="md">
-                <Group justify="space-between" align="flex-start">
-                  <Stack gap={4} style={{ flex: 1 }}>
-                    <Group gap="xs">
-                      <Text fw={600} size="lg" lineClamp={1}>
+            <div key={environment.id} className="rounded-lg border p-4">
+              <div className="flex flex-col gap-3">
+                <div className="flex items-start justify-between">
+                  <div className="min-w-0 flex-1">
+                    <div className="flex items-center gap-2">
+                      <p className="truncate text-lg font-semibold">
                         {environment.name || environment.slug}
-                      </Text>
+                      </p>
                       {environment.is_production && (
-                        <Badge color="red" size="sm" variant="light">
+                        <span className="inline-flex items-center rounded-md bg-red-100 px-2 py-0.5 text-xs font-medium text-red-700">
                           Production
-                        </Badge>
+                        </span>
                       )}
-                    </Group>
-                    <Text size="sm" c="dimmed">
+                    </div>
+                    <p className="text-sm text-muted-foreground">
                       {environment.slug}
-                    </Text>
+                    </p>
                     {environment.description && (
-                      <Text size="sm" c="dimmed" lineClamp={2}>
+                      <p className="line-clamp-2 text-sm text-muted-foreground">
                         {environment.description}
-                      </Text>
+                      </p>
                     )}
-                  </Stack>
-                </Group>
+                  </div>
+                </div>
 
-                <Group gap="lg">
-                  <Group gap="xs">
-                    <IconServer size={14} style={{ opacity: 0.7 }} />
-                    <Text size="sm" c="dimmed">
+                <div className="flex items-center gap-6 text-sm text-muted-foreground">
+                  <div className="flex items-center gap-1">
+                    <IconServer size={14} className="opacity-70" />
+                    <span>
                       {environment.runner_count} runner
                       {environment.runner_count !== 1 ? 's' : ''}
-                    </Text>
-                  </Group>
-                  <Group gap="xs">
-                    <IconDatabase size={14} style={{ opacity: 0.7 }} />
-                    <Text size="sm" c="dimmed">
+                    </span>
+                  </div>
+                  <div className="flex items-center gap-1">
+                    <IconDatabase size={14} className="opacity-70" />
+                    <span>
                       {environment.database_instance_count} DB
                       {environment.database_instance_count !== 1 ? 's' : ''}
-                    </Text>
-                  </Group>
-                </Group>
+                    </span>
+                  </div>
+                </div>
 
-                <Group gap="xs" mt="xs">
-                  <Text size="xs" c="dimmed">
-                    Created{' '}
-                    {new Date(environment.created_at).toLocaleDateString()}
-                  </Text>
-                  {environment.updated_at !== environment.created_at && (
-                    <>
-                      <Text size="xs" c="dimmed">
-                        •
-                      </Text>
-                      <Text size="xs" c="dimmed">
-                        Updated{' '}
-                        {new Date(environment.updated_at).toLocaleDateString()}
-                      </Text>
-                    </>
-                  )}
-                </Group>
-
-                <Button
-                  variant="light"
-                  fullWidth
+                <button
+                  type="button"
+                  className="mt-2 inline-flex w-full justify-center rounded-md border bg-background px-3 py-2 text-sm font-medium hover:bg-accent"
                   onClick={() =>
                     navigate({
                       to: '/dev/environments/$environmentSlug',
@@ -169,12 +150,12 @@ function RouteComponent() {
                   }
                 >
                   Manage Environment
-                </Button>
-              </Stack>
-            </Card>
+                </button>
+              </div>
+            </div>
           ))}
-        </SimpleGrid>
+        </div>
       )}
-    </Stack>
+    </div>
   );
 }

@@ -1,4 +1,3 @@
-import { Stack, Text, Title } from '@mantine/core';
 import { createFileRoute } from '@tanstack/react-router';
 
 import { AccessDenied } from '#src/components/utils/access-denied';
@@ -21,9 +20,11 @@ function RouteComponent() {
   if (!isAllowed) return <AccessDenied />;
 
   return (
-    <Stack>
-      <Title order={2}>Git Providers</Title>
-      <Text c="dimmed">Management UI coming soon.</Text>
-    </Stack>
+    <div className="space-y-2">
+      <h2 className="text-2xl font-semibold tracking-tight">Git Providers</h2>
+      <p className="text-sm text-muted-foreground">
+        Management UI coming soon.
+      </p>
+    </div>
   );
 }

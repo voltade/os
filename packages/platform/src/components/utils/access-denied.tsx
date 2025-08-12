@@ -1,10 +1,10 @@
-import { Stack, Text, Title } from '@mantine/core';
-
 export function AccessDenied() {
   return (
-    <Stack justify="center" align="center" h="60vh">
-      <Title order={2}>Access Denied</Title>
-      <Text c="dimmed">You do not have permission to access this page.</Text>
-    </Stack>
+    <div className="flex h-[60vh] flex-col items-center justify-center gap-2">
+      <h2 className="text-2xl font-semibold tracking-tight">Access Denied</h2>
+      <p className="text-sm text-muted-foreground">
+        You do not have permission to access this page.
+      </p>
+    </div>
   );
 }

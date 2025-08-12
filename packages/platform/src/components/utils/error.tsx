@@ -1,5 +1,3 @@
-import { Group } from '@mantine/core';
-
 export function ErrorComponent({ error }: { error: Error; reset: () => void }) {
   return (
     <div className="flex min-h-screen flex-col items-center justify-center p-4 text-center">
@@ -12,7 +10,7 @@ export function ErrorComponent({ error }: { error: Error; reset: () => void }) {
           {error.message}
         </pre>
       )}
-      <Group>
+      <div className="flex items-center gap-3">
         <button
           type="button"
           onClick={() => {
@@ -28,7 +26,7 @@ export function ErrorComponent({ error }: { error: Error; reset: () => void }) {
         >
           Back to Home
         </a>
-      </Group>
+      </div>
     </div>
   );
 }

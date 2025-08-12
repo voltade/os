@@ -1,6 +1,6 @@
-import { Center, Loader } from '@mantine/core';
 import { createFileRoute, Outlet } from '@tanstack/react-router';
 
+import { DevSidebar } from '#src/components/ui/dev/Sidebar';
 import { AccessDenied } from '#src/components/utils/access-denied';
 import { authClient } from '#src/lib/auth.ts';
 
@@ -14,9 +14,9 @@ function RouteComponent() {
 
   if (isPending) {
     return (
-      <Center h={200}>
-        <Loader />
-      </Center>
+      <div className="flex h-48 items-center justify-center">
+        <div className="h-6 w-6 animate-spin rounded-full border-2 border-muted-foreground border-t-transparent" />
+      </div>
     );
   }
 
@@ -31,5 +31,12 @@ function RouteComponent() {
     return <AccessDenied />;
   }
 
-  return <Outlet />;
+  return (
+    <div className="flex gap-6">
+      <DevSidebar />
+      <div className="min-w-0 flex-1">
+        <Outlet />
+      </div>
+    </div>
+  );
 }
