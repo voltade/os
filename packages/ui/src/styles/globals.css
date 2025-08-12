@@ -1,5 +1,4 @@
 @import "tailwindcss";
-
 @import "tw-animate-css";
 
 /* https://github.com/tailwindlabs/tailwindcss/issues/13136#issuecomment-2614243243 */
@@ -7,79 +6,114 @@
 
 @custom-variant dark (&:is(.dark *));
 
+/* =========================
+   Base tokens (Voltade purple, low-ink)
+   ========================= */
 :root {
   --background: oklch(1 0 0);
   --foreground: oklch(0.145 0 0);
+
   --card: oklch(1 0 0);
   --card-foreground: oklch(0.145 0 0);
+
   --popover: oklch(1 0 0);
   --popover-foreground: oklch(0.145 0 0);
-  /* Voltade purple for primary */
+
+  /* Voltade purple as brand */
   --primary: oklch(0.54 0.214 307.79);
   --primary-foreground: oklch(0.985 0 0);
-  --secondary: oklch(0.97 0 0);
+
+  /* Subtle purple-tinted utility surfaces (very light chroma) */
+  --secondary: oklch(0.975 0.022 307.79);
   --secondary-foreground: oklch(0.205 0 0);
-  --muted: oklch(0.97 0 0);
-  --muted-foreground: oklch(0.556 0 0);
-  --accent: oklch(0.97 0 0);
+
+  --muted: oklch(0.975 0.018 307.79);
+  --muted-foreground: oklch(0.556 0.004 0);
+
+  --accent: oklch(0.97 0.03 307.79);
   --accent-foreground: oklch(0.205 0 0);
+
   --destructive: oklch(0.577 0.245 27.325);
-  --destructive-foreground: oklch(0.577 0.245 27.325);
-  --border: oklch(0.922 0 0);
-  --input: oklch(0.922 0 0);
-  --ring: oklch(0.54 0.214 307.79);
-  --chart-1: oklch(0.646 0.222 41.116);
-  --chart-2: oklch(0.6 0.118 184.704);
-  --chart-3: oklch(0.398 0.07 227.392);
-  --chart-4: oklch(0.828 0.189 84.429);
-  --chart-5: oklch(0.769 0.188 70.08);
+  --destructive-foreground: oklch(0.985 0 0);
+
+  /* Neutral with the faintest purple bias for edges/inputs */
+  --border: oklch(0.922 0.015 307.79);
+  --input: oklch(0.922 0.015 307.79);
+
+  /* Focus rings lean brandy but not overpowering */
+  --ring: oklch(0.62 0.14 307.79);
+
+  /* Charts: keep mostly neutral with one brand accent */
+  --chart-1: oklch(0.54 0.214 307.79); /* brand */
+  --chart-2: oklch(0.646 0.06 41.116);
+  --chart-3: oklch(0.6 0.05 184.704);
+  --chart-4: oklch(0.398 0.04 227.392);
+  --chart-5: oklch(0.828 0.03 84.429);
+
   --radius: 0.625rem;
-  --sidebar: oklch(0.985 0 0);
+
+  /* Sidebar with gentle brand wash */
+  --sidebar: oklch(0.985 0.01 307.79);
   --sidebar-foreground: oklch(0.145 0 0);
-  --sidebar-primary: oklch(0.54 0.214 307.79);
+  --sidebar-primary: oklch(0.58 0.18 307.79);
   --sidebar-primary-foreground: oklch(0.985 0 0);
-  --sidebar-accent: oklch(0.97 0 0);
+  --sidebar-accent: oklch(0.975 0.02 307.79);
   --sidebar-accent-foreground: oklch(0.205 0 0);
-  --sidebar-border: oklch(0.922 0 0);
-  --sidebar-ring: oklch(0.54 0.214 307.79);
+  --sidebar-border: oklch(0.922 0.015 307.79);
+  --sidebar-ring: oklch(0.62 0.14 307.79);
 }
 
 .dark {
   --background: oklch(0.145 0 0);
   --foreground: oklch(0.985 0 0);
+
   --card: oklch(0.145 0 0);
   --card-foreground: oklch(0.985 0 0);
+
   --popover: oklch(0.145 0 0);
   --popover-foreground: oklch(0.985 0 0);
-  /* Dark mode primary as light foreground text on purple backgrounds */
+
+  /* In dark, keep text light; purple shows up on surfaces and rings */
   --primary: oklch(0.985 0 0);
   --primary-foreground: oklch(0.205 0 0);
-  --secondary: oklch(0.269 0 0);
+
+  --secondary: oklch(0.23 0.03 307.79);
   --secondary-foreground: oklch(0.985 0 0);
-  --muted: oklch(0.269 0 0);
-  --muted-foreground: oklch(0.708 0 0);
-  --accent: oklch(0.269 0 0);
+
+  --muted: oklch(0.22 0.025 307.79);
+  --muted-foreground: oklch(0.708 0.005 0);
+
+  --accent: oklch(0.24 0.04 307.79);
   --accent-foreground: oklch(0.985 0 0);
+
   --destructive: oklch(0.396 0.141 25.723);
-  --destructive-foreground: oklch(0.637 0.237 25.331);
-  --border: oklch(0.269 0 0);
-  --input: oklch(0.269 0 0);
-  --ring: oklch(0.54 0.214 307.79);
-  --chart-1: oklch(0.488 0.243 264.376);
-  --chart-2: oklch(0.696 0.17 162.48);
-  --chart-3: oklch(0.769 0.188 70.08);
-  --chart-4: oklch(0.627 0.265 303.9);
-  --chart-5: oklch(0.645 0.246 16.439);
-  --sidebar: oklch(0.205 0 0);
+  --destructive-foreground: oklch(0.985 0 0);
+
+  --border: oklch(0.26 0.02 307.79);
+  --input: oklch(0.26 0.02 307.79);
+
+  --ring: oklch(0.56 0.16 307.79);
+
+  /* Dark charts: one brand, others muted */
+  --chart-1: oklch(0.62 0.2 307.79); /* brand */
+  --chart-2: oklch(0.488 0.06 264.376);
+  --chart-3: oklch(0.696 0.07 162.48);
+  --chart-4: oklch(0.627 0.08 303.9);
+  --chart-5: oklch(0.645 0.06 16.439);
+
+  --sidebar: oklch(0.20 0.03 307.79);
   --sidebar-foreground: oklch(0.985 0 0);
-  --sidebar-primary: oklch(0.488 0.243 264.376);
+  --sidebar-primary: oklch(0.50 0.20 307.79);
   --sidebar-primary-foreground: oklch(0.985 0 0);
-  --sidebar-accent: oklch(0.269 0 0);
+  --sidebar-accent: oklch(0.23 0.035 307.79);
   --sidebar-accent-foreground: oklch(0.985 0 0);
-  --sidebar-border: oklch(0.269 0 0);
-  --sidebar-ring: oklch(0.54 0.214 307.79);
+  --sidebar-border: oklch(0.26 0.02 307.79);
+  --sidebar-ring: oklch(0.56 0.16 307.79);
 }
 
+/* =========================
+   Tailwind theme mapping
+   ========================= */
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
@@ -105,10 +139,12 @@
   --color-chart-3: var(--chart-3);
   --color-chart-4: var(--chart-4);
   --color-chart-5: var(--chart-5);
+
   --radius-sm: calc(var(--radius) - 4px);
   --radius-md: calc(var(--radius) - 2px);
   --radius-lg: var(--radius);
   --radius-xl: calc(var(--radius) + 4px);
+
   --color-sidebar: var(--sidebar);
   --color-sidebar-foreground: var(--sidebar-foreground);
   --color-sidebar-primary: var(--sidebar-primary);
@@ -119,11 +155,71 @@
   --color-sidebar-ring: var(--sidebar-ring);
 }
 
+/* =========================
+   Base
+   ========================= */
 @layer base {
-  * {
-    @apply border-border outline-ring/50;
+  * { @apply border-border outline-ring/50; }
+  body { @apply bg-background text-foreground; }
+}
+
+/* =========================
+   Interaction polish (no extra classes; works with shadcn/Radix)
+   Placed in utilities so these load after Tailwind utilities.
+   ========================= */
+@layer utilities {
+  /* Global focus ring */
+  :where(button, a, input, textarea, select, [role="tab"], [role="menuitem"], [role="option"], [role="switch"], [role="checkbox"], [role="radio"])
+  :where(:not([data-state=disabled])):focus-visible {
+    outline-color: var(--ring);
+    box-shadow: 0 0 0 3px color-mix(in oklch, var(--ring) 35%, transparent);
   }
-  body {
-    @apply bg-background text-foreground;
+
+  /* Primary Button (shadcn adds .bg-primary and hover:bg-primary/90) */
+  .bg-primary:hover {
+    background-color: color-mix(in oklch, var(--primary) 90%, white / 0); /* gentle shift */
+  }
+  .bg-primary:active {
+    background-color: color-mix(in oklch, var(--primary) 84%, black / 0);
+  }
+
+  /* Outline & Ghost Buttons (shadcn uses hover:bg-accent + hover:text-accent-foreground) */
+  /* Our accent already has a faint purple tint. Add subtle border pop on hover. */
+  .hover\\:bg-accent:hover {
+    border-color: color-mix(in oklch, var(--ring) 30%, var(--border));
+  }
+
+  /* Tabs (Radix data-state) */
+  [role="tab"][data-state="active"] {
+    background: color-mix(in oklch, var(--primary) 12%, transparent);
+    border-color: color-mix(in oklch, var(--ring) 45%, var(--border));
+  }
+  [role="tab"]:hover:not([data-state="active"]) {
+    background: color-mix(in oklch, var(--primary) 7%, transparent);
+  }
+
+  /* Switch / Checkbox / Radio — Radix adds data-state attributes and shadcn maps to bg-primary/text-primary-foreground */
+  [role="switch"][data-state="checked"],
+  [role="checkbox"][data-state="checked"],
+  [role="radio"][data-state="checked"] {
+    box-shadow: 0 0 0 2px color-mix(in oklch, var(--ring) 35%, transparent);
+  }
+
+  /* Menus / Select / Combobox highlight */
+  [role="menuitem"][data-highlighted],
+  [role="option"][data-highlighted] {
+    background: color-mix(in oklch, var(--primary) 12%, transparent);
+    color: var(--foreground);
+  }
+
+  /* Generic current-page affordance (works for link/button with aria-current attr) */
+  [aria-current="page"] {
+    background: color-mix(in oklch, var(--primary) 14%, transparent);
+    border-color: color-mix(in oklch, var(--ring) 45%, var(--border));
+  }
+
+  /* Subtle hover affordance for bordered rows/cards without touching component code */
+  .border:hover {
+    border-color: color-mix(in oklch, var(--ring) 45%, var(--border));
   }
 }
