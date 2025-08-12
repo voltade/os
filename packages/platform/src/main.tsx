@@ -1,5 +1,4 @@
 import '@mantine/core/styles.css';
-import '@mantine/notifications/styles.css';
 import '@mantine/dates/styles.css';
 
 import './main.css';
@@ -7,11 +6,11 @@ import './main.css';
 import { MantineProvider } from '@mantine/core';
 import { DatesProvider } from '@mantine/dates';
 import { ModalsProvider } from '@mantine/modals';
-import { Notifications } from '@mantine/notifications';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { createRouter, RouterProvider } from '@tanstack/react-router';
 import { StrictMode } from 'react';
 import { createRoot } from 'react-dom/client';
+import { Toaster } from 'sonner';
 
 import { routeTree } from './routeTree.gen.ts';
 
@@ -38,7 +37,7 @@ createRoot(document.getElementById('root')!).render(
         <DatesProvider settings={{}}>
           <ModalsProvider>
             <RouterProvider router={router} />
-            <Notifications position="top-right" />
+            <Toaster position="top-right" richColors />
           </ModalsProvider>
         </DatesProvider>
       </MantineProvider>

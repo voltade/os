@@ -1,4 +1,3 @@
-import { Group, Stack, Text, Title } from '@mantine/core';
 import { createFileRoute } from '@tanstack/react-router';
 import { useState } from 'react';
 
@@ -13,56 +12,55 @@ export default function RouteComponent() {
   const [email, setEmail] = useState<string | null>(null);
 
   return (
-    <Group className="min-h-screen bg-white" wrap="nowrap" gap={0}>
-      {/* Left side - Voltade OS title and tagline */}
-      <Stack className="flex-1 px-8 lg:px-16" justify="space-between" h="100vh">
+    <div className="flex min-h-screen bg-white">
+      {/* Left: branding */}
+      <div className="flex flex-1 flex-col justify-between px-8 lg:px-16">
         <div className="pt-8">
-          <div
+          <img
+            src="https://voltade.com/images/Logo+typo.svg"
+            alt="Voltade Logo"
             className="h-8 w-auto"
-            style={{
-              backgroundImage: 'url(https://voltade.com/images/Logo+typo.svg)',
-              backgroundSize: 'contain',
-              backgroundRepeat: 'no-repeat',
-              backgroundPosition: 'left center',
-            }}
           />
         </div>
-
-        <div className="flex-1 flex items-center">
+        <div className="flex flex-1 items-center">
           <div className="max-w-md">
-            <Stack gap="xl">
-              <Title
-                order={1}
-                className="text-5xl font-bold text-gray-900 leading-tight"
-                style={{ fontFamily: 'Inter, system-ui, sans-serif' }}
-              >
-                Voltade OS
-              </Title>
-              <Text className="text-3xl text-gray-900 leading-tight">
-                Next gen business software and developer platform
-              </Text>
-            </Stack>
+            <h1 className="text-5xl font-bold leading-tight text-gray-900">
+              Voltade OS
+            </h1>
+            <p className="mt-4 text-3xl leading-tight text-gray-900">
+              Next gen business software and developer platform
+            </p>
           </div>
         </div>
+        <div />
+      </div>
 
-        <div></div>
-      </Stack>
-
-      {/* Right side - Sign in form */}
-      <Stack
-        className="flex-1 bg-gray-50"
-        justify="center"
-        align="center"
-        h="100vh"
-      >
-        <div className="max-w-sm w-full">
+      {/* Right: sign-in form */}
+      <div className="flex flex-1 items-center justify-center border-l bg-white">
+        <div className="w-full max-w-sm p-6">
+          <div className="mb-6">
+            <h2 className="text-3xl font-bold text-gray-900">Sign in</h2>
+            <p className="text-sm text-gray-600">
+              Use your email to receive a verification code.
+            </p>
+          </div>
           {!email ? (
             <EmailForm onEmailSent={setEmail} />
           ) : (
-            <EmailOtp email={email} setEmail={setEmail} />
+            <>
+              <div className="mb-4">
+                <h3 className="text-xl font-semibold text-gray-900">
+                  Enter verification code
+                </h3>
+                <p className="text-sm text-gray-600">
+                  We sent a code to {email}
+                </p>
+              </div>
+              <EmailOtp email={email} setEmail={setEmail} />
+            </>
           )}
         </div>
-      </Stack>
-    </Group>
+      </div>
+    </div>
   );
 }

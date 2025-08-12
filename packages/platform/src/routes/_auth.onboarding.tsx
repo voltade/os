@@ -1,166 +1,118 @@
-import { Button, Group, Stack, Text, TextInput, Title } from '@mantine/core';
-import { useForm } from '@mantine/form';
-import { notifications } from '@mantine/notifications';
 import { createFileRoute, redirect, useNavigate } from '@tanstack/react-router';
+import { Button } from '@voltade/ui/button.tsx';
+import { Input } from '@voltade/ui/input.tsx';
+import { useEffect, useState } from 'react';
 
+import {
+  showError,
+  showSuccess,
+} from '#src/components/utils/notifications.tsx';
 import { authClient } from '#src/lib/auth.ts';
 
-export const Route = createFileRoute('/_auth/onboarding' as any)({
+export const Route = createFileRoute('/_auth/onboarding')({
   component: RouteComponent,
-  beforeLoad: async () => {
-    // Require an authenticated session for onboarding
-    const { data } = await authClient.getSession();
-    if (!data) {
-      throw redirect({ to: '/signin' });
-    }
-  },
 });
 
 function RouteComponent() {
   const navigate = useNavigate();
-  const form = useForm({
-    mode: 'uncontrolled',
-    initialValues: {
-      name: '',
-    },
-    validate: {
-      name: (value) =>
-        value.trim().length < 2 ? 'Name must be at least 2 characters' : null,
-    },
-  });
+  const [name, setName] = useState('');
+  const [loading, setLoading] = useState(false);
+
+  useEffect(() => {
+    (async () => {
+      const { data, error } = await authClient.getSession();
+      if (error || !data) {
+        redirect({ to: '/signin' });
+        return;
+      }
+    })();
+  }, []);
+
+  const handleSubmit = async () => {
+    const trimmed = name.trim();
+    if (trimmed.length < 2) {
+      showError('Name must be at least 2 characters');
+      return;
+    }
+    setLoading(true);
+    try {
+      const result = await authClient.updateUser({ name: trimmed });
+      if (result.error) {
+        showError(result.error.message || 'Failed to save name');
+        return;
+      }
+      showSuccess('Welcome to Voltade');
+      navigate({ to: '/' });
+    } catch (e) {
+      showError(e instanceof Error ? e.message : 'Failed to save name');
+    } finally {
+      setLoading(false);
+    }
+  };
 
   return (
-    <Group className="min-h-screen bg-white" wrap="nowrap" gap={0}>
-      {/* Left side - Branding, identical to sign-in */}
-      <Stack className="flex-1 px-8 lg:px-16" justify="space-between" h="100vh">
+    <div className="flex min-h-screen bg-white">
+      {/* Left: branding */}
+      <div className="flex flex-1 flex-col justify-between px-8 lg:px-16">
         <div className="pt-8">
-          <div
+          <img
+            src="https://voltade.com/images/Logo+typo.svg"
+            alt="Voltade Logo"
             className="h-8 w-auto"
-            style={{
-              backgroundImage: 'url(https://voltade.com/images/Logo+typo.svg)',
-              backgroundSize: 'contain',
-              backgroundRepeat: 'no-repeat',
-              backgroundPosition: 'left center',
-            }}
           />
         </div>
-
-        <div className="flex-1 flex items-center">
+        <div className="flex flex-1 items-center">
           <div className="max-w-md">
-            <Stack gap="xl">
-              <Title
-                order={1}
-                className="text-5xl font-bold text-gray-900 leading-tight"
-                style={{ fontFamily: 'Inter, system-ui, sans-serif' }}
-              >
-                Voltade OS
-              </Title>
-              <Text className="text-3xl text-gray-900 leading-tight">
-                Next gen business software and developer platform
-              </Text>
-            </Stack>
+            <h1 className="text-5xl font-bold leading-tight text-gray-900">
+              Voltade OS
+            </h1>
+            <p className="mt-4 text-3xl leading-tight text-gray-900">
+              Next gen business software and developer platform
+            </p>
           </div>
         </div>
+        <div />
+      </div>
 
-        <div></div>
-      </Stack>
-
-      {/* Right side - Onboarding name form */}
-      <Stack
-        className="flex-1 bg-gray-50"
-        justify="center"
-        align="center"
-        h="100vh"
-      >
-        <div className="max-w-sm w-full">
+      {/* Right: onboarding form */}
+      <div className="flex flex-1 items-center justify-center border-l bg-white">
+        <div className="w-full max-w-sm p-6">
+          <div className="mb-6">
+            <h2 className="text-3xl font-bold text-gray-900">
+              Enter your name
+            </h2>
+            <p className="text-sm text-gray-600">
+              We will use this to personalize your account.
+            </p>
+          </div>
           <form
-            onSubmit={form.onSubmit(async (values) => {
-              try {
-                const result = await authClient.updateUser({
-                  name: values.name.trim(),
-                });
-                if (result.error) {
-                  notifications.show({
-                    title: 'Error',
-                    message: result.error.message || 'Failed to save name',
-                    color: 'red',
-                  });
-                  return;
-                }
-                navigate({ to: '/' });
-              } catch (error) {
-                notifications.show({
-                  title: 'Error',
-                  message: (error as Error).message,
-                  color: 'red',
-                });
-              }
-            })}
+            onSubmit={(e) => {
+              e.preventDefault();
+              handleSubmit();
+            }}
+            className="space-y-4"
           >
-            <Stack gap="xl">
-              <Stack gap="xs">
-                <Title
-                  order={2}
-                  className="text-3xl font-bold text-gray-900"
-                  style={{ fontFamily: 'Inter, system-ui, sans-serif' }}
-                >
-                  Enter your name
-                </Title>
-                <Text className="text-sm text-gray-600">
-                  We will use this to personalize your account.
-                </Text>
-              </Stack>
-
-              <Stack gap="lg">
-                <Stack gap="xs">
-                  <Text className="text-sm font-medium text-gray-700">
-                    Full name
-                  </Text>
-                  <TextInput
-                    placeholder="Jane Doe"
-                    required
-                    size="md"
-                    styles={{
-                      input: {
-                        border: 'none',
-                        borderBottom: '2px solid #e5e7eb',
-                        borderRadius: '0',
-                        backgroundColor: 'transparent',
-                        padding: '12px 0',
-                        fontSize: '16px',
-                        '&:focus': {
-                          outline: 'none',
-                          borderBottom: '2px solid #7c3aed',
-                          backgroundColor: 'transparent',
-                        },
-                      },
-                    }}
-                    key={form.key('name')}
-                    {...form.getInputProps('name')}
-                  />
-                </Stack>
-
-                <Button
-                  type="submit"
-                  fullWidth
-                  size="lg"
-                  style={{
-                    backgroundColor: '#7c3aed',
-                    borderRadius: '6px',
-                    border: 'none',
-                    fontWeight: 600,
-                    fontSize: '16px',
-                    color: 'white',
-                    height: '48px',
-                  }}
-                >
-                  Continue
-                </Button>
-              </Stack>
-            </Stack>
+            <div>
+              <label
+                htmlFor="onboarding-fullname"
+                className="mb-1 block text-sm font-medium text-muted-foreground"
+              >
+                Full name
+              </label>
+              <Input
+                id="onboarding-fullname"
+                value={name}
+                onChange={(e) => setName(e.target.value)}
+                placeholder="Jane Doe"
+                autoFocus
+              />
+            </div>
+            <Button type="submit" className="w-full" disabled={loading}>
+              {loading ? 'Saving…' : 'Continue'}
+            </Button>
           </form>
         </div>
-      </Stack>
-    </Group>
+      </div>
+    </div>
   );
 }

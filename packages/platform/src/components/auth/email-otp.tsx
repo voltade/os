@@ -1,9 +1,13 @@
-import { Button, PinInput, Stack, Text, Title } from '@mantine/core';
-import { useForm } from '@mantine/form';
-import { notifications } from '@mantine/notifications';
 import { useNavigate } from '@tanstack/react-router';
-import { useState } from 'react';
+import { Button } from '@voltade/ui/button.tsx';
+import {
+  InputOTP,
+  InputOTPGroup,
+  InputOTPSlot,
+} from '@voltade/ui/input-otp.tsx';
+import { useMemo, useState } from 'react';
 
+import { showError } from '#src/components/utils/notifications.tsx';
 import { authClient } from '#src/lib/auth.ts';
 
 interface Props {
@@ -14,97 +18,71 @@ interface Props {
 export function EmailOtp({ email, setEmail }: Props) {
   const navigate = useNavigate();
   const [isLoading, setIsLoading] = useState(false);
+  const [otp, setOtp] = useState('');
 
-  const form = useForm({
-    mode: 'uncontrolled',
-    initialValues: {
-      otp: '',
-    },
-  });
+  const slots = useMemo(() => ['s1', 's2', 's3', 's4', 's5', 's6'], []);
+
+  const handleSubmit = async () => {
+    if (otp.length !== 6) {
+      showError('Enter the 6-digit code');
+      return;
+    }
+    setIsLoading(true);
+    try {
+      const result = await authClient.signIn.emailOtp({ email, otp });
+      if (!result.error) {
+        const session = await authClient.getSession();
+        const needsOnboarding =
+          !session.data?.user?.name ||
+          session.data.user.name.trim().length === 0;
+        navigate({ to: needsOnboarding ? '/onboarding' : '/' });
+      } else {
+        showError(result.error.message || 'Invalid verification code');
+      }
+    } catch (error) {
+      console.error('Error verifying OTP:', error);
+      showError((error as Error).message);
+    } finally {
+      setIsLoading(false);
+    }
+  };
 
   return (
     <form
-      onSubmit={form.onSubmit(async (values) => {
-        setIsLoading(true);
-        try {
-          const result = await authClient.signIn.emailOtp({
-            email,
-            otp: values.otp,
-          });
-          if (!result.error) {
-            // After successful sign-in, check if onboarding is needed
-            const session = await authClient.getSession();
-            const needsOnboarding =
-              !session.data?.user?.name ||
-              session.data.user.name.trim().length === 0;
-            navigate({ to: needsOnboarding ? '/onboarding' : '/' });
-          } else {
-            notifications.show({
-              title: 'Error',
-              message: result.error.message || 'Invalid verification code',
-              color: 'red',
-            });
-          }
-        } catch (error) {
-          console.error('Error verifying OTP:', error);
-          notifications.show({
-            title: 'Error',
-            message: (error as Error).message,
-            color: 'red',
-          });
-        } finally {
-          setIsLoading(false);
-        }
-      })}
+      onSubmit={(e) => {
+        e.preventDefault();
+        handleSubmit();
+      }}
+      className="space-y-6"
     >
-      <Stack gap="xl">
-        <Stack gap="xs">
-          <Title
-            order={2}
-            className="text-3xl font-bold text-gray-900"
-            style={{ fontFamily: 'Inter, system-ui, sans-serif' }}
-          >
-            Enter verification code
-          </Title>
-          <Text className="text-sm text-gray-600">
-            We sent a code to {email}
-          </Text>
-        </Stack>
+      <div className="flex justify-center">
+        <InputOTP
+          value={otp}
+          onChange={(v) => setOtp(v)}
+          maxLength={6}
+          containerClassName="justify-center"
+        >
+          <InputOTPGroup>
+            {slots.map((key, i) => (
+              <InputOTPSlot key={key} index={i} />
+            ))}
+          </InputOTPGroup>
+        </InputOTP>
+      </div>
 
-        <Stack gap="lg">
-          <Stack gap="xs">
-            <PinInput
-              length={6}
-              size="lg"
-              autoFocus
-              styles={{
-                input: {
-                  border: '2px solid #e5e7eb',
-                  borderRadius: '8px',
-                  fontSize: '18px',
-                  fontWeight: 600,
-                  width: '48px',
-                  height: '48px',
-                },
-              }}
-              {...form.getInputProps('otp')}
-            />
-          </Stack>
-
-          <Button type="submit" fullWidth size="md" loading={isLoading}>
-            {isLoading ? 'Verifying...' : 'Verify and Sign in'}
-          </Button>
-          <Button
-            onClick={() => {
-              setEmail(null);
-            }}
-            size="md"
-            variant="outline"
-          >
-            Cancel
-          </Button>
-        </Stack>
-      </Stack>
+      <div className="space-y-2">
+        <Button type="submit" className="w-full" disabled={isLoading}>
+          {isLoading ? 'Verifying…' : 'Verify and Sign in'}
+        </Button>
+        <Button
+          type="button"
+          variant="outline"
+          className="w-full"
+          onClick={() => setEmail(null)}
+        >
+          Cancel
+        </Button>
+      </div>
     </form>
   );
 }

@@ -1,5 +1,5 @@
-import { Button, Stack, Text, Title } from '@mantine/core';
 import { createFileRoute, useNavigate } from '@tanstack/react-router';
+import { Button } from '@voltade/ui/button.tsx';
 import { useEffect, useState } from 'react';
 
 import { authClient } from '#src/lib/auth.ts';
@@ -16,15 +16,12 @@ export default function RouteComponent() {
   const [error, setError] = useState<string | null>(null);
   const [invitationValid, setInvitationValid] = useState(false);
 
-  // Validate invitation on component mount by trying to get invitation details
   useEffect(() => {
     const validateInvitation = async () => {
       try {
-        // Try to get invitation details to validate it exists and is valid
         const result = await authClient.organization.getInvitation({
           query: { id: invitationId },
         });
-
         if (result?.data) {
           setInvitationValid(true);
           setError(null);
@@ -43,19 +40,14 @@ export default function RouteComponent() {
         setValidating(false);
       }
     };
-
     validateInvitation();
   }, [invitationId]);
 
   const handleAccept = async () => {
     setLoading(true);
     setError(null);
-
     try {
-      await authClient.organization.acceptInvitation({
-        invitationId,
-      });
-
+      await authClient.organization.acceptInvitation({ invitationId });
       navigate({ to: '/' });
     } catch (error: unknown) {
       const message =
@@ -68,60 +60,127 @@ export default function RouteComponent() {
 
   if (validating) {
     return (
-      <Stack justify="center" align="center" h="100vh" className="bg-gray-50">
-        <div className="max-w-md text-center p-8 bg-white rounded-lg shadow-sm">
-          <Text className="text-gray-600 mb-4">Validating invitation...</Text>
+      <div className="flex min-h-screen bg-white">
+        <div className="flex flex-1 flex-col justify-between px-8 lg:px-16">
+          <div className="pt-8">
+            <img
+              src="https://voltade.com/images/Logo+typo.svg"
+              alt="Voltade Logo"
+              className="h-8 w-auto"
+            />
+          </div>
+          <div className="flex flex-1 items-center">
+            <div className="max-w-md">
+              <h1 className="text-5xl font-bold leading-tight text-gray-900">
+                Voltade OS
+              </h1>
+              <p className="mt-4 text-3xl leading-tight text-gray-900">
+                Next gen business software and developer platform
+              </p>
+            </div>
+          </div>
+          <div />
         </div>
-      </Stack>
+        <div className="flex flex-1 items-center justify-center border-l bg-white">
+          <div className="w-full max-w-sm p-6 text-center">
+            <p className="text-gray-600">Validating invitation...</p>
+          </div>
+        </div>
+      </div>
     );
   }
 
   if (error || !invitationValid) {
     return (
-      <Stack justify="center" align="center" h="100vh" className="bg-gray-50">
-        <div className="max-w-md text-center p-8 bg-white rounded-lg shadow-sm">
-          <Title order={2} className="text-2xl font-bold text-gray-900 mb-4">
-            Invalid or expired invitation
-          </Title>
-          <Text className="text-gray-600 mb-6">{error}</Text>
-          <Button onClick={() => navigate({ to: '/' })}>Go to Dashboard</Button>
+      <div className="flex min-h-screen bg-white">
+        <div className="flex flex-1 flex-col justify-between px-8 lg:px-16">
+          <div className="pt-8">
+            <img
+              src="https://voltade.com/images/Logo+typo.svg"
+              alt="Voltade Logo"
+              className="h-8 w-auto"
+            />
+          </div>
+          <div className="flex flex-1 items-center">
+            <div className="max-w-md">
+              <h1 className="text-5xl font-bold leading-tight text-gray-900">
+                Voltade OS
+              </h1>
+              <p className="mt-4 text-3xl leading-tight text-gray-900">
+                Next gen business software and developer platform
+              </p>
+            </div>
+          </div>
+          <div />
         </div>
-      </Stack>
+        <div className="flex flex-1 items-center justify-center border-l bg-white">
+          <div className="w-full max-w-sm p-6 text-center">
+            <h2 className="mb-4 text-2xl font-bold text-gray-900">
+              Invalid or expired invitation
+            </h2>
+            <p className="mb-6 text-gray-600">{error}</p>
+            <Button onClick={() => navigate({ to: '/' })}>
+              Go to Dashboard
+            </Button>
+          </div>
+        </div>
+      </div>
     );
   }
 
   return (
-    <Stack justify="center" align="center" h="100vh" className="bg-gray-50">
-      <div className="max-w-md w-full text-center p-8 bg-white rounded-lg shadow-sm">
-        <Title order={2} className="text-2xl font-bold text-gray-900 mb-4">
-          Join organization
-        </Title>
-        <Text className="text-gray-600 mb-2">
-          You've been invited to join an organization.
-        </Text>
-        <Text className="text-gray-500 mb-6" size="sm">
-          By accepting, you'll be added as a member and gain access immediately.
-        </Text>
-
-        <Stack gap="md">
-          <Button
-            onClick={handleAccept}
-            loading={loading}
-            size="md"
-            className="w-full"
-          >
-            Accept invitation
-          </Button>
-
-          <Button
-            variant="light"
-            onClick={() => navigate({ to: '/' })}
-            className="w-full"
-          >
-            Cancel
-          </Button>
-        </Stack>
+    <div className="flex min-h-screen bg-white">
+      <div className="flex flex-1 flex-col justify-between px-8 lg:px-16">
+        <div className="pt-8">
+          <img
+            src="https://voltade.com/images/Logo+typo.svg"
+            alt="Voltade Logo"
+            className="h-8 w-auto"
+          />
+        </div>
+        <div className="flex flex-1 items-center">
+          <div className="max-w-md">
+            <h1 className="text-5xl font-bold leading-tight text-gray-900">
+              Voltade OS
+            </h1>
+            <p className="mt-4 text-3xl leading-tight text-gray-900">
+              Next gen business software and developer platform
+            </p>
+          </div>
+        </div>
+        <div />
       </div>
-    </Stack>
+      <div className="flex flex-1 items-center justify-center border-l bg-white">
+        <div className="w-full max-w-sm p-6 text-center">
+          <h2 className="mb-4 text-2xl font-bold text-gray-900">
+            Join organization
+          </h2>
+          <p className="mb-2 text-gray-600">
+            You've been invited to join an organization.
+          </p>
+          <p className="mb-6 text-sm text-gray-500">
+            By accepting, you'll be added as a member and gain access
+            immediately.
+          </p>
+
+          <div className="space-y-3">
+            <Button
+              onClick={handleAccept}
+              disabled={loading}
+              className="w-full"
+            >
+              {loading ? 'Accepting…' : 'Accept invitation'}
+            </Button>
+            <Button
+              variant="outline"
+              onClick={() => navigate({ to: '/' })}
+              className="w-full"
+            >
+              Cancel
+            </Button>
+          </div>
+        </div>
+      </div>
+    </div>
   );
 }

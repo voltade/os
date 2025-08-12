@@ -1,6 +1,5 @@
 import { useForm } from '@mantine/form';
 import { useDisclosure } from '@mantine/hooks';
-import { notifications } from '@mantine/notifications';
 import {
   IconCrown,
   IconPlus,
@@ -35,6 +34,10 @@ import { MembersFilters } from '#src/components/team/MembersFilters';
 import { MembersTable } from '#src/components/team/MembersTable';
 import { RemoveMemberModal } from '#src/components/team/RemoveMemberModal';
 import { AccessDenied } from '#src/components/utils/access-denied';
+import {
+  showError,
+  showSuccess,
+} from '#src/components/utils/notifications.tsx';
 import { authClient } from '#src/lib/auth.ts';
 
 export const Route = createFileRoute('/_main/team/')({
@@ -137,21 +140,16 @@ function RouteComponent() {
         memberIdOrEmail: memberToRemove.id,
         organizationId: organisation?.id || '',
       });
-      notifications.show({
-        title: 'Member removed',
-        message: `${memberToRemove.name} has been removed from the organization`,
-        color: 'green',
-      });
+      showSuccess(
+        `${memberToRemove.name} has been removed from the organization`,
+      );
       closeRemoveModal();
       setMemberToRemove(null);
     } catch (error) {
       console.error('Error removing member:', error);
-      notifications.show({
-        title: 'Failed to remove member',
-        message:
-          error instanceof Error ? error.message : 'Something went wrong',
-        color: 'red',
-      });
+      showError(
+        error instanceof Error ? error.message : 'Something went wrong',
+      );
     } finally {
       setIsRemoving(false);
     }
@@ -168,30 +166,19 @@ function RouteComponent() {
       });
 
       if (!error) {
-        notifications.show({
-          title: 'Invitation sent',
-          message: `We’ve sent an invite to ${values.email}`,
-          color: 'green',
-        });
+        showSuccess(`We’ve sent an invite to ${values.email}`);
         form.reset();
         close();
         // refresh invites list if on invites tab
         if (activeTab === 'invites') await fetchInvites();
       } else {
-        notifications.show({
-          title: 'Failed to send invitation',
-          message: error.message || 'Please try again later',
-          color: 'red',
-        });
+        showError(error.message || 'Please try again later');
       }
     } catch (error) {
       console.error('Error inviting member:', error);
-      notifications.show({
-        title: 'Failed to send invitation',
-        message:
-          error instanceof Error ? error.message : 'Please try again later',
-        color: 'red',
-      });
+      showError(
+        error instanceof Error ? error.message : 'Please try again later',
+      );
     } finally {
       setIsInviting(false);
     }
@@ -212,17 +199,9 @@ function RouteComponent() {
         organizationId: organisation?.id || undefined,
       });
       if (error) throw new Error(error.message);
-      notifications.show({
-        title: 'Role updated',
-        message: 'Member role has been updated',
-        color: 'green',
-      });
+      showSuccess('Member role has been updated');
     } catch (e) {
-      notifications.show({
-        title: 'Failed to update role',
-        message: e instanceof Error ? e.message : 'Unknown error',
-        color: 'red',
-      });
+      showError(e instanceof Error ? e.message : 'Unknown error');
     } finally {
       setRoleUpdateMemberId(null);
     }
@@ -242,11 +221,7 @@ function RouteComponent() {
       );
       setInvites(onlyPending as OrganizationInviteRow[]);
     } catch (e) {
-      notifications.show({
-        title: 'Failed to load invitations',
-        message: e instanceof Error ? e.message : 'Unknown error',
-        color: 'red',
-      });
+      showError(e instanceof Error ? e.message : 'Unknown error');
     } finally {
       setInvitesLoading(false);
     }
@@ -258,18 +233,10 @@ function RouteComponent() {
         invitationId,
       });
       if (error) throw new Error(error.message);
-      notifications.show({
-        title: 'Invitation cancelled',
-        message: 'The invite has been cancelled',
-        color: 'green',
-      });
+      showSuccess('The invite has been cancelled');
       await fetchInvites();
     } catch (e) {
-      notifications.show({
-        title: 'Failed to cancel invitation',
-        message: e instanceof Error ? e.message : 'Unknown error',
-        color: 'red',
-      });
+      showError(e instanceof Error ? e.message : 'Unknown error');
     }
   };
 
@@ -282,17 +249,9 @@ function RouteComponent() {
         resend: true,
       });
       if (error) throw new Error(error.message);
-      notifications.show({
-        title: 'Invitation re-sent',
-        message: 'We have re-sent the invitation email',
-        color: 'green',
-      });
+      showSuccess('We have re-sent the invitation email');
     } catch (e) {
-      notifications.show({
-        title: 'Failed to resend invitation',
-        message: e instanceof Error ? e.message : 'Unknown error',
-        color: 'red',
-      });
+      showError(e instanceof Error ? e.message : 'Unknown error');
     }
   };
 

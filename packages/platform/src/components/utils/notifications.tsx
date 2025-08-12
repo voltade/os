@@ -1,15 +1,12 @@
-import { showNotification } from '@mantine/notifications';
 import { IconCheck, IconX } from '@tabler/icons-react';
+import { toast } from 'sonner';
 
 export const showSuccess = (message: string) =>
-  showNotification({
-    color: 'green',
+  toast.success(message, {
     icon: <IconCheck size={16} />,
-    message,
   });
+
 export const showError = (message: string) =>
-  showNotification({
-    color: 'red',
+  toast.error(message, {
     icon: <IconX size={16} />,
-    message,
   });
