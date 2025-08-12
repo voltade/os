@@ -32,7 +32,7 @@ function RouteComponent() {
   }
 
   return (
-    <div className="flex gap-6">
+    <div className="flex min-h-[calc(100dvh-theme(spacing.24))] gap-6">
       <DevSidebar />
       <div className="min-w-0 flex-1">
         <Outlet />
