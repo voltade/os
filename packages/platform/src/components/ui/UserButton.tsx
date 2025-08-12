@@ -42,15 +42,11 @@ export function UserButton() {
   };
 
   const handleDev = () => {
-    navigate({ to: '/dev' });
-  };
-
-  const handleProfile = () => {
-    navigate({ to: '/profile' });
+    navigate({ to: '/dev/environments' });
   };
 
   const handleSettings = () => {
-    console.log('Settings clicked');
+    navigate({ to: '/settings' });
   };
 
   return (
@@ -93,11 +89,8 @@ export function UserButton() {
         </div>
         <DropdownMenuSeparator />
         <DropdownMenuLabel>Account</DropdownMenuLabel>
-        <DropdownMenuItem onClick={handleProfile} className="cursor-pointer">
-          <User className="mr-2 size-4" /> Profile
-        </DropdownMenuItem>
         <DropdownMenuItem onClick={handleSettings} className="cursor-pointer">
-          <Settings className="mr-2 size-4" /> Settings
+          <User className="mr-2 size-4" /> Settings
         </DropdownMenuItem>
         <DropdownMenuSeparator />
         <DropdownMenuLabel>Organization</DropdownMenuLabel>
