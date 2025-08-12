@@ -1,7 +1,8 @@
 import { createFileRoute, Outlet } from '@tanstack/react-router';
 
-import { EnvironmentNavbar } from '#src/components/ui/environment/Navbar';
+import { EnvironmentSettingsSidebar } from '#src/components/ui/environment/SettingsSidebar';
 import { AccessDenied } from '#src/components/utils/access-denied';
+import { Loading } from '#src/components/utils/loading';
 import { authClient } from '#src/lib/auth.ts';
 
 export const Route = createFileRoute(
@@ -15,12 +16,7 @@ function RouteComponent() {
   const { data: organisation, isPending } = authClient.useActiveOrganization();
   const { data: session } = authClient.useSession();
 
-  if (isPending)
-    return (
-      <div className="flex h-24 items-center justify-center">
-        <div className="h-5 w-5 animate-spin rounded-full border-2 border-muted-foreground border-t-transparent" />
-      </div>
-    );
+  if (isPending) return <Loading fullHeight message="Loading environment..." />;
 
   const currentUserMember = organisation?.members?.find(
     (m) => m.userId === session?.user?.id,
@@ -31,12 +27,19 @@ function RouteComponent() {
   if (!isAllowed) return <AccessDenied />;
 
   return (
-    <>
-      <EnvironmentNavbar
+    <div className="flex gap-6">
+      <EnvironmentSettingsSidebar
         envSlug={environmentSlug}
         basePathPrefix="/dev/environments"
       />
-      <Outlet />
-    </>
+      <div className="min-w-0 flex-1">
+        <div className="mb-4 text-sm text-muted-foreground">
+          <span>Environments</span>
+          <span className="mx-1">/</span>
+          <span className="font-medium text-foreground">{environmentSlug}</span>
+        </div>
+        <Outlet />
+      </div>
+    </div>
   );
 }

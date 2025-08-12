@@ -42,7 +42,11 @@ export function SettingsNavbar({
     <aside className="h-full w-full">
       <div className="p-2">
         <div className="space-y-2 p-2">
-          <p className="text-sm font-semibold text-muted-foreground">{title}</p>
+          {title ? (
+            <p className="text-sm font-semibold text-muted-foreground">
+              {title}
+            </p>
+          ) : null}
           <nav className="space-y-1">
             {navItems.map((item) => {
               const active = isActivePathMatcher(
@@ -57,13 +61,15 @@ export function SettingsNavbar({
                   type="button"
                   onClick={() => navigate({ to: item.path })}
                   className={[
-                    'flex w-full items-center gap-2 rounded-md px-2 py-1.5 text-left text-sm transition-colors',
+                    'group flex w-full items-center gap-2 rounded-md px-2 py-1.5 text-left text-sm transition-colors',
                     active
                       ? 'bg-accent text-accent-foreground'
                       : 'text-muted-foreground hover:bg-accent hover:text-accent-foreground',
                   ].join(' ')}
                 >
-                  <IconComp size={18} />
+                  <span className="inline-flex size-5 items-center justify-center rounded-md bg-muted text-muted-foreground group-hover:bg-background group-hover:text-foreground">
+                    <IconComp size={14} />
+                  </span>
                   <span>{item.label}</span>
                 </button>
               );

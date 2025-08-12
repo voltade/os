@@ -1,4 +1,8 @@
-import { createFileRoute, Outlet } from '@tanstack/react-router';
+import {
+  createFileRoute,
+  Outlet,
+  useRouterState,
+} from '@tanstack/react-router';
 
 import { DevSidebar } from '#src/components/ui/dev/Sidebar';
 import { AccessDenied } from '#src/components/utils/access-denied';
@@ -11,6 +15,7 @@ export const Route = createFileRoute('/_main/dev')({
 function RouteComponent() {
   const { data: organisation, isPending } = authClient.useActiveOrganization();
   const { data: session } = authClient.useSession();
+  const pathname = useRouterState({ select: (s) => s.location.pathname });
 
   if (isPending) {
     return (
@@ -31,9 +36,11 @@ function RouteComponent() {
     return <AccessDenied />;
   }
 
+  const isEnvironmentDetail = pathname.startsWith('/dev/environments/');
+
   return (
     <div className="flex min-h-[calc(100dvh-theme(spacing.24))] gap-6">
-      <DevSidebar />
+      {!isEnvironmentDetail && <DevSidebar />}
       <div className="min-w-0 flex-1">
         <Outlet />
       </div>
