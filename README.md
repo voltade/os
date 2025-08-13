@@ -24,10 +24,9 @@ Login to ArgoCD with username `admin` and password `admin`.
 ## Prepare the platform database
 
 ```bash
-bun --cwd packages/platform env
 bun --cwd packages/platform db:reset
 ```
-This creates the platform database and inserts one row into the `environment` table.
+This updates your `packages/platform/.env` file, creates the platform database, and inserts one row into the `environment` table.
 
 Note: If `drizzle-kit` is stuck after outputting `Reading config file`, run `bun run clean && bun install` and try again.
 
@@ -44,14 +43,22 @@ This serves an `/environment` endpoint which tells ArgoCD to create a CNPG clust
 bun --cwd packages/core-schema db:reset
 ```
 
-## Connect the app template to the environment database
-Edit `packages/app-template/.env` with reference to `.env.example`.
+## Connect the app template or an app to the environment database
+For the app template, edit `packages/app-template/.env`  with reference to `.env.example`.
 
-## Start the app template
+For some app, e.g., `education-registration`, edit `apps/education-registration/.env` with reference to `.env.example`.
+
+## Start the app template or an app
 
 ```bash
+# For the app template:
 bun --cwd packages/app-template dev
+
+# For an app:
+bun --cwd apps/education-registration dev
 ```
+
+If your development server is not starting, run `bun run clean && bun install` from the root of the repository before continuing to troubleshoot.
 
 ## Installation of PostgreSQL extensions
 
