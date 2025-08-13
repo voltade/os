@@ -1,7 +1,9 @@
+import { useNavigate } from '@tanstack/react-router';
 import { useTheme } from '@voltade/ui/theme-provider.js';
 import { useEffect, useState } from 'react';
 
 export function Logo() {
+  const navigate = useNavigate();
   const { theme } = useTheme(); // app theme
   const [systemTheme, setSystemTheme] = useState<'dark' | 'light'>('light');
 
@@ -17,13 +19,17 @@ export function Logo() {
   const effectiveTheme = theme === 'system' ? systemTheme : theme; // handle case where app theme follows system
 
   return (
+    /* biome-ignore lint/a11y/useKeyWithClickEvents: Clickable logo navigates home; keyboard handling intentionally omitted. */
     <svg
-      className="h-6 w-auto shrink-0"
+      className="h-6 w-auto shrink-0 cursor-pointer "
       width="347"
       height="110"
       viewBox="0 0 347 110"
       fill="none"
       xmlns="http://www.w3.org/2000/svg"
+      onClick={() => {
+        navigate({ to: '/' });
+      }}
     >
       <title>Voltade</title>
       <path
