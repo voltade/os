@@ -291,28 +291,6 @@ function RouteComponent() {
     setActivePage(1);
   };
 
-  const _getRoleIcon = (role: string) => {
-    switch (role) {
-      case 'owner':
-        return <Crown size={16} />;
-      case 'admin':
-        return <UserCheck size={16} />;
-      default:
-        return <User size={16} />;
-    }
-  };
-
-  const _getRoleBadgeColor = (role: string) => {
-    switch (role) {
-      case 'owner':
-        return 'grape';
-      case 'admin':
-        return 'red';
-      default:
-        return 'gray';
-    }
-  };
-
   if (isPending) {
     return (
       <div className="flex h-[200px] items-center justify-center">
@@ -331,8 +309,8 @@ function RouteComponent() {
       {/* Header */}
       <div className="flex items-start justify-between">
         <div>
-          <h2 className="text-xl font-semibold text-foreground">Team</h2>
-          <p className="text-muted-foreground">
+          <h2 className="text-3xl font-bold text-foreground">Team</h2>
+          <p className="text-sm text-muted-foreground">
             Manage members and invitations for {organisation?.name}
           </p>
         </div>
@@ -369,12 +347,6 @@ function RouteComponent() {
 
         <TabsContent value="members">
           <Card className="gap-0 py-0">
-            <CardHeader className="p-4">
-              <CardTitle className="sr-only">Members</CardTitle>
-              <CardDescription className="sr-only">
-                Filters and table
-              </CardDescription>
-            </CardHeader>
             <CardContent className="p-6">
               <div className="mb-4">
                 <MembersFilters
@@ -402,7 +374,10 @@ function RouteComponent() {
             <div className="flex justify-center py-10">
               <div className="flex flex-col items-center gap-2">
                 <User size={48} className="text-muted-foreground" />
-                <p className="text-muted-foreground">
+                <h3 className="text-lg font-medium text-foreground">
+                  No members found
+                </h3>
+                <p className="text-sm text-muted-foreground">
                   No members found matching your criteria
                 </p>
                 <Button
