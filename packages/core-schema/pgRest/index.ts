@@ -7,11 +7,13 @@ export { useProductTemplates } from './hooks/products/useProductTemplates.ts';
 
 export const createClient = (
   POSTGRES_URL: string,
-  POSTGRES_JWT_TOKEN: string,
+  POSTGRES_JWT_TOKEN?: string,
 ) => {
   return new PostgrestClient<Database>(POSTGRES_URL, {
     headers: {
-      Authorization: `Bearer ${POSTGRES_JWT_TOKEN}`,
+      Authorization: POSTGRES_JWT_TOKEN
+        ? `Bearer ${POSTGRES_JWT_TOKEN}`
+        : undefined,
       'Content-Type': 'application/json',
     },
   });
