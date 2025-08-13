@@ -39,7 +39,7 @@ export function OrganizationSwitcher() {
       <SidebarMenu>
         <SidebarMenuItem>
           <SidebarMenuButton
-            size="lg"
+            size="default"
             className="animate-pulse opacity-70"
             disabled
           >
@@ -77,8 +77,8 @@ export function OrganizationSwitcher() {
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
             <SidebarMenuButton
-              size="lg"
-              className="data-[state=open]:bg-sidebar-accent data-[state=open]:text-sidebar-accent-foreground h-9"
+              size="default"
+              className="data-[state=open]:bg-sidebar-accent data-[state=open]:text-sidebar-accent-foreground"
             >
               <TriggerBadge org={activeOrg} />
               <div className="grid flex-1 text-left text-sm leading-tight">
