@@ -20,6 +20,7 @@ import { Route as AuthOnboardingRouteImport } from './routes/_auth.onboarding'
 import { Route as MainTeamIndexRouteImport } from './routes/_main.team.index'
 import { Route as MainSettingsIndexRouteImport } from './routes/_main.settings.index'
 import { Route as MainDevIndexRouteImport } from './routes/_main.dev.index'
+import { Route as MainSettingsOrganizationsRouteImport } from './routes/_main.settings.organizations'
 import { Route as MainDevGitProvidersRouteImport } from './routes/_main.dev.git-providers'
 import { Route as MainDevApplicationsRouteImport } from './routes/_main.dev.applications'
 import { Route as MainAcceptInvitationInvitationIdRouteImport } from './routes/_main.accept-invitation.$invitationId'
@@ -83,6 +84,12 @@ const MainDevIndexRoute = MainDevIndexRouteImport.update({
   path: '/',
   getParentRoute: () => MainDevRoute,
 } as any)
+const MainSettingsOrganizationsRoute =
+  MainSettingsOrganizationsRouteImport.update({
+    id: '/organizations',
+    path: '/organizations',
+    getParentRoute: () => MainSettingsRoute,
+  } as any)
 const MainDevGitProvidersRoute = MainDevGitProvidersRouteImport.update({
   id: '/git-providers',
   path: '/git-providers',
@@ -145,6 +152,7 @@ export interface FileRoutesByFullPath {
   '/accept-invitation/$invitationId': typeof MainAcceptInvitationInvitationIdRoute
   '/dev/applications': typeof MainDevApplicationsRoute
   '/dev/git-providers': typeof MainDevGitProvidersRoute
+  '/settings/organizations': typeof MainSettingsOrganizationsRoute
   '/dev/': typeof MainDevIndexRoute
   '/settings/': typeof MainSettingsIndexRoute
   '/team': typeof MainTeamIndexRoute
@@ -163,6 +171,7 @@ export interface FileRoutesByTo {
   '/accept-invitation/$invitationId': typeof MainAcceptInvitationInvitationIdRoute
   '/dev/applications': typeof MainDevApplicationsRoute
   '/dev/git-providers': typeof MainDevGitProvidersRoute
+  '/settings/organizations': typeof MainSettingsOrganizationsRoute
   '/dev': typeof MainDevIndexRoute
   '/settings': typeof MainSettingsIndexRoute
   '/team': typeof MainTeamIndexRoute
@@ -185,6 +194,7 @@ export interface FileRoutesById {
   '/_main/accept-invitation/$invitationId': typeof MainAcceptInvitationInvitationIdRoute
   '/_main/dev/applications': typeof MainDevApplicationsRoute
   '/_main/dev/git-providers': typeof MainDevGitProvidersRoute
+  '/_main/settings/organizations': typeof MainSettingsOrganizationsRoute
   '/_main/dev/': typeof MainDevIndexRoute
   '/_main/settings/': typeof MainSettingsIndexRoute
   '/_main/team/': typeof MainTeamIndexRoute
@@ -207,6 +217,7 @@ export interface FileRouteTypes {
     | '/accept-invitation/$invitationId'
     | '/dev/applications'
     | '/dev/git-providers'
+    | '/settings/organizations'
     | '/dev/'
     | '/settings/'
     | '/team'
@@ -225,6 +236,7 @@ export interface FileRouteTypes {
     | '/accept-invitation/$invitationId'
     | '/dev/applications'
     | '/dev/git-providers'
+    | '/settings/organizations'
     | '/dev'
     | '/settings'
     | '/team'
@@ -246,6 +258,7 @@ export interface FileRouteTypes {
     | '/_main/accept-invitation/$invitationId'
     | '/_main/dev/applications'
     | '/_main/dev/git-providers'
+    | '/_main/settings/organizations'
     | '/_main/dev/'
     | '/_main/settings/'
     | '/_main/team/'
@@ -339,6 +352,13 @@ declare module '@tanstack/react-router' {
       fullPath: '/dev/'
       preLoaderRoute: typeof MainDevIndexRouteImport
       parentRoute: typeof MainDevRoute
+    }
+    '/_main/settings/organizations': {
+      id: '/_main/settings/organizations'
+      path: '/organizations'
+      fullPath: '/settings/organizations'
+      preLoaderRoute: typeof MainSettingsOrganizationsRouteImport
+      parentRoute: typeof MainSettingsRoute
     }
     '/_main/dev/git-providers': {
       id: '/_main/dev/git-providers'
@@ -461,10 +481,12 @@ const MainDevRouteWithChildren =
   MainDevRoute._addFileChildren(MainDevRouteChildren)
 
 interface MainSettingsRouteChildren {
+  MainSettingsOrganizationsRoute: typeof MainSettingsOrganizationsRoute
   MainSettingsIndexRoute: typeof MainSettingsIndexRoute
 }
 
 const MainSettingsRouteChildren: MainSettingsRouteChildren = {
+  MainSettingsOrganizationsRoute: MainSettingsOrganizationsRoute,
   MainSettingsIndexRoute: MainSettingsIndexRoute,
 }
 

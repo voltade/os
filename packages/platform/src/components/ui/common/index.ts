@@ -1,1 +1,1 @@
-export { SettingsNavbar } from './SettingsNavbar.tsx';
+export { NavigationSidebar } from './NavigationSidebar.tsx';

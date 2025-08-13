@@ -8,7 +8,7 @@ interface NavItem {
   external?: boolean;
 }
 
-interface SettingsNavbarProps {
+interface NavigationSidebarProps {
   title?: string;
   navItems: NavItem[];
   pathPrefix?: string;
@@ -31,13 +31,13 @@ function defaultIsActivePathMatcher(
   return currentPath.startsWith(itemPath);
 }
 
-export function SettingsNavbar({
+export function NavigationSidebar({
   title,
   navItems,
   pathPrefix,
   showIcons = false,
   isActivePathMatcher = defaultIsActivePathMatcher,
-}: SettingsNavbarProps) {
+}: NavigationSidebarProps) {
   const location = useLocation();
   const navigate = useNavigate();
 

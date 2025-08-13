@@ -1,6 +1,6 @@
 import { Database, Grid3X3, Settings, Variable } from 'lucide-react';
 
-import { SettingsNavbar } from '../common/index.ts';
+import { NavigationSidebar } from '../common/index.ts';
 
 interface Props {
   envSlug: string;
@@ -36,7 +36,7 @@ export function EnvironmentSettingsSidebar({
   return (
     <aside className="w-52 shrink-0 border-r bg-background">
       <div className="px-4 py-5">
-        <SettingsNavbar
+        <NavigationSidebar
           title="Environment Settings"
           navItems={navItems}
           pathPrefix={base}
