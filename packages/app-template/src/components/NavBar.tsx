@@ -17,13 +17,11 @@ export const NAVBAR_COLLAPSED_WIDTH_PX = 60;
 // Define routes
 export const HOME_ROUTE = '/';
 export const PRODUCT_TEMPLATES_TABLE_ROUTE = '/product-templates';
-export const REGISTRATION_FORM_ROUTE = '/registration-form';
 export const STUDENTS_ROUTE = '/students';
 
 // Define route display names
 const HOME_ROUTE_NAME = 'Home';
 const PRODUCT_TEMPLATES_TABLE_ROUTE_NAME = 'Product Templates';
-export const REGISTRATION_FORM_ROUTE_NAME = 'Registration Form';
 export const STUDENTS_ROUTE_NAME = 'Students';
 
 export interface NavBarProps {
@@ -91,13 +89,6 @@ const NavBar: React.FC<NavBarProps> = (props: NavBarProps) => {
                 }
               />
               <NavLink
-                label={REGISTRATION_FORM_ROUTE_NAME}
-                variant="light"
-                leftSection={<IconUserPlus size={18} stroke={1.5} />}
-                active={activeTab === REGISTRATION_FORM_ROUTE}
-                onClick={() => handleSetActiveTab(REGISTRATION_FORM_ROUTE)}
-              />
-              <NavLink
                 label={STUDENTS_ROUTE_NAME}
                 variant="light"
                 leftSection={<IconTable size={18} stroke={1.5} />}
@@ -141,27 +132,6 @@ const NavBar: React.FC<NavBarProps> = (props: NavBarProps) => {
                     stroke={1.5}
                     color={
                       activeTab === PRODUCT_TEMPLATES_TABLE_ROUTE
-                        ? undefined
-                        : 'black'
-                    }
-                  />
-                </ActionIcon>
-              </Tooltip>
-              <Tooltip
-                label={REGISTRATION_FORM_ROUTE_NAME}
-                position="right"
-                withArrow
-                arrowSize={4}
-              >
-                <ActionIcon
-                  variant="transparent"
-                  onClick={() => handleSetActiveTab(REGISTRATION_FORM_ROUTE)}
-                >
-                  <IconUserPlus
-                    size={24}
-                    stroke={1.5}
-                    color={
-                      activeTab === REGISTRATION_FORM_ROUTE
                         ? undefined
                         : 'black'
                     }
