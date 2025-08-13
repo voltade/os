@@ -57,7 +57,7 @@ export function ProfileGeneral() {
       <Card className="w-full gap-0">
         {' '}
         {/* make card span full width */}
-        <CardHeader className="pb-0 px-4 pt-4">
+        <CardHeader className="p-4">
           <CardTitle className="text-sm font-medium text-muted-foreground">
             Profile
           </CardTitle>

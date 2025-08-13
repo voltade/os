@@ -249,7 +249,7 @@ export function EnvironmentVariablesTable({
                 <td className="px-3 py-2 align-top">
                   <input
                     placeholder="VARIABLE_NAME"
-                    className="w-full rounded-md border bg-background px-2 py-1 font-mono text-sm outline-none ring-0 focus:border-ring"
+                    className="w-full rounded-md border bg-background px-3 py-2 font-mono text-sm outline-none ring-0 focus:border-ring"
                     value={newName}
                     onChange={(e) => setNewName(e.target.value)}
                   />
@@ -257,7 +257,7 @@ export function EnvironmentVariablesTable({
                 <td className="px-3 py-2 align-top">
                   <input
                     placeholder="Description (optional)"
-                    className="w-full rounded-md border bg-background px-2 py-1 text-sm outline-none ring-0 focus:border-ring"
+                    className="w-full rounded-md border bg-background px-3 py-2 text-sm outline-none ring-0 focus:border-ring"
                     value={newDescription}
                     onChange={(e) => setNewDescription(e.target.value)}
                   />
@@ -265,7 +265,7 @@ export function EnvironmentVariablesTable({
                 <td className="px-3 py-2 align-top">
                   <textarea
                     placeholder="Variable value"
-                    className="w-full rounded-md border bg-background px-2 py-1 text-sm outline-none ring-0 focus:border-ring"
+                    className="w-full rounded-md border bg-background px-3 py-2 text-sm outline-none ring-0 focus:border-ring"
                     rows={1}
                     value={newValue}
                     onChange={(e) => setNewValue(e.target.value)}
@@ -277,7 +277,7 @@ export function EnvironmentVariablesTable({
                       type="button"
                       title="Save"
                       onClick={handleCreate}
-                      className="inline-flex items-center justify-center rounded-md border border-green-600 bg-green-50 p-1 text-green-600 hover:bg-green-100"
+                      className="inline-flex items-center justify-center rounded-md border border-green-600 bg-green-50 p-1.5 text-green-600 hover:bg-green-100"
                     >
                       {createMutation.isPending ? (
                         <span className="h-4 w-4 animate-spin rounded-full border-2 border-green-600 border-t-transparent" />
@@ -289,7 +289,7 @@ export function EnvironmentVariablesTable({
                       type="button"
                       title="Cancel"
                       onClick={cancelCreating}
-                      className="inline-flex items-center justify-center rounded-md border p-1 hover:bg-accent"
+                      className="inline-flex items-center justify-center rounded-md border p-1.5 hover:bg-accent"
                     >
                       <IconX size={16} />
                     </button>
@@ -302,7 +302,7 @@ export function EnvironmentVariablesTable({
                 <td className="px-3 py-2 align-top">
                   {editingId === variable.id ? (
                     <input
-                      className="w-full rounded-md border bg-background px-2 py-1 font-mono text-sm outline-none ring-0 focus:border-ring"
+                      className="w-full rounded-md border bg-background px-3 py-2 font-mono text-sm outline-none ring-0 focus:border-ring"
                       value={editName}
                       onChange={(e) => setEditName(e.target.value)}
                     />
@@ -313,7 +313,7 @@ export function EnvironmentVariablesTable({
                 <td className="px-3 py-2 align-top">
                   {editingId === variable.id ? (
                     <input
-                      className="w-full rounded-md border bg-background px-2 py-1 text-sm outline-none ring-0 focus:border-ring"
+                      className="w-full rounded-md border bg-background px-3 py-2 text-sm outline-none ring-0 focus:border-ring"
                       value={editDescription}
                       onChange={(e) => setEditDescription(e.target.value)}
                     />
@@ -324,7 +324,7 @@ export function EnvironmentVariablesTable({
                 <td className="px-3 py-2 align-top">
                   {editingId === variable.id ? (
                     <textarea
-                      className="w-full rounded-md border bg-background px-2 py-1 text-sm outline-none ring-0 focus:border-ring"
+                      className="w-full rounded-md border bg-background px-3 py-2 text-sm outline-none ring-0 focus:border-ring"
                       rows={1}
                       value={editValue}
                       onChange={(e) => setEditValue(e.target.value)}
@@ -343,7 +343,7 @@ export function EnvironmentVariablesTable({
                           type="button"
                           title="Save"
                           onClick={() => handleUpdate(variable.id)}
-                          className="inline-flex items-center justify-center rounded-md border border-green-600 bg-green-50 p-1 text-green-600 hover:bg-green-100"
+                          className="inline-flex items-center justify-center rounded-md border border-green-600 bg-green-50 p-1.5 text-green-600 hover:bg-green-100"
                         >
                           {updateMutation.isPending ? (
                             <span className="h-4 w-4 animate-spin rounded-full border-2 border-green-600 border-t-transparent" />
@@ -355,7 +355,7 @@ export function EnvironmentVariablesTable({
                           type="button"
                           title="Cancel"
                           onClick={cancelEditing}
-                          className="inline-flex items-center justify-center rounded-md border p-1 hover:bg-accent"
+                          className="inline-flex items-center justify-center rounded-md border p-1.5 hover:bg-accent"
                         >
                           <IconX size={16} />
                         </button>
@@ -366,7 +366,7 @@ export function EnvironmentVariablesTable({
                           type="button"
                           title="Edit"
                           onClick={() => startEditing(variable)}
-                          className="inline-flex items-center justify-center rounded-md border p-1 hover:bg-accent"
+                          className="inline-flex items-center justify-center rounded-md border p-1.5 hover:bg-accent"
                         >
                           <IconEdit size={16} />
                         </button>
@@ -374,7 +374,7 @@ export function EnvironmentVariablesTable({
                           type="button"
                           title="Delete"
                           onClick={() => handleDelete(variable.id)}
-                          className="inline-flex items-center justify-center rounded-md border border-destructive bg-destructive/10 p-1 text-destructive hover:bg-destructive/20"
+                          className="inline-flex items-center justify-center rounded-md border border-destructive bg-destructive/10 p-1.5 text-destructive hover:bg-destructive/20"
                         >
                           {deleteMutation.isPending ? (
                             <span className="h-4 w-4 animate-spin rounded-full border-2 border-red-600 border-t-transparent" />

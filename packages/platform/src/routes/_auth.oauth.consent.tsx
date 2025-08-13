@@ -200,7 +200,7 @@ function RouteComponent() {
       </div>
 
       <Card>
-        <CardContent className="space-y-5 p-4 sm:p-6">
+        <CardContent className="space-y-4 p-6">
           {/* Application info */}
           <div className="flex items-center gap-3">
             <div className="flex size-10 items-center justify-center rounded-full bg-primary text-primary-foreground">
@@ -247,7 +247,7 @@ function RouteComponent() {
           )}
 
           {/* Permissions */}
-          <div className="space-y-2">
+          <div className="space-y-4">
             <p className="text-sm font-medium">
               This application would like to:
             </p>

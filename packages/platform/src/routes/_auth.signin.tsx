@@ -15,7 +15,7 @@ export default function RouteComponent() {
   return (
     <div className="flex min-h-screen bg-background">
       {/* Left: branding */}
-      <div className="flex flex-1 flex-col justify-between px-8 lg:px-16">
+      <div className="flex flex-1 flex-col justify-between px-6 lg:px-8">
         <div className="pt-8">
           <Logo />
         </div>
@@ -45,7 +45,7 @@ export default function RouteComponent() {
             <EmailForm onEmailSent={setEmail} />
           ) : (
             <>
-              <div className="mb-4">
+              <div className="mb-6">
                 <h3 className="text-xl font-semibold text-foreground">
                   Enter verification code
                 </h3>

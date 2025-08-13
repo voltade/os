@@ -62,7 +62,7 @@ export default function RouteComponent() {
   if (validating) {
     return (
       <div className="flex min-h-screen bg-background">
-        <div className="flex flex-1 flex-col justify-between px-8 lg:px-16">
+        <div className="flex flex-1 flex-col justify-between px-6 lg:px-8">
           <div className="pt-8">
             <Logo />
           </div>
@@ -90,7 +90,7 @@ export default function RouteComponent() {
   if (error || !invitationValid) {
     return (
       <div className="flex min-h-screen bg-background">
-        <div className="flex flex-1 flex-col justify-between px-8 lg:px-16">
+        <div className="flex flex-1 flex-col justify-between px-6 lg:px-8">
           <div className="pt-8">
             <Logo />
           </div>
@@ -152,7 +152,7 @@ export default function RouteComponent() {
             immediately.
           </p>
 
-          <div className="space-y-3">
+          <div className="space-y-4">
             <Button
               onClick={handleAccept}
               disabled={loading}

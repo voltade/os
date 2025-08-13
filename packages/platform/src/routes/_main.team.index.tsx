@@ -375,14 +375,14 @@ function RouteComponent() {
 
         <TabsContent value="members">
           <Card className="gap-0 py-0">
-            <CardHeader className="pb-0">
+            <CardHeader className="p-4">
               <CardTitle className="sr-only">Members</CardTitle>
               <CardDescription className="sr-only">
                 Filters and table
               </CardDescription>
             </CardHeader>
-            <CardContent className="p-0">
-              <div className="px-4 pb-0">
+            <CardContent className="p-6">
+              <div className="mb-4">
                 <MembersFilters
                   searchQuery={searchQuery}
                   onSearchChange={handleSearchChange}
@@ -390,8 +390,8 @@ function RouteComponent() {
                   onRoleFilterChange={handleRoleFilterChange}
                 />
               </div>
-              <Separator />
-              <div className="p-4 pt-2">
+              <Separator className="my-4" />
+              <div>
                 <MembersTable
                   rows={paginatedMembers}
                   currentUserId={session?.user?.id}
@@ -472,8 +472,8 @@ function RouteComponent() {
 
         <TabsContent value="invites">
           <Card className="gap-0 py-0">
-            <CardHeader className="pb-0">
-              <div className="flex items-center justify-between px-4 pt-4">
+            <CardHeader className="p-4">
+              <div className="flex items-center justify-between">
                 <CardTitle className="text-sm font-medium text-muted-foreground">
                   Pending invitations
                 </CardTitle>
@@ -488,8 +488,8 @@ function RouteComponent() {
               </div>
             </CardHeader>
             <Separator />
-            <CardContent className="p-0">
-              <div className="p-4 pt-2">
+            <CardContent className="p-6">
+              <div>
                 <InvitesTable
                   invites={invites}
                   invitesLoading={invitesLoading}

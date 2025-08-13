@@ -51,7 +51,7 @@ function RouteComponent() {
 
         <main className="flex-1 min-w-0">
           <div className="container min-w-screen">
-            <div className="px-15 py-4">
+            <div className="px-6 py-4 lg:px-8">
               <Outlet />
             </div>
           </div>

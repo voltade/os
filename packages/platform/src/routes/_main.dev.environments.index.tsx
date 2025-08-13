@@ -83,7 +83,7 @@ function RouteComponent() {
       </div>
 
       {filteredEnvironments.length === 0 ? (
-        <div className="rounded-lg border p-10 text-center">
+        <div className="rounded-lg border p-6 text-center">
           <div className="mx-auto mb-2 flex size-12 items-center justify-center rounded-full bg-muted/50">
             <IconServer size={28} className="opacity-60" />
           </div>
@@ -99,8 +99,8 @@ function RouteComponent() {
       ) : (
         <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
           {filteredEnvironments.map((environment) => (
-            <div key={environment.id} className="rounded-lg border p-4">
-              <div className="flex flex-col gap-3">
+            <div key={environment.id} className="rounded-lg border p-6">
+              <div className="flex flex-col gap-4">
                 <div className="flex items-start justify-between">
                   <div className="min-w-0 flex-1">
                     <div className="flex items-center gap-2">

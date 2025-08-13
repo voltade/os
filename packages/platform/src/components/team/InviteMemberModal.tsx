@@ -62,7 +62,7 @@ export function InviteMemberModal({
           onSubmit={form.handleSubmit(async (vals) => {
             await onSubmit(vals);
           })}
-          className="flex flex-col gap-4"
+          className="space-y-4"
         >
           <div className="flex flex-col gap-2">
             <Label htmlFor="invite-email">Email Address</Label>

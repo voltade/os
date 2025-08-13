@@ -127,8 +127,8 @@ export function BulkImportModal({
         onClick={handleClose}
         className="absolute inset-0 bg-black/40"
       />
-      <div className="relative z-10 w-full max-w-2xl rounded-lg border bg-background p-4 shadow-lg">
-        <div className="flex items-center justify-between pb-2">
+      <div className="relative z-10 w-full max-w-2xl rounded-lg border bg-background p-6 shadow-lg">
+        <div className="flex items-center justify-between mb-6">
           <h3 className="text-lg font-semibold">
             Bulk Import Environment Variables
           </h3>

@@ -48,7 +48,7 @@ export function EmailForm({ onEmailSent }: Props) {
         e.preventDefault();
         onSubmit();
       }}
-      className="space-y-3"
+      className="space-y-4"
     >
       <div>
         <label

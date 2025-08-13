@@ -54,7 +54,7 @@ function RouteComponent() {
   return (
     <div className="flex min-h-screen">
       {/* Left: branding */}
-      <div className="flex flex-1 flex-col justify-between px-8 lg:px-16">
+      <div className="flex flex-1 flex-col justify-between px-6 lg:px-8">
         <div className="pt-8">
           <Logo />
         </div>
