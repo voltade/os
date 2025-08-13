@@ -5,6 +5,7 @@ interface NavItem {
   label: string;
   path: string;
   icon?: Icon;
+  external?: boolean;
 }
 
 interface SettingsNavbarProps {
@@ -61,7 +62,13 @@ export function SettingsNavbar({
                 <button
                   key={item.path}
                   type="button"
-                  onClick={() => navigate({ to: item.path })}
+                  onClick={() => {
+                    if (item.external) {
+                      window.open(item.path, '_blank');
+                    } else {
+                      navigate({ to: item.path });
+                    }
+                  }}
                   className={[
                     'group flex w-full items-center gap-1.5 rounded-md px-1.5 py-0.5 text-left text-[11px] transition-colors whitespace-nowrap',
                     active
