@@ -143,12 +143,12 @@ export function BulkImportModal({
         </div>
 
         <div className="space-y-4">
-          <div className="rounded-md border bg-blue-50 p-3 text-sm text-blue-900">
+          <div className="rounded-md border bg-blue-50 p-3 text-sm text-blue-600">
             <div className="mb-1 inline-flex items-center gap-2 font-medium">
               <IconInfoCircle size={16} /> Instructions
             </div>
             <p>Paste your environment variables in the format:</p>
-            <pre className="mt-2 rounded bg-white/70 p-2 font-mono text-xs text-blue-950">
+            <pre className="mt-2 rounded bg-white/70 p-2 font-mono text-xs text-blue-700">
               {`VARIABLE_NAME=value
 ANOTHER_VAR="value with spaces"
 # Comments are ignored`}
@@ -180,7 +180,7 @@ ANOTHER_VAR="value with spaces"
           </div>
 
           {parseErrors.length > 0 && (
-            <div className="rounded-md border border-red-200 bg-red-50 p-3 text-sm text-red-900">
+            <div className="rounded-md border border-destructive/20 bg-destructive/10 p-3 text-sm text-destructive-foreground">
               <p className="mb-2 font-medium">Parse Errors</p>
               <ul className="list-disc space-y-1 pl-5">
                 {parseErrors.map((error) => (
@@ -191,7 +191,7 @@ ANOTHER_VAR="value with spaces"
           )}
 
           {parsedVariables.length > 0 && (
-            <div className="rounded-md border border-green-200 bg-green-50 p-3 text-sm text-green-900">
+            <div className="rounded-md border border-green-200 bg-green-50 p-3 text-sm text-green-600">
               <p className="mb-2 font-medium">
                 Found {parsedVariables.length} variables
               </p>

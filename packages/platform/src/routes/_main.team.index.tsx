@@ -337,7 +337,7 @@ function RouteComponent() {
       {/* Header */}
       <div className="flex items-start justify-between">
         <div>
-          <h2 className="text-xl font-semibold">Team</h2>
+          <h2 className="text-xl font-semibold text-foreground">Team</h2>
           <p className="text-muted-foreground">
             Manage members and invitations for {organisation?.name}
           </p>

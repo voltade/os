@@ -273,7 +273,7 @@ function RouteComponent() {
                             {scopeInfo.name}
                           </p>
                           {isRequired && (
-                            <span className="text-xs font-medium text-orange-600">
+                            <span className="text-xs font-medium text-amber-600">
                               Required
                             </span>
                           )}
@@ -290,7 +290,7 @@ function RouteComponent() {
           </div>
 
           {/* Security notice */}
-          <div className="flex items-start gap-2 rounded-md border border-blue-200 bg-blue-50 p-3 text-sm text-blue-900">
+          <div className="flex items-start gap-2 rounded-md border border-blue-200 bg-blue-50 p-3 text-sm text-blue-600">
             <IconAlertTriangle size={16} />
             <span>
               Only approve access for applications you trust. You can revoke

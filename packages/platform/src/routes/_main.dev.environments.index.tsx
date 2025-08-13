@@ -54,7 +54,9 @@ function RouteComponent() {
   return (
     <div className="flex flex-col gap-6">
       <div className="flex items-center justify-between">
-        <h2 className="text-2xl font-semibold tracking-tight">Environments</h2>
+        <h2 className="text-2xl font-semibold tracking-tight text-foreground">
+          Environments
+        </h2>
         <button
           type="button"
           className="inline-flex items-center gap-2 rounded-md bg-primary px-3 py-2 text-sm font-medium text-primary-foreground shadow hover:opacity-90"
@@ -106,7 +108,7 @@ function RouteComponent() {
                         {environment.name || environment.slug}
                       </p>
                       {environment.is_production && (
-                        <span className="inline-flex items-center rounded-md bg-red-100 px-2 py-0.5 text-xs font-medium text-red-700">
+                        <span className="inline-flex items-center rounded-md bg-destructive/10 px-2 py-0.5 text-xs font-medium text-destructive">
                           Production
                         </span>
                       )}

@@ -8,7 +8,7 @@ function RouteComponent() {
   return (
     <>
       <div className="mb-4">
-        <h2 className="text-xl font-semibold">Settings</h2>
+        <h2 className="text-xl font-semibold text-foreground">Settings</h2>
         <p className="text-muted-foreground">Manage your settings</p>
       </div>
       <Outlet />

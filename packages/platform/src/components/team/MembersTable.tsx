@@ -162,12 +162,12 @@ export function MembersTable({
                     <DropdownMenuSeparator />
                     {!isYou && (
                       <DropdownMenuItem
-                        className="text-red-600 focus:text-red-700"
+                        className="text-destructive focus:text-destructive-foreground"
                         onClick={() => onRemove(member.id, member.user.name)}
                       >
                         <IconTrash
                           size={14}
-                          className="mr-2 text-red-600 focus:text-red-700"
+                          className="mr-2 text-destructive focus:text-destructive-foreground"
                         />{' '}
                         Remove Member
                       </DropdownMenuItem>

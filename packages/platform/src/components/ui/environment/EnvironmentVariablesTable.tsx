@@ -177,7 +177,9 @@ export function EnvironmentVariablesTable({
   return (
     <div className="space-y-4">
       <div className="flex items-center justify-between">
-        <h2 className="text-xl font-semibold">Environment Variables</h2>
+        <h2 className="text-xl font-semibold text-foreground">
+          Environment Variables
+        </h2>
         <div className="flex items-center gap-2">
           <div className="relative">
             <button
@@ -275,7 +277,7 @@ export function EnvironmentVariablesTable({
                       type="button"
                       title="Save"
                       onClick={handleCreate}
-                      className="inline-flex items-center justify-center rounded-md border border-green-600 bg-green-50 p-1 text-green-700 hover:bg-green-100"
+                      className="inline-flex items-center justify-center rounded-md border border-green-600 bg-green-50 p-1 text-green-600 hover:bg-green-100"
                     >
                       {createMutation.isPending ? (
                         <span className="h-4 w-4 animate-spin rounded-full border-2 border-green-600 border-t-transparent" />
@@ -328,7 +330,9 @@ export function EnvironmentVariablesTable({
                       onChange={(e) => setEditValue(e.target.value)}
                     />
                   ) : (
-                    <span className="font-mono text-gray-500">••••••••</span>
+                    <span className="font-mono text-muted-foreground">
+                      ••••••••
+                    </span>
                   )}
                 </td>
                 <td className="px-3 py-2 align-top">
@@ -339,7 +343,7 @@ export function EnvironmentVariablesTable({
                           type="button"
                           title="Save"
                           onClick={() => handleUpdate(variable.id)}
-                          className="inline-flex items-center justify-center rounded-md border border-green-600 bg-green-50 p-1 text-green-700 hover:bg-green-100"
+                          className="inline-flex items-center justify-center rounded-md border border-green-600 bg-green-50 p-1 text-green-600 hover:bg-green-100"
                         >
                           {updateMutation.isPending ? (
                             <span className="h-4 w-4 animate-spin rounded-full border-2 border-green-600 border-t-transparent" />
@@ -370,7 +374,7 @@ export function EnvironmentVariablesTable({
                           type="button"
                           title="Delete"
                           onClick={() => handleDelete(variable.id)}
-                          className="inline-flex items-center justify-center rounded-md border border-red-600 bg-red-50 p-1 text-red-700 hover:bg-red-100"
+                          className="inline-flex items-center justify-center rounded-md border border-destructive bg-destructive/10 p-1 text-destructive hover:bg-destructive/20"
                         >
                           {deleteMutation.isPending ? (
                             <span className="h-4 w-4 animate-spin rounded-full border-2 border-red-600 border-t-transparent" />
@@ -389,7 +393,7 @@ export function EnvironmentVariablesTable({
       </div>
 
       {environmentVariables.length === 0 && !isCreating && (
-        <div className="py-8 text-center text-gray-500">
+        <div className="py-8 text-center text-muted-foreground">
           No environment variables found. Click "Add Variable" to create one.
         </div>
       )}

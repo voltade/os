@@ -155,7 +155,7 @@ export function UserButton() {
         <DropdownMenuSeparator />
         <DropdownMenuItem
           onClick={handleLogout}
-          className="cursor-pointer text-red-600 focus:text-red-700"
+          className="cursor-pointer text-destructive focus:text-destructive-foreground"
         >
           <LogOut className="mr-2 size-4" /> Logout
         </DropdownMenuItem>

@@ -40,7 +40,9 @@ function RouteComponent() {
   }
   return (
     <div className="space-y-1">
-      <h3 className="text-xl font-semibold tracking-tight">{data.name}</h3>
+      <h3 className="text-xl font-semibold tracking-tight text-foreground">
+        {data.name}
+      </h3>
       <p className="text-sm text-muted-foreground">{data.slug}</p>
     </div>
   );

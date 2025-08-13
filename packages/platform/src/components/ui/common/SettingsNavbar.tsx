@@ -43,14 +43,14 @@ export function SettingsNavbar({
 
   return (
     <aside className="h-full w-full">
-      <div className="p-2">
-        <div className="space-y-2 p-2">
+      <div className="p-4">
+        <div className="space-y-3">
           {title ? (
             <p className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">
               {title}
             </p>
           ) : null}
-          <nav className="space-y-2">
+          <nav className="space-y-1 mt-4">
             {navItems.map((item) => {
               const active = isActivePathMatcher(
                 location.pathname,
@@ -70,10 +70,10 @@ export function SettingsNavbar({
                     }
                   }}
                   className={[
-                    'group flex w-full items-center gap-1.5 rounded-md px-1.5 py-0.5 text-left text-[11px] transition-colors whitespace-nowrap',
+                    'group flex w-full items-center gap-2 rounded-md px-3 py-2 text-left text-sm transition-colors whitespace-nowrap',
                     active
-                      ? 'bg-accent text-accent-foreground'
-                      : 'text-muted-foreground hover:bg-accent hover:text-accent-foreground',
+                      ? 'text-foreground font-semibold'
+                      : 'text-muted-foreground hover:text-foreground',
                   ].join(' ')}
                 >
                   {showIcons && IconComp ? (

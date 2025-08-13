@@ -60,8 +60,10 @@ function RouteComponent() {
         </div>
         <div className="flex flex-1 items-center">
           <div className="max-w-md">
-            <h1 className="text-5xl font-bold leading-tight">Voltade OS</h1>
-            <p className="mt-4 text-3xl leading-tight">
+            <h1 className="text-5xl font-bold leading-tight text-foreground">
+              Voltade OS
+            </h1>
+            <p className="mt-4 text-3xl leading-tight text-muted-foreground">
               Next gen business software and developer platform
             </p>
           </div>
@@ -73,8 +75,10 @@ function RouteComponent() {
       <div className="flex flex-1 items-center justify-center border-l">
         <div className="w-full max-w-sm p-6">
           <div className="mb-6">
-            <h2 className="text-3xl font-bold">Enter your name</h2>
-            <p className="text-sm">
+            <h2 className="text-3xl font-bold text-foreground">
+              Enter your name
+            </h2>
+            <p className="text-sm text-muted-foreground">
               We will use this to personalize your account.
             </p>
           </div>
