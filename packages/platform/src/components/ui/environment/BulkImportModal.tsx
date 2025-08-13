@@ -1,4 +1,4 @@
-import { IconInfoCircle, IconUpload } from '@tabler/icons-react';
+import { Info, Upload } from 'lucide-react';
 import { useState } from 'react';
 
 import {
@@ -145,7 +145,7 @@ export function BulkImportModal({
         <div className="space-y-4">
           <div className="rounded-md border bg-blue-50 p-3 text-sm text-blue-600">
             <div className="mb-1 inline-flex items-center gap-2 font-medium">
-              <IconInfoCircle size={16} /> Instructions
+              <Info size={16} /> Instructions
             </div>
             <p>Paste your environment variables in the format:</p>
             <pre className="mt-2 rounded bg-white/70 p-2 font-mono text-xs text-blue-700">
@@ -234,7 +234,7 @@ ANOTHER_VAR="value with spaces"
               onClick={handleImport}
               disabled={parsedVariables.length === 0 || parseErrors.length > 0}
             >
-              <IconUpload size={16} /> Import {parsedVariables.length} Variables
+              <Upload size={16} /> Import {parsedVariables.length} Variables
             </button>
           </div>
         </div>

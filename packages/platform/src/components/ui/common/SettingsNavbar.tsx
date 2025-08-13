@@ -1,10 +1,10 @@
-import type { Icon } from '@tabler/icons-react';
 import { useLocation, useNavigate } from '@tanstack/react-router';
+import type { LucideIcon } from 'lucide-react';
 
 interface NavItem {
   label: string;
   path: string;
-  icon?: Icon;
+  icon?: LucideIcon;
   external?: boolean;
 }
 

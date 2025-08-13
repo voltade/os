@@ -1,15 +1,9 @@
-import {
-  IconAlertTriangle,
-  IconBuilding,
-  IconMail,
-  IconShieldCheck,
-  IconUser,
-} from '@tabler/icons-react';
 import { createFileRoute, redirect } from '@tanstack/react-router';
 import { Avatar, AvatarFallback, AvatarImage } from '@voltade/ui/avatar.tsx';
 import { Button } from '@voltade/ui/button.tsx';
 import { Card, CardContent } from '@voltade/ui/card.tsx';
 import { Checkbox } from '@voltade/ui/checkbox.tsx';
+import { AlertTriangle, Building, Mail, ShieldCheck, User } from 'lucide-react';
 import type React from 'react';
 import { useEffect, useState } from 'react';
 
@@ -51,29 +45,29 @@ const SCOPE_DEFINITIONS: Record<string, ScopeInfo> = {
   openid: {
     name: 'Identity',
     description: 'Access your basic identity information',
-    icon: (p) => <IconUser size={p.size ?? 20} />,
+    icon: (p) => <User size={p.size ?? 20} />,
     required: true,
   },
   profile: {
     name: 'Profile Information',
     description: 'Access your profile information such as name and picture',
-    icon: (p) => <IconUser size={p.size ?? 20} />,
+    icon: (p) => <User size={p.size ?? 20} />,
   },
   email: {
     name: 'Email Address',
     description: 'Access your email address',
-    icon: (p) => <IconMail size={p.size ?? 20} />,
+    icon: (p) => <Mail size={p.size ?? 20} />,
   },
   offline_access: {
     name: 'Offline Access',
     description:
       "Maintain access when you're not actively using the application",
-    icon: (p) => <IconShieldCheck size={p.size ?? 20} />,
+    icon: (p) => <ShieldCheck size={p.size ?? 20} />,
   },
   organization: {
     name: 'Organization Access',
     description: 'Access your organization information and membership',
-    icon: (p) => <IconBuilding size={p.size ?? 20} />,
+    icon: (p) => <Building size={p.size ?? 20} />,
   },
 };
 
@@ -183,7 +177,7 @@ function RouteComponent() {
     return (
       <div className="mx-auto max-w-2xl p-6">
         <div className="flex items-start gap-2 rounded-md border border-destructive/20 bg-destructive/10 p-3 text-sm text-destructive-foreground">
-          <IconAlertTriangle size={16} />
+          <AlertTriangle size={16} />
           <span>{error || 'Invalid consent request'}</span>
         </div>
       </div>
@@ -291,7 +285,7 @@ function RouteComponent() {
 
           {/* Security notice */}
           <div className="flex items-start gap-2 rounded-md border border-blue-200 bg-blue-50 p-3 text-sm text-blue-600">
-            <IconAlertTriangle size={16} />
+            <AlertTriangle size={16} />
             <span>
               Only approve access for applications you trust. You can revoke
               access at any time in your account settings.

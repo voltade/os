@@ -1,10 +1,10 @@
-import { IconGridDots } from '@tabler/icons-react';
 import { useNavigate } from '@tanstack/react-router';
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuTrigger,
 } from '@voltade/ui/dropdown-menu.tsx';
+import { Grip } from 'lucide-react';
 
 import { useAppInstallations } from '#src/hooks/app_installation.ts';
 import { ENVIRONMENT_ID } from '#src/main.tsx';
@@ -30,7 +30,7 @@ export function AppSelector() {
           className="inline-flex items-center justify-center rounded-md p-2 hover:bg-accent"
           aria-label="Open apps menu"
         >
-          <IconGridDots size={20} />
+          <Grip size={20} />
         </button>
       </DropdownMenuTrigger>
       <DropdownMenuContent align="end" className="w-[300px] p-3">

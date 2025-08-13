@@ -1,9 +1,4 @@
-import {
-  IconApps,
-  IconDatabase,
-  IconSettings,
-  IconVariable,
-} from '@tabler/icons-react';
+import { Database, Grid3X3, Settings, Variable } from 'lucide-react';
 
 import { SettingsNavbar } from '../common/index.ts';
 
@@ -19,16 +14,16 @@ export function EnvironmentSettingsSidebar({
   const base = `${basePathPrefix}/${envSlug}`;
 
   const navItems = [
-    { label: 'General', icon: IconSettings, path: `${base}` },
-    { label: 'Database', icon: IconDatabase, path: `${base}/database` },
+    { label: 'General', icon: Settings, path: `${base}` },
+    { label: 'Database', icon: Database, path: `${base}/database` },
     {
       label: 'Environment Variables',
-      icon: IconVariable,
+      icon: Variable,
       path: `${base}/environment_variables`,
     },
     {
       label: 'App Installations',
-      icon: IconApps,
+      icon: Grid3X3,
       path: `${base}/app-installations`,
     },
   ];

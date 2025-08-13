@@ -1,10 +1,3 @@
-import {
-  IconCrown,
-  IconPlus,
-  IconRefresh,
-  IconUser,
-  IconUserCheck,
-} from '@tabler/icons-react';
 import { createFileRoute } from '@tanstack/react-router';
 import { Button } from '@voltade/ui/button.tsx';
 import {
@@ -24,6 +17,7 @@ import {
 } from '@voltade/ui/pagination.tsx';
 import { Separator } from '@voltade/ui/separator.tsx';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@voltade/ui/tabs.tsx';
+import { Crown, Plus, RefreshCw, User, UserCheck } from 'lucide-react';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 
 import { InviteMemberModal } from '#src/components/team/InviteMemberModal';
@@ -300,11 +294,11 @@ function RouteComponent() {
   const _getRoleIcon = (role: string) => {
     switch (role) {
       case 'owner':
-        return <IconCrown size={16} />;
+        return <Crown size={16} />;
       case 'admin':
-        return <IconUserCheck size={16} />;
+        return <UserCheck size={16} />;
       default:
-        return <IconUser size={16} />;
+        return <User size={16} />;
     }
   };
 
@@ -344,7 +338,7 @@ function RouteComponent() {
         </div>
         {canInviteMembers && (
           <Button onClick={open}>
-            <IconPlus size={16} />
+            <Plus size={16} />
             <span className="ml-1">Invite Member</span>
           </Button>
         )}
@@ -407,7 +401,7 @@ function RouteComponent() {
           {paginatedMembers.length === 0 && !isPending && (
             <div className="flex justify-center py-10">
               <div className="flex flex-col items-center gap-2">
-                <IconUser size={48} className="text-muted-foreground" />
+                <User size={48} className="text-muted-foreground" />
                 <p className="text-muted-foreground">
                   No members found matching your criteria
                 </p>
@@ -483,7 +477,7 @@ function RouteComponent() {
                   className="text-muted-foreground hover:text-foreground"
                   onClick={fetchInvites}
                 >
-                  <IconRefresh size={16} />
+                  <RefreshCw size={16} />
                 </Button>
               </div>
             </CardHeader>

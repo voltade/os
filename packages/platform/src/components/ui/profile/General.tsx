@@ -66,7 +66,7 @@ export function ProfileGeneral() {
           {' '}
           {/* give content the full width + comfy padding */}
           <div className="mb-4 flex items-center gap-3">
-            <Avatar className="size-12 rounded-md">
+            <Avatar className="size-30 rounded-md">
               {sessionData.user.image ? (
                 <AvatarImage
                   src={sessionData.user.image}

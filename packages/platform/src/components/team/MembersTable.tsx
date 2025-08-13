@@ -1,4 +1,3 @@
-import { IconDots, IconEdit, IconMail, IconTrash } from '@tabler/icons-react';
 import { Avatar, AvatarFallback, AvatarImage } from '@voltade/ui/avatar.tsx';
 import { Badge as ShadcnBadge } from '@voltade/ui/badge.tsx';
 import {
@@ -24,6 +23,7 @@ import {
   TableRow,
 } from '@voltade/ui/table.tsx';
 import { Tooltip } from '@voltade/ui/tooltip.tsx';
+import { Edit, Mail, MoreHorizontal, Trash2 } from 'lucide-react';
 
 interface UserRef {
   id: string;
@@ -98,7 +98,7 @@ export function MembersTable({
                       )}
                     </div>
                     <div className="flex items-center gap-1 text-sm text-muted-foreground">
-                      <IconMail size={14} />
+                      <Mail size={14} />
                       <span>{member.user.email}</span>
                     </div>
                   </div>
@@ -148,16 +148,16 @@ export function MembersTable({
                       className="text-muted-foreground hover:text-foreground inline-flex items-center justify-center rounded-md p-1"
                     >
                       <Tooltip>
-                        <IconDots size={16} />
+                        <MoreHorizontal size={16} />
                       </Tooltip>
                     </button>
                   </DropdownMenuTrigger>
                   <DropdownMenuContent align="end" className="w-56">
                     <DropdownMenuItem disabled>
-                      <IconEdit size={14} className="mr-2" /> Edit Member
+                      <Edit size={14} className="mr-2" /> Edit Member
                     </DropdownMenuItem>
                     <DropdownMenuItem disabled>
-                      <IconMail size={14} className="mr-2" /> Send Message
+                      <Mail size={14} className="mr-2" /> Send Message
                     </DropdownMenuItem>
                     <DropdownMenuSeparator />
                     {!isYou && (
@@ -165,7 +165,7 @@ export function MembersTable({
                         className="text-destructive focus:text-destructive-foreground"
                         onClick={() => onRemove(member.id, member.user.name)}
                       >
-                        <IconTrash
+                        <Trash2
                           size={14}
                           className="mr-2 text-destructive focus:text-destructive-foreground"
                         />{' '}

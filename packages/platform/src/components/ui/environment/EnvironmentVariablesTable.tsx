@@ -1,13 +1,13 @@
 import {
-  IconCheck,
-  IconDots,
-  IconDownload,
-  IconEdit,
-  IconPlus,
-  IconTrash,
-  IconUpload,
-  IconX,
-} from '@tabler/icons-react';
+  Check,
+  Download,
+  Edit,
+  MoreHorizontal,
+  Plus,
+  Trash2,
+  Upload,
+  X,
+} from 'lucide-react';
 import { useEffect, useState } from 'react';
 
 import {
@@ -187,7 +187,7 @@ export function EnvironmentVariablesTable({
               onClick={() => setBulkMenuOpen((v) => !v)}
               className="inline-flex items-center gap-2 rounded-md border bg-background px-3 py-2 text-sm hover:bg-accent"
             >
-              <IconDots size={16} />
+              <MoreHorizontal size={16} />
               Bulk Actions
             </button>
             {bulkMenuOpen && (
@@ -201,7 +201,7 @@ export function EnvironmentVariablesTable({
                   }}
                 >
                   <span className="inline-flex items-center gap-2">
-                    <IconUpload size={16} /> Import Variables
+                    <Upload size={16} /> Import Variables
                   </span>
                 </button>
                 <button
@@ -214,7 +214,7 @@ export function EnvironmentVariablesTable({
                   }}
                 >
                   <span className="inline-flex items-center gap-2">
-                    <IconDownload size={16} /> Export Variables
+                    <Download size={16} /> Export Variables
                   </span>
                 </button>
               </div>
@@ -226,7 +226,7 @@ export function EnvironmentVariablesTable({
             disabled={isCreating}
             className="inline-flex items-center gap-2 rounded-md bg-primary px-3 py-2 text-sm font-medium text-primary-foreground shadow hover:opacity-90 disabled:opacity-50"
           >
-            <IconPlus size={16} /> Add Variable
+            <Plus size={16} /> Add Variable
           </button>
         </div>
       </div>
@@ -282,7 +282,7 @@ export function EnvironmentVariablesTable({
                       {createMutation.isPending ? (
                         <span className="h-4 w-4 animate-spin rounded-full border-2 border-green-600 border-t-transparent" />
                       ) : (
-                        <IconCheck size={16} />
+                        <Check size={16} />
                       )}
                     </button>
                     <button
@@ -291,7 +291,7 @@ export function EnvironmentVariablesTable({
                       onClick={cancelCreating}
                       className="inline-flex items-center justify-center rounded-md border p-1.5 hover:bg-accent"
                     >
-                      <IconX size={16} />
+                      <X size={16} />
                     </button>
                   </div>
                 </td>
@@ -348,7 +348,7 @@ export function EnvironmentVariablesTable({
                           {updateMutation.isPending ? (
                             <span className="h-4 w-4 animate-spin rounded-full border-2 border-green-600 border-t-transparent" />
                           ) : (
-                            <IconCheck size={16} />
+                            <Check size={16} />
                           )}
                         </button>
                         <button
@@ -357,7 +357,7 @@ export function EnvironmentVariablesTable({
                           onClick={cancelEditing}
                           className="inline-flex items-center justify-center rounded-md border p-1.5 hover:bg-accent"
                         >
-                          <IconX size={16} />
+                          <X size={16} />
                         </button>
                       </>
                     ) : (
@@ -368,7 +368,7 @@ export function EnvironmentVariablesTable({
                           onClick={() => startEditing(variable)}
                           className="inline-flex items-center justify-center rounded-md border p-1.5 hover:bg-accent"
                         >
-                          <IconEdit size={16} />
+                          <Edit size={16} />
                         </button>
                         <button
                           type="button"
@@ -379,7 +379,7 @@ export function EnvironmentVariablesTable({
                           {deleteMutation.isPending ? (
                             <span className="h-4 w-4 animate-spin rounded-full border-2 border-red-600 border-t-transparent" />
                           ) : (
-                            <IconTrash size={16} />
+                            <Trash2 size={16} />
                           )}
                         </button>
                       </>

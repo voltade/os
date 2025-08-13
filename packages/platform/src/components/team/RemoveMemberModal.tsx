@@ -1,4 +1,3 @@
-import { IconTrash } from '@tabler/icons-react';
 import { Button } from '@voltade/ui/button.tsx';
 import {
   Dialog,
@@ -8,6 +7,7 @@ import {
   DialogHeader,
   DialogTitle,
 } from '@voltade/ui/dialog.tsx';
+import { Trash2 } from 'lucide-react';
 
 interface RemoveMemberModalProps {
   opened: boolean;
@@ -44,7 +44,7 @@ export function RemoveMemberModal({
             disabled={isRemoving}
             variant="destructive"
           >
-            <IconTrash className="mr-1" size={16} /> Remove Member
+            <Trash2 className="mr-1" size={16} /> Remove Member
           </Button>
         </DialogFooter>
       </DialogContent>

@@ -1,4 +1,3 @@
-import { IconPlus } from '@tabler/icons-react';
 import { Button } from '@voltade/ui/button.tsx';
 import {
   Dialog,
@@ -18,6 +17,7 @@ import {
   SelectValue,
 } from '@voltade/ui/select.tsx';
 import { Separator } from '@voltade/ui/separator.tsx';
+import { Plus } from 'lucide-react';
 import { useForm } from 'react-hook-form';
 
 interface InviteFormValues {
@@ -107,7 +107,7 @@ export function InviteMemberModal({
               Cancel
             </Button>
             <Button type="submit" disabled={isInviting}>
-              <IconPlus className="mr-1" size={16} /> Send Invitation
+              <Plus className="mr-1" size={16} /> Send Invitation
             </Button>
           </DialogFooter>
         </form>

@@ -1,4 +1,3 @@
-import { IconMail } from '@tabler/icons-react';
 import { Badge } from '@voltade/ui/badge.tsx';
 import { Button } from '@voltade/ui/button.tsx';
 import {
@@ -9,6 +8,7 @@ import {
   TableHeader,
   TableRow,
 } from '@voltade/ui/table.tsx';
+import { Mail } from 'lucide-react';
 
 export interface InviteRow {
   id: string;
@@ -63,7 +63,7 @@ export function InvitesTable({
             <TableRow key={inv.id}>
               <TableCell>
                 <div className="flex items-center gap-2">
-                  <IconMail size={14} />
+                  <Mail size={14} />
                   <span>{inv.email}</span>
                 </div>
               </TableCell>

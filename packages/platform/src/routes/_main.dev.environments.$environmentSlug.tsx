@@ -1,5 +1,5 @@
-import { IconArrowLeft } from '@tabler/icons-react';
 import { createFileRoute, Link, Outlet } from '@tanstack/react-router';
+import { ArrowLeft } from 'lucide-react';
 
 import { AccessDenied } from '#src/components/utils/access-denied';
 import { Loading } from '#src/components/utils/loading';
@@ -33,7 +33,7 @@ function RouteComponent() {
           to={'/dev/environments'}
           className="inline-flex items-center gap-2 rounded-md border bg-background px-2 py-1.5 text-sm text-muted-foreground transition-colors hover:bg-accent hover:text-accent-foreground"
         >
-          <IconArrowLeft size={16} /> Back
+          <ArrowLeft size={16} /> Back
         </Link>
       </div>
       <Outlet />

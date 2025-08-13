@@ -1,4 +1,3 @@
-import { IconSearch, IconX } from '@tabler/icons-react';
 import { Input } from '@voltade/ui/input.tsx';
 import {
   Select,
@@ -7,6 +6,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@voltade/ui/select.tsx';
+import { Search, X } from 'lucide-react';
 
 interface MembersFiltersProps {
   searchQuery: string;
@@ -25,7 +25,7 @@ export function MembersFilters({
     <div className="flex flex-wrap items-center gap-4 p-4">
       <div className="flex-1 min-w-[260px]">
         <div className="relative">
-          <IconSearch className="absolute left-2 top-1/2 -translate-y-1/2 size-4 text-muted-foreground" />
+          <Search className="absolute left-2 top-1/2 -translate-y-1/2 size-4 text-muted-foreground" />
           <Input
             className="pl-8 w-full"
             placeholder="Search members..."
@@ -38,7 +38,7 @@ export function MembersFilters({
               className="absolute right-2 top-1/2 -translate-y-1/2 text-muted-foreground"
               onClick={() => onSearchChange('')}
             >
-              <IconX className="size-4" />
+              <X className="size-4" />
             </button>
           )}
         </div>

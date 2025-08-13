@@ -1,10 +1,5 @@
-import {
-  IconDatabase,
-  IconPlus,
-  IconSearch,
-  IconServer,
-} from '@tabler/icons-react';
 import { createFileRoute, useNavigate } from '@tanstack/react-router';
+import { Database, Plus, Search, Server } from 'lucide-react';
 import { useMemo, useState } from 'react';
 
 import { AccessDenied } from '#src/components/utils/access-denied';
@@ -61,14 +56,14 @@ function RouteComponent() {
           type="button"
           className="inline-flex items-center gap-2 rounded-md bg-primary px-3 py-2 text-sm font-medium text-primary-foreground shadow hover:opacity-90"
         >
-          <IconPlus size={16} />
+          <Plus size={16} />
           Add New Environment
         </button>
       </div>
 
       <div className="max-w-md">
         <div className="relative">
-          <IconSearch
+          <Search
             size={16}
             className="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground"
           />
@@ -85,7 +80,7 @@ function RouteComponent() {
       {filteredEnvironments.length === 0 ? (
         <div className="rounded-lg border p-6 text-center">
           <div className="mx-auto mb-2 flex size-12 items-center justify-center rounded-full bg-muted/50">
-            <IconServer size={28} className="opacity-60" />
+            <Server size={28} className="opacity-60" />
           </div>
           <p className="text-lg font-medium">
             {searchQuery ? 'No environments found' : 'No environments yet'}
@@ -126,14 +121,14 @@ function RouteComponent() {
 
                 <div className="flex items-center gap-6 text-sm text-muted-foreground">
                   <div className="flex items-center gap-1">
-                    <IconServer size={14} className="opacity-70" />
+                    <Server size={14} className="opacity-70" />
                     <span>
                       {environment.runner_count} runner
                       {environment.runner_count !== 1 ? 's' : ''}
                     </span>
                   </div>
                   <div className="flex items-center gap-1">
-                    <IconDatabase size={14} className="opacity-70" />
+                    <Database size={14} className="opacity-70" />
                     <span>
                       {environment.database_instance_count} DB
                       {environment.database_instance_count !== 1 ? 's' : ''}

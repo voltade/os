@@ -1,4 +1,3 @@
-import { IconDownload, IconInfoCircle } from '@tabler/icons-react';
 import { Button } from '@voltade/ui/button.tsx';
 import { Checkbox } from '@voltade/ui/checkbox.tsx';
 import {
@@ -10,6 +9,7 @@ import {
 } from '@voltade/ui/dialog.tsx';
 import { RadioGroup, RadioGroupItem } from '@voltade/ui/radio-group.tsx';
 import { Textarea } from '@voltade/ui/textarea.tsx';
+import { Download, Info } from 'lucide-react';
 import { useEffect, useState } from 'react';
 
 import { showSuccess } from '#src/components/utils/notifications.tsx';
@@ -238,7 +238,7 @@ export function BulkExportModal({
           {selectedVariables.length > 0 && (
             <div className="space-y-2 rounded-md border p-3">
               <div className="flex items-center gap-2 text-sm">
-                <IconInfoCircle size={16} />
+                <Info size={16} />
                 <span>
                   Preview of exported content ({selectedVariables.length}{' '}
                   variables):
@@ -272,7 +272,7 @@ export function BulkExportModal({
               disabled={selectedVariables.length === 0 || isLoading}
               type="button"
             >
-              <IconDownload size={16} className="mr-2" /> Download File
+              <Download size={16} className="mr-2" /> Download File
             </Button>
           </div>
         </DialogFooter>
