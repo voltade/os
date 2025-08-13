@@ -3,6 +3,7 @@ import { Button } from '@voltade/ui/button.tsx';
 import { Input } from '@voltade/ui/input.tsx';
 import { useEffect, useState } from 'react';
 
+import { Logo } from '#src/components/ui/logo.tsx';
 import {
   showError,
   showSuccess,
@@ -51,22 +52,16 @@ function RouteComponent() {
   };
 
   return (
-    <div className="flex min-h-screen bg-white">
+    <div className="flex min-h-screen">
       {/* Left: branding */}
       <div className="flex flex-1 flex-col justify-between px-8 lg:px-16">
         <div className="pt-8">
-          <img
-            src="https://voltade.com/images/Logo+typo.svg"
-            alt="Voltade Logo"
-            className="h-8 w-auto"
-          />
+          <Logo />
         </div>
         <div className="flex flex-1 items-center">
           <div className="max-w-md">
-            <h1 className="text-5xl font-bold leading-tight text-gray-900">
-              Voltade OS
-            </h1>
-            <p className="mt-4 text-3xl leading-tight text-gray-900">
+            <h1 className="text-5xl font-bold leading-tight">Voltade OS</h1>
+            <p className="mt-4 text-3xl leading-tight">
               Next gen business software and developer platform
             </p>
           </div>
@@ -75,13 +70,11 @@ function RouteComponent() {
       </div>
 
       {/* Right: onboarding form */}
-      <div className="flex flex-1 items-center justify-center border-l bg-white">
+      <div className="flex flex-1 items-center justify-center border-l">
         <div className="w-full max-w-sm p-6">
           <div className="mb-6">
-            <h2 className="text-3xl font-bold text-gray-900">
-              Enter your name
-            </h2>
-            <p className="text-sm text-gray-600">
+            <h2 className="text-3xl font-bold">Enter your name</h2>
+            <p className="text-sm">
               We will use this to personalize your account.
             </p>
           </div>

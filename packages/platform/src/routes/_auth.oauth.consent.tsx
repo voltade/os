@@ -13,6 +13,7 @@ import { Checkbox } from '@voltade/ui/checkbox.tsx';
 import type React from 'react';
 import { useEffect, useState } from 'react';
 
+import { Logo } from '#src/components/ui/logo.tsx';
 import { authClient } from '#src/lib/auth.ts';
 
 export const Route = createFileRoute('/_auth/oauth/consent')({
@@ -181,7 +182,7 @@ function RouteComponent() {
   if (error || !consentRequest) {
     return (
       <div className="mx-auto max-w-2xl p-6">
-        <div className="flex items-start gap-2 rounded-md border border-red-200 bg-red-50 p-3 text-sm text-red-900">
+        <div className="flex items-start gap-2 rounded-md border border-destructive/20 bg-destructive/10 p-3 text-sm text-destructive-foreground">
           <IconAlertTriangle size={16} />
           <span>{error || 'Invalid consent request'}</span>
         </div>
@@ -192,12 +193,8 @@ function RouteComponent() {
   return (
     <div className="mx-auto max-w-2xl p-6">
       <div className="mb-6 flex flex-col items-center gap-3">
-        <img
-          src="https://voltade.com/images/Logo+typo.svg"
-          alt="Voltade Logo"
-          className="h-12 w-auto"
-        />
-        <h1 className="text-3xl font-bold text-gray-900">
+        <Logo />
+        <h1 className="text-3xl font-bold text-foreground">
           Authorize Application
         </h1>
       </div>
@@ -206,7 +203,7 @@ function RouteComponent() {
         <CardContent className="space-y-5 p-4 sm:p-6">
           {/* Application info */}
           <div className="flex items-center gap-3">
-            <div className="flex size-10 items-center justify-center rounded-full bg-blue-500 text-white">
+            <div className="flex size-10 items-center justify-center rounded-full bg-primary text-primary-foreground">
               <span className="text-sm font-bold uppercase">
                 {consentRequest.client_name?.charAt(0).toUpperCase() || 'A'}
               </span>

@@ -2,6 +2,7 @@ import { createFileRoute, useNavigate } from '@tanstack/react-router';
 import { Button } from '@voltade/ui/button.tsx';
 import { useEffect, useState } from 'react';
 
+import { Logo } from '#src/components/ui/logo.tsx';
 import { authClient } from '#src/lib/auth.ts';
 
 export const Route = createFileRoute('/_main/accept-invitation/$invitationId')({
@@ -60,30 +61,26 @@ export default function RouteComponent() {
 
   if (validating) {
     return (
-      <div className="flex min-h-screen bg-white">
+      <div className="flex min-h-screen bg-background">
         <div className="flex flex-1 flex-col justify-between px-8 lg:px-16">
           <div className="pt-8">
-            <img
-              src="https://voltade.com/images/Logo+typo.svg"
-              alt="Voltade Logo"
-              className="h-8 w-auto"
-            />
+            <Logo />
           </div>
           <div className="flex flex-1 items-center">
             <div className="max-w-md">
-              <h1 className="text-5xl font-bold leading-tight text-gray-900">
+              <h1 className="text-5xl font-bold leading-tight text-foreground">
                 Voltade OS
               </h1>
-              <p className="mt-4 text-3xl leading-tight text-gray-900">
+              <p className="mt-4 text-3xl leading-tight text-muted-foreground">
                 Next gen business software and developer platform
               </p>
             </div>
           </div>
           <div />
         </div>
-        <div className="flex flex-1 items-center justify-center border-l bg-white">
+        <div className="flex flex-1 items-center justify-center border-l border-border bg-background">
           <div className="w-full max-w-sm p-6 text-center">
-            <p className="text-gray-600">Validating invitation...</p>
+            <p className="text-muted-foreground">Validating invitation...</p>
           </div>
         </div>
       </div>
@@ -92,33 +89,29 @@ export default function RouteComponent() {
 
   if (error || !invitationValid) {
     return (
-      <div className="flex min-h-screen bg-white">
+      <div className="flex min-h-screen bg-background">
         <div className="flex flex-1 flex-col justify-between px-8 lg:px-16">
           <div className="pt-8">
-            <img
-              src="https://voltade.com/images/Logo+typo.svg"
-              alt="Voltade Logo"
-              className="h-8 w-auto"
-            />
+            <Logo />
           </div>
           <div className="flex flex-1 items-center">
             <div className="max-w-md">
-              <h1 className="text-5xl font-bold leading-tight text-gray-900">
+              <h1 className="text-5xl font-bold leading-tight text-foreground">
                 Voltade OS
               </h1>
-              <p className="mt-4 text-3xl leading-tight text-gray-900">
+              <p className="mt-4 text-3xl leading-tight text-muted-foreground">
                 Next gen business software and developer platform
               </p>
             </div>
           </div>
           <div />
         </div>
-        <div className="flex flex-1 items-center justify-center border-l bg-white">
+        <div className="flex flex-1 items-center justify-center border-l border-border bg-background">
           <div className="w-full max-w-sm p-6 text-center">
-            <h2 className="mb-4 text-2xl font-bold text-gray-900">
+            <h2 className="mb-4 text-2xl font-bold text-foreground">
               Invalid or expired invitation
             </h2>
-            <p className="mb-6 text-gray-600">{error}</p>
+            <p className="mb-6 text-muted-foreground">{error}</p>
             <Button onClick={() => navigate({ to: '/' })}>
               Go to Dashboard
             </Button>
@@ -129,36 +122,32 @@ export default function RouteComponent() {
   }
 
   return (
-    <div className="flex min-h-screen bg-white">
+    <div className="flex min-h-screen bg-background">
       <div className="flex flex-1 flex-col justify-between px-8 lg:px-16">
         <div className="pt-8">
-          <img
-            src="https://voltade.com/images/Logo+typo.svg"
-            alt="Voltade Logo"
-            className="h-8 w-auto"
-          />
+          <Logo />
         </div>
         <div className="flex flex-1 items-center">
           <div className="max-w-md">
-            <h1 className="text-5xl font-bold leading-tight text-gray-900">
+            <h1 className="text-5xl font-bold leading-tight text-foreground">
               Voltade OS
             </h1>
-            <p className="mt-4 text-3xl leading-tight text-gray-900">
+            <p className="mt-4 text-3xl leading-tight text-muted-foreground">
               Next gen business software and developer platform
             </p>
           </div>
         </div>
         <div />
       </div>
-      <div className="flex flex-1 items-center justify-center border-l bg-white">
+      <div className="flex flex-1 items-center justify-center border-l border-border bg-background">
         <div className="w-full max-w-sm p-6 text-center">
-          <h2 className="mb-4 text-2xl font-bold text-gray-900">
+          <h2 className="mb-4 text-2xl font-bold text-foreground">
             Join organization
           </h2>
-          <p className="mb-2 text-gray-600">
+          <p className="mb-2 text-muted-foreground">
             You've been invited to join an organization.
           </p>
-          <p className="mb-6 text-sm text-gray-500">
+          <p className="mb-6 text-sm text-muted-foreground">
             By accepting, you'll be added as a member and gain access
             immediately.
           </p>
