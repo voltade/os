@@ -6,7 +6,8 @@
   "module": "index.ts",
   "type": "module",
   "workspaces": [
-    "packages/*"
+    "packages/*",
+    "apps/*"
   ],
   "scripts": {
     "ncu": "ncu --packageManager bun --workspaces --format group -i",
