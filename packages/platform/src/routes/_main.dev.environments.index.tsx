@@ -1,9 +1,38 @@
+import { zodResolver } from '@hookform/resolvers/zod';
 import { createFileRoute, useNavigate } from '@tanstack/react-router';
+import { Button } from '@voltade/ui/button.tsx';
+import {
+  Dialog,
+  DialogContent,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from '@voltade/ui/dialog.tsx';
+import {
+  Form,
+  FormControl,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
+} from '@voltade/ui/form.tsx';
+import { Input } from '@voltade/ui/input.tsx';
+import { Switch } from '@voltade/ui/switch.tsx';
 import { Database, Plus, Search, Server } from 'lucide-react';
 import { useMemo, useState } from 'react';
+import { useForm } from 'react-hook-form';
+import type { z } from 'zod';
 
+import { createEnvironmentSchema } from '#shared/schemas/environment.ts';
 import { AccessDenied } from '#src/components/utils/access-denied';
-import { useEnvironments } from '#src/hooks/environment.ts';
+import {
+  showError,
+  showSuccess,
+} from '#src/components/utils/notifications.tsx';
+import {
+  useCreateEnvironment,
+  useEnvironments,
+} from '#src/hooks/environment.ts';
 import { authClient } from '#src/lib/auth.ts';
 
 export const Route = createFileRoute('/_main/dev/environments/')({
@@ -54,13 +83,7 @@ function RouteComponent() {
         <h2 className="text-2xl font-semibold tracking-tight text-foreground">
           Environments
         </h2>
-        <button
-          type="button"
-          className="inline-flex items-center gap-2 rounded-md bg-primary px-3 py-2 text-sm font-medium text-primary-foreground shadow hover:opacity-90"
-        >
-          <Plus size={16} />
-          Add New Environment
-        </button>
+        <CreateEnvironmentButton />
       </div>
 
       <div className="max-w-md">
@@ -156,5 +179,195 @@ function RouteComponent() {
         </div>
       )}
     </div>
+  );
+}
+
+function CreateEnvironmentButton() {
+  const { data: organisation } = authClient.useActiveOrganization();
+  const orgId = organisation?.id ?? '';
+  const createEnv = useCreateEnvironment(orgId);
+  const [open, setOpen] = useState(false);
+
+  const form = useForm<z.input<typeof createEnvironmentSchema>>({
+    resolver: zodResolver(createEnvironmentSchema),
+    defaultValues: {
+      slug: '',
+      name: '',
+      description: '',
+      is_production: false,
+      runner_count: 1,
+      database_instance_count: 1,
+    },
+    mode: 'onChange',
+  });
+
+  const onSubmit = async (values: z.input<typeof createEnvironmentSchema>) => {
+    try {
+      const payload = {
+        ...values,
+        name: values.name?.trim() === '' ? null : values.name,
+        description:
+          values.description?.trim() === '' ? null : values.description,
+      };
+      const parsed = createEnvironmentSchema.parse(payload);
+      await createEnv.mutateAsync(parsed);
+      showSuccess('Environment created');
+      setOpen(false);
+      form.reset();
+    } catch (e) {
+      showError(
+        e instanceof Error ? e.message : 'Failed to create environment',
+      );
+    }
+  };
+
+  return (
+    <>
+      <Button onClick={() => setOpen(true)}>
+        <Plus size={16} className="mr-2" /> Add New Environment
+      </Button>
+      <Dialog open={open} onOpenChange={setOpen}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>Create Environment</DialogTitle>
+          </DialogHeader>
+          <Form {...form}>
+            <form
+              className="grid grid-cols-1 gap-2"
+              onSubmit={form.handleSubmit(onSubmit)}
+            >
+              <FormField
+                control={form.control}
+                name="slug"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Slug</FormLabel>
+                    <FormControl>
+                      <Input placeholder="staging" {...field} />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              <FormField
+                control={form.control}
+                name="name"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Name</FormLabel>
+                    <FormControl>
+                      <Input
+                        placeholder="Environment name"
+                        {...field}
+                        value={field.value ?? ''}
+                      />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              <FormField
+                control={form.control}
+                name="description"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Description</FormLabel>
+                    <FormControl>
+                      <Input
+                        placeholder="Optional description"
+                        {...field}
+                        value={field.value ?? ''}
+                      />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              <div className="grid grid-cols-1 sm:grid-cols-3 gap-2">
+                <FormField
+                  control={form.control}
+                  name="is_production"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Production</FormLabel>
+                      <FormControl>
+                        <div className="h-9 flex items-center">
+                          <Switch
+                            checked={field.value}
+                            onCheckedChange={field.onChange}
+                          />
+                        </div>
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+                <FormField
+                  control={form.control}
+                  name="runner_count"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Runners</FormLabel>
+                      <FormControl>
+                        <Input
+                          type="number"
+                          min={1}
+                          value={Number(field.value ?? 0)}
+                          onChange={(e) =>
+                            field.onChange(Number(e.target.value))
+                          }
+                          onBlur={field.onBlur}
+                          name={field.name}
+                          ref={field.ref}
+                        />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+                <FormField
+                  control={form.control}
+                  name="database_instance_count"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>DB Instances</FormLabel>
+                      <FormControl>
+                        <Input
+                          type="number"
+                          min={1}
+                          value={Number(field.value ?? 0)}
+                          onChange={(e) =>
+                            field.onChange(Number(e.target.value))
+                          }
+                          onBlur={field.onBlur}
+                          name={field.name}
+                          ref={field.ref}
+                        />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+              </div>
+            </form>
+          </Form>
+          <DialogFooter>
+            <Button
+              variant="outline"
+              onClick={() => setOpen(false)}
+              disabled={createEnv.isPending}
+            >
+              Cancel
+            </Button>
+            <Button
+              onClick={form.handleSubmit(onSubmit)}
+              disabled={!form.formState.isDirty || createEnv.isPending}
+            >
+              Create
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+    </>
   );
 }

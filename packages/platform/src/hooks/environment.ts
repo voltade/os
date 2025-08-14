@@ -1,5 +1,6 @@
-import { useQuery } from '@tanstack/react-query';
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 
+import type { CreateEnvironmentInput } from '#shared/schemas/environment.ts';
 import { api } from '#src/lib/api.ts';
 
 export const useEnvironments = (orgId: string, enabled = true) => {
@@ -33,6 +34,22 @@ export const useEnvironment = (environmentSlug: string) => {
       }
       const data = await res.json();
       return data;
+    },
+  });
+};
+
+export const useCreateEnvironment = (orgId: string) => {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: async (data: CreateEnvironmentInput) => {
+      const res = await api.environment.$post({ json: data });
+      if (!res.ok) {
+        throw new Error(res.statusText);
+      }
+      return res.json();
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['environments', orgId] });
     },
   });
 };

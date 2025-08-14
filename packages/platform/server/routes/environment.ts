@@ -17,6 +17,7 @@ import { factory } from '#server/factory.ts';
 import { authMiddleware } from '#server/lib/auth';
 import { db } from '#server/lib/db.ts';
 import { signJwt } from '#server/lib/jwk.ts';
+import { createEnvironmentSchema } from '#shared/schemas/environment.ts';
 
 type Common = {
   id: string;
@@ -211,5 +212,26 @@ export const route = factory
         .from(environmentTable)
         .where(eq(environmentTable.organization_id, orgId));
       return c.json(environments);
+    },
+  )
+  .post(
+    '/',
+    authMiddleware(true),
+    zValidator('json', createEnvironmentSchema),
+    async (c) => {
+      // biome-ignore lint/style/noNonNullAssertion: session is guaranteed by the authMiddleware
+      const { activeOrganizationId } = c.get('session')!;
+      if (!activeOrganizationId) {
+        return c.json({ error: 'No active organization' }, 400);
+      }
+      const body = c.req.valid('json');
+      const [created] = await db
+        .insert(environmentTable)
+        .values({
+          organization_id: activeOrganizationId,
+          ...body,
+        })
+        .returning();
+      return c.json(created);
     },
   );
