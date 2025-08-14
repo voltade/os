@@ -11,17 +11,7 @@ import {
 import { Skeleton } from '@voltade/ui/skeleton.tsx';
 import { useTheme } from '@voltade/ui/theme-provider.tsx';
 import { ToggleGroup, ToggleGroupItem } from '@voltade/ui/toggle-group.tsx';
-import {
-  CircleUser,
-  Code,
-  Laptop,
-  LogOut,
-  Moon,
-  Settings,
-  Sun,
-  User,
-  Users,
-} from 'lucide-react';
+import { CircleUser, Laptop, LogOut, Moon, Sun, User } from 'lucide-react';
 
 import { authClient } from '#src/lib/auth.ts';
 
@@ -48,14 +38,6 @@ export function UserButton() {
         },
       },
     });
-  };
-
-  const handleTeam = () => {
-    navigate({ to: '/team' });
-  };
-
-  const handleDev = () => {
-    navigate({ to: '/dev/environments' });
   };
 
   const handleSettings = () => {
@@ -144,14 +126,6 @@ export function UserButton() {
             </ToggleGroupItem>
           </ToggleGroup>
         </div>
-        <DropdownMenuSeparator />
-        <DropdownMenuLabel>Organization</DropdownMenuLabel>
-        <DropdownMenuItem onClick={handleTeam} className="cursor-pointer">
-          <Users className="mr-2 size-4" /> Team
-        </DropdownMenuItem>
-        <DropdownMenuItem onClick={handleDev} className="cursor-pointer">
-          <Code className="mr-2 size-4" /> Developer
-        </DropdownMenuItem>
         <DropdownMenuSeparator />
         <DropdownMenuItem
           onClick={handleLogout}

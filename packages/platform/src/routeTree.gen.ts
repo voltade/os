@@ -14,15 +14,17 @@ import { Route as AuthRouteImport } from './routes/_auth'
 import { Route as MainIndexRouteImport } from './routes/_main.index'
 import { Route as MainSettingsRouteImport } from './routes/_main.settings'
 import { Route as MainDevRouteImport } from './routes/_main.dev'
+import { Route as MainAdminRouteImport } from './routes/_main.admin'
 import { Route as AuthSignupRouteImport } from './routes/_auth.signup'
 import { Route as AuthSigninRouteImport } from './routes/_auth.signin'
 import { Route as AuthOnboardingRouteImport } from './routes/_auth.onboarding'
-import { Route as MainTeamIndexRouteImport } from './routes/_main.team.index'
 import { Route as MainSettingsIndexRouteImport } from './routes/_main.settings.index'
 import { Route as MainDevIndexRouteImport } from './routes/_main.dev.index'
+import { Route as MainAdminIndexRouteImport } from './routes/_main.admin.index'
 import { Route as MainSettingsOrganizationsRouteImport } from './routes/_main.settings.organizations'
 import { Route as MainDevGitProvidersRouteImport } from './routes/_main.dev.git-providers'
 import { Route as MainDevApplicationsRouteImport } from './routes/_main.dev.applications'
+import { Route as MainAdminTeamRouteImport } from './routes/_main.admin.team'
 import { Route as MainAcceptInvitationInvitationIdRouteImport } from './routes/_main.accept-invitation.$invitationId'
 import { Route as AuthOauthConsentRouteImport } from './routes/_auth.oauth.consent'
 import { Route as MainDevEnvironmentsIndexRouteImport } from './routes/_main.dev.environments.index'
@@ -56,6 +58,11 @@ const MainDevRoute = MainDevRouteImport.update({
   path: '/dev',
   getParentRoute: () => MainRoute,
 } as any)
+const MainAdminRoute = MainAdminRouteImport.update({
+  id: '/admin',
+  path: '/admin',
+  getParentRoute: () => MainRoute,
+} as any)
 const AuthSignupRoute = AuthSignupRouteImport.update({
   id: '/signup',
   path: '/signup',
@@ -71,11 +78,6 @@ const AuthOnboardingRoute = AuthOnboardingRouteImport.update({
   path: '/onboarding',
   getParentRoute: () => AuthRoute,
 } as any)
-const MainTeamIndexRoute = MainTeamIndexRouteImport.update({
-  id: '/team/',
-  path: '/team/',
-  getParentRoute: () => MainRoute,
-} as any)
 const MainSettingsIndexRoute = MainSettingsIndexRouteImport.update({
   id: '/',
   path: '/',
@@ -85,6 +87,11 @@ const MainDevIndexRoute = MainDevIndexRouteImport.update({
   id: '/',
   path: '/',
   getParentRoute: () => MainDevRoute,
+} as any)
+const MainAdminIndexRoute = MainAdminIndexRouteImport.update({
+  id: '/',
+  path: '/',
+  getParentRoute: () => MainAdminRoute,
 } as any)
 const MainSettingsOrganizationsRoute =
   MainSettingsOrganizationsRouteImport.update({
@@ -101,6 +108,11 @@ const MainDevApplicationsRoute = MainDevApplicationsRouteImport.update({
   id: '/applications',
   path: '/applications',
   getParentRoute: () => MainDevRoute,
+} as any)
+const MainAdminTeamRoute = MainAdminTeamRouteImport.update({
+  id: '/team',
+  path: '/team',
+  getParentRoute: () => MainAdminRoute,
 } as any)
 const MainAcceptInvitationInvitationIdRoute =
   MainAcceptInvitationInvitationIdRouteImport.update({
@@ -159,17 +171,19 @@ export interface FileRoutesByFullPath {
   '/onboarding': typeof AuthOnboardingRoute
   '/signin': typeof AuthSigninRoute
   '/signup': typeof AuthSignupRoute
+  '/admin': typeof MainAdminRouteWithChildren
   '/dev': typeof MainDevRouteWithChildren
   '/settings': typeof MainSettingsRouteWithChildren
   '/': typeof MainIndexRoute
   '/oauth/consent': typeof AuthOauthConsentRoute
   '/accept-invitation/$invitationId': typeof MainAcceptInvitationInvitationIdRoute
+  '/admin/team': typeof MainAdminTeamRoute
   '/dev/applications': typeof MainDevApplicationsRoute
   '/dev/git-providers': typeof MainDevGitProvidersRoute
   '/settings/organizations': typeof MainSettingsOrganizationsRoute
+  '/admin/': typeof MainAdminIndexRoute
   '/dev/': typeof MainDevIndexRoute
   '/settings/': typeof MainSettingsIndexRoute
-  '/team': typeof MainTeamIndexRoute
   '/dev/environments/$environmentSlug': typeof MainDevEnvironmentsEnvironmentSlugRouteWithChildren
   '/apps/$appId': typeof MainAppsAppIdIndexRoute
   '/dev/environments': typeof MainDevEnvironmentsIndexRoute
@@ -185,12 +199,13 @@ export interface FileRoutesByTo {
   '/': typeof MainIndexRoute
   '/oauth/consent': typeof AuthOauthConsentRoute
   '/accept-invitation/$invitationId': typeof MainAcceptInvitationInvitationIdRoute
+  '/admin/team': typeof MainAdminTeamRoute
   '/dev/applications': typeof MainDevApplicationsRoute
   '/dev/git-providers': typeof MainDevGitProvidersRoute
   '/settings/organizations': typeof MainSettingsOrganizationsRoute
+  '/admin': typeof MainAdminIndexRoute
   '/dev': typeof MainDevIndexRoute
   '/settings': typeof MainSettingsIndexRoute
-  '/team': typeof MainTeamIndexRoute
   '/apps/$appId': typeof MainAppsAppIdIndexRoute
   '/dev/environments': typeof MainDevEnvironmentsIndexRoute
   '/dev/environments/$environmentSlug/app-installations': typeof MainDevEnvironmentsEnvironmentSlugAppInstallationsRoute
@@ -205,17 +220,19 @@ export interface FileRoutesById {
   '/_auth/onboarding': typeof AuthOnboardingRoute
   '/_auth/signin': typeof AuthSigninRoute
   '/_auth/signup': typeof AuthSignupRoute
+  '/_main/admin': typeof MainAdminRouteWithChildren
   '/_main/dev': typeof MainDevRouteWithChildren
   '/_main/settings': typeof MainSettingsRouteWithChildren
   '/_main/': typeof MainIndexRoute
   '/_auth/oauth/consent': typeof AuthOauthConsentRoute
   '/_main/accept-invitation/$invitationId': typeof MainAcceptInvitationInvitationIdRoute
+  '/_main/admin/team': typeof MainAdminTeamRoute
   '/_main/dev/applications': typeof MainDevApplicationsRoute
   '/_main/dev/git-providers': typeof MainDevGitProvidersRoute
   '/_main/settings/organizations': typeof MainSettingsOrganizationsRoute
+  '/_main/admin/': typeof MainAdminIndexRoute
   '/_main/dev/': typeof MainDevIndexRoute
   '/_main/settings/': typeof MainSettingsIndexRoute
-  '/_main/team/': typeof MainTeamIndexRoute
   '/_main/dev/environments/$environmentSlug': typeof MainDevEnvironmentsEnvironmentSlugRouteWithChildren
   '/_main/apps/$appId/': typeof MainAppsAppIdIndexRoute
   '/_main/dev/environments/': typeof MainDevEnvironmentsIndexRoute
@@ -230,17 +247,19 @@ export interface FileRouteTypes {
     | '/onboarding'
     | '/signin'
     | '/signup'
+    | '/admin'
     | '/dev'
     | '/settings'
     | '/'
     | '/oauth/consent'
     | '/accept-invitation/$invitationId'
+    | '/admin/team'
     | '/dev/applications'
     | '/dev/git-providers'
     | '/settings/organizations'
+    | '/admin/'
     | '/dev/'
     | '/settings/'
-    | '/team'
     | '/dev/environments/$environmentSlug'
     | '/apps/$appId'
     | '/dev/environments'
@@ -256,12 +275,13 @@ export interface FileRouteTypes {
     | '/'
     | '/oauth/consent'
     | '/accept-invitation/$invitationId'
+    | '/admin/team'
     | '/dev/applications'
     | '/dev/git-providers'
     | '/settings/organizations'
+    | '/admin'
     | '/dev'
     | '/settings'
-    | '/team'
     | '/apps/$appId'
     | '/dev/environments'
     | '/dev/environments/$environmentSlug/app-installations'
@@ -275,17 +295,19 @@ export interface FileRouteTypes {
     | '/_auth/onboarding'
     | '/_auth/signin'
     | '/_auth/signup'
+    | '/_main/admin'
     | '/_main/dev'
     | '/_main/settings'
     | '/_main/'
     | '/_auth/oauth/consent'
     | '/_main/accept-invitation/$invitationId'
+    | '/_main/admin/team'
     | '/_main/dev/applications'
     | '/_main/dev/git-providers'
     | '/_main/settings/organizations'
+    | '/_main/admin/'
     | '/_main/dev/'
     | '/_main/settings/'
-    | '/_main/team/'
     | '/_main/dev/environments/$environmentSlug'
     | '/_main/apps/$appId/'
     | '/_main/dev/environments/'
@@ -337,6 +359,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof MainDevRouteImport
       parentRoute: typeof MainRoute
     }
+    '/_main/admin': {
+      id: '/_main/admin'
+      path: '/admin'
+      fullPath: '/admin'
+      preLoaderRoute: typeof MainAdminRouteImport
+      parentRoute: typeof MainRoute
+    }
     '/_auth/signup': {
       id: '/_auth/signup'
       path: '/signup'
@@ -358,13 +387,6 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthOnboardingRouteImport
       parentRoute: typeof AuthRoute
     }
-    '/_main/team/': {
-      id: '/_main/team/'
-      path: '/team'
-      fullPath: '/team'
-      preLoaderRoute: typeof MainTeamIndexRouteImport
-      parentRoute: typeof MainRoute
-    }
     '/_main/settings/': {
       id: '/_main/settings/'
       path: '/'
@@ -378,6 +400,13 @@ declare module '@tanstack/react-router' {
       fullPath: '/dev/'
       preLoaderRoute: typeof MainDevIndexRouteImport
       parentRoute: typeof MainDevRoute
+    }
+    '/_main/admin/': {
+      id: '/_main/admin/'
+      path: '/'
+      fullPath: '/admin/'
+      preLoaderRoute: typeof MainAdminIndexRouteImport
+      parentRoute: typeof MainAdminRoute
     }
     '/_main/settings/organizations': {
       id: '/_main/settings/organizations'
@@ -399,6 +428,13 @@ declare module '@tanstack/react-router' {
       fullPath: '/dev/applications'
       preLoaderRoute: typeof MainDevApplicationsRouteImport
       parentRoute: typeof MainDevRoute
+    }
+    '/_main/admin/team': {
+      id: '/_main/admin/team'
+      path: '/team'
+      fullPath: '/admin/team'
+      preLoaderRoute: typeof MainAdminTeamRouteImport
+      parentRoute: typeof MainAdminRoute
     }
     '/_main/accept-invitation/$invitationId': {
       id: '/_main/accept-invitation/$invitationId'
@@ -482,6 +518,20 @@ const AuthRouteChildren: AuthRouteChildren = {
 
 const AuthRouteWithChildren = AuthRoute._addFileChildren(AuthRouteChildren)
 
+interface MainAdminRouteChildren {
+  MainAdminTeamRoute: typeof MainAdminTeamRoute
+  MainAdminIndexRoute: typeof MainAdminIndexRoute
+}
+
+const MainAdminRouteChildren: MainAdminRouteChildren = {
+  MainAdminTeamRoute: MainAdminTeamRoute,
+  MainAdminIndexRoute: MainAdminIndexRoute,
+}
+
+const MainAdminRouteWithChildren = MainAdminRoute._addFileChildren(
+  MainAdminRouteChildren,
+)
+
 interface MainDevEnvironmentsEnvironmentSlugRouteChildren {
   MainDevEnvironmentsEnvironmentSlugAppInstallationsRoute: typeof MainDevEnvironmentsEnvironmentSlugAppInstallationsRoute
   MainDevEnvironmentsEnvironmentSlugDatabaseRoute: typeof MainDevEnvironmentsEnvironmentSlugDatabaseRoute
@@ -541,20 +591,20 @@ const MainSettingsRouteWithChildren = MainSettingsRoute._addFileChildren(
 )
 
 interface MainRouteChildren {
+  MainAdminRoute: typeof MainAdminRouteWithChildren
   MainDevRoute: typeof MainDevRouteWithChildren
   MainSettingsRoute: typeof MainSettingsRouteWithChildren
   MainIndexRoute: typeof MainIndexRoute
   MainAcceptInvitationInvitationIdRoute: typeof MainAcceptInvitationInvitationIdRoute
-  MainTeamIndexRoute: typeof MainTeamIndexRoute
   MainAppsAppIdIndexRoute: typeof MainAppsAppIdIndexRoute
 }
 
 const MainRouteChildren: MainRouteChildren = {
+  MainAdminRoute: MainAdminRouteWithChildren,
   MainDevRoute: MainDevRouteWithChildren,
   MainSettingsRoute: MainSettingsRouteWithChildren,
   MainIndexRoute: MainIndexRoute,
   MainAcceptInvitationInvitationIdRoute: MainAcceptInvitationInvitationIdRoute,
-  MainTeamIndexRoute: MainTeamIndexRoute,
   MainAppsAppIdIndexRoute: MainAppsAppIdIndexRoute,
 }
 

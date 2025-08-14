@@ -1,12 +1,6 @@
 import { createFileRoute } from '@tanstack/react-router';
 import { Button } from '@voltade/ui/button.tsx';
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from '@voltade/ui/card.tsx';
+import { Card, CardContent, CardHeader, CardTitle } from '@voltade/ui/card.tsx';
 import {
   Pagination,
   PaginationContent,
@@ -17,7 +11,7 @@ import {
 } from '@voltade/ui/pagination.tsx';
 import { Separator } from '@voltade/ui/separator.tsx';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@voltade/ui/tabs.tsx';
-import { Crown, Plus, RefreshCw, User, UserCheck } from 'lucide-react';
+import { Plus, RefreshCw, User } from 'lucide-react';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 
 import { InviteMemberModal } from '#src/components/team/InviteMemberModal';
@@ -45,7 +39,7 @@ function useDisclosure(initial: boolean = false) {
   return [opened, handlers] as const;
 }
 
-export const Route = createFileRoute('/_main/team/')({
+export const Route = createFileRoute('/_main/admin/team')({
   component: RouteComponent,
 });
 
@@ -160,7 +154,7 @@ function RouteComponent() {
       });
 
       if (!error) {
-        showSuccess(`We’ve sent an invite to ${values.email}`);
+        showSuccess(`We've sent an invite to ${values.email}`);
         close();
         // refresh invites list if on invites tab
         if (activeTab === 'invites') await fetchInvites();
@@ -185,10 +179,8 @@ function RouteComponent() {
     try {
       const { error } = await authClient.organization.updateMemberRole({
         memberId,
-        role: (newRole === 'developer' ? 'member' : newRole) as
-          | 'member'
-          | 'admin'
-          | 'owner',
+        //TODO: Fix this to use the correct type
+        role: newRole as 'member' | 'admin' | 'owner' | 'developer',
         organizationId: organisation?.id || undefined,
       });
       if (error) throw new Error(error.message);

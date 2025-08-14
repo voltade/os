@@ -1,3 +1,4 @@
+import { useNavigate } from '@tanstack/react-router';
 import { Avatar, AvatarFallback, AvatarImage } from '@voltade/ui/avatar.tsx';
 import {
   DropdownMenu,
@@ -12,7 +13,7 @@ import {
   SidebarMenuButton,
   SidebarMenuItem,
 } from '@voltade/ui/sidebar.tsx';
-import { Check, ChevronsUpDown } from 'lucide-react';
+import { Check, ChevronsUpDown, Settings, Users } from 'lucide-react';
 
 import { authClient } from '#src/lib/auth.ts';
 
@@ -25,14 +26,36 @@ type Org = {
 type OrgSource = { id: string; name?: string | null; logo?: string | null };
 
 export function OrganizationSwitcher() {
+  const navigate = useNavigate();
   const { data: organizations, isPending } = authClient.useListOrganizations();
   const { data: activeOrganization } = authClient.useActiveOrganization();
+  const { data: session } = authClient.useSession();
 
   const handleSwitchOrganization = async (orgId: string) => {
     await authClient.organization.setActive({
       organizationId: orgId,
     });
   };
+
+  const handleSettings = () => {
+    navigate({ to: '/admin' });
+  };
+
+  const handleDev = () => {
+    navigate({ to: '/dev/environments' });
+  };
+
+  // Get current user's role in the organization
+  const currentUserMember = activeOrganization?.members?.find(
+    (member) => member.userId === session?.user?.id,
+  );
+  const currentUserRole = currentUserMember?.role;
+
+  // Check permissions - admins can see settings but get redirected to team
+  const canViewSettings =
+    currentUserRole === 'admin' || currentUserRole === 'owner';
+  const canViewDeveloper =
+    currentUserRole === 'developer' || currentUserRole === 'owner';
 
   if (isPending) {
     return (
@@ -114,10 +137,23 @@ export function OrganizationSwitcher() {
               );
             })}
 
-            <DropdownMenuSeparator />
-            <DropdownMenuItem disabled className="p-2 text-muted-foreground">
-              Manage organizations in account settings
-            </DropdownMenuItem>
+            {(canViewSettings || canViewDeveloper) && <DropdownMenuSeparator />}
+            {canViewSettings && (
+              <DropdownMenuItem
+                onClick={handleSettings}
+                className="cursor-pointer p-2"
+              >
+                <Settings className="mr-2 size-4" /> Settings
+              </DropdownMenuItem>
+            )}
+            {canViewDeveloper && (
+              <DropdownMenuItem
+                onClick={handleDev}
+                className="cursor-pointer p-2"
+              >
+                <Users className="mr-2 size-4" /> Developer
+              </DropdownMenuItem>
+            )}
           </DropdownMenuContent>
         </DropdownMenu>
       </SidebarMenuItem>

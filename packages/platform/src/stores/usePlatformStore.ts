@@ -41,6 +41,8 @@ export const usePlatformStore = create<PlatformStore>((set) => ({
         isInitialized: true,
       }));
     } else {
+      //TODO: Fix the logic here to handle cases where no production environment is found
+      console.warn('No production environment found, using first environment.');
       // Fallback to first environment if no production environment found
       const firstEnvironment = environments[0];
       if (firstEnvironment) {
