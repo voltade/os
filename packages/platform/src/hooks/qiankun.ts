@@ -2,7 +2,7 @@ import { loadMicroApp, type MicroApp } from 'qiankun';
 import { useEffect, useRef } from 'react';
 
 import type { AppInstallation } from '#src/hooks/app_installation.ts';
-import { ENVIRONMENT_SLUG } from '#src/main.tsx';
+import { usePlatformStore } from '#src/stores/usePlatformStore.ts';
 
 interface UseQiankunMicroAppOptions {
   app: AppInstallation | undefined;
@@ -15,6 +15,7 @@ export function useQiankunMicroApp({
 }: UseQiankunMicroAppOptions) {
   const appContainerRef = useRef<HTMLDivElement>(null);
   const microAppRef = useRef<MicroApp | null>(null);
+  const { environment } = usePlatformStore();
 
   useEffect(() => {
     if (!appContainerRef.current) return;
@@ -24,7 +25,7 @@ export function useQiankunMicroApp({
     const microApp = loadMicroApp(
       {
         name: app.app.slug ?? '',
-        entry: `//${activeOrganization.slug}-${ENVIRONMENT_SLUG}.127.0.0.1.nip.io/apps/${app.app.id}/${app.app_installation.app_build_id}/`,
+        entry: `//${activeOrganization.slug}-${environment.slug}.127.0.0.1.nip.io/apps/${app.app.id}/${app.app_installation.app_build_id}/`,
         container: appContainerRef.current,
         props: {
           baseUrl: `${window.location.origin}/apps/${app.app.id}`,
@@ -56,7 +57,7 @@ export function useQiankunMicroApp({
       microApp.unmount();
       microAppRef.current = null;
     };
-  }, [app, activeOrganization]);
+  }, [app, activeOrganization, environment.slug]);
 
   return { appContainerRef };
 }
