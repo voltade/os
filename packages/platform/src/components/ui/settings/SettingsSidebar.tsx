@@ -18,16 +18,12 @@ export function SettingsSidebar() {
   };
 
   return (
-    <aside className="w-52 shrink-0 border-r bg-background">
-      <div className="p-4">
-        <NavigationSidebar
-          title="Settings"
-          navItems={navItems}
-          pathPrefix="/settings"
-          isActivePathMatcher={isActive}
-          showIcons={false}
-        />
-      </div>
-    </aside>
+    <NavigationSidebar
+      title="Settings"
+      navItems={navItems}
+      pathPrefix="/settings"
+      isActivePathMatcher={isActive}
+      showIcons={false}
+    />
   );
 }

@@ -30,6 +30,8 @@ import { Route as MainAppsAppIdIndexRouteImport } from './routes/_main.apps.$app
 import { Route as MainDevEnvironmentsEnvironmentSlugRouteImport } from './routes/_main.dev.environments.$environmentSlug'
 import { Route as MainDevEnvironmentsEnvironmentSlugIndexRouteImport } from './routes/_main.dev.environments.$environmentSlug.index'
 import { Route as MainDevEnvironmentsEnvironmentSlugEnvironment_variablesRouteImport } from './routes/_main.dev.environments.$environmentSlug.environment_variables'
+import { Route as MainDevEnvironmentsEnvironmentSlugDatabaseRouteImport } from './routes/_main.dev.environments.$environmentSlug.database'
+import { Route as MainDevEnvironmentsEnvironmentSlugAppInstallationsRouteImport } from './routes/_main.dev.environments.$environmentSlug.app-installations'
 
 const MainRoute = MainRouteImport.update({
   id: '/_main',
@@ -140,6 +142,18 @@ const MainDevEnvironmentsEnvironmentSlugEnvironment_variablesRoute =
     path: '/environment_variables',
     getParentRoute: () => MainDevEnvironmentsEnvironmentSlugRoute,
   } as any)
+const MainDevEnvironmentsEnvironmentSlugDatabaseRoute =
+  MainDevEnvironmentsEnvironmentSlugDatabaseRouteImport.update({
+    id: '/database',
+    path: '/database',
+    getParentRoute: () => MainDevEnvironmentsEnvironmentSlugRoute,
+  } as any)
+const MainDevEnvironmentsEnvironmentSlugAppInstallationsRoute =
+  MainDevEnvironmentsEnvironmentSlugAppInstallationsRouteImport.update({
+    id: '/app-installations',
+    path: '/app-installations',
+    getParentRoute: () => MainDevEnvironmentsEnvironmentSlugRoute,
+  } as any)
 
 export interface FileRoutesByFullPath {
   '/onboarding': typeof AuthOnboardingRoute
@@ -159,6 +173,8 @@ export interface FileRoutesByFullPath {
   '/dev/environments/$environmentSlug': typeof MainDevEnvironmentsEnvironmentSlugRouteWithChildren
   '/apps/$appId': typeof MainAppsAppIdIndexRoute
   '/dev/environments': typeof MainDevEnvironmentsIndexRoute
+  '/dev/environments/$environmentSlug/app-installations': typeof MainDevEnvironmentsEnvironmentSlugAppInstallationsRoute
+  '/dev/environments/$environmentSlug/database': typeof MainDevEnvironmentsEnvironmentSlugDatabaseRoute
   '/dev/environments/$environmentSlug/environment_variables': typeof MainDevEnvironmentsEnvironmentSlugEnvironment_variablesRoute
   '/dev/environments/$environmentSlug/': typeof MainDevEnvironmentsEnvironmentSlugIndexRoute
 }
@@ -177,6 +193,8 @@ export interface FileRoutesByTo {
   '/team': typeof MainTeamIndexRoute
   '/apps/$appId': typeof MainAppsAppIdIndexRoute
   '/dev/environments': typeof MainDevEnvironmentsIndexRoute
+  '/dev/environments/$environmentSlug/app-installations': typeof MainDevEnvironmentsEnvironmentSlugAppInstallationsRoute
+  '/dev/environments/$environmentSlug/database': typeof MainDevEnvironmentsEnvironmentSlugDatabaseRoute
   '/dev/environments/$environmentSlug/environment_variables': typeof MainDevEnvironmentsEnvironmentSlugEnvironment_variablesRoute
   '/dev/environments/$environmentSlug': typeof MainDevEnvironmentsEnvironmentSlugIndexRoute
 }
@@ -201,6 +219,8 @@ export interface FileRoutesById {
   '/_main/dev/environments/$environmentSlug': typeof MainDevEnvironmentsEnvironmentSlugRouteWithChildren
   '/_main/apps/$appId/': typeof MainAppsAppIdIndexRoute
   '/_main/dev/environments/': typeof MainDevEnvironmentsIndexRoute
+  '/_main/dev/environments/$environmentSlug/app-installations': typeof MainDevEnvironmentsEnvironmentSlugAppInstallationsRoute
+  '/_main/dev/environments/$environmentSlug/database': typeof MainDevEnvironmentsEnvironmentSlugDatabaseRoute
   '/_main/dev/environments/$environmentSlug/environment_variables': typeof MainDevEnvironmentsEnvironmentSlugEnvironment_variablesRoute
   '/_main/dev/environments/$environmentSlug/': typeof MainDevEnvironmentsEnvironmentSlugIndexRoute
 }
@@ -224,6 +244,8 @@ export interface FileRouteTypes {
     | '/dev/environments/$environmentSlug'
     | '/apps/$appId'
     | '/dev/environments'
+    | '/dev/environments/$environmentSlug/app-installations'
+    | '/dev/environments/$environmentSlug/database'
     | '/dev/environments/$environmentSlug/environment_variables'
     | '/dev/environments/$environmentSlug/'
   fileRoutesByTo: FileRoutesByTo
@@ -242,6 +264,8 @@ export interface FileRouteTypes {
     | '/team'
     | '/apps/$appId'
     | '/dev/environments'
+    | '/dev/environments/$environmentSlug/app-installations'
+    | '/dev/environments/$environmentSlug/database'
     | '/dev/environments/$environmentSlug/environment_variables'
     | '/dev/environments/$environmentSlug'
   id:
@@ -265,6 +289,8 @@ export interface FileRouteTypes {
     | '/_main/dev/environments/$environmentSlug'
     | '/_main/apps/$appId/'
     | '/_main/dev/environments/'
+    | '/_main/dev/environments/$environmentSlug/app-installations'
+    | '/_main/dev/environments/$environmentSlug/database'
     | '/_main/dev/environments/$environmentSlug/environment_variables'
     | '/_main/dev/environments/$environmentSlug/'
   fileRoutesById: FileRoutesById
@@ -423,6 +449,20 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof MainDevEnvironmentsEnvironmentSlugEnvironment_variablesRouteImport
       parentRoute: typeof MainDevEnvironmentsEnvironmentSlugRoute
     }
+    '/_main/dev/environments/$environmentSlug/database': {
+      id: '/_main/dev/environments/$environmentSlug/database'
+      path: '/database'
+      fullPath: '/dev/environments/$environmentSlug/database'
+      preLoaderRoute: typeof MainDevEnvironmentsEnvironmentSlugDatabaseRouteImport
+      parentRoute: typeof MainDevEnvironmentsEnvironmentSlugRoute
+    }
+    '/_main/dev/environments/$environmentSlug/app-installations': {
+      id: '/_main/dev/environments/$environmentSlug/app-installations'
+      path: '/app-installations'
+      fullPath: '/dev/environments/$environmentSlug/app-installations'
+      preLoaderRoute: typeof MainDevEnvironmentsEnvironmentSlugAppInstallationsRouteImport
+      parentRoute: typeof MainDevEnvironmentsEnvironmentSlugRoute
+    }
   }
 }
 
@@ -443,12 +483,18 @@ const AuthRouteChildren: AuthRouteChildren = {
 const AuthRouteWithChildren = AuthRoute._addFileChildren(AuthRouteChildren)
 
 interface MainDevEnvironmentsEnvironmentSlugRouteChildren {
+  MainDevEnvironmentsEnvironmentSlugAppInstallationsRoute: typeof MainDevEnvironmentsEnvironmentSlugAppInstallationsRoute
+  MainDevEnvironmentsEnvironmentSlugDatabaseRoute: typeof MainDevEnvironmentsEnvironmentSlugDatabaseRoute
   MainDevEnvironmentsEnvironmentSlugEnvironment_variablesRoute: typeof MainDevEnvironmentsEnvironmentSlugEnvironment_variablesRoute
   MainDevEnvironmentsEnvironmentSlugIndexRoute: typeof MainDevEnvironmentsEnvironmentSlugIndexRoute
 }
 
 const MainDevEnvironmentsEnvironmentSlugRouteChildren: MainDevEnvironmentsEnvironmentSlugRouteChildren =
   {
+    MainDevEnvironmentsEnvironmentSlugAppInstallationsRoute:
+      MainDevEnvironmentsEnvironmentSlugAppInstallationsRoute,
+    MainDevEnvironmentsEnvironmentSlugDatabaseRoute:
+      MainDevEnvironmentsEnvironmentSlugDatabaseRoute,
     MainDevEnvironmentsEnvironmentSlugEnvironment_variablesRoute:
       MainDevEnvironmentsEnvironmentSlugEnvironment_variablesRoute,
     MainDevEnvironmentsEnvironmentSlugIndexRoute:

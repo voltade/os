@@ -42,8 +42,8 @@ export function NavigationSidebar({
   const navigate = useNavigate();
 
   return (
-    <aside className="h-full w-full">
-      <div className="p-4">
+    <aside className="w-52 shrink-0 border-r">
+      <div className="pe-4">
         <div className="space-y-3">
           {title ? (
             <p className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">

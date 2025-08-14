@@ -34,16 +34,12 @@ export function EnvironmentSettingsSidebar({
   };
 
   return (
-    <aside className="w-52 shrink-0 border-r bg-background">
-      <div className="px-4 py-5">
-        <NavigationSidebar
-          title="Environment Settings"
-          navItems={navItems}
-          pathPrefix={base}
-          isActivePathMatcher={isActive}
-          showIcons={false}
-        />
-      </div>
-    </aside>
+    <NavigationSidebar
+      title="Environment Settings"
+      navItems={navItems}
+      pathPrefix={base}
+      isActivePathMatcher={isActive}
+      showIcons={false}
+    />
   );
 }

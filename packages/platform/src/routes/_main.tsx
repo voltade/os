@@ -48,13 +48,10 @@ function RouteComponent() {
   return (
     <div className="min-h-screen w-full">
       <div className="flex min-h-screen flex-col">
-        <Header />
-
-        <main className="flex-1 min-w-0">
-          <div className="container min-w-screen">
-            <div className="px-6 py-4 lg:px-8">
-              <Outlet />
-            </div>
+        <Header className="h-12" />
+        <main className="min-w-0 h-[calc(100vh-48px)]">
+          <div className="px-4 pt-4 min-w-screen h-full">
+            <Outlet />
           </div>
         </main>
       </div>
