@@ -7,11 +7,12 @@ import {
 import { Grip, Package } from 'lucide-react';
 
 import { useAppInstallations } from '#src/hooks/app_installation.ts';
-import { ENVIRONMENT_ID } from '#src/main.tsx';
+import { usePlatformStore } from '#src/stores/usePlatformStore.ts';
 
 export function AppSelector() {
   const navigate = useNavigate();
-  const { data: appInstallations } = useAppInstallations(ENVIRONMENT_ID);
+  const { environment } = usePlatformStore();
+  const { data: appInstallations } = useAppInstallations(environment.id);
 
   const handleAppClick = (appId: string) => {
     navigate({

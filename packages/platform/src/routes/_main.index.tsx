@@ -1,9 +1,8 @@
 import { createFileRoute, useNavigate } from '@tanstack/react-router';
-import { Card, CardContent } from '@voltade/ui/card.tsx';
 import { Package, Plus } from 'lucide-react';
 
 import { useAppInstallations } from '#src/hooks/app_installation.ts';
-import { ENVIRONMENT_ID } from '#src/main.tsx';
+import { usePlatformStore } from '#src/stores/usePlatformStore.ts';
 
 export const Route = createFileRoute('/_main/')({
   component: RouteComponent,
@@ -11,8 +10,10 @@ export const Route = createFileRoute('/_main/')({
 
 function RouteComponent() {
   const navigate = useNavigate();
-  const { data: appInstallations, isPending } =
-    useAppInstallations(ENVIRONMENT_ID);
+  const { environment } = usePlatformStore();
+  const { data: appInstallations, isPending } = useAppInstallations(
+    environment.id,
+  );
 
   const handleAppClick = (appId: string) => {
     navigate({

@@ -30,9 +30,6 @@ declare global {
   }
 }
 
-export const ENVIRONMENT_ID = 'eloafid9';
-export const ENVIRONMENT_SLUG = 'main';
-
 window.toast = toast;
 
 // biome-ignore lint/style/noNonNullAssertion: root element is there

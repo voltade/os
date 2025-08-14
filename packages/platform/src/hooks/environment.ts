@@ -2,7 +2,7 @@ import { useQuery } from '@tanstack/react-query';
 
 import { api } from '#src/lib/api.ts';
 
-export const useEnvironments = (orgId: string) => {
+export const useEnvironments = (orgId: string, enabled = true) => {
   return useQuery({
     queryKey: ['environments', orgId],
     queryFn: async () => {
@@ -17,6 +17,7 @@ export const useEnvironments = (orgId: string) => {
       const data = await res.json();
       return data;
     },
+    enabled: enabled && !!orgId,
   });
 };
 

@@ -4,10 +4,10 @@ import {
   redirect,
   useRouterState,
 } from '@tanstack/react-router';
-import { SidebarProvider } from '@voltade/ui/sidebar.js';
 
 import { Header } from '#src/components/ui/Header';
 import { useEnsureActiveOrganization } from '#src/hooks/useEnsureActiveOrganization';
+import { usePlatformInitialization } from '#src/hooks/usePlatformInitialization';
 import { authClient } from '#src/lib/auth.ts';
 import { isJWTExpired } from '#src/lib/isJWTExpired';
 
@@ -43,6 +43,7 @@ export const Route = createFileRoute('/_main')({
 function RouteComponent() {
   useRouterState({ select: (s) => s.location });
   useEnsureActiveOrganization();
+  usePlatformInitialization();
 
   return (
     <div className="min-h-screen w-full">
