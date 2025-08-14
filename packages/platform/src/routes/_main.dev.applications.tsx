@@ -87,7 +87,7 @@ function RouteComponent() {
   const list = (apps as AppItem[]) || [];
 
   return (
-    <div className="pt-4">
+    <div>
       <div className="flex items-center justify-between mb-4">
         <h2 className="text-2xl font-semibold tracking-tight text-foreground">
           Applications

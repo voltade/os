@@ -178,7 +178,7 @@ function RouteComponent() {
   };
 
   return (
-    <div className="pt-4">
+    <div>
       <div className="flex items-center justify-between mb-4">
         <h2 className="text-lg font-semibold">App Installations</h2>
         <Button size="sm" onClick={() => setInstallOpen(true)}>
