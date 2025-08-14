@@ -52,12 +52,10 @@ export function AppSelector() {
                 key={app.app.id}
                 type="button"
                 onClick={() => handleAppClick(app.app.id)}
-                className="flex w-full flex-col items-center gap-2 rounded-md p-3 transition-colors hover:bg-accent"
+                className="flex w-full flex-col items-center gap-1 rounded-md p-2 transition-colors hover:bg-accent"
               >
-                <div className="flex size-10 items-center justify-center rounded-full bg-primary text-primary-foreground">
-                  <span className="text-sm font-bold uppercase">
-                    {app.app.name?.charAt(0) ?? 'A'}
-                  </span>
+                <div className="size-12 flex items-center justify-center rounded-lg bg-card border shadow-sm mb-1">
+                  <Package size={20} className="text-primary" />
                 </div>
                 <span className="line-clamp-2 text-center text-xs text-muted-foreground">
                   {app.app.name}
