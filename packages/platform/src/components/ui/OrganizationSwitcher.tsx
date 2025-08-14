@@ -54,8 +54,7 @@ export function OrganizationSwitcher() {
   // Check permissions - admins can see settings but get redirected to team
   const canViewSettings =
     currentUserRole === 'admin' || currentUserRole === 'owner';
-  const canViewDeveloper =
-    currentUserRole === 'developer' || currentUserRole === 'owner';
+  const canViewDeveloper = currentUserRole === 'owner'; // Only owners can see developer tools now
 
   if (isPending) {
     return (
@@ -66,7 +65,7 @@ export function OrganizationSwitcher() {
             className="animate-pulse opacity-70"
             disabled
           >
-            <div className="mr-2 aspect-square size-8 rounded-lg bg-muted" />
+            <div className="mr-2 aspect-square size-6 rounded-lg bg-muted" />
             <div className="grid flex-1 text-left leading-tight">
               <div className="h-4 w-24 rounded bg-muted" />
               <div className="mt-1 h-3 w-16 rounded bg-muted" />
@@ -164,7 +163,7 @@ export function OrganizationSwitcher() {
 function TriggerBadge({ org }: { org: Org }) {
   return (
     <div className="mr-2">
-      <Avatar className="size-8 rounded-lg">
+      <Avatar className="size-6 rounded-lg">
         {org.imageUrl ? (
           <AvatarImage src={org.imageUrl} alt={org.name} />
         ) : null}

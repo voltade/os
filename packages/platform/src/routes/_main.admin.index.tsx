@@ -8,6 +8,11 @@ import { useEffect, useState } from 'react';
 import { useForm } from 'react-hook-form';
 
 import { AccessDenied } from '#src/components/utils/access-denied';
+import {
+  showError,
+  showSuccess,
+} from '#src/components/utils/notifications.tsx';
+import { api } from '#src/lib/api.ts';
 import { authClient } from '#src/lib/auth';
 
 interface OrganizationFormValues {
@@ -51,9 +56,23 @@ function RouteComponent() {
   const onSubmit = async (values: OrganizationFormValues) => {
     setIsLoading(true);
     try {
-      // TODO: Implement backend API call to update organization
-      console.log('Organization update values:', values);
-      // Placeholder - no backend implementation yet
+      const response = await api.organization.$put({
+        json: {
+          organizationId: activeOrganization?.id || '',
+          name: values.name,
+          logo: values.image,
+        },
+      });
+
+      if (!response.ok) {
+        throw new Error('Failed to update organization');
+      }
+
+      showSuccess('Organization updated successfully');
+    } catch (error) {
+      showError(
+        `Failed to update organization: ${error instanceof Error ? error.message : 'Unknown error'}`,
+      );
     } finally {
       setIsLoading(false);
     }

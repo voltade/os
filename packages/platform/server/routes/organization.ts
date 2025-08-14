@@ -1,4 +1,6 @@
-import { eq } from 'drizzle-orm';
+import { zValidator } from '@hono/zod-validator';
+import { and, eq } from 'drizzle-orm';
+import { z } from 'zod';
 
 import {
   member as memberTable,
@@ -24,4 +26,54 @@ export const route = factory
       );
 
     return c.json(memberships.map((m) => m.organization));
-  });
+  })
+  .put(
+    '/',
+    zValidator(
+      'json',
+      z.object({
+        organizationId: z.string(),
+        name: z.string().optional(),
+        logo: z.string().optional(),
+      }),
+    ),
+    authMiddleware(true),
+    async (c) => {
+      // biome-ignore lint/style/noNonNullAssertion: this is guaranteed by the auth middleware
+      const { id: userId } = c.get('user')!;
+      const { organizationId, name, logo } = c.req.valid('json');
+
+      // Check if the user is a member of the organization
+      const membership = await db
+        .select()
+        .from(memberTable)
+        .where(
+          and(
+            eq(memberTable.userId, userId),
+            eq(memberTable.organizationId, organizationId),
+          ),
+        )
+        .limit(1);
+
+      if (membership.length === 0) {
+        return c.json({ error: 'Not a member of this organization' }, 403);
+      }
+
+      // Build update object with only provided fields
+      const updateData: { name?: string; logo?: string } = {};
+      if (name !== undefined) updateData.name = name;
+      if (logo !== undefined) updateData.logo = logo;
+
+      if (Object.keys(updateData).length === 0) {
+        return c.json({ error: 'No valid fields to update' }, 400);
+      }
+
+      // Update the organization
+      await db
+        .update(organizationTable)
+        .set(updateData)
+        .where(eq(organizationTable.id, organizationId));
+
+      return c.json({ success: true });
+    },
+  );
