@@ -177,8 +177,6 @@ function RouteComponent() {
     }
   };
 
-  console.log(availableBuilds);
-
   return (
     <div className="pt-4">
       <div className="flex items-center justify-between mb-4">
@@ -200,7 +198,7 @@ function RouteComponent() {
         </div>
       ) : (
         <div className="w-full">
-          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3">
+          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-3">
             {installations.map((inst) => (
               <InstallationCard
                 key={inst.app.id}
@@ -305,8 +303,8 @@ function InstallationCard({
   });
 
   return (
-    <div className="rounded-lg border p-3 space-y-2">
-      <div className="flex items-center justify-between">
+    <div className="rounded-lg border p-3 space-y-2 flex flex-col">
+      <div className="flex items-center justify-between flex-1">
         <div className="flex items-center gap-2">
           <div className="size-10 flex items-center justify-center rounded-md bg-card border">
             <Package size={20} className="text-primary" />
