@@ -1,123 +1,33 @@
-// import { registerMicroApps, start } from '@voltade/qiankun';
-// import { useEffect, useState } from 'react';
+import { loadMicroApp, type MicroApp } from 'qiankun';
+import { useEffect, useRef } from 'react';
 
-// interface RequiredMicroAppProps {
-//   baseUrl: string;
-// }
+import type { AppInstallation } from '#src/hooks/app_installation.ts';
+import { ENVIRONMENT_SLUG } from '#src/main.tsx';
 
-// interface UseQiankunMicroAppProps<T = {}> {
-//   appContainerRef: React.RefObject<HTMLDivElement | null>;
-//   orgSlug?: string;
-//   envSlug?: string;
-//   microApps: MicroApps<T>[];
-// }
-
-// interface MicroApps<T = {}> {
-//   appName: string;
-//   appId: string;
-//   releaseId: string;
-//   props: RequiredMicroAppProps & T;
-// }
-// export function useQiankunMicroApp({
-//   appContainerRef,
-//   microApps,
-//   orgSlug,
-//   envSlug,
-// }: UseQiankunMicroAppProps) {
-//   const [isLoading, setIsLoading] = useState(false);
-//   const [error, setError] = useState<string | null>(null);
-
-//   useEffect(() => {
-//     if (appContainerRef.current === null) {
-//       console.error('App container ref is null');
-//       setError('Container reference not found');
-//       setIsLoading(false);
-//       return;
-//     }
-
-//     if (!orgSlug || !envSlug) {
-//       return;
-//     }
-
-//     const container = appContainerRef.current;
-
-//     registerMicroApps(
-//       microApps.map((microApp) => ({
-//         name: microApp.appName,
-//         entry: `//${orgSlug}-${envSlug}.127.0.0.1.nip.io/apps/${microApp.appId}/${microApp.releaseId}/index.html`,
-//         container,
-//         activeRule: [`/apps/${microApp.appId}/`, `/apps/${microApp.appId}`],
-//         props: {
-//           ...microApp.props,
-//         },
-//       })),
-//       {
-//         beforeLoad: async () => {
-//           console.log('beforeLoad');
-//           setIsLoading(true);
-//         },
-//         beforeMount: async () => {
-//           console.log('beforeMount');
-//         },
-//         afterMount: async () => {
-//           console.log('afterMount');
-//           setIsLoading(false);
-//           setError(null);
-//         },
-//         beforeUnmount: async () => {
-//           console.log('beforeUnmount');
-//         },
-//         afterUnmount: async () => {
-//           console.log('afterUnmount');
-//         },
-//       },
-//     );
-
-//     start();
-//   }, [appContainerRef, microApps, orgSlug, envSlug]);
-
-//   return { isLoading, error };
-// }
-
-import { loadMicroApp } from '@voltade/qiankun';
-import { useEffect, useState } from 'react';
-
-interface UseQiankunMicroAppProps {
-  appContainerRef: React.RefObject<HTMLDivElement | null>;
-  appId?: string;
-  appSlug?: string;
-  orgSlug?: string;
-  envSlug?: string;
-  appBuildId?: string;
-  baseUrl?: string;
+interface UseQiankunMicroAppOptions {
+  app: AppInstallation | undefined;
+  activeOrganization: { slug: string } | undefined | null;
 }
 
 export function useQiankunMicroApp({
-  appContainerRef,
-  appId,
-  appSlug,
-  orgSlug,
-  envSlug,
-  appBuildId,
-  baseUrl,
-}: UseQiankunMicroAppProps) {
-  const [isLoading, setIsLoading] = useState(false);
-  const [error, setError] = useState<string | null>(null);
+  app,
+  activeOrganization,
+}: UseQiankunMicroAppOptions) {
+  const appContainerRef = useRef<HTMLDivElement>(null);
+  const microAppRef = useRef<MicroApp | null>(null);
 
   useEffect(() => {
     if (!appContainerRef.current) return;
-    if (!appId || !appSlug || !orgSlug || !envSlug || !appBuildId) return;
-
-    setIsLoading(true);
-    setError(null);
+    if (!activeOrganization) return;
+    if (!app) return;
 
     const microApp = loadMicroApp(
       {
-        name: appSlug,
-        entry: `//${orgSlug}-${envSlug}.127.0.0.1.nip.io/apps/${appId}/${appBuildId}/`,
+        name: app.app.slug ?? '',
+        entry: `//${activeOrganization.slug}-${ENVIRONMENT_SLUG}.127.0.0.1.nip.io/apps/${app.app.id}/${app.app_installation.app_build_id}/`,
         container: appContainerRef.current,
         props: {
-          baseUrl: baseUrl || `${window.location.origin}/apps/${appId}`,
+          baseUrl: `${window.location.origin}/apps/${app.app.id}`,
         },
       },
       { sandbox: false },
@@ -130,7 +40,6 @@ export function useQiankunMicroApp({
         },
         afterMount: async (app) => {
           console.log('afterMount', app);
-          setIsLoading(false);
         },
         beforeUnmount: async (app) => {
           console.log('beforeUnmount', app);
@@ -141,10 +50,13 @@ export function useQiankunMicroApp({
       },
     );
 
+    microAppRef.current = microApp;
+
     return () => {
       microApp.unmount();
+      microAppRef.current = null;
     };
-  }, [appContainerRef, appId, appSlug, orgSlug, envSlug, appBuildId, baseUrl]);
+  }, [app, activeOrganization]);
 
-  return { isLoading, error };
+  return { appContainerRef };
 }

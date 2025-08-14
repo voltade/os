@@ -359,4 +359,26 @@ export const route = factory
 
       return c.json(build);
     },
+  )
+  .get(
+    '/',
+    zValidator(
+      'query',
+      z.object({
+        appId: z.string(),
+        orgId: z.string(),
+      }),
+    ),
+    async (c) => {
+      const { appId, orgId } = c.req.valid('query');
+
+      const builds = await db.query.appBuildTable.findMany({
+        where: and(
+          eq(appBuildTable.app_id, appId),
+          eq(appBuildTable.organization_id, orgId),
+        ),
+      });
+
+      return c.json(builds);
+    },
   );

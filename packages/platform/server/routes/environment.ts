@@ -1,9 +1,11 @@
 import { readFileSync } from 'node:fs';
 import path from 'node:path';
+import { zValidator } from '@hono/zod-validator';
 import { symmetricDecrypt } from 'better-auth/crypto';
 import { and, desc, eq } from 'drizzle-orm';
 import * as jose from 'jose';
 import yaml from 'yaml';
+import z from 'zod';
 
 import {
   jwks as jwksTable,
@@ -138,18 +140,6 @@ export const route = factory
       },
     });
   })
-  .get('/', authMiddleware(true), async (c) => {
-    // biome-ignore lint/style/noNonNullAssertion: session is guaranteed to be set by the authMiddleware
-    const { activeOrganizationId } = c.get('session')!;
-    if (!activeOrganizationId) {
-      return c.json({ error: 'No active organization' }, 400);
-    }
-    const environments = await db
-      .select()
-      .from(environmentTable)
-      .where(eq(environmentTable.organization_id, activeOrganizationId));
-    return c.json(environments);
-  })
   .get('/:environmentSlug', authMiddleware(true), async (c) => {
     // biome-ignore lint/style/noNonNullAssertion: session is guaranteed to be set by the authMiddleware
     const { activeOrganizationId } = c.get('session')!;
@@ -204,4 +194,22 @@ export const route = factory
       }),
     });
     return c.json({ success: true });
-  });
+  })
+  .get(
+    '/',
+    authMiddleware(true),
+    zValidator(
+      'query',
+      z.object({
+        orgId: z.string(),
+      }),
+    ),
+    async (c) => {
+      const { orgId } = c.req.valid('query');
+      const environments = await db
+        .select()
+        .from(environmentTable)
+        .where(eq(environmentTable.organization_id, orgId));
+      return c.json(environments);
+    },
+  );

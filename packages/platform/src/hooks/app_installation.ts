@@ -2,6 +2,10 @@ import { useQuery } from '@tanstack/react-query';
 
 import { api } from '#src/lib/api.ts';
 
+export type AppInstallation = NonNullable<
+  Awaited<ReturnType<typeof useAppInstallations>>['data']
+>[number];
+
 export const useAppInstallations = (environmentId: string) => {
   return useQuery({
     queryKey: ['appInstallations', environmentId],

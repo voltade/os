@@ -5,11 +5,12 @@ import type { EnvironmentOptions } from './index.ts';
 
 export async function listEnvironments(this: Command) {
   const options = getFinalOptions<EnvironmentOptions>(this);
-  const environments = await getEnvironments();
+  if (!options.org) {
+    throw new Error(
+      'Organization is required add --org <org-id> to the command',
+    );
+  }
+  const environments = await getEnvironments(options.org);
 
-  const filtered = options.org
-    ? environments.filter((env) => env.org === options.org)
-    : environments;
-
-  console.log(filtered);
+  console.log(environments);
 }

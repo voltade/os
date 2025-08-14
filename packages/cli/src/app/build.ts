@@ -460,16 +460,23 @@ export async function buildApp(this: Command, folderPathArg: string) {
     const errText = await presignRes.text();
     const errJson = JSON.parse(errText);
     if (errJson?.error?.name === 'ZodError') {
-      throw Error(errJson.error.message);
+      console.error(errJson.error.message);
+      process.exit(1);
     }
-    throw Error(`Failed to get presigned URL: ${presignRes.status} ${errText}`);
+    console.error(
+      `Failed to get presigned URL: ${presignRes.status} ${errText}`,
+    );
+    process.exit(1);
   }
   const { uploadUrl, appBuild } = (await presignRes.json()) as {
     uploadUrl: string;
     appBuild: Array<{ id: string }>;
   };
   const buildId = appBuild?.[0]?.id;
-  if (!uploadUrl || !buildId) throw Error('Invalid presign response');
+  if (!uploadUrl || !buildId) {
+    console.error('Invalid presign response');
+    process.exit(1);
+  }
 
   // Upload zip to S3
   const blob = Bun.file(zipPath);
@@ -480,7 +487,8 @@ export async function buildApp(this: Command, folderPathArg: string) {
   });
   if (!(uploadRes.status === 200 || uploadRes.status === 204)) {
     const errText = await uploadRes.text();
-    throw Error(`Upload failed: ${uploadRes.status} ${errText}`);
+    console.error(`Upload failed: ${uploadRes.status} ${errText}`);
+    process.exit(1);
   }
 
   // Notify server to progress state
@@ -489,7 +497,8 @@ export async function buildApp(this: Command, folderPathArg: string) {
   });
   if (!notifyRes.ok) {
     const errText = await notifyRes.text();
-    throw Error(`Failed to notify server: ${notifyRes.status} ${errText}`);
+    console.error(`Failed to notify server: ${notifyRes.status} ${errText}`);
+    process.exit(1);
   }
 
   console.log(JSON.stringify({ success: true, buildId }, null, 2));

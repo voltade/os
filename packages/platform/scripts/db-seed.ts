@@ -99,7 +99,7 @@ await db.transaction(async (tx) => {
     .values({
       organization_id: organizationId,
       name: 'Test App',
-      slug: 'test-app',
+      slug: '@voltade/app-template',
       description: 'Test App',
       git_repo_url: 'file://mnt/voltade-os.git',
       git_repo_path: 'packages/app-template',

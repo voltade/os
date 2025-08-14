@@ -11,7 +11,13 @@ import type { EnvironmentOptions } from './index.ts';
 export async function getEnvironment(this: Command) {
   const options = getFinalOptions<EnvironmentOptions>(this);
 
-  const allEnvironments = await getEnvironments();
+  if (!options.org) {
+    throw new Error(
+      'Organization is required add --org <org-id> to the command',
+    );
+  }
+
+  const allEnvironments = await getEnvironments(options.org);
   const environments = options.org
     ? allEnvironments.filter((env) => env.org === options.org)
     : allEnvironments;
@@ -20,7 +26,7 @@ export async function getEnvironment(this: Command) {
     message: 'Select an environment:',
     choices: environments.map((env) => ({
       name: `${env.org}-${env.env}`,
-      value: env.name,
+      value: env.slug,
     })),
   });
 

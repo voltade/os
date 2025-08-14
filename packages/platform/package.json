@@ -48,6 +48,7 @@
     "jose": "^6.0.12",
     "postcss": "^8.5.6",
     "postcss-simple-vars": "^7.0.1",
+    "qiankun": "2.10.16",
     "react": "^19.1.1",
     "react-dom": "^19.1.1",
     "tailwindcss": "^4.1.11",

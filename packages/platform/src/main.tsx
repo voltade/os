@@ -23,7 +23,7 @@ declare module '@tanstack/react-router' {
   }
 }
 
-export const ENVIRONMENT_ID = '58itgeka';
+export const ENVIRONMENT_ID = 'eloafid9';
 export const ENVIRONMENT_SLUG = 'main';
 
 // biome-ignore lint/style/noNonNullAssertion: root element is there

@@ -37,11 +37,11 @@ export function Logo() {
         fill={effectiveTheme === 'dark' ? '#fff' : '#454545'}
       />
       <path
-        fill-rule="evenodd"
-        clip-rule="evenodd"
+        fillRule="evenodd"
+        clipRule="evenodd"
         d="m.4 55.9 11.3-15.5L7 59H2A2 2 0 0 1 .4 56ZM11.2 59 18 31.7 37.6 4.8c1.3-1.7 4-.5 3.5 1.7l-8.3 34.7a2 2 0 0 0 2 2.5h11.5L39.5 71l-19 26c-1.4 1.7-4.2.4-3.6-1.8l9.3-33.7a2 2 0 0 0-1.9-2.6h-13Zm34.6 3.6 11.6-15.8a2 2 0 0 0-1.6-3.1h-5.3l-4.7 19Z"
         fill="url(#paint0_linear_128_163)"
-        fill-opacity=".9"
+        fillOpacity=".9"
       />
       <defs>
         <linearGradient
@@ -52,8 +52,8 @@ export function Logo() {
           y2="105.8"
           gradientUnits="userSpaceOnUse"
         >
-          <stop offset=".4" stop-color="#8E24AA" />
-          <stop offset="1" stop-color="#039BE5" />
+          <stop offset=".4" stopColor="#8E24AA" />
+          <stop offset="1" stopColor="#039BE5" />
         </linearGradient>
       </defs>
     </svg>

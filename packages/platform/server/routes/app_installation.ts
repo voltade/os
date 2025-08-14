@@ -15,6 +15,18 @@ export const route = factory
   .post('/', zValidator('json', appInstallationSchema.create), async (c) => {
     const createObj = c.req.valid('json');
 
+    const checkAppInstallation = await db.query.appInstallationTable.findFirst({
+      where: and(
+        eq(appInstallationTable.app_id, createObj.app_id),
+        eq(appInstallationTable.environment_id, createObj.environment_id),
+        eq(appInstallationTable.organization_id, createObj.organization_id),
+      ),
+    });
+
+    if (checkAppInstallation) {
+      return c.json({ error: 'App installation already exists' }, 400);
+    }
+
     const appInstallation = await db
       .insert(appInstallationTable)
       .values(createObj)
