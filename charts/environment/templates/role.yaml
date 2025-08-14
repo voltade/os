@@ -2,11 +2,14 @@
 apiVersion: rbac.authorization.k8s.io/v1
 kind: Role
 metadata:
-  name: drizzle-gateway-read-secrets
+  name: runner-read
   namespace: {{ .Release.Namespace }}
 rules:
   - apiGroups: [""]
     resources: ["secrets"]
-    resourceNames: ["cnpg-cluster-app"]
+    resourceNames: ["cnpg-authenticator", "cnpg-cluster-app", "cnpg-core-migrator", "cnpg-custom-migrator", "cnpg-openfga-admin", "cnpg-service-role"]
     verbs: ["get"]
+  - apiGroups: ["gateway.networking.k8s.io"]
+    resources: ["httproutes"]
+    verbs: ["get", "list"]
 {{- end -}}

@@ -46,7 +46,7 @@ declare global {
     __env: {
       [key: string]: RuntimeEnv;
     };
-    toast: typeof toast;
+    toast?: typeof toast;
   }
 }
 

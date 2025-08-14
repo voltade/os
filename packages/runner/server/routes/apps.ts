@@ -4,7 +4,7 @@ import { cors } from 'hono/cors';
 import { z } from 'zod';
 
 import { factory } from '#server/factory.ts';
-import { getAppEnvs } from '#server/utils/env/index.ts';
+import { getAppEnvs, getAppEnvsFromK8s } from '#server/utils/env/index.ts';
 import { downloadPackage } from '#server/utils/package/index.ts';
 import { createWorker, getWorker } from '#server/utils/worker/index.ts';
 
@@ -51,11 +51,14 @@ export const routes = factory.createApp().all(
         },
       );
 
+      const k8sEnvs = await getAppEnvsFromK8s();
+
       console.log(c.req.raw.headers.get('origin'));
 
       worker = await createWorker(appId, truncatedReleaseId, workerPath, {
         VITE_APP_URL: `${c.req.raw.headers.get('origin')}/${appId}/${releaseId}`,
         ...envs,
+        ...k8sEnvs,
       });
     }
 

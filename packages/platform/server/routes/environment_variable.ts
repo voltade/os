@@ -9,6 +9,10 @@ import { factory } from '#server/factory.ts';
 import { authMiddleware } from '#server/lib/auth';
 import { db } from '#server/lib/db.ts';
 import { Vault } from '#server/lib/vault.ts';
+import {
+  checkReservedEnvironmentVariableNames,
+  reservedNames,
+} from '#server/utils/environment_variable.ts';
 
 export const route = factory
   .createApp()
@@ -109,6 +113,15 @@ export const route = factory
 
       const { environment_id, name, description, value } = c.req.valid('json');
 
+      if (checkReservedEnvironmentVariableNames(name)) {
+        return c.json(
+          {
+            error: 'Reserved environment variable name',
+            reservedNames,
+          },
+          400,
+        );
+      }
       // Create secret in vault first
       const secretId = await Vault.create(value);
 
@@ -211,16 +224,16 @@ export const route = factory
         return c.json({ error: 'Environment variable not found' }, 404);
       }
 
-      // Delete from vault if secret exists
-      if (existingVariable[0].secret_id) {
-        await Vault.delete(existingVariable[0].secret_id);
-      }
-
       // Delete the environment variable
       const environmentVariable = await db
         .delete(environmentVariableTable)
         .where(eq(environmentVariableTable.id, id))
         .returning();
+
+      // Delete from vault if secret exists
+      if (existingVariable[0].secret_id) {
+        await Vault.delete(existingVariable[0].secret_id);
+      }
 
       return c.json(environmentVariable[0]);
     },

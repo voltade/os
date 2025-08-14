@@ -11,10 +11,12 @@ export const Route = createFileRoute('/_main/dev/environments/')({
 });
 
 function RouteComponent() {
-  const { data: environments, isLoading } = useEnvironments();
+  const { data: organisation } = authClient.useActiveOrganization();
+  const { data: environments, isLoading } = useEnvironments(
+    organisation?.id ?? '',
+  );
   const [searchQuery, setSearchQuery] = useState('');
   const navigate = useNavigate();
-  const { data: organisation } = authClient.useActiveOrganization();
   const { data: session } = authClient.useSession();
 
   const currentUserMember = organisation?.members?.find(

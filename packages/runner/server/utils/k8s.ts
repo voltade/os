@@ -1,10 +1,10 @@
-import { getK8sClient } from '#server/lib/kubeapi.ts';
+import { getK8sClient, getK8sObjectClient } from '#server/lib/kubeapi.ts';
 
-export async function getCnpgSecret(namespace: string) {
+export async function getCnpgSecret(namespace: string, secretName: string) {
   const k8s = getK8sClient();
   try {
     const secret = await k8s.readNamespacedSecret({
-      name: 'cnpg-cluster-app',
+      name: secretName,
       namespace,
     });
 
@@ -24,4 +24,31 @@ export async function getCnpgSecret(namespace: string) {
     console.error(error);
     throw error;
   }
+}
+
+export type HttpRoute = {
+  apiVersion: string;
+  kind: string;
+  metadata: {
+    name: string;
+  };
+  spec: {
+    hostnames: string[];
+  };
+};
+
+export async function getHttpRouteHostname(
+  namespace: string,
+  routeName: string,
+) {
+  const k8s = getK8sObjectClient();
+  const route: HttpRoute = await k8s.read({
+    apiVersion: 'gateway.networking.k8s.io/v1',
+    kind: 'HTTPRoute',
+    metadata: {
+      name: routeName,
+      namespace,
+    },
+  });
+  return route.spec.hostnames[0];
 }

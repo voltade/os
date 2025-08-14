@@ -278,12 +278,11 @@ export const route = factory
         appId: z.string(),
         orgId: z.string(),
         status: z.enum(['pending', 'building', 'ready', 'error']),
-        logs: z.string().optional(),
       }),
     ),
     async (c) => {
       const { buildId } = c.req.valid('param');
-      const { appId, orgId, status, logs } = c.req.valid('json');
+      const { appId, orgId, status } = c.req.valid('json');
 
       // Verify build exists and belongs to the org/app
       const existingBuild = await db.query.appBuildTable.findFirst({
@@ -314,11 +313,6 @@ export const route = factory
           ),
         )
         .returning();
-
-      // Log for debugging
-      console.log(`Build ${buildId} status updated to ${status}`, {
-        logs: logs ? `${logs.length} characters` : 'none',
-      });
 
       return c.json({
         success: true,

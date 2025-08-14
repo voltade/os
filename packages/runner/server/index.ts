@@ -8,7 +8,10 @@ import { getCnpgSecret } from './utils/k8s.ts';
 async function initializeDrizzleConnection() {
   try {
     const namespace = `org-${appEnvVariables.ORGANIZATION_ID}-${appEnvVariables.ENVIRONMENT_ID}`;
-    const { username, password } = await getCnpgSecret(namespace);
+    const { username, password } = await getCnpgSecret(
+      namespace,
+      'cnpg-cluster-app',
+    );
     const response = await fetch(`${appEnvVariables.PLATFORM_URL}/drizzle`, {
       method: 'POST',
       headers: {

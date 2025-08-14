@@ -2,11 +2,15 @@ import { useQuery } from '@tanstack/react-query';
 
 import { api } from '#src/lib/api.ts';
 
-export const useEnvironments = () => {
+export const useEnvironments = (orgId: string) => {
   return useQuery({
-    queryKey: ['environments'],
+    queryKey: ['environments', orgId],
     queryFn: async () => {
-      const res = await api.environment.$get({});
+      const res = await api.environment.$get({
+        query: {
+          orgId,
+        },
+      });
       if (!res.ok) {
         throw new Error(res.statusText);
       }
