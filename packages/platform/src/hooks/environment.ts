@@ -53,3 +53,26 @@ export const useCreateEnvironment = (orgId: string) => {
     },
   });
 };
+
+export const useDeleteEnvironment = (orgId?: string) => {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: async (environmentSlug: string) => {
+      const res = await api.environment[`:environmentSlug`].$delete({
+        param: { environmentSlug },
+      });
+      if (!res.ok) {
+        throw new Error(res.statusText);
+      }
+      return res.json();
+    },
+    onSuccess: (_data, environmentSlug) => {
+      if (orgId) {
+        queryClient.invalidateQueries({ queryKey: ['environments', orgId] });
+      } else {
+        queryClient.invalidateQueries({ queryKey: ['environments'] });
+      }
+      queryClient.removeQueries({ queryKey: ['environment', environmentSlug] });
+    },
+  });
+};
