@@ -6,8 +6,10 @@ import {
   createRouter,
   RouterProvider,
 } from '@tanstack/react-router';
+import { Toaster } from '@voltade/ui/sonner.tsx';
 import { StrictMode } from 'react';
 import ReactDOM from 'react-dom/client';
+import type { toast } from 'sonner';
 
 import { name } from '../package.json';
 import type { RuntimeEnv } from './lib/get-runtime-env.ts';
@@ -44,6 +46,7 @@ declare global {
     __env: {
       [key: string]: RuntimeEnv;
     };
+    toast: typeof toast;
   }
 }
 
@@ -63,6 +66,7 @@ const render = (props?: Props) => {
   root.render(
     <StrictMode>
       <QueryClientProvider client={queryClient}>
+        {import.meta.env.DEV && <Toaster position="top-right" richColors />}
         <RouterProvider router={router} />
         <ReactQueryDevtools initialIsOpen={false} />
       </QueryClientProvider>

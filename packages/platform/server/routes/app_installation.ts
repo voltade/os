@@ -34,6 +34,35 @@ export const route = factory
 
     return c.json(appInstallation);
   })
+  .put(
+    '/',
+    zValidator(
+      'json',
+      z.object({
+        app_build_id: z.string(),
+        environment_id: z.string(),
+        organization_id: z.string(),
+        app_id: z.string(),
+      }),
+    ),
+    async (c) => {
+      const updateObj = c.req.valid('json');
+
+      const appInstallation = await db
+        .update(appInstallationTable)
+        .set(updateObj)
+        .where(
+          and(
+            eq(appInstallationTable.app_id, updateObj.app_id),
+            eq(appInstallationTable.environment_id, updateObj.environment_id),
+            eq(appInstallationTable.organization_id, updateObj.organization_id),
+          ),
+        )
+        .returning();
+
+      return c.json(appInstallation);
+    },
+  )
   .get(
     '/',
     zValidator(

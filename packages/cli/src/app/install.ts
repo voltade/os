@@ -116,15 +116,76 @@ export async function installApp(this: Command) {
       },
     });
 
+    let installation: unknown;
+
     if (!installationRes.ok) {
       const errorText = await installationRes.text();
+      let parsed: unknown = null;
+      try {
+        parsed = JSON.parse(errorText);
+      } catch {}
+
+      const alreadyExists =
+        installationRes.status === 400 &&
+        parsed !== null &&
+        typeof parsed === 'object' &&
+        'error' in parsed &&
+        (parsed as { error: string }).error ===
+          'App installation already exists';
+
+      if (alreadyExists) {
+        const updateConfirm = await confirm({
+          message: `App '${selectedApp.slug}' is already installed in environment '${selectedEnvironment.env}'. Do you want to update it to the selected build?`,
+          default: true,
+        });
+
+        if (!updateConfirm) {
+          console.log('Update cancelled.');
+          return;
+        }
+
+        // Update existing installation with new build
+        const updateRes = await api.app_installation.$put({
+          json: {
+            app_id: selectedAppId,
+            environment_id: selectedEnvId,
+            organization_id: selectedOrgId,
+            app_build_id: selectedBuildId,
+          },
+        });
+
+        if (!updateRes.ok) {
+          const updateErrorText = await updateRes.text();
+          console.error(
+            `Update failed: ${updateRes.status} ${updateErrorText}`,
+          );
+          process.exit(1);
+        }
+
+        installation = await updateRes.json();
+        console.log(
+          JSON.stringify(
+            {
+              success: true,
+              message: `App '${selectedApp.slug}' updated successfully in environment '${selectedEnvironment.env}'`,
+              buildId: selectedBuildId,
+              installation,
+            },
+            null,
+            2,
+          ),
+        );
+        return;
+      }
+
+      // Other errors
       console.error(
         `Installation failed: ${installationRes.status} ${errorText}`,
       );
       process.exit(1);
+    } else {
+      installation = await installationRes.json();
     }
-
-    const installation = await installationRes.json();
 
     console.log(
       JSON.stringify(
