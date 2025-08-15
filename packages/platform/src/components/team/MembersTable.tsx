@@ -153,7 +153,11 @@ export function MembersTable({
                     </button>
                   </DropdownMenuTrigger>
                   <DropdownMenuContent align="end" className="w-56">
-                    <DropdownMenuItem disabled>
+                    <DropdownMenuItem
+                      onClick={() => {
+                        window.location.href = `http://127.0.0.1.nip.io/apps/ma93tqa2p#/settings`;
+                      }}
+                    >
                       <Edit size={14} className="mr-2" /> Edit Member
                     </DropdownMenuItem>
                     <DropdownMenuItem disabled>
