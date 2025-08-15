@@ -17,6 +17,7 @@ import { factory } from '#server/factory.ts';
 import { authMiddleware } from '#server/lib/auth/index.ts';
 import { db } from '#server/lib/db.ts';
 import { signJwt } from '#server/lib/jwk.ts';
+import { checkCnpgHealth } from '#server/lib/kubernetes/cnpg.ts';
 import { createEnvironmentSchema } from '#shared/schemas/environment.ts';
 
 type Common = {
@@ -88,12 +89,12 @@ export const route = factory
       }),
     };
     const publicKey = JSON.stringify(publicWebKeySet);
-    const alg = publicWebKeySet.keys[0].alg as string;
+    const alg = publicWebKeySet.keys[0]?.alg as string;
 
     // Decrypt the private key to be used for signing long-live anon and service_role tokens
     const decryptedPrivateKey = await symmetricDecrypt({
       key: appEnvVariables.AUTH_SECRET,
-      data: JSON.parse(jwks[0].privateKey),
+      data: JSON.parse(jwks[0]?.privateKey ?? ''),
     });
     const privateWebKey = JSON.parse(
       decryptedPrivateKey,
@@ -148,7 +149,7 @@ export const route = factory
       return c.json({ error: 'No active organization' }, 400);
     }
     const { environmentSlug } = c.req.param();
-    const environment = await db
+    const [environment] = await db
       .select()
       .from(environmentTable)
       .where(
@@ -158,10 +159,16 @@ export const route = factory
         ),
       )
       .limit(1);
-    if (environment.length === 0) {
+    if (!environment) {
       return c.json({ error: 'Environment not found' }, 404);
     }
-    return c.json(environment[0]);
+    const cnpgHealth = await checkCnpgHealth(
+      `org-${environment.organization_id}-${environment.id}`,
+    );
+    return c.json({
+      ...environment,
+      cnpgHealth,
+    });
   })
   .delete('/:environmentSlug', authMiddleware(true), async (c) => {
     // biome-ignore lint/style/noNonNullAssertion: session is guaranteed to be set by the authMiddleware

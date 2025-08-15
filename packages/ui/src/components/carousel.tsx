@@ -116,6 +116,7 @@ function Carousel({
         canScrollNext,
       }}
     >
+      {/** biome-ignore lint/a11y/useSemanticElements: ignore shadcn */}
       <div
         onKeyDownCapture={handleKeyDown}
         className={cn('relative', className)}
@@ -155,6 +156,7 @@ function CarouselItem({ className, ...props }: React.ComponentProps<'div'>) {
   const { orientation } = useCarousel();
 
   return (
+    // biome-ignore lint/a11y/useSemanticElements: ignore shadcn
     <div
       role="group"
       aria-roledescription="slide"

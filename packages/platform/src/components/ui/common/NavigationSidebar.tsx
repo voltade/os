@@ -43,7 +43,7 @@ export function NavigationSidebar({
 
   return (
     <aside className="w-52 shrink-0 border-r">
-      <div className="pe-4">
+      <div className="pe-4 fixed top-16 h-full">
         <div className="space-y-3">
           {title ? (
             <p className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">

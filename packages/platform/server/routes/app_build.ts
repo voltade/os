@@ -49,6 +49,10 @@ export const route = factory
           })
           .returning();
 
+        if (!newBuildRecord) {
+          return c.json({ error: 'Failed to create build' }, 500);
+        }
+
         buildRecord = newBuildRecord;
         const buildId = buildRecord.id;
 
@@ -157,7 +161,7 @@ export const route = factory
     async (c) => {
       const { appId, orgId } = c.req.valid('json');
 
-      const appBuild = await db
+      const [appBuild] = await db
         .insert(appBuildTable)
         .values({
           app_id: appId,
@@ -166,13 +170,12 @@ export const route = factory
         })
         .returning();
 
-      const buildId = appBuild[0].id;
-      if (!buildId) {
+      if (!appBuild) {
         return c.json({ error: 'Failed to create build' }, 500);
       }
 
       const uploadUrl = s3Client.presign(
-        `source/${appId}/${orgId}/${buildId}.zip`,
+        `source/${appId}/${orgId}/${appBuild.id}.zip`,
         {
           method: 'PUT',
           expiresIn: 3600,

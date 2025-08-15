@@ -28,8 +28,10 @@ import { Route as MainAdminTeamRouteImport } from './routes/_main.admin.team'
 import { Route as MainAcceptInvitationInvitationIdRouteImport } from './routes/_main.accept-invitation.$invitationId'
 import { Route as AuthOauthConsentRouteImport } from './routes/_auth.oauth.consent'
 import { Route as MainDevEnvironmentsIndexRouteImport } from './routes/_main.dev.environments.index'
+import { Route as MainDevAppsIndexRouteImport } from './routes/_main.dev.apps.index'
 import { Route as MainAppsAppIdIndexRouteImport } from './routes/_main.apps.$appId.index'
 import { Route as MainDevEnvironmentsEnvironmentSlugRouteImport } from './routes/_main.dev.environments.$environmentSlug'
+import { Route as MainDevAppsAppIdRouteImport } from './routes/_main.dev.apps.$appId'
 import { Route as MainDevEnvironmentsEnvironmentSlugIndexRouteImport } from './routes/_main.dev.environments.$environmentSlug.index'
 import { Route as MainDevEnvironmentsEnvironmentSlugEnvironment_variablesRouteImport } from './routes/_main.dev.environments.$environmentSlug.environment_variables'
 import { Route as MainDevEnvironmentsEnvironmentSlugDatabaseRouteImport } from './routes/_main.dev.environments.$environmentSlug.database'
@@ -131,6 +133,11 @@ const MainDevEnvironmentsIndexRoute =
     path: '/environments/',
     getParentRoute: () => MainDevRoute,
   } as any)
+const MainDevAppsIndexRoute = MainDevAppsIndexRouteImport.update({
+  id: '/apps/',
+  path: '/apps/',
+  getParentRoute: () => MainDevRoute,
+} as any)
 const MainAppsAppIdIndexRoute = MainAppsAppIdIndexRouteImport.update({
   id: '/apps/$appId/',
   path: '/apps/$appId/',
@@ -142,6 +149,11 @@ const MainDevEnvironmentsEnvironmentSlugRoute =
     path: '/environments/$environmentSlug',
     getParentRoute: () => MainDevRoute,
   } as any)
+const MainDevAppsAppIdRoute = MainDevAppsAppIdRouteImport.update({
+  id: '/apps/$appId',
+  path: '/apps/$appId',
+  getParentRoute: () => MainDevRoute,
+} as any)
 const MainDevEnvironmentsEnvironmentSlugIndexRoute =
   MainDevEnvironmentsEnvironmentSlugIndexRouteImport.update({
     id: '/',
@@ -184,8 +196,10 @@ export interface FileRoutesByFullPath {
   '/admin/': typeof MainAdminIndexRoute
   '/dev/': typeof MainDevIndexRoute
   '/settings/': typeof MainSettingsIndexRoute
+  '/dev/apps/$appId': typeof MainDevAppsAppIdRoute
   '/dev/environments/$environmentSlug': typeof MainDevEnvironmentsEnvironmentSlugRouteWithChildren
   '/apps/$appId': typeof MainAppsAppIdIndexRoute
+  '/dev/apps': typeof MainDevAppsIndexRoute
   '/dev/environments': typeof MainDevEnvironmentsIndexRoute
   '/dev/environments/$environmentSlug/app-installations': typeof MainDevEnvironmentsEnvironmentSlugAppInstallationsRoute
   '/dev/environments/$environmentSlug/database': typeof MainDevEnvironmentsEnvironmentSlugDatabaseRoute
@@ -206,7 +220,9 @@ export interface FileRoutesByTo {
   '/admin': typeof MainAdminIndexRoute
   '/dev': typeof MainDevIndexRoute
   '/settings': typeof MainSettingsIndexRoute
+  '/dev/apps/$appId': typeof MainDevAppsAppIdRoute
   '/apps/$appId': typeof MainAppsAppIdIndexRoute
+  '/dev/apps': typeof MainDevAppsIndexRoute
   '/dev/environments': typeof MainDevEnvironmentsIndexRoute
   '/dev/environments/$environmentSlug/app-installations': typeof MainDevEnvironmentsEnvironmentSlugAppInstallationsRoute
   '/dev/environments/$environmentSlug/database': typeof MainDevEnvironmentsEnvironmentSlugDatabaseRoute
@@ -233,8 +249,10 @@ export interface FileRoutesById {
   '/_main/admin/': typeof MainAdminIndexRoute
   '/_main/dev/': typeof MainDevIndexRoute
   '/_main/settings/': typeof MainSettingsIndexRoute
+  '/_main/dev/apps/$appId': typeof MainDevAppsAppIdRoute
   '/_main/dev/environments/$environmentSlug': typeof MainDevEnvironmentsEnvironmentSlugRouteWithChildren
   '/_main/apps/$appId/': typeof MainAppsAppIdIndexRoute
+  '/_main/dev/apps/': typeof MainDevAppsIndexRoute
   '/_main/dev/environments/': typeof MainDevEnvironmentsIndexRoute
   '/_main/dev/environments/$environmentSlug/app-installations': typeof MainDevEnvironmentsEnvironmentSlugAppInstallationsRoute
   '/_main/dev/environments/$environmentSlug/database': typeof MainDevEnvironmentsEnvironmentSlugDatabaseRoute
@@ -260,8 +278,10 @@ export interface FileRouteTypes {
     | '/admin/'
     | '/dev/'
     | '/settings/'
+    | '/dev/apps/$appId'
     | '/dev/environments/$environmentSlug'
     | '/apps/$appId'
+    | '/dev/apps'
     | '/dev/environments'
     | '/dev/environments/$environmentSlug/app-installations'
     | '/dev/environments/$environmentSlug/database'
@@ -282,7 +302,9 @@ export interface FileRouteTypes {
     | '/admin'
     | '/dev'
     | '/settings'
+    | '/dev/apps/$appId'
     | '/apps/$appId'
+    | '/dev/apps'
     | '/dev/environments'
     | '/dev/environments/$environmentSlug/app-installations'
     | '/dev/environments/$environmentSlug/database'
@@ -308,8 +330,10 @@ export interface FileRouteTypes {
     | '/_main/admin/'
     | '/_main/dev/'
     | '/_main/settings/'
+    | '/_main/dev/apps/$appId'
     | '/_main/dev/environments/$environmentSlug'
     | '/_main/apps/$appId/'
+    | '/_main/dev/apps/'
     | '/_main/dev/environments/'
     | '/_main/dev/environments/$environmentSlug/app-installations'
     | '/_main/dev/environments/$environmentSlug/database'
@@ -457,6 +481,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof MainDevEnvironmentsIndexRouteImport
       parentRoute: typeof MainDevRoute
     }
+    '/_main/dev/apps/': {
+      id: '/_main/dev/apps/'
+      path: '/apps'
+      fullPath: '/dev/apps'
+      preLoaderRoute: typeof MainDevAppsIndexRouteImport
+      parentRoute: typeof MainDevRoute
+    }
     '/_main/apps/$appId/': {
       id: '/_main/apps/$appId/'
       path: '/apps/$appId'
@@ -469,6 +500,13 @@ declare module '@tanstack/react-router' {
       path: '/environments/$environmentSlug'
       fullPath: '/dev/environments/$environmentSlug'
       preLoaderRoute: typeof MainDevEnvironmentsEnvironmentSlugRouteImport
+      parentRoute: typeof MainDevRoute
+    }
+    '/_main/dev/apps/$appId': {
+      id: '/_main/dev/apps/$appId'
+      path: '/apps/$appId'
+      fullPath: '/dev/apps/$appId'
+      preLoaderRoute: typeof MainDevAppsAppIdRouteImport
       parentRoute: typeof MainDevRoute
     }
     '/_main/dev/environments/$environmentSlug/': {
@@ -560,7 +598,9 @@ interface MainDevRouteChildren {
   MainDevApplicationsRoute: typeof MainDevApplicationsRoute
   MainDevGitProvidersRoute: typeof MainDevGitProvidersRoute
   MainDevIndexRoute: typeof MainDevIndexRoute
+  MainDevAppsAppIdRoute: typeof MainDevAppsAppIdRoute
   MainDevEnvironmentsEnvironmentSlugRoute: typeof MainDevEnvironmentsEnvironmentSlugRouteWithChildren
+  MainDevAppsIndexRoute: typeof MainDevAppsIndexRoute
   MainDevEnvironmentsIndexRoute: typeof MainDevEnvironmentsIndexRoute
 }
 
@@ -568,8 +608,10 @@ const MainDevRouteChildren: MainDevRouteChildren = {
   MainDevApplicationsRoute: MainDevApplicationsRoute,
   MainDevGitProvidersRoute: MainDevGitProvidersRoute,
   MainDevIndexRoute: MainDevIndexRoute,
+  MainDevAppsAppIdRoute: MainDevAppsAppIdRoute,
   MainDevEnvironmentsEnvironmentSlugRoute:
     MainDevEnvironmentsEnvironmentSlugRouteWithChildren,
+  MainDevAppsIndexRoute: MainDevAppsIndexRoute,
   MainDevEnvironmentsIndexRoute: MainDevEnvironmentsIndexRoute,
 }
 

@@ -1,4 +1,4 @@
-import { createFileRoute, useNavigate } from '@tanstack/react-router';
+import { createFileRoute } from '@tanstack/react-router';
 import { Button } from '@voltade/ui/button.tsx';
 import {
   Dialog,
@@ -14,7 +14,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@voltade/ui/select.tsx';
-import { Package, Plus, Trash2, Wrench } from 'lucide-react';
+import { Package, Plus, Trash2 } from 'lucide-react';
 import { useMemo, useState } from 'react';
 
 import { AccessDenied } from '#src/components/utils/access-denied.tsx';
@@ -50,7 +50,6 @@ function formatTimestamp(ts?: string | null) {
 
 function RouteComponent() {
   const { environmentSlug } = Route.useParams();
-  const navigate = useNavigate();
 
   const { data: organisation, isPending } = authClient.useActiveOrganization();
   const { data: session } = authClient.useSession();
@@ -121,13 +120,6 @@ function RouteComponent() {
       </div>
     );
   }
-
-  const handleAppClick = (appId: string) => {
-    navigate({
-      to: '/apps/$appId',
-      params: { appId },
-    });
-  };
 
   const handleUninstall = async (appId: string) => {
     if (!environment || !organisation) return;
@@ -204,7 +196,6 @@ function RouteComponent() {
                 key={inst.app.id}
                 inst={inst}
                 orgId={orgId}
-                onOpenApp={handleAppClick}
                 onUninstall={handleUninstall}
                 onChangeBuild={handleChangeBuild}
               />
@@ -288,13 +279,11 @@ function RouteComponent() {
 function InstallationCard({
   inst,
   orgId,
-  onOpenApp,
   onUninstall,
   onChangeBuild,
 }: {
   inst: AppInstallation;
   orgId: string;
-  onOpenApp: (appId: string) => void;
   onUninstall: (appId: string) => void;
   onChangeBuild: (appId: string, buildId: string) => void;
 }) {
@@ -317,14 +306,6 @@ function InstallationCard({
           </div>
         </div>
         <div className="flex items-center gap-2">
-          <Button
-            variant="outline"
-            size="icon"
-            title="Open App"
-            onClick={() => onOpenApp(inst.app.id)}
-          >
-            <Wrench size={16} />
-          </Button>
           <Button
             variant="destructive"
             size="icon"

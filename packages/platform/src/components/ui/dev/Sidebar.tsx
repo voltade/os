@@ -5,7 +5,7 @@ type NavItem = { label: string; path: string };
 const navItems: NavItem[] = [
   { label: 'Environments', path: '/dev/environments' },
   { label: 'Git Providers', path: '/dev/git-providers' },
-  { label: 'Applications', path: '/dev/applications' },
+  { label: 'Applications', path: '/dev/apps' },
 ];
 
 export function DevSidebar() {

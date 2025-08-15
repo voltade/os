@@ -49,8 +49,8 @@ function RouteComponent() {
     <div className="min-h-screen w-full">
       <div className="flex min-h-screen flex-col">
         <Header className="h-12" />
-        <main className="min-w-0 h-[calc(100vh-48px)]">
-          <div className="px-4 pt-4 min-w-screen h-full">
+        <main className="min-w-0 min-h-[calc(100vh-48px)]">
+          <div className="p-4 min-w-screen min-h-full">
             <Outlet />
           </div>
         </main>

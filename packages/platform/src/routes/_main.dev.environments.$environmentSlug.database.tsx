@@ -1,6 +1,9 @@
 import { createFileRoute } from '@tanstack/react-router';
 import { Button } from '@voltade/ui/button.tsx';
+import { Skeleton } from '@voltade/ui/skeleton.tsx';
 import { Database, ExternalLink, HeartPulse, Info } from 'lucide-react';
+
+import { useEnvironment } from '#src/hooks/environment.ts';
 
 export const Route = createFileRoute(
   '/_main/dev/environments/$environmentSlug/database',
@@ -9,34 +12,65 @@ export const Route = createFileRoute(
 });
 
 function RouteComponent() {
-  // Mocked DB status
-  const status = {
-    health: 'healthy' as 'healthy' | 'degraded' | 'down',
-    connections: 12,
-    size: '2.3 GB',
-    lastBackup: 'Today, 02:15 UTC',
-  };
-
-  // Display version from core-schema (mocked for now)
-  const coreSchemaVersion = '0.1.0';
+  const { environmentSlug } = Route.useParams();
+  const {
+    data: environment,
+    isLoading,
+    error,
+  } = useEnvironment(environmentSlug);
 
   const openStudio = () => {
     window.open('/drizzle', '_blank', 'noopener,noreferrer');
   };
 
   const healthBadgeColor =
-    status.health === 'healthy'
+    environment?.cnpgHealth.readyInstances === environment?.cnpgHealth.instances
       ? 'bg-emerald-500'
-      : status.health === 'degraded'
+      : environment?.cnpgHealth.readyInstances === 0
         ? 'bg-amber-500'
         : 'bg-red-500';
+
+  if (isLoading) {
+    return (
+      <div className="flex flex-col gap-6">
+        <div className="flex items-center justify-between">
+          <Skeleton className="h-8 w-32" />
+          <Skeleton className="h-10 w-48" />
+        </div>
+        <div className="grid grid-cols-1 gap-4 md:grid-cols-3">
+          <Skeleton className="rounded-lg border p-4 space-y-3" />
+        </div>
+      </div>
+    );
+  }
+
+  if (error || !environment) {
+    return (
+      <div className="flex flex-col items-center justify-center h-64">
+        <Database size={48} className="text-muted-foreground mb-4" />
+        <h3 className="text-lg font-medium text-foreground mb-2">
+          Environment not found
+        </h3>
+        <p className="text-sm text-muted-foreground">
+          The environment you're looking for doesn't exist or you don't have
+          access to it.
+        </p>
+      </div>
+    );
+  }
 
   return (
     <div className="flex flex-col gap-6">
       <div className="flex items-center justify-between">
-        <h2 className="text-2xl font-semibold tracking-tight text-foreground">
-          Database
-        </h2>
+        <div>
+          <h2 className="text-2xl font-semibold tracking-tight text-foreground">
+            Database
+          </h2>
+          <p className="text-sm text-muted-foreground">
+            {environment.name || environment.slug} •{' '}
+            {environment.is_production ? 'Production' : 'Development'}
+          </p>
+        </div>
         <Button onClick={openStudio}>
           <ExternalLink size={16} className="mr-2" /> Open Database Studio
         </Button>
@@ -52,10 +86,16 @@ function RouteComponent() {
             <span
               className={`inline-block h-2 w-2 rounded-full ${healthBadgeColor}`}
             />
-            <span className="text-sm capitalize">{status.health}</span>
+            <span className="text-sm capitalize">
+              {environment.cnpgHealth.readyInstances ===
+              environment.cnpgHealth.instances
+                ? 'healthy'
+                : 'degraded'}
+            </span>
           </div>
           <div className="mt-2 text-sm text-muted-foreground">
-            {status.connections} connections • {status.size}
+            {environment.cnpgHealth.readyInstances} of{' '}
+            {environment.cnpgHealth.instances} instances are ready
           </div>
         </div>
 
@@ -65,21 +105,11 @@ function RouteComponent() {
             <span className="text-sm font-medium">Core Schema</span>
           </div>
           <div className="mt-2 text-sm">
-            Version <span className="font-mono">{coreSchemaVersion}</span>
+            Version{' '}
+            <span className="font-mono">{environment.core_schema_version}</span>
           </div>
           <div className="mt-2 text-xs text-muted-foreground">
-            Schema and API definitions for the platform
-          </div>
-        </div>
-
-        <div className="rounded-lg border p-4">
-          <div className="flex items-center gap-2">
-            <Database size={18} className="text-muted-foreground" />
-            <span className="text-sm font-medium">Migrations</span>
-          </div>
-          <div className="mt-2 text-sm">Up to date</div>
-          <div className="mt-2 text-xs text-muted-foreground">
-            Last backup: {status.lastBackup}
+            Schema and API definitions for apps in this environment
           </div>
         </div>
       </div>

@@ -7,7 +7,7 @@ resources:
 helmCharts:
   - repo: oci://registry.127.0.0.1.nip.io
     name: platform
-    version: 0.1.9
+    version: 0.1.10-668e380
     releaseName: platform
     namespace: platform
   - repo: oci://registry.127.0.0.1.nip.io
