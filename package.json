@@ -17,7 +17,7 @@
     "tofu:nuke": "cd terraform/kind-local && docker rm --force --volumes registry voltade-os-local-control-plane && rm -r certs/* terraform.tfstate* kubeconfig",
     "charts": "bun run scripts/charts.ts",
     "charts:patch": "bun run scripts/charts.ts --patch",
-    "voltade": "bun packages/cli/src/index.ts",
+    "voltade": "bun packages/voltade-cli/bin/dev.ts",
     "prepare": "lefthook install",
     "clean": "rm -rf node_modules packages/*/node_modules apps/*/node_modules"
   },
