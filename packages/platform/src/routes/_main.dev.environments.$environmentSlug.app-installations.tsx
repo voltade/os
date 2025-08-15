@@ -17,8 +17,8 @@ import {
 import { Package, Plus, Trash2, Wrench } from 'lucide-react';
 import { useMemo, useState } from 'react';
 
-import { AccessDenied } from '#src/components/utils/access-denied';
-import { Loading } from '#src/components/utils/loading';
+import { AccessDenied } from '#src/components/utils/access-denied.tsx';
+import { Loading } from '#src/components/utils/loading.tsx';
 import {
   showError,
   showSuccess,

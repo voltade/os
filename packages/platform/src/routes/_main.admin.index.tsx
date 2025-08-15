@@ -7,13 +7,13 @@ import { Label } from '@voltade/ui/label.tsx';
 import { useEffect, useState } from 'react';
 import { useForm } from 'react-hook-form';
 
-import { AccessDenied } from '#src/components/utils/access-denied';
+import { AccessDenied } from '#src/components/utils/access-denied.tsx';
 import {
   showError,
   showSuccess,
 } from '#src/components/utils/notifications.tsx';
 import { api } from '#src/lib/api.ts';
-import { authClient } from '#src/lib/auth';
+import { authClient } from '#src/lib/auth.ts';
 
 interface OrganizationFormValues {
   name: string;

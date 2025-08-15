@@ -11,10 +11,10 @@ import {
   jwks as jwksTable,
   organization as organizationTable,
 } from '#drizzle/auth.ts';
-import { environmentTable } from '#drizzle/environment';
+import { environmentTable } from '#drizzle/environment.ts';
 import { appEnvVariables } from '#server/env.ts';
 import { factory } from '#server/factory.ts';
-import { authMiddleware } from '#server/lib/auth';
+import { authMiddleware } from '#server/lib/auth/index.ts';
 import { db } from '#server/lib/db.ts';
 import { signJwt } from '#server/lib/jwk.ts';
 import { createEnvironmentSchema } from '#shared/schemas/environment.ts';

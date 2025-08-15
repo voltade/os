@@ -1,6 +1,7 @@
 import { serveStatic } from 'hono/bun';
 
 import { factory } from '#server/factory.ts';
+import { authMiddleware } from '#server/lib/auth/index.ts';
 import { route as appRoute } from '#server/routes/app.ts';
 import { route as appBuildRoute } from '#server/routes/app_build.ts';
 import { route as appInstallationRoute } from '#server/routes/app_installation.ts';
@@ -9,7 +10,7 @@ import { route as drizzleProxyRoute } from '#server/routes/drizzle-proxy.ts';
 import { route as environmentRoute } from '#server/routes/environment.ts';
 import { route as environmentVariableRoute } from '#server/routes/environment_variable.ts';
 import { route as organizationRoute } from '#server/routes/organization.ts';
-import { authMiddleware } from './lib/auth/index.ts';
+import { route as registryRoute } from '#server/routes/registry.ts';
 
 const app = factory.createApp();
 
@@ -26,6 +27,7 @@ app.route('/drizzle', drizzleProxyRoute);
 export const apiRoutes = app
   .basePath('/api')
   .route('/auth', authRoute)
+  .route('/registry', registryRoute)
   .use(authMiddleware(true))
   .route('/environment', environmentRoute)
   .route('/environment_variable', environmentVariableRoute)

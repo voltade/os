@@ -21,7 +21,7 @@ import { useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { z } from 'zod';
 
-import { AccessDenied } from '#src/components/utils/access-denied';
+import { AccessDenied } from '#src/components/utils/access-denied.tsx';
 import {
   useDeleteEnvironment,
   useEnvironment,

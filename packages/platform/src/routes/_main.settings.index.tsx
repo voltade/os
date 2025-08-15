@@ -7,7 +7,7 @@ import { Label } from '@voltade/ui/label.tsx';
 import { useEffect, useState } from 'react';
 import { useForm } from 'react-hook-form';
 
-import { authClient } from '#src/lib/auth';
+import { authClient } from '#src/lib/auth.ts';
 
 interface ProfileFormValues {
   name: string;

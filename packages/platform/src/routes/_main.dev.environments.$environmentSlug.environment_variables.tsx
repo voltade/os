@@ -1,7 +1,7 @@
 import { createFileRoute } from '@tanstack/react-router';
 
 import { EnvironmentVariablesTable } from '#src/components/ui/environment/index.ts';
-import { AccessDenied } from '#src/components/utils/access-denied';
+import { AccessDenied } from '#src/components/utils/access-denied.tsx';
 import { useEnvironment } from '#src/hooks/environment.ts';
 import { authClient } from '#src/lib/auth.ts';
 

@@ -4,9 +4,9 @@ import {
   useRouterState,
 } from '@tanstack/react-router';
 
-import { DevSidebar } from '#src/components/ui/dev/Sidebar';
-import { EnvironmentSettingsSidebar } from '#src/components/ui/environment/SettingsSidebar';
-import { AccessDenied } from '#src/components/utils/access-denied';
+import { DevSidebar } from '#src/components/ui/dev/Sidebar.tsx';
+import { EnvironmentSettingsSidebar } from '#src/components/ui/environment/SettingsSidebar.tsx';
+import { AccessDenied } from '#src/components/utils/access-denied.tsx';
 import { authClient } from '#src/lib/auth.ts';
 
 export const Route = createFileRoute('/_main/dev')({

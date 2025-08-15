@@ -24,7 +24,7 @@ import { useForm } from 'react-hook-form';
 import type { z } from 'zod';
 
 import { createEnvironmentSchema } from '#shared/schemas/environment.ts';
-import { AccessDenied } from '#src/components/utils/access-denied';
+import { AccessDenied } from '#src/components/utils/access-denied.tsx';
 import {
   showError,
   showSuccess,

@@ -1,7 +1,7 @@
 import { createFileRoute, Outlet } from '@tanstack/react-router';
 
 import { AdminSidebar } from '#src/components/ui/admin/AdminSidebar.tsx';
-import { AccessDenied } from '#src/components/utils/access-denied';
+import { AccessDenied } from '#src/components/utils/access-denied.tsx';
 import { authClient } from '#src/lib/auth.ts';
 
 export const Route = createFileRoute('/_main/admin')({

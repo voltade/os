@@ -24,7 +24,7 @@ import { useForm } from 'react-hook-form';
 import type { z } from 'zod';
 
 import { createAppSchema, updateAppSchema } from '#shared/schemas/app.ts';
-import { Loading } from '#src/components/utils/loading';
+import { Loading } from '#src/components/utils/loading.tsx';
 import {
   showError,
   showSuccess,

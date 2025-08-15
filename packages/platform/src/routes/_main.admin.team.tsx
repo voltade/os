@@ -14,12 +14,12 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@voltade/ui/tabs.tsx';
 import { Plus, RefreshCw, User } from 'lucide-react';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 
-import { InviteMemberModal } from '#src/components/team/InviteMemberModal';
-import { InvitesTable } from '#src/components/team/InvitesTable';
-import { MembersFilters } from '#src/components/team/MembersFilters';
-import { MembersTable } from '#src/components/team/MembersTable';
-import { RemoveMemberModal } from '#src/components/team/RemoveMemberModal';
-import { AccessDenied } from '#src/components/utils/access-denied';
+import { InviteMemberModal } from '#src/components/team/InviteMemberModal.tsx';
+import { InvitesTable } from '#src/components/team/InvitesTable.tsx';
+import { MembersFilters } from '#src/components/team/MembersFilters.tsx';
+import { MembersTable } from '#src/components/team/MembersTable.tsx';
+import { RemoveMemberModal } from '#src/components/team/RemoveMemberModal.tsx';
+import { AccessDenied } from '#src/components/utils/access-denied.tsx';
 import {
   showError,
   showSuccess,

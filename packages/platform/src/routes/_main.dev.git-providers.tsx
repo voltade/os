@@ -1,6 +1,6 @@
 import { createFileRoute } from '@tanstack/react-router';
 
-import { AccessDenied } from '#src/components/utils/access-denied';
+import { AccessDenied } from '#src/components/utils/access-denied.tsx';
 import { authClient } from '#src/lib/auth.ts';
 
 export const Route = createFileRoute('/_main/dev/git-providers')({

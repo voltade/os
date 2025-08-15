@@ -1,8 +1,8 @@
 import { createFileRoute, Link, Outlet } from '@tanstack/react-router';
 import { ArrowLeft } from 'lucide-react';
 
-import { AccessDenied } from '#src/components/utils/access-denied';
-import { Loading } from '#src/components/utils/loading';
+import { AccessDenied } from '#src/components/utils/access-denied.tsx';
+import { Loading } from '#src/components/utils/loading.tsx';
 import { authClient } from '#src/lib/auth.ts';
 
 export const Route = createFileRoute(

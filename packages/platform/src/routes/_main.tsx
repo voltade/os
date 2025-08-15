@@ -5,11 +5,11 @@ import {
   useRouterState,
 } from '@tanstack/react-router';
 
-import { Header } from '#src/components/ui/Header';
-import { useEnsureActiveOrganization } from '#src/hooks/useEnsureActiveOrganization';
-import { usePlatformInitialization } from '#src/hooks/usePlatformInitialization';
+import { Header } from '#src/components/ui/Header.tsx';
+import { useEnsureActiveOrganization } from '#src/hooks/useEnsureActiveOrganization.ts';
+import { usePlatformInitialization } from '#src/hooks/usePlatformInitialization.ts';
 import { authClient } from '#src/lib/auth.ts';
-import { isJWTExpired } from '#src/lib/isJWTExpired';
+import { isJWTExpired } from '#src/lib/isJWTExpired.ts';
 
 export const Route = createFileRoute('/_main')({
   beforeLoad: async () => {

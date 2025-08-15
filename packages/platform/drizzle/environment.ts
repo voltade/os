@@ -30,6 +30,8 @@ export const environmentTable = pgTable(
     is_production: boolean().notNull().default(false),
     runner_count: integer().notNull().default(1),
     database_instance_count: integer().notNull().default(1),
+
+    core_schema_version: text().notNull().default('0.1.0'),
   },
   (table) => [
     check(
