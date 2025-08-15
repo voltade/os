@@ -135,6 +135,7 @@ export default class Install extends BaseCommand {
       json: {
         orgId,
         appId: app.id,
+        type: 'builds',
       },
     });
     if (!appBuildRes.ok) {
@@ -149,7 +150,11 @@ export default class Install extends BaseCommand {
       this.error(`Output path ${outputPath} does not exist.`);
     }
     const tmpDir = process.env.TMPDIR || '/tmp';
-    const tarFilePath = path.join(tmpDir, `${appBuild.id}.tar.gz`);
+    const tarFileDir = path.join(tmpDir, appBuild.id);
+    if (!fs.existsSync(tarFileDir)) {
+      fs.mkdirSync(tarFileDir, { recursive: true });
+    }
+    const tarFilePath = path.join(tarFileDir, 'artifact.tar.gz');
 
     spinner.start(`Archiving app build...`);
     await tar.create(
@@ -189,7 +194,7 @@ export default class Install extends BaseCommand {
     });
 
     spinner.start(`Installing app build...`);
-    const installRes = await honoClient.app_installation.$post({
+    const installRes = await honoClient.app_installation.$put({
       json: {
         organization_id: orgId,
         environment_id: envId,

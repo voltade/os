@@ -154,12 +154,13 @@ export const route = factory
     zValidator(
       'json',
       z.object({
+        type: z.enum(['source', 'builds']).default('source'),
         appId: z.string(),
         orgId: z.string(),
       }),
     ),
     async (c) => {
-      const { appId, orgId } = c.req.valid('json');
+      const { type, appId, orgId } = c.req.valid('json');
 
       const [appBuild] = await db
         .insert(appBuildTable)
@@ -175,7 +176,9 @@ export const route = factory
       }
 
       const uploadUrl = s3Client.presign(
-        `source/${appId}/${orgId}/${appBuild.id}.zip`,
+        type === 'source'
+          ? `/source/${appId}/${orgId}/${appBuild.id}.zip`
+          : `/builds/${orgId}/${appId}/${appBuild.id}/artifact.tar.gz`,
         {
           method: 'PUT',
           expiresIn: 3600,
