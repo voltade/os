@@ -180,4 +180,12 @@ body {
   body {
     @apply bg-background text-foreground;
   }
+  /* Disable page-swap animations from the View Transitions API */
+  @layer base {
+    ::view-transition-old(root),
+    ::view-transition-new(root) {
+      animation: none !important;
+      mix-blend-mode: normal;
+    }
+  }
 }

@@ -2,6 +2,7 @@ import { createFileRoute, useNavigate } from '@tanstack/react-router';
 import { Button } from '@voltade/ui/button.tsx';
 import { useEffect, useState } from 'react';
 
+import { AuthBranding } from '#src/components/auth/branding.tsx';
 import { Logo } from '#src/components/ui/logo.tsx';
 import { authClient } from '#src/lib/auth.ts';
 
@@ -68,12 +69,7 @@ export default function RouteComponent() {
           </div>
           <div className="flex flex-1 items-center">
             <div className="max-w-md">
-              <h1 className="text-5xl font-bold leading-tight text-foreground">
-                Voltade OS
-              </h1>
-              <p className="mt-4 text-3xl leading-tight text-muted-foreground">
-                Next gen business software and developer platform
-              </p>
+              <AuthBranding />
             </div>
           </div>
           <div />
@@ -96,12 +92,7 @@ export default function RouteComponent() {
           </div>
           <div className="flex flex-1 items-center">
             <div className="max-w-md">
-              <h1 className="text-5xl font-bold leading-tight text-foreground">
-                Voltade OS
-              </h1>
-              <p className="mt-4 text-3xl leading-tight text-muted-foreground">
-                Next gen business software and developer platform
-              </p>
+              <AuthBranding />
             </div>
           </div>
           <div />

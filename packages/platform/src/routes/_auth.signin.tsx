@@ -1,6 +1,8 @@
 import { createFileRoute } from '@tanstack/react-router';
+import { AnimatedThemeToggler } from '@voltade/ui/magicui/animated-theme-toggler.tsx';
 import { useState } from 'react';
 
+import { AuthBranding } from '#src/components/auth/branding.tsx';
 import { EmailForm } from '#src/components/auth/email-form.tsx';
 import { EmailOtp } from '#src/components/auth/email-otp.tsx';
 import { Logo } from '#src/components/ui/logo.tsx';
@@ -21,19 +23,15 @@ export default function RouteComponent() {
         </div>
         <div className="flex flex-1 items-center">
           <div className="max-w-md">
-            <h1 className="text-5xl font-bold leading-tight text-foreground">
-              Voltade OS
-            </h1>
-            <p className="mt-4 text-3xl leading-tight text-muted-foreground">
-              Next gen business software and developer platform
-            </p>
+            <AuthBranding />
           </div>
         </div>
         <div />
       </div>
 
       {/* Right: sign-in form */}
-      <div className="flex flex-1 items-center justify-center border-l border-border bg-background">
+      <div className="flex flex-1 items-center justify-center border-l border-border bg-background relative">
+        <AnimatedThemeToggler className="absolute top-8 right-8 p-2 rounded-md hover:bg-accent transition-colors" />
         <div className="w-full max-w-sm p-6">
           <div className="mb-6">
             <h2 className="text-3xl font-bold text-foreground">Sign in</h2>
