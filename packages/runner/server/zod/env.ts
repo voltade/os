@@ -6,7 +6,9 @@ export const appEnvVariablesSchema = z.object({
 
   // Environment variables
   ORGANIZATION_ID: z.string(),
+  ORGANIZATION_SLUG: z.string(),
   ENVIRONMENT_ID: z.string(),
+  ENVIRONMENT_SLUG: z.string(),
   RUNNER_SECRET_TOKEN: z.string(),
   PROXY_SECRET_TOKEN: z.string(),
 

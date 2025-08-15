@@ -49,6 +49,10 @@ spec:
               value: {{ .Values.global.organizationId | quote }}
             - name: ENVIRONMENT_ID
               value: {{ .Values.global.environmentId | quote }}
+            - name: ORGANIZATION_SLUG
+              value: {{ .Values.global.organizationSlug | quote }}
+            - name: ENVIRONMENT_SLUG
+              value: {{ .Values.global.environmentSlug | quote }}
             - name: AWS_ACCESS_KEY_ID
               valueFrom:
                 secretKeyRef:

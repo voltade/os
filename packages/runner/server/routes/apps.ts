@@ -59,6 +59,11 @@ export const routes = factory.createApp().all(
         VITE_APP_URL: `${c.req.raw.headers.get('origin')}/${appId}/${releaseId}`,
         ...envs,
         ...k8sEnvs,
+        PLATFORM_URL: c.env.PLATFORM_URL,
+        ORGANIZATION_ID: c.env.ORGANIZATION_ID,
+        ORGANIZATION_SLUG: c.env.ORGANIZATION_SLUG,
+        ENVIRONMENT_ID: c.env.ENVIRONMENT_ID,
+        ENVIRONMENT_SLUG: c.env.ENVIRONMENT_SLUG,
       });
     }
 

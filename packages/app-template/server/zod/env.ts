@@ -6,6 +6,13 @@ export const appEnvVariablesSchema = z.object({
 
   VITE_APP_URL: z.string().url(),
   VITE_PGREST_URL: z.string(),
+
+  PLATFORM_URL: z.url(),
+  ORGANIZATION_ID: z.string(),
+  ORGANIZATION_SLUG: z.string(),
+  ENVIRONMENT_ID: z.string(),
+  ENVIRONMENT_SLUG: z.string(),
+
   DB_USER: z.string(),
   DB_PASSWORD: z.string(),
   DB_HOST: z.string(),
@@ -14,15 +21,6 @@ export const appEnvVariablesSchema = z.object({
 });
 
 // Validate and export the environment
-export const env = appEnvVariablesSchema.parse({
-  VITE_NODE_ENV: process.env.VITE_NODE_ENV,
-  VITE_PGREST_URL: process.env.VITE_PGREST_URL,
-  VITE_APP_URL: process.env.VITE_APP_URL,
-  DB_USER: process.env.DB_USER,
-  DB_PASSWORD: process.env.DB_PASSWORD,
-  DB_HOST: process.env.DB_HOST,
-  DB_PORT: process.env.DB_PORT,
-  DB_NAME: process.env.DB_NAME,
-});
+export const appEnvVariables = appEnvVariablesSchema.parse(process.env);
 
 export type AppEnvVariables = z.infer<typeof appEnvVariablesSchema>;
