@@ -7,7 +7,7 @@ import { $ } from 'bun';
   const namespace = 'platform';
 
   const user_token =
-    await $`kubectl create token ${user_name} -n ${namespace}`.text();
+    await $`kubectl create token ${user_name} -n ${namespace} --duration=10h`.text();
   console.log('Generated USER_TOKEN');
 
   const cluster_server =
