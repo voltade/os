@@ -470,9 +470,9 @@ export async function buildApp(this: Command, folderPathArg: string) {
   }
   const { uploadUrl, appBuild } = (await presignRes.json()) as {
     uploadUrl: string;
-    appBuild: Array<{ id: string }>;
+    appBuild: { id: string };
   };
-  const buildId = appBuild?.[0]?.id;
+  const buildId = appBuild?.id;
   if (!uploadUrl || !buildId) {
     console.error('Invalid presign response');
     process.exit(1);
