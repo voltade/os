@@ -11,7 +11,7 @@ import { StrictMode } from 'react';
 import ReactDOM from 'react-dom/client';
 import type { toast } from 'sonner';
 
-import { name } from '../package.json';
+// import { name } from '../package.json';
 import type { RuntimeEnv } from './lib/get-runtime-env.ts';
 import reportWebVitals from './reportWebVitals.ts';
 // Import the generated route tree
@@ -81,6 +81,8 @@ if (!window.__POWERED_BY_QIANKUN__) {
   // or send to an analytics endpoint. Learn more: https://bit.ly/CRA-vitals
   reportWebVitals();
 }
+
+const name = 'voltade-permissions';
 
 export async function bootstrap() {
   console.log(`${name} bootstrap`);
