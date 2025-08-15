@@ -22,22 +22,16 @@ export abstract class BaseCommand extends Command {
       await fs.mkdir(dataDir, { recursive: true });
     }
     if (!this.authClient) {
-      console.log('Initializing auth client...');
-      this.authClient = await this.initAuthClient();
-      console.log('Auth client set.');
+      this.authClient = this.initAuthClient();
     }
     if (!this.honoClient) {
-      console.log('Initializing Hono client...');
       this.honoClient = await this.initHonoClient();
-      console.log('Hono client set.');
     }
   }
 
-  authClient!: Awaited<ReturnType<BaseCommand['initAuthClient']>>;
-  async initAuthClient() {
+  protected authClient!: Awaited<ReturnType<BaseCommand['initAuthClient']>>;
+  private initAuthClient() {
     const { dataDir } = this.config;
-
-    console.log('Initializing auth client...');
     const client = createAuthClient({
       baseURL: `${BaseUrl}/api/auth`,
       fetchOptions: {
@@ -61,27 +55,24 @@ export abstract class BaseCommand extends Command {
       },
       plugins: [emailOTPClient(), organizationClient()],
     });
-    console.log('Auth client initialized.');
     return client;
   }
 
-  honoClient!: Awaited<ReturnType<BaseCommand['initHonoClient']>>;
-  async initHonoClient() {
+  protected honoClient!: Awaited<ReturnType<BaseCommand['initHonoClient']>>;
+  private async initHonoClient() {
     const { dataDir } = this.config;
     const cookies = await loadCookies(dataDir);
     if (!cookies) {
       throw new Error('No cookies found. Please login first.');
     }
-    console.log('Initializing Hono client...');
     const { api } = hc<AppType>(BaseUrl, {
       init: {
         headers: {
+          'content-type': 'application/json',
           cookie: cookies.join('; '),
         },
       },
     });
-    console.log('Hono client initialized.');
-
     return api;
   }
 }
