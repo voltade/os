@@ -1,4 +1,4 @@
-import { useMutation, useQuery } from '@tanstack/react-query';
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { Button } from '@voltade/ui/button.tsx';
 import { Card, CardContent, CardHeader, CardTitle } from '@voltade/ui/card.tsx';
 import {
@@ -47,6 +47,8 @@ interface CreateClassFormValues {
 }
 
 export default function CreateClassForm() {
+  const queryClient = useQueryClient();
+
   const form = useForm<CreateClassFormValues>({
     mode: 'onChange',
   });
@@ -97,6 +99,7 @@ export default function CreateClassForm() {
     },
     onSuccess: () => {
       form.reset();
+      queryClient.invalidateQueries({ queryKey: ['classes'] });
       toast.success('Class created successfully!');
     },
     onError: (error: Error) => {
