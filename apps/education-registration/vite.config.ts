@@ -40,7 +40,7 @@ export default defineConfig({
     tsconfigPaths(),
     react(),
     // qiankun({ name, sandbox: true }),
-    qiankun(name),
+    qiankun('voltade-education-registration'),
     tailwindcss(),
   ],
 });
