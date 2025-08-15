@@ -4,12 +4,18 @@
   "license": "AGPL-3.0-only",
   "version": "0.1.0",
   "type": "module",
+  "imports": {
+    "#drizzle/*": "./drizzle/*",
+    "#server/*": "./server/*",
+    "#shared/*": "./shared/*",
+    "#src/*": "./src/*"
+  },
   "exports": {
+    "./types": {
+      "default": "./types.ts"
+    },
     "./drizzle": {
       "default": "./drizzle/index.ts"
-    },
-    "./types": {
-      "default": "./server/index.ts"
     }
   },
   "scripts": {
