@@ -11,6 +11,7 @@ import { route as environmentRoute } from '#server/routes/environment.ts';
 import { route as environmentVariableRoute } from '#server/routes/environment_variable.ts';
 import { route as organizationRoute } from '#server/routes/organization.ts';
 import { route as registryRoute } from '#server/routes/registry.ts';
+import { route as userRoute } from '#server/routes/user.ts';
 
 const app = factory.createApp();
 
@@ -34,7 +35,8 @@ export const apiRoutes = app
   .route('/app', appRoute)
   .route('/app_build', appBuildRoute)
   .route('/app_installation', appInstallationRoute)
-  .route('/organization', organizationRoute);
+  .route('/organization', organizationRoute)
+  .route('/user', userRoute);
 
 app
   .get('/*', serveStatic({ root: './dist/static' }))

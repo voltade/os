@@ -64,6 +64,7 @@ export const routes = factory.createApp().all(
         ORGANIZATION_SLUG: c.env.ORGANIZATION_SLUG,
         ENVIRONMENT_ID: c.env.ENVIRONMENT_ID,
         ENVIRONMENT_SLUG: c.env.ENVIRONMENT_SLUG,
+        RUNNER_SECRET_TOKEN: c.env.RUNNER_SECRET_TOKEN,
       });
     }
 
