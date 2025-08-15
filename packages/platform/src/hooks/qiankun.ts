@@ -28,7 +28,7 @@ export function useQiankunMicroApp({
         entry: `//${activeOrganization.slug}-${environment.slug}.127.0.0.1.nip.io/apps/${app.app.id}/${app.app_installation.app_build_id}/`,
         container: appContainerRef.current,
         props: {
-          baseUrl: `${window.location.origin}/apps/${app.app.id}`,
+          baseUrl: `http://${activeOrganization.slug}-${environment.slug}.127.0.0.1.nip.io/apps/${app.app.id}/${app.app_installation.app_build_id}`,
         },
       },
       { sandbox: false },

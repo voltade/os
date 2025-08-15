@@ -31,7 +31,7 @@ export async function getAppEnvsFromK8s() {
   const namespace = `org-${appEnvVariables.ORGANIZATION_ID}-${appEnvVariables.ENVIRONMENT_ID}`;
   const { username, password } = await getCnpgSecret(
     namespace,
-    'cnpg-cluster-app',
+    'cnpg-authenticator',
   );
 
   if (!username || !password) {
@@ -41,7 +41,7 @@ export async function getAppEnvsFromK8s() {
   const pgrstHostname = await getHttpRouteHostname(namespace, 'postgrest');
   let pgrstUrl = '';
   if (pgrstHostname.endsWith('nip.io')) {
-    pgrstUrl = `http://${pgrstUrl}`;
+    pgrstUrl = `http://${pgrstHostname}`;
   } else {
     pgrstUrl = `https://${pgrstHostname}`;
   }
