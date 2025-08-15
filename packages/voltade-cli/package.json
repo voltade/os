@@ -38,7 +38,7 @@
     "@voltade/platform": "workspace:*",
     "esbuild": "^0.25.9",
     "oclif": "^4",
-    "shx": "^0.3.3",
+    "shx": "^0.4.0",
     "typescript": "^5"
   }
 }
