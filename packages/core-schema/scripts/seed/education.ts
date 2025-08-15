@@ -312,7 +312,7 @@ async function seedClasses(
   }>;
 }> {
   console.log('Classes:');
-  // Define classes (empty temporary_name) and usual timings in SGT
+  // Define classes and usual timings in SGT
   const specs: {
     key: string;
     display: string;
@@ -356,7 +356,6 @@ async function seedClasses(
       const dayLit: DayNameLiteral | undefined = DayName[s.day];
       if (!dayLit) throw new Error(`Invalid day for class ${s.key}: ${s.day}`);
       return {
-        temporary_name: '', // empty temporary name as requested
         level_group_id: s.levelGroupId,
         subject_id: s.subjectId,
         usual_day_of_the_week: dayLit,
@@ -460,7 +459,7 @@ export async function seedEducationData(
   // 5) Subjects
   const subjectIds = await seedSubjects();
 
-  // 6) Classes (empty temporary_name) with usual SGT timings stored as UTC times
+  // 6) Classes with usual SGT timings stored as UTC times
   const { classIds, classSpecs } = await seedClasses(levelGroupIds, subjectIds);
 
   // 7) Weekly Lessons for each term and class

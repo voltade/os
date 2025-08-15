@@ -11,7 +11,6 @@ import { educationSubjectTable } from './subject.ts';
 
 export const educationClassTable = educationSchema.table('class', {
   ...DEFAULT_COLUMNS,
-  temporary_name: text('temporary_name'),
   level_group_id: integer('level_group_id')
     // .notNull() TODO: Update the seed script and uncomment this.
     .references(() => educationLevelGroupTable.id, { onDelete: 'restrict' }),

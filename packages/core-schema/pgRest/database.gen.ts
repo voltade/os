@@ -14,16 +14,23 @@ export type Database = {
     Views: {
       class_view: {
         Row: {
+          course_id: number | null
           id: number | null
-          temporary_name: string | null
-        }
-        Insert: {
-          id?: number | null
-          temporary_name?: string | null
-        }
-        Update: {
-          id?: number | null
-          temporary_name?: string | null
+          level_group_id: number | null
+          level_group_name: string | null
+          subject_id: number | null
+          subject_name: string | null
+          usual_day_of_the_week:
+            | "Monday"
+            | "Tuesday"
+            | "Wednesday"
+            | "Thursday"
+            | "Friday"
+            | "Saturday"
+            | "Sunday"
+            | null
+          usual_end_time_utc: string | null
+          usual_start_time_utc: string | null
         }
         Relationships: []
       }
@@ -115,7 +122,7 @@ export type Database = {
     }
     Functions: {
       allow: {
-        Args: { p_relation: string; p_object: string }
+        Args: { p_object: string; p_relation: string }
         Returns: boolean
       }
     }
