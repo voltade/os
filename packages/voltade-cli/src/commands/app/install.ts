@@ -101,7 +101,9 @@ export default class Install extends BaseCommand {
     const appSlug = slug(pkgJson.name.replace('/', '-'));
     let app = apps.find((a) => a.slug === appSlug);
     if (!app) {
-      spinner.warn(`App ${appSlug} not found in this organization.`);
+      spinner.warn(
+        `App ${appSlug} not found in this organization, creating it...`,
+      );
       spinner.start(`Creating app ${appSlug}...`);
       const createAppRes = await honoClient.app.$post({
         json: {
@@ -194,7 +196,7 @@ export default class Install extends BaseCommand {
     });
 
     spinner.start(`Installing app build...`);
-    const installRes = await honoClient.app_installation.$put({
+    const installPostRes = await honoClient.app_installation.$post({
       json: {
         organization_id: orgId,
         environment_id: envId,
@@ -202,9 +204,19 @@ export default class Install extends BaseCommand {
         app_build_id: appBuild.id,
       },
     });
-    if (!installRes.ok) {
-      const error = await installRes.text();
-      this.error(`Failed to install app: ${error}`);
+    if (!installPostRes.ok) {
+      const installRes = await honoClient.app_installation.$put({
+        json: {
+          organization_id: orgId,
+          environment_id: envId,
+          app_id: app.id,
+          app_build_id: appBuild.id,
+        },
+      });
+      if (!installRes.ok) {
+        const error = await installRes.text();
+        this.error(`Failed to install app: ${error}`);
+      }
     }
     spinner.stop();
   }
