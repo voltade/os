@@ -46,7 +46,12 @@ bun --cwd packages/core-schema db:reset
 ## Connect the app template or an app to the environment database
 For the app template, edit `packages/app-template/.env`  with reference to `.env.example`.
 
-For some app, e.g., `education-registration`, edit `apps/education-registration/.env` with reference to `.env.example`.
+For some app, e.g., `education-registration`:
+* Edit `apps/education-registration/.env` with reference to `.env.example`.
+* You will also need to change the appropriate line in `pg-rest.ts` to:
+  ```
+  const pgRestUrl = 'http://postgrest.voltade-main.127.0.0.1.nip.io';
+  ```
 
 ## Start the app template or an app
 

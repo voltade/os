@@ -32,6 +32,34 @@ export type Database = {
           usual_end_time_utc: string | null
           usual_start_time_utc: string | null
         }
+        Relationships: [
+          {
+            foreignKeyName: "class_level_group_id_level_group_id_fk"
+            columns: ["level_group_id"]
+            referencedRelation: "level_group_view"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "class_subject_id_subject_id_fk"
+            columns: ["subject_id"]
+            referencedRelation: "subject_view"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      level_group_view: {
+        Row: {
+          id: number | null
+          name: string | null
+        }
+        Insert: {
+          id?: number | null
+          name?: string | null
+        }
+        Update: {
+          id?: number | null
+          name?: string | null
+        }
         Relationships: []
       }
       product_template_view: {
@@ -118,6 +146,21 @@ export type Database = {
             referencedColumns: ["id"]
           },
         ]
+      }
+      subject_view: {
+        Row: {
+          id: number | null
+          name: string | null
+        }
+        Insert: {
+          id?: number | null
+          name?: string | null
+        }
+        Update: {
+          id?: number | null
+          name?: string | null
+        }
+        Relationships: []
       }
     }
     Functions: {
