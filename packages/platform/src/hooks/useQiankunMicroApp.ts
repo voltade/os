@@ -1,6 +1,5 @@
 import { type LoadableApp, loadMicroApp, type MicroApp } from 'qiankun';
 import { useEffect, useRef } from 'react';
-import { isConstructorDeclaration } from 'typescript';
 
 import type { AppInstallation } from '#src/hooks/app_installation.ts';
 import { authClient } from '#src/lib/auth.ts';
