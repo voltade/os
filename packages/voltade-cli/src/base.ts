@@ -62,15 +62,16 @@ export abstract class BaseCommand extends Command {
   private async initHonoClient() {
     const { dataDir } = this.config;
     const cookies = await loadCookies(dataDir);
-    if (!cookies) {
-      throw new Error('No cookies found. Please login first.');
-    }
     const { api } = hc<AppType>(BaseUrl, {
       init: {
-        headers: {
-          'content-type': 'application/json',
-          cookie: cookies.join('; '),
-        },
+        headers: cookies
+          ? {
+              'content-type': 'application/json',
+              cookie: cookies?.join('; '),
+            }
+          : {
+              'content-type': 'application/json',
+            },
       },
     });
     return api;
