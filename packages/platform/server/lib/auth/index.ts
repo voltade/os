@@ -66,7 +66,7 @@ export const auth = betterAuth({
     }),
     jwt({
       jwt: {
-        audience: async ({ user }) => {
+        definePayload: async ({ user }) => {
           const organizations = await db
             .select({
               slug: organizationTable.slug,
@@ -77,11 +77,11 @@ export const auth = betterAuth({
               eq(organizationTable.id, memberTable.organizationId),
             )
             .where(eq(memberTable.userId, user.id));
-          return organizations.map((org) => org.slug);
+          return {
+            role: 'authenticated',
+            aud: organizations.map((org) => org.slug),
+          };
         },
-        definePayload: () => ({
-          role: 'authenticated',
-        }),
         expirationTime: Math.floor(Date.now() / 1000) + 60 * 60 * 24 * 30, // 30 days
       },
     }),
