@@ -81,14 +81,9 @@ if (!window.__POWERED_BY_QIANKUN__) {
   reportWebVitals();
 }
 
-const name = 'voltade-app-template';
-
-export async function bootstrap() {
-  console.log(`${name} bootstrap`);
-}
+export async function bootstrap() {}
 
 export async function mount(props: Props) {
-  console.log(`${name} mount`, props);
   // Set baseUrl to global so components can access it without props drilling
   if (props?.baseUrl) {
     window.__BASE_URL__ = props.baseUrl;
@@ -96,11 +91,8 @@ export async function mount(props: Props) {
   render(props);
 }
 
-export async function unmount(props: Props) {
-  console.log(`${name} unmount`, props);
+export async function unmount(_props: Props) {
   root.unmount();
 }
 
-export async function update(props: Props) {
-  console.log(`${name} update`, props);
-}
+export async function update(_props: Props) {}

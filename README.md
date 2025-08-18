@@ -26,6 +26,7 @@ Login to ArgoCD with username `admin` and password `admin`.
 ```bash
 bun --cwd packages/platform db:reset
 ```
+
 This updates your `packages/platform/.env` file, creates the platform database, and inserts one row into the `environment` table.
 
 Note: If `drizzle-kit` is stuck after outputting `Reading config file`, run `bun run clean && bun install` and try again.
@@ -37,6 +38,7 @@ bun --cwd packages/platform dev
 ```
 
 This serves an `/environment` endpoint which tells ArgoCD to create a CNPG cluster corresponding to the row inserted, which has one database (the "environment database").
+
 ## Apply the core schema to the environment database and seed it
 
 ```bash
@@ -44,11 +46,13 @@ bun --cwd packages/core-schema db:reset
 ```
 
 ## Connect the app template or an app to the environment database
-For the app template, edit `packages/app-template/.env`  with reference to `.env.example`.
+
+For the app template, edit `apps/core/app-template/.env` with reference to `.env.example`.
 
 For some app, e.g., `education-registration`:
-* Edit `apps/education-registration/.env` with reference to `.env.example`.
-* You will also need to change the appropriate line in `pg-rest.ts` to:
+
+- Edit `apps/education-registration/.env` with reference to `.env.example`.
+- You will also need to change the appropriate line in `pg-rest.ts` to:
   ```
   const pgRestUrl = 'http://postgrest.voltade-main.127.0.0.1.nip.io';
   ```
@@ -57,10 +61,10 @@ For some app, e.g., `education-registration`:
 
 ```bash
 # For the app template:
-bun --cwd packages/app-template dev
+bun --cwd apps/core/app-template dev
 
 # For an app:
-bun --cwd apps/education-registration dev
+bun --cwd apps/education/registration dev
 ```
 
 If your development server is not starting, run `bun run clean && bun install` from the root of the repository before continuing to troubleshoot.
