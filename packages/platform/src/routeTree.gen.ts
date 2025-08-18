@@ -29,7 +29,7 @@ import { Route as MainAcceptInvitationInvitationIdRouteImport } from './routes/_
 import { Route as AuthOauthConsentRouteImport } from './routes/_auth.oauth.consent'
 import { Route as MainDevEnvironmentsIndexRouteImport } from './routes/_main.dev.environments.index'
 import { Route as MainDevAppsIndexRouteImport } from './routes/_main.dev.apps.index'
-import { Route as MainAppsAppIdIndexRouteImport } from './routes/_main.apps.$appId.index'
+import { Route as MainAppsSlugIndexRouteImport } from './routes/_main.apps.$slug.index'
 import { Route as MainDevEnvironmentsEnvironmentSlugRouteImport } from './routes/_main.dev.environments.$environmentSlug'
 import { Route as MainDevAppsAppIdRouteImport } from './routes/_main.dev.apps.$appId'
 import { Route as MainDevEnvironmentsEnvironmentSlugIndexRouteImport } from './routes/_main.dev.environments.$environmentSlug.index'
@@ -138,9 +138,9 @@ const MainDevAppsIndexRoute = MainDevAppsIndexRouteImport.update({
   path: '/apps/',
   getParentRoute: () => MainDevRoute,
 } as any)
-const MainAppsAppIdIndexRoute = MainAppsAppIdIndexRouteImport.update({
-  id: '/apps/$appId/',
-  path: '/apps/$appId/',
+const MainAppsSlugIndexRoute = MainAppsSlugIndexRouteImport.update({
+  id: '/apps/$slug/',
+  path: '/apps/$slug/',
   getParentRoute: () => MainRoute,
 } as any)
 const MainDevEnvironmentsEnvironmentSlugRoute =
@@ -198,7 +198,7 @@ export interface FileRoutesByFullPath {
   '/settings/': typeof MainSettingsIndexRoute
   '/dev/apps/$appId': typeof MainDevAppsAppIdRoute
   '/dev/environments/$environmentSlug': typeof MainDevEnvironmentsEnvironmentSlugRouteWithChildren
-  '/apps/$appId': typeof MainAppsAppIdIndexRoute
+  '/apps/$slug': typeof MainAppsSlugIndexRoute
   '/dev/apps': typeof MainDevAppsIndexRoute
   '/dev/environments': typeof MainDevEnvironmentsIndexRoute
   '/dev/environments/$environmentSlug/app-installations': typeof MainDevEnvironmentsEnvironmentSlugAppInstallationsRoute
@@ -221,7 +221,7 @@ export interface FileRoutesByTo {
   '/dev': typeof MainDevIndexRoute
   '/settings': typeof MainSettingsIndexRoute
   '/dev/apps/$appId': typeof MainDevAppsAppIdRoute
-  '/apps/$appId': typeof MainAppsAppIdIndexRoute
+  '/apps/$slug': typeof MainAppsSlugIndexRoute
   '/dev/apps': typeof MainDevAppsIndexRoute
   '/dev/environments': typeof MainDevEnvironmentsIndexRoute
   '/dev/environments/$environmentSlug/app-installations': typeof MainDevEnvironmentsEnvironmentSlugAppInstallationsRoute
@@ -251,7 +251,7 @@ export interface FileRoutesById {
   '/_main/settings/': typeof MainSettingsIndexRoute
   '/_main/dev/apps/$appId': typeof MainDevAppsAppIdRoute
   '/_main/dev/environments/$environmentSlug': typeof MainDevEnvironmentsEnvironmentSlugRouteWithChildren
-  '/_main/apps/$appId/': typeof MainAppsAppIdIndexRoute
+  '/_main/apps/$slug/': typeof MainAppsSlugIndexRoute
   '/_main/dev/apps/': typeof MainDevAppsIndexRoute
   '/_main/dev/environments/': typeof MainDevEnvironmentsIndexRoute
   '/_main/dev/environments/$environmentSlug/app-installations': typeof MainDevEnvironmentsEnvironmentSlugAppInstallationsRoute
@@ -280,7 +280,7 @@ export interface FileRouteTypes {
     | '/settings/'
     | '/dev/apps/$appId'
     | '/dev/environments/$environmentSlug'
-    | '/apps/$appId'
+    | '/apps/$slug'
     | '/dev/apps'
     | '/dev/environments'
     | '/dev/environments/$environmentSlug/app-installations'
@@ -303,7 +303,7 @@ export interface FileRouteTypes {
     | '/dev'
     | '/settings'
     | '/dev/apps/$appId'
-    | '/apps/$appId'
+    | '/apps/$slug'
     | '/dev/apps'
     | '/dev/environments'
     | '/dev/environments/$environmentSlug/app-installations'
@@ -332,7 +332,7 @@ export interface FileRouteTypes {
     | '/_main/settings/'
     | '/_main/dev/apps/$appId'
     | '/_main/dev/environments/$environmentSlug'
-    | '/_main/apps/$appId/'
+    | '/_main/apps/$slug/'
     | '/_main/dev/apps/'
     | '/_main/dev/environments/'
     | '/_main/dev/environments/$environmentSlug/app-installations'
@@ -488,11 +488,11 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof MainDevAppsIndexRouteImport
       parentRoute: typeof MainDevRoute
     }
-    '/_main/apps/$appId/': {
-      id: '/_main/apps/$appId/'
-      path: '/apps/$appId'
-      fullPath: '/apps/$appId'
-      preLoaderRoute: typeof MainAppsAppIdIndexRouteImport
+    '/_main/apps/$slug/': {
+      id: '/_main/apps/$slug/'
+      path: '/apps/$slug'
+      fullPath: '/apps/$slug'
+      preLoaderRoute: typeof MainAppsSlugIndexRouteImport
       parentRoute: typeof MainRoute
     }
     '/_main/dev/environments/$environmentSlug': {
@@ -638,7 +638,7 @@ interface MainRouteChildren {
   MainSettingsRoute: typeof MainSettingsRouteWithChildren
   MainIndexRoute: typeof MainIndexRoute
   MainAcceptInvitationInvitationIdRoute: typeof MainAcceptInvitationInvitationIdRoute
-  MainAppsAppIdIndexRoute: typeof MainAppsAppIdIndexRoute
+  MainAppsSlugIndexRoute: typeof MainAppsSlugIndexRoute
 }
 
 const MainRouteChildren: MainRouteChildren = {
@@ -647,7 +647,7 @@ const MainRouteChildren: MainRouteChildren = {
   MainSettingsRoute: MainSettingsRouteWithChildren,
   MainIndexRoute: MainIndexRoute,
   MainAcceptInvitationInvitationIdRoute: MainAcceptInvitationInvitationIdRoute,
-  MainAppsAppIdIndexRoute: MainAppsAppIdIndexRoute,
+  MainAppsSlugIndexRoute: MainAppsSlugIndexRoute,
 }
 
 const MainRouteWithChildren = MainRoute._addFileChildren(MainRouteChildren)

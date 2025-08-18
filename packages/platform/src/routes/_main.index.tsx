@@ -1,5 +1,5 @@
-import { createFileRoute, useNavigate } from '@tanstack/react-router';
-import { Package, Plus } from 'lucide-react';
+import { createFileRoute, Link } from '@tanstack/react-router';
+import { Code, Package, Plus } from 'lucide-react';
 
 import { useAppInstallations } from '#src/hooks/app_installation.ts';
 import { usePlatformStore } from '#src/stores/usePlatformStore.ts';
@@ -9,20 +9,10 @@ export const Route = createFileRoute('/_main/')({
 });
 
 function RouteComponent() {
-  const navigate = useNavigate();
   const { environment } = usePlatformStore();
   const { data: appInstallations, isPending } = useAppInstallations(
     environment.id,
   );
-
-  const handleAppClick = (appId: string) => {
-    navigate({
-      to: '/apps/$appId',
-      params: {
-        appId,
-      },
-    });
-  };
 
   if (isPending) {
     return (
@@ -48,11 +38,9 @@ function RouteComponent() {
     );
   }
 
-  const apps = appInstallations || [];
-
   return (
     <div className="pt-16 sm:pt-24 lg:pt-32">
-      {apps.length === 0 ? (
+      {appInstallations?.length === 0 ? (
         <div className="text-center p-12">
           <Package size={48} className="mx-auto text-muted-foreground mb-4" />
           <h3 className="text-lg font-medium text-foreground mb-2">
@@ -66,21 +54,36 @@ function RouteComponent() {
       ) : (
         <div className="max-w-4xl mx-auto px-8 sm:px-12 lg:px-16">
           <div className="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-5 lg:grid-cols-6 gap-2 sm:gap-3">
-            {apps.map((appInstallation) => (
-              <button
-                key={appInstallation.app.id}
+            <Link
+              to="/apps/$slug"
+              params={{ slug: 'app-template' }}
+              type="button"
+              className="group cursor-pointer flex flex-col items-center text-center bg-transparent border-none p-0"
+              aria-label="Open [Dev] Template"
+            >
+              <div className="size-16 flex items-center justify-center rounded-lg bg-card border shadow-sm mb-2 group-hover:shadow-md transition-shadow">
+                <Code size={24} className="text-primary" />
+              </div>
+              <p className="text-xs text-foreground font-medium line-clamp-2">
+                [Dev] Template
+              </p>
+            </Link>
+            {appInstallations?.map(({ app }) => (
+              <Link
+                key={app.id}
+                to="/apps/$slug"
+                params={{ slug: app.slug }}
                 type="button"
                 className="group cursor-pointer flex flex-col items-center text-center bg-transparent border-none p-0"
-                onClick={() => handleAppClick(appInstallation.app.id)}
-                aria-label={`Open ${appInstallation.app.name || 'app'}`}
+                aria-label={`Open ${app.name || 'Unnamed App'}`}
               >
                 <div className="size-16 flex items-center justify-center rounded-lg bg-card border shadow-sm mb-2 group-hover:shadow-md transition-shadow">
                   <Package size={24} className="text-primary" />
                 </div>
                 <p className="text-xs text-foreground font-medium line-clamp-2">
-                  {appInstallation.app.name || 'Unnamed App'}
+                  {app.name || 'Unnamed App'}
                 </p>
-              </button>
+              </Link>
             ))}
 
             {/* Add more apps placeholder */}

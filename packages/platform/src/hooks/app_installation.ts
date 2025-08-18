@@ -19,7 +19,7 @@ export const useAppInstallations = (environmentId: string) => {
         throw new Error(res.statusText);
       }
       const data = await res.json();
-      return data;
+      return data ?? [];
     },
   });
 };
