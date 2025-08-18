@@ -60,18 +60,27 @@ export abstract class BaseCommand extends Command {
 
   protected honoClient!: Awaited<ReturnType<BaseCommand['initHonoClient']>>;
   private async initHonoClient() {
-    const { dataDir } = this.config;
-    const cookies = await loadCookies(dataDir);
+    const { config } = this;
     const { api } = hc<AppType>(BaseUrl, {
-      init: {
-        headers: cookies
-          ? {
-              'content-type': 'application/json',
-              cookie: cookies?.join('; '),
-            }
-          : {
-              'content-type': 'application/json',
-            },
+      fetch: async (url: URL, init?: RequestInit) => {
+        const headers = new Headers(init?.headers);
+        const cookies = await loadCookies(config.dataDir);
+        if (cookies) {
+          for (const cookie of cookies) {
+            headers.append('cookie', cookie);
+          }
+        }
+        const res = await fetch(url, {
+          ...init,
+          headers,
+          credentials: 'omit',
+        });
+        if (res.status === 401) {
+          this.spinner.stop();
+          this.spinner.fail('Unauthorized. Please login first.');
+          throw new Error('Unauthorized');
+        }
+        return res;
       },
     });
     return api;
