@@ -1,14 +1,11 @@
-import fs from 'node:fs';
 import tailwindcss from '@tailwindcss/vite';
 import { tanstackRouter } from '@tanstack/router-plugin/vite';
 import react from '@vitejs/plugin-react-swc';
 import { defineConfig } from 'vite';
-// import qiankun from 'vite-plugin-qiankun-lite';
-import qiankun from 'vite-plugin-qiankun-x';
+import qiankun from 'vite-plugin-qiankun-lite';
 import tsconfigPaths from 'vite-tsconfig-paths';
 
-const packageJson = JSON.parse(fs.readFileSync('./package.json', 'utf-8'));
-const name = packageJson.name;
+import packageJson from './package.json';
 
 // https://vite.dev/config/
 export default defineConfig({
@@ -39,8 +36,7 @@ export default defineConfig({
     tanstackRouter({ target: 'react', autoCodeSplitting: true }),
     tsconfigPaths(),
     react(),
-    // qiankun({ name, sandbox: true }),
-    qiankun('voltade-class-management'),
+    qiankun({ name: packageJson.name, sandbox: false }),
     tailwindcss(),
   ],
 });
