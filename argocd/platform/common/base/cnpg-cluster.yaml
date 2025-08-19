@@ -34,6 +34,12 @@ spec:
           - platform_admin
         passwordSecret:
           name: cnpg-platform-migrator
+
+      - name: openfga_admin
+        login: true
+        passwordSecret:
+          name: cnpg-openfga-admin
+
   bootstrap:
     initdb:
       database: platform

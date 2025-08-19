@@ -1,0 +1,27 @@
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+
+resources:
+  - cnpg-database.yaml
+
+helmCharts:
+  - repo: https://openfga.github.io/helm-charts
+    name: openfga
+    # https://artifacthub.io/packages/helm/openfga/openfga
+    version: 0.2.42
+    releaseName: openfga
+    namespace: platform
+    # https://github.com/openfga/helm-charts/blob/main/charts/openfga/values.yaml
+    # https://artifacthub.io/packages/helm/openfga/openfga?modal=values
+    valuesInline:
+      replicaCount: 1
+      datastore:
+        engine: postgres
+        existingSecret: cnpg-openfga-admin
+        secretKeys:
+          uriKey: uri
+          usernameKey: username
+          passwordKey: password
+        applyMigrations: true
+        waitForMigrations: true
+        migrationType: initContainer

@@ -1,0 +1,38 @@
+apiVersion: gateway.networking.k8s.io/v1
+kind: HTTPRoute
+metadata:
+  name: openfga
+spec:
+  parentRefs:
+    - name: cilium-gateway
+      namespace: gateway
+  hostnames:
+    - openfga.127.0.0.1.nip.io
+  rules:
+    - backendRefs:
+        - name: openfga
+          port: 8080
+      matches:
+        - path:
+            type: PathPrefix
+            value: /
+
+---
+apiVersion: gateway.networking.k8s.io/v1
+kind: HTTPRoute
+metadata:
+  name: openfga-playground
+spec:
+  parentRefs:
+    - name: cilium-gateway
+      namespace: gateway
+  hostnames:
+    - openfga-playground.127.0.0.1.nip.io
+  rules:
+    - backendRefs:
+        - name: openfga
+          port: 3000
+      matches:
+        - path:
+            type: PathPrefix
+            value: /

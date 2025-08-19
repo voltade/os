@@ -13,9 +13,13 @@ spec:
   schemas:
     - name: extensions
       owner: platform_admin
+    - name: openfga
+      owner: openfga_admin
   extensions:
-    - name: plv8
     - name: pgcrypto
       schema: extensions
+    - name: plv8
+      version: "3.2.3"
     - name: openfga
       schema: extensions
+      version: "0.1"
