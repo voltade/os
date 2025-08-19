@@ -14,7 +14,7 @@ interface UseMicroAppOptions {
 
 export function useMicroApp({ enabled, name, entry }: UseMicroAppOptions) {
   const containerRef = useRef<HTMLDivElement>(null);
-  const microAppRef = useRef<MicroApp | null>(null);
+  const microAppRef = useRef<MicroApp>(null);
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {

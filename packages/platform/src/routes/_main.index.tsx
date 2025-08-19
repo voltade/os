@@ -1,5 +1,5 @@
 import { createFileRoute, Link } from '@tanstack/react-router';
-import { Code, Package, Plus } from 'lucide-react';
+import { CodeIcon, PackageIcon, PlusIcon } from 'lucide-react';
 
 import { useAppInstallations } from '#src/hooks/app_installation.ts';
 import { usePlatformStore } from '#src/stores/usePlatformStore.ts';
@@ -62,7 +62,7 @@ function RouteComponent() {
               aria-label="Open [Dev] Template"
             >
               <div className="size-16 flex items-center justify-center rounded-lg bg-card border shadow-sm mb-2 group-hover:shadow-md transition-shadow">
-                <Code size={24} className="text-primary" />
+                <CodeIcon size={24} className="text-primary" />
               </div>
               <p className="text-xs text-foreground font-medium line-clamp-2">
                 [Dev] Template
@@ -78,7 +78,7 @@ function RouteComponent() {
                 aria-label={`Open ${app.name || 'Unnamed App'}`}
               >
                 <div className="size-16 flex items-center justify-center rounded-lg bg-card border shadow-sm mb-2 group-hover:shadow-md transition-shadow">
-                  <Package size={24} className="text-primary" />
+                  <PackageIcon size={24} className="text-primary" />
                 </div>
                 <p className="text-xs text-foreground font-medium line-clamp-2">
                   {app.name || 'Unnamed App'}
@@ -93,7 +93,7 @@ function RouteComponent() {
               aria-label="Add new app"
             >
               <div className="size-16 flex items-center justify-center rounded-lg bg-muted border-2 border-dashed border-border mb-2 group-hover:bg-accent transition-colors">
-                <Plus size={20} className="text-muted-foreground" />
+                <PlusIcon size={20} className="text-muted-foreground" />
               </div>
               <p className="text-xs text-muted-foreground font-medium">
                 Add App
