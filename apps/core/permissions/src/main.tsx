@@ -11,7 +11,6 @@ import { StrictMode } from 'react';
 import ReactDOM from 'react-dom/client';
 import type { toast } from 'sonner';
 
-// import { name } from '../package.json';
 import type { RuntimeEnv } from './lib/get-runtime-env.ts';
 import reportWebVitals from './reportWebVitals.ts';
 // Import the generated route tree
@@ -82,14 +81,9 @@ if (!window.__POWERED_BY_QIANKUN__) {
   reportWebVitals();
 }
 
-const name = 'voltade-permissions';
-
-export async function bootstrap() {
-  console.log(`${name} bootstrap`);
-}
+export async function bootstrap() {}
 
 export async function mount(props: Props) {
-  console.log(`${name} mount`, props);
   // Set baseUrl to global so components can access it without props drilling
   if (props?.baseUrl) {
     window.__BASE_URL__ = props.baseUrl;
@@ -97,11 +91,8 @@ export async function mount(props: Props) {
   render(props);
 }
 
-export async function unmount(props: Props) {
-  console.log(`${name} unmount`, props);
+export async function unmount(_props: Props) {
   root.unmount();
 }
 
-export async function update(props: Props) {
-  console.log(`${name} update`, props);
-}
+export async function update(_props: Props) {}

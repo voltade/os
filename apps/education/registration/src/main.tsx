@@ -82,7 +82,6 @@ if (!window.__POWERED_BY_QIANKUN__) {
 export async function bootstrap() {}
 
 export async function mount(props: Props) {
-  console.log(`${name} mount`, props);
   // Set baseUrl to global so components can access it without props drilling
   if (props?.baseUrl) {
     window.__BASE_URL__ = props.baseUrl;
