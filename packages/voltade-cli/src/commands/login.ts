@@ -37,5 +37,32 @@ export default class Login extends BaseCommand {
         message: signinRes.error.statusText,
       });
     }
+
+    spinner.start('Loading organizations...');
+    const { data: orgs } = await authClient.organization.list();
+    spinner.stop();
+    if (!orgs?.length) {
+      spinner.fail('No organizations found');
+      this.error('You need to create an organization first.');
+    }
+
+    if (orgs.length === 1 && orgs[0]) {
+      const org = orgs[0];
+      spinner.start(`Setting active organization to ${org.name}...`);
+      const setActiveRes = await authClient.organization.setActive({
+        organizationId: org.id,
+      });
+      spinner.stop();
+      if (setActiveRes.error) {
+        spinner.fail('Failed to set active organization');
+        this.error(setActiveRes.error.message ?? '', {
+          code: setActiveRes.error.code,
+          message: setActiveRes.error.statusText,
+        });
+      }
+      this.log(
+        `Logged in as ${email} and set active organization to ${org.name}`,
+      );
+    }
   }
 }

@@ -19,6 +19,16 @@ export default class Info extends BaseCommand {
         primitiveConfigs[key] = value;
       }
     }
+    this.log('oclif config:');
     this.log(cj(primitiveConfigs));
+
+    const { data: orgs } = await this.authClient.organization.list();
+    console.log(orgs);
+
+    const { data: session } = await this.authClient.getSession();
+    if (session) {
+      this.log('session:');
+      this.log(cj(session));
+    }
   }
 }

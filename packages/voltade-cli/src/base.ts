@@ -46,6 +46,11 @@ export abstract class BaseCommand extends Command {
           return context;
         },
         onResponse: async (context) => {
+          if (context.response.status === 401) {
+            this.spinner.stop();
+            this.spinner.fail('Unauthorized. Please login first.');
+            throw new Error('Unauthorized');
+          }
           const cookies = context.response.headers.getSetCookie();
           if (cookies && cookies.length > 0) {
             await saveCookies(dataDir, cookies);
