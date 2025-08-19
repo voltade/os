@@ -36,7 +36,7 @@ export default defineConfig({
     tanstackRouter({ target: 'react', autoCodeSplitting: true }),
     tsconfigPaths(),
     react(),
-    qiankun({ name: packageJson.name, sandbox: false }),
+    qiankun({ name: packageJson.name, sandbox: true }),
     tailwindcss(),
   ],
 });

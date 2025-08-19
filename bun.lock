@@ -295,7 +295,7 @@
         "jose": "^6.0.12",
         "postcss": "^8.5.6",
         "postcss-simple-vars": "^7.0.1",
-        "qiankun": "3.0.0-rc.19",
+        "qiankun": "^2.10.16",
         "react": "^19.1.1",
         "react-dom": "^19.1.1",
         "tailwindcss": "^4.1.12",
@@ -843,12 +843,6 @@
     "@prisma/fetch-engine": ["@prisma/fetch-engine@5.22.0", "", { "dependencies": { "@prisma/debug": "5.22.0", "@prisma/engines-version": "5.22.0-44.605197351a3c8bdd595af2d2a9bc3025bca48ea2", "@prisma/get-platform": "5.22.0" } }, "sha512-bkrD/Mc2fSvkQBV5EpoFcZ87AvOgDxbG99488a5cexp5Ccny+UM6MAe/UFkUC0wLYD9+9befNOqGiIJhhq+HbA=="],
 
     "@prisma/get-platform": ["@prisma/get-platform@5.22.0", "", { "dependencies": { "@prisma/debug": "5.22.0" } }, "sha512-pHhpQdr1UPFpt+zFfnPazhulaZYCUqeIcPpJViYoq9R+D/yw4fjE+CtnsnKzPYm0ddUbeXUzjGVGIRVgPDCk4Q=="],
-
-    "@qiankunjs/loader": ["@qiankunjs/loader@0.0.1-rc.19", "", { "dependencies": { "@babel/runtime": "^7.10.5", "@qiankunjs/sandbox": "^0.0.1-rc.16", "@qiankunjs/shared": "^0.0.1-rc.11", "lodash": "^4.17.11" } }, "sha512-6WskAeFI+xNmExkI52TQkFBvAs8NzqJsBYhIlUbktBX5IRPDEQZRU57B+RK7W/zLkc/e0EZL6h55uwwNzPAM3A=="],
-
-    "@qiankunjs/sandbox": ["@qiankunjs/sandbox@0.0.1-rc.16", "", { "dependencies": { "@babel/runtime": "^7.10.5", "@qiankunjs/shared": "^0.0.1-rc.11", "lodash": "^4.17.11" } }, "sha512-7VzntfHOWFjbdcZp3hPkI1X78EPRhApEdYilvbePzwQUr2W2SbyD+szPtMogxOsWFWikk9M8LxfPr7Y0Jravdg=="],
-
-    "@qiankunjs/shared": ["@qiankunjs/shared@0.0.1-rc.11", "", { "dependencies": { "@babel/runtime": "^7.10.5", "lodash": "^4.17.11", "semver": "^7.5.3" } }, "sha512-FRv9k2YDfJ9zikwrPqjwa8fNrmYuLG92tOwgcJhojy5Co2UnrsRCSENkz8pbkJStGqxt0B3F6G4t3eSz7qGVVA=="],
 
     "@radix-ui/number": ["@radix-ui/number@1.1.1", "", {}, "sha512-MkKCwxlXTgz6CFoJx3pCwn07GKp36+aZyu/u2Ln2VrA5DcdyCZkASEDBTd8x5whTQQL5CiYf4prXKLcgQdv29g=="],
 
@@ -1780,6 +1774,8 @@
 
     "import-fresh": ["import-fresh@3.3.1", "", { "dependencies": { "parent-module": "^1.0.0", "resolve-from": "^4.0.0" } }, "sha512-TR3KfrTZTYLPB6jUjfx6MF9WcWrHL9su5TObK4ZkYgBdWKPOFoSoQIdEuTuR82pmtxH2spWG9h6etwfr1pLBqQ=="],
 
+    "import-html-entry": ["import-html-entry@1.17.0", "", { "dependencies": { "@babel/runtime": "^7.7.2" } }, "sha512-2SDsRlGlE8bqdnGqsOyiDPEWlzJR0jNW4LWopnZl5QE1Yd0nJ7fykWo2GaKUF7Jq7pR0g3dElhuJHyamTt1gPQ=="],
+
     "indent-string": ["indent-string@4.0.0", "", {}, "sha512-EdDDZu4A2OyIK7Lr/2zG+w5jmbuk1DVBnEwREQvBzspBJkCEbRa8GxU1lghYcaGJCnRWibjDXlq779X1/y5xwg=="],
 
     "inherits": ["inherits@2.0.4", "", {}, "sha512-k/vGaX4/Yla3WzyMCvTQOXYeIHvqOKtnqBduzTHpzpQZzAskKMhZ2K+EnBiSM9zGSoIFeMpXKxa4dYeZIQqewQ=="],
@@ -2168,7 +2164,7 @@
 
     "pvutils": ["pvutils@1.1.3", "", {}, "sha512-pMpnA0qRdFp32b1sJl1wOJNxZLQ2cbQx+k6tjNtZ8CpvVhNqEPRgivZ2WOUev2YMajecdH7ctUPDvEe87nariQ=="],
 
-    "qiankun": ["qiankun@3.0.0-rc.19", "", { "dependencies": { "@babel/runtime": "^7.10.5", "@qiankunjs/loader": "^0.0.1-rc.19", "@qiankunjs/sandbox": "^0.0.1-rc.16", "@qiankunjs/shared": "^0.0.1-rc.11", "lodash": "^4.17.11", "single-spa": "^6.0.0" } }, "sha512-qvu1JlluTXASGYzxUEWHnJ4ENHjwAqjT26UDtjxbTi0jwZYeo0F/meVdwJlPgt++npNQQ2tqQXPpBPTn1BcgqQ=="],
+    "qiankun": ["qiankun@2.10.16", "", { "dependencies": { "@babel/runtime": "^7.10.5", "import-html-entry": "^1.15.1", "lodash": "^4.17.11", "single-spa": "^5.9.2" } }, "sha512-Q3tSVUrPnzx8ckEOKIoPnhb5LE28FPKyan/r6jEuGJGqTbIy+3rp6E2/KfU82ZI4yZpef9LFTrnxdj49jAEsmw=="],
 
     "qs": ["qs@6.14.0", "", { "dependencies": { "side-channel": "^1.1.0" } }, "sha512-YWWTjgABSKcvs/nWBi9PycY/JiPJqOD4JA6o9Sej2AtvSGarXxKC3OQSk4pAarbdQlKAh5D4FCQkJNkW+GAn3w=="],
 
@@ -2320,7 +2316,7 @@
 
     "simple-get": ["simple-get@4.0.1", "", { "dependencies": { "decompress-response": "^6.0.0", "once": "^1.3.1", "simple-concat": "^1.0.0" } }, "sha512-brv7p5WgH0jmQJr1ZDDfKDOSeWWg+OVypG99A/5vYGPqJ6pxiaHLy8nxtFjBA7oMa01ebA9gfh1uMCFqOuXxvA=="],
 
-    "single-spa": ["single-spa@6.0.3", "", {}, "sha512-pXlwHXHhs3hx/MnGQHBLdFCVAN2rlm9TLBKazbDMyZ25QRxoen2vlUZ47MyXKa9K8Gd5UZs/gkuQad4TGbViwg=="],
+    "single-spa": ["single-spa@5.9.5", "", {}, "sha512-9SQdmsyz4HSP+3gs6PJzhkaMEg+6zTlu9oxIghnwUX3eq+ajq4ft5egl0iyR55LAmO/UwvU8NgIWs/ZyQMa6dw=="],
 
     "sisteransi": ["sisteransi@1.0.5", "", {}, "sha512-bLGGlR1QxBcynn2d5YmDX4MGjlZvy2MRBDRNHLJ8VI6l6+9FUiyTFNJ0IveOSP0bcXgVDPRcfGqA0pjaqUpfVg=="],
 

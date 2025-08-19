@@ -53,7 +53,7 @@ export function useQiankunMicroApp({
 
     const microApp = loadMicroApp(
       loadableApp,
-      { sandbox: false },
+      { sandbox: true },
       {
         beforeLoad: async (app) => {
           console.log('beforeLoad', app);
