@@ -45,7 +45,7 @@ resource "null_resource" "run_bun_charts" {
 resource "null_resource" "run_runner_docker" {
   depends_on = [docker_container.registry]
   provisioner "local-exec" {
-    command = "bun --cwd packages/runner docker"
+    command = "bun --cwd ../../packages/runner docker"
   }
 }
 
