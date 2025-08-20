@@ -7,7 +7,12 @@ import {
 
 export const appEnvVariables = appEnvVariablesSchema.parse(process.env);
 
+export type VoltadeJWTPayload = JWTPayload & {
+  aud: string | string[];
+  roles: Record<string, string>;
+  role: string;
+};
+
 export type Variables = AppEnvVariables & {
-  jwtPayload?: JWTPayload;
-  osOrgId?: string;
+  jwtPayload?: VoltadeJWTPayload;
 };

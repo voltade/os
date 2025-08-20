@@ -1,5 +1,6 @@
 import { betterAuth } from 'better-auth';
 import { drizzleAdapter } from 'better-auth/adapters/drizzle';
+import { createAuthMiddleware } from 'better-auth/api';
 import {
   admin,
   apiKey,
@@ -23,6 +24,7 @@ import { nanoid } from '#server/lib/nanoid.ts';
 import { ac, roles } from './permissions.ts';
 
 export const BASE_URL = `${appEnvVariables.VITE_APP_URL}/api/auth`;
+export const JWT_COOKIE_NAME = 'voltade-jwt';
 
 // https://www.better-auth.com/docs/reference/options
 export const auth = betterAuth({
@@ -67,9 +69,10 @@ export const auth = betterAuth({
     jwt({
       jwt: {
         definePayload: async ({ user }) => {
-          const organizations = await db
+          const mappings = await db
             .select({
-              slug: organizationTable.slug,
+              organization_slug: organizationTable.slug,
+              member_role: memberTable.role,
             })
             .from(memberTable)
             .innerJoin(
@@ -77,9 +80,15 @@ export const auth = betterAuth({
               eq(organizationTable.id, memberTable.organizationId),
             )
             .where(eq(memberTable.userId, user.id));
+
+          const aud = mappings.map((mapping) => mapping.organization_slug);
           return {
             role: 'authenticated',
-            aud: organizations.map((org) => org.slug),
+            roles: mappings.reduce<Record<string, string>>((acc, mapping) => {
+              acc[mapping.organization_slug] = mapping.member_role;
+              return acc;
+            }, {}),
+            aud,
           };
         },
         expirationTime: Math.floor(Date.now() / 1000) + 60 * 60 * 24 * 30, // 30 days
@@ -131,6 +140,54 @@ export const auth = betterAuth({
         return nanoid(size);
       },
     },
+    crossSubDomainCookies: {
+      enabled: true,
+      domain: new URL(appEnvVariables.VITE_APP_URL).hostname,
+    },
+  },
+  hooks: {
+    after: createAuthMiddleware(async (ctx) => {
+      if (ctx.path === '/get-session') {
+        const headers = ctx.headers;
+        if (!ctx.context.session) {
+          return;
+        }
+        if (
+          ctx.context.session.session.id === ctx.context.newSession?.session.id
+        ) {
+          const jwtCookie = ctx.getCookie(JWT_COOKIE_NAME);
+          if (jwtCookie) {
+            return;
+          }
+        }
+        console.log('Setting JWT cookie');
+        const jwt = await fetch(
+          `http://${headers?.get('host')}/api/auth/token`,
+          {
+            method: 'GET',
+            headers,
+          },
+        );
+        const jwtData = (await jwt.json()) as {
+          token: string;
+        };
+        console.log('jwtData', jwtData);
+        ctx.setCookie(JWT_COOKIE_NAME, jwtData.token, {
+          httpOnly: true,
+          sameSite: 'lax',
+          path: '/',
+          domain: new URL(appEnvVariables.VITE_APP_URL).hostname,
+          expires: ctx.context.session?.session.expiresAt,
+        });
+        ctx.setCookie(JWT_COOKIE_NAME, jwtData.token, {
+          httpOnly: true,
+          sameSite: 'lax',
+          path: '/',
+          domain: `.${new URL(appEnvVariables.VITE_APP_URL).hostname}`,
+          expires: ctx.context.session?.session.expiresAt,
+        });
+      }
+    }),
   },
 });
 

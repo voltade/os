@@ -17,7 +17,6 @@ export const route = factory
       credentials: true,
     }),
   )
-  .use(authMiddleware())
   .on(['POST', 'GET'], '/*', (c) => {
     return auth.handler(c.req.raw);
   });

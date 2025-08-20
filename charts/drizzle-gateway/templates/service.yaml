@@ -4,6 +4,8 @@ metadata:
   name: {{ include "drizzle-gateway.fullname" . }}
   labels:
     {{- include "drizzle-gateway.labels" . | nindent 4 }}
+  annotations:
+    argocd.argoproj.io/sync-wave: "1"
 spec:
   type: {{ .Values.service.type }}
   ports:

@@ -11,8 +11,11 @@ dependencies:
 - name: supabase-studio
   repository: file://../supabase-studio
   version: 0.1.12
+- name: drizzle-gateway
+  repository: file://../drizzle-gateway
+  version: 0.1.7
 - name: openfga
   repository: https://openfga.github.io/helm-charts
   version: 0.2.39
-digest: sha256:f8b08c8e9f40eea1a386c914c7fa2c1d67331249a4e6cb8ffe60a561c81ceb5e
-generated: "2025-08-03T11:56:53.233816+08:00"
+digest: sha256:edef44632f0e42717770915b6623a3a8799ebd41a2845bbbfc7d4a1e4e7395dd
+generated: "2025-08-20T14:47:03.352623+08:00"

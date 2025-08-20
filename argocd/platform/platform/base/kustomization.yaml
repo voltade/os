@@ -12,9 +12,15 @@ helmCharts:
     namespace: platform
   - repo: oci://registry.127.0.0.1.nip.io
     name: drizzle-gateway
-    version: 0.1.3
+    version: 0.1.7
     releaseName: drizzle-gateway
     namespace: platform
     valuesInline:
       image:
         tag: 1.0.2
+      databases:
+        - secretName: cnpg-platform-admin
+          dbname: platform
+          dialect: postgresql
+          host: cnpg-cluster-rw
+          port: 5432

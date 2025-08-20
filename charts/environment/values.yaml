@@ -58,12 +58,10 @@ deployment:
   # For more information checkout: https://kubernetes.io/docs/concepts/overview/working-with-objects/labels/
   podLabels: {}
 
-  podSecurityContext:
-    {}
+  podSecurityContext: {}
     # fsGroup: 2000
 
-  securityContext:
-    {}
+  securityContext: {}
     # capabilities:
     #   drop:
     #   - ALL
@@ -319,3 +317,23 @@ openfga:
     applyMigrations: true
     waitForMigrations: true
     migrationType: initContainer
+
+drizzle-gateway:
+  enabled: true
+  fullnameOverride: drizzle-gateway
+  replicaCount: 1
+  image:
+    tag: 1.0.2
+  service:
+    type: ClusterIP
+    port: 4983
+  httproute:
+    enabled: false
+  databases:
+    - secretName: cnpg-cluster-app
+      dbname: app
+      dialect: postgresql
+      host: cnpg-cluster-rw
+      port: 5432
+  environment:
+    PORT: "4983"
