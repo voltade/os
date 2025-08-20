@@ -26,7 +26,7 @@ function RouteComponent() {
                   className="animate-pulse flex flex-col items-center text-center"
                 >
                   <div className="size-16 flex items-center justify-center rounded-lg bg-card border shadow-sm mb-2">
-                    <Package size={24} className="text-muted-foreground" />
+                    <PackageIcon size={24} className="text-muted-foreground" />
                   </div>
                   <div className="h-3 bg-muted rounded w-8" />
                 </div>
@@ -42,7 +42,10 @@ function RouteComponent() {
     <div className="pt-16 sm:pt-24 lg:pt-32">
       {appInstallations?.length === 0 ? (
         <div className="text-center p-12">
-          <Package size={48} className="mx-auto text-muted-foreground mb-4" />
+          <PackageIcon
+            size={48}
+            className="mx-auto text-muted-foreground mb-4"
+          />
           <h3 className="text-lg font-medium text-foreground mb-2">
             No apps installed
           </h3>
