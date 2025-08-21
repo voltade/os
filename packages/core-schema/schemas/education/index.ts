@@ -9,6 +9,7 @@ export * from './tables/level.ts';
 export * from './tables/level_group.ts';
 export * from './tables/level_group_join_level.ts';
 export * from './tables/student.ts';
+export * from './tables/student_join_class.ts';
 export * from './tables/subject.ts';
 export * from './views/class_view.ts';
 export * from './views/student_view.ts';

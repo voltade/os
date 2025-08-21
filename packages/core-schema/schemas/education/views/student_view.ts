@@ -13,7 +13,6 @@ export const studentView = pgView('student_view')
       .select({
         id: educationStudentTable.id,
         name: educationStudentTable.name,
-        selected_class: educationStudentTable.selected_class,
       })
       .from(educationStudentTable),
   );

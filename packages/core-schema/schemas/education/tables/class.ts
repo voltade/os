@@ -1,5 +1,5 @@
 import { relations } from 'drizzle-orm';
-import { integer, text, time } from 'drizzle-orm/pg-core';
+import { integer, time } from 'drizzle-orm/pg-core';
 
 import { DEFAULT_COLUMNS } from '../../utils.ts';
 import { educationDayOfTheWeek } from '../enums.ts';
@@ -7,6 +7,7 @@ import { educationSchema } from '../schema.ts';
 import { educationCourseTable } from './course.ts';
 import { educationLessonTable } from './lesson.ts';
 import { educationLevelGroupTable } from './level_group.ts';
+import { educationStudentJoinClassTable } from './student_join_class.ts';
 import { educationSubjectTable } from './subject.ts';
 
 export const educationClassTable = educationSchema.table('class', {
@@ -33,6 +34,7 @@ export const educationClassTableRelations = relations(
   educationClassTable,
   ({ many, one }) => ({
     lessons: many(educationLessonTable),
+    studentJoinClass: many(educationStudentJoinClassTable),
     level_group: one(educationLevelGroupTable, {
       fields: [educationClassTable.level_group_id],
       references: [educationLevelGroupTable.id],

@@ -10,13 +10,7 @@ import {
   FormMessage,
 } from '@voltade/ui/form.tsx';
 import { Input } from '@voltade/ui/input.tsx';
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from '@voltade/ui/select.tsx';
+import { MultiSelect } from '@voltade/ui/multiselect.tsx';
 import dayjs from 'dayjs';
 import customParseFormat from 'dayjs/plugin/customParseFormat';
 import timezone from 'dayjs/plugin/timezone';
@@ -82,14 +76,14 @@ const formatClassLabel = (c: {
 
 interface RegistrationFormValues {
   name: string;
-  classId: string;
+  classIds: string[];
 }
 
 export default function RegistrationForm() {
   const form = useForm<RegistrationFormValues>({
     defaultValues: {
       name: '',
-      classId: '',
+      classIds: [],
     },
     mode: 'onChange',
   });
@@ -120,10 +114,11 @@ export default function RegistrationForm() {
   });
 
   const { mutate, status: mutationStatus } = useMutation({
-    mutationFn: async (payload: { name: string; selected_class: number }) => {
-      const res = await api['register-student'].$post({
-        json: payload,
-      });
+    mutationFn: async (payload: {
+      name: string;
+      selected_class_ids: number[];
+    }) => {
+      const res = await api['register-student'].$post({ json: payload });
 
       if (!res.ok) throw new Error('Registration failed');
       return res.json();
@@ -132,13 +127,16 @@ export default function RegistrationForm() {
       form.reset();
       toast.success('Registration successful!');
     },
-    onError: (error: Error) => {
+    onError: (_: Error) => {
       toast.error('Registration failed');
     },
   });
 
   const handleSubmit = (values: RegistrationFormValues) => {
-    mutate({ name: values.name, selected_class: Number(values.classId) });
+    mutate({
+      name: values.name,
+      selected_class_ids: values.classIds.map((id) => Number(id)),
+    });
   };
 
   return (
@@ -169,35 +167,22 @@ export default function RegistrationForm() {
 
             <FormField
               control={form.control}
-              name="classId"
-              rules={{ required: 'Class is required' }}
+              name="classIds"
+              rules={{ required: 'At least one class is required' }}
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Select Class</FormLabel>
-                  <Select onValueChange={field.onChange} value={field.value}>
-                    <FormControl>
-                      <SelectTrigger
-                        disabled={classesLoading || !!classesError}
-                      >
-                        <SelectValue
-                          placeholder={
-                            classesLoading ? 'Loading...' : 'Choose a class'
-                          }
-                        />
-                      </SelectTrigger>
-                    </FormControl>
-                    <SelectContent className="rounded-xl">
-                      {classesData?.map((cls) => (
-                        <SelectItem
-                          key={cls.id}
-                          value={String(cls.id)}
-                          className="rounded-lg"
-                        >
-                          {formatClassLabel(cls)}
-                        </SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
+                  <FormLabel>Select Class(es)</FormLabel>
+                  <FormControl>
+                    <MultiSelect
+                      value={field.value}
+                      onValueChange={field.onChange}
+                      disabled={classesLoading || !!classesError}
+                      options={(classesData || []).map((cls) => ({
+                        value: String(cls.id),
+                        label: formatClassLabel(cls),
+                      }))}
+                    />
+                  </FormControl>
                   <FormMessage />
                 </FormItem>
               )}
@@ -208,7 +193,7 @@ export default function RegistrationForm() {
                 type="submit"
                 disabled={
                   !form.watch('name') ||
-                  !form.watch('classId') ||
+                  !(form.watch('classIds')?.length > 0) ||
                   mutationStatus === 'pending' ||
                   classesLoading
                 }

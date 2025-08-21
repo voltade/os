@@ -126,26 +126,16 @@ export type Database = {
         Row: {
           id: number | null
           name: string | null
-          selected_class: number | null
         }
         Insert: {
           id?: number | null
           name?: string | null
-          selected_class?: number | null
         }
         Update: {
           id?: number | null
           name?: string | null
-          selected_class?: number | null
         }
-        Relationships: [
-          {
-            foreignKeyName: "student_selected_class_class_id_fk"
-            columns: ["selected_class"]
-            referencedRelation: "class_view"
-            referencedColumns: ["id"]
-          },
-        ]
+        Relationships: []
       }
       subject_view: {
         Row: {
