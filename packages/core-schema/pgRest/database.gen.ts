@@ -124,16 +124,12 @@ export type Database = {
       }
       student_view: {
         Row: {
+          class_ids: number[] | null
+          email: string | null
           id: number | null
           name: string | null
-        }
-        Insert: {
-          id?: number | null
-          name?: string | null
-        }
-        Update: {
-          id?: number | null
-          name?: string | null
+          phone: string | null
+          school: string | null
         }
         Relationships: []
       }

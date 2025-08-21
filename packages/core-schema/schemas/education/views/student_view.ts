@@ -1,10 +1,11 @@
+import { eq, sql } from 'drizzle-orm';
 import { pgView } from 'drizzle-orm/pg-core';
 
 import { educationStudentTable } from '../tables/student.ts';
+import { educationStudentJoinClassTable } from '../tables/student_join_class.ts';
 
 export const studentView = pgView('student_view')
   .with({
-    checkOption: 'cascaded',
     securityBarrier: true,
     securityInvoker: true,
   })
@@ -13,6 +14,24 @@ export const studentView = pgView('student_view')
       .select({
         id: educationStudentTable.id,
         name: educationStudentTable.name,
+        phone: educationStudentTable.phone,
+        school: educationStudentTable.school,
+        email: educationStudentTable.email,
+        class_ids:
+          sql`coalesce(array_agg(distinct ${educationStudentJoinClassTable.class_id}), '{}'::int[])`.as(
+            'class_ids',
+          ),
       })
-      .from(educationStudentTable),
+      .from(educationStudentTable)
+      .leftJoin(
+        educationStudentJoinClassTable,
+        eq(educationStudentJoinClassTable.student_id, educationStudentTable.id),
+      )
+      .groupBy(
+        educationStudentTable.id,
+        educationStudentTable.name,
+        educationStudentTable.phone,
+        educationStudentTable.school,
+        educationStudentTable.email,
+      ),
   );

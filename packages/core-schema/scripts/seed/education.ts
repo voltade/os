@@ -7,6 +7,8 @@ import { educationLessonTable } from '../../schemas/education/tables/lesson.ts';
 import { educationLevelTable } from '../../schemas/education/tables/level.ts';
 import { educationLevelGroupTable } from '../../schemas/education/tables/level_group.ts';
 import { educationLevelGroupJoinLevelTable } from '../../schemas/education/tables/level_group_join_level.ts';
+import { educationStudentTable } from '../../schemas/education/tables/student.ts';
+import { educationStudentJoinClassTable } from '../../schemas/education/tables/student_join_class.ts';
 import { educationSubjectTable } from '../../schemas/education/tables/subject.ts';
 import { educationTermTable } from '../../schemas/education/tables/term.ts';
 import { clearTables, type SeedContext } from './utils.ts';
@@ -436,6 +438,67 @@ async function seedWeeklyLessons(
   console.log(`   Created ${created.length} lessons`);
   return created.length;
 }
+/** Seeds three students and enrolls them in 1, 2, and 3 classes respectively. */
+async function seedStudents(classIds: ClassIds) {
+  console.log('Students:');
+  const students: InferInsertModel<typeof educationStudentTable>[] = [
+    {
+      name: 'Alice Tan',
+      school: 'Raffles Institution',
+      phone: '+65 9123 4567',
+      email: 'alice.tan@lioncity.edu.sg',
+    },
+    {
+      name: 'Bob Lim',
+      school: 'Anglo-Chinese School (Independent)',
+      phone: '+65 9876 5432',
+      email: 'bob.lim@lioncity.edu.sg',
+    },
+    {
+      name: 'Charlie Ng',
+      school: 'Hwa Chong Institution',
+      phone: '+65 8765 4321',
+      email: 'charlie.ng@lioncity.edu.sg',
+    },
+  ];
+
+  const created = await db
+    .insert(educationStudentTable)
+    .values(students)
+    .returning();
+  if (created.length !== students.length) {
+    throw new Error(
+      `Expected ${students.length} students, got ${created.length}`,
+    );
+  }
+  console.log(`   Created ${created.length} students`);
+  const [alice, bob, charlie] = created;
+  if (!alice || !bob || !charlie)
+    throw new Error('Missing created student rows');
+
+  // Enrollments: Alice -> 1 class; Bob -> 2 classes; Charlie -> 3 classes
+  const pri5Eng = requireId(classIds, 'PRI_5_ENGLISH', 'class');
+  const sec3Math = requireId(classIds, 'SEC_3_MATH', 'class');
+  const upperSecEng = requireId(classIds, 'UPPER_SEC_ENGLISH', 'class');
+
+  const joinRows: InferInsertModel<typeof educationStudentJoinClassTable>[] = [
+    // Alice Tan
+    { student_id: alice.id, class_id: pri5Eng },
+    // Bob Lim
+    { student_id: bob.id, class_id: pri5Eng },
+    { student_id: bob.id, class_id: sec3Math },
+    // Charlie Ng
+    { student_id: charlie.id, class_id: pri5Eng },
+    { student_id: charlie.id, class_id: sec3Math },
+    { student_id: charlie.id, class_id: upperSecEng },
+  ];
+
+  const enrollments = await db
+    .insert(educationStudentJoinClassTable)
+    .values(joinRows)
+    .returning();
+  console.log(`   Enrolled ${enrollments.length} student-class relations`);
+}
 // endregion
 
 // region Drivers
@@ -477,6 +540,9 @@ export async function seedEducationData(
     };
   });
   await seedWeeklyLessons(terms, classesForLessons);
+
+  // 8) Students and enrollments
+  await seedStudents(classIds);
 
   context = {
     ...context,
