@@ -37,7 +37,9 @@ Note: If `drizzle-kit` is stuck after outputting `Reading config file`, run `bun
 bun --cwd packages/platform dev
 ```
 
-This serves an `/environment` endpoint which tells ArgoCD to create a CNPG cluster corresponding to the row inserted, which has one database (the "environment database").
+Sign in using `admin@voltade.com`. Hint: the six-digit verification code is printed in the terminal.
+
+This also serves an `/environment` endpoint which tells ArgoCD to create a CNPG cluster corresponding to the row inserted, which has one database (the "environment database").
 
 ## Apply the core schema to the environment database and seed it
 
@@ -47,11 +49,11 @@ bun --cwd packages/core-schema db:reset
 
 ## Connect the app template or an app to the environment database
 
-For the app template, edit `apps/core/app-template/.env` with reference to `.env.example`.
+For the app template, create and edit `apps/core/app-template/.env` with reference to `.env.example`.
 
-For some app, e.g., `education-registration`:
+For some app, e.g., `education/registration`:
 
-- Edit `apps/education-registration/.env` with reference to `.env.example`.
+- Edit `apps/education/registration/.env` with reference to `.env.example`.
 - You will also need to change the appropriate line in `pg-rest.ts` to:
   ```
   const pgRestUrl = 'http://postgrest.voltade-main.127.0.0.1.nip.io';
