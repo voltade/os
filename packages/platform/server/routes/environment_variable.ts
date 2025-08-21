@@ -29,7 +29,7 @@ export const route = factory
     async (c) => {
       const { organization_id, environment_id } = c.req.valid('param');
 
-      const env_vars_ids = await db
+      const EnvVarIds = await db
         .select({
           id: environmentVariableTable.id,
           name: environmentVariableTable.name,
@@ -43,23 +43,22 @@ export const route = factory
           ),
         );
 
-      const decrypted_env_vars = await Vault.getMany(
-        env_vars_ids
-          .filter((e) => e.secret_id)
+      const decryptedEnvVars = await Vault.getMany(
+        EnvVarIds.filter((e) => e.secret_id)
           // biome-ignore lint/style/noNonNullAssertion: secret_id is guaranteed to be set by filter
           .map((e) => e.secret_id!),
       );
 
-      const env_vars = env_vars_ids.reduce(
+      const envVars = EnvVarIds.reduce(
         (acc, e) => {
           // biome-ignore lint/style/noNonNullAssertion: secret_id is guaranteed to be set by filter
-          acc[e.name] = decrypted_env_vars[e.secret_id!];
+          acc[e.name] = decryptedEnvVars[e.secret_id!];
           return acc;
         },
         {} as Record<string, string>,
       );
 
-      return c.json(env_vars);
+      return c.json(envVars);
     },
   )
   .get(
@@ -270,19 +269,19 @@ export const route = factory
           ),
         );
 
-      const decrypted_env_vars = await Vault.getMany(
+      const decryptedEnvVars = await Vault.getMany(
         environmentVariable
           .filter((e) => e.secret_id)
           // biome-ignore lint/style/noNonNullAssertion: secret_id is guaranteed to be set by filter
           .map((e) => e.secret_id!),
       );
 
-      const env_vars = environmentVariable.reduce(
+      const envVars = environmentVariable.reduce(
         (acc, e) => {
           acc.push({
             ...e,
             // biome-ignore lint/style/noNonNullAssertion: secret_id is guaranteed to be set by filter
-            value: decrypted_env_vars[e.secret_id!],
+            value: decryptedEnvVars[e.secret_id!],
           });
           return acc;
         },
@@ -291,6 +290,6 @@ export const route = factory
         })[],
       );
 
-      return c.json(env_vars);
+      return c.json(envVars);
     },
   );
