@@ -99,17 +99,101 @@ func removeClient(storeName string) {
 	}
 }
 
-// _check is the internal implementation for checking permissions.
-func _check(storeName, user, relation, object, contextualTuplesJSON string) (bool, error) {
+func _perform_write(storeName string, writeTuplesJSON string, deleteTuplesJson string) (bool, error) {
 	// Create a context with a 5-second timeout.
 	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
 	defer cancel() // Important to release resources
-
 	client, storeId, err := getGrpcClient(ctx, storeName)
 	if err != nil {
 		return false, fmt.Errorf("failed to get gRPC client: %w", err)
 	}
+	var writeTuples []*pb.TupleKey
+	if strings.TrimSpace(writeTuplesJSON) != "" {
+		if err := json.Unmarshal([]byte(writeTuplesJSON), &writeTuples); err != nil {
+			return false, fmt.Errorf("failed to unmarshal write tuples: %w", err)
+		}
+	}
+	var deleteTuples []*pb.TupleKeyWithoutCondition
+	if strings.TrimSpace(deleteTuplesJson) != "" {
+		if err := json.Unmarshal([]byte(deleteTuplesJson), &deleteTuples); err != nil {
+			return false, fmt.Errorf("failed to unmarshal delete tuples: %w", err)
+		}
+	}
+	writeRequest := &pb.WriteRequest{
+		StoreId: storeId,
+	}
+	if len(writeTuples) > 0 {
+		writeRequest.Writes = &pb.WriteRequestWrites{
+			TupleKeys: writeTuples,
+		}
+	}
+	if len(deleteTuples) > 0 {
+		writeRequest.Deletes = &pb.WriteRequestDeletes{
+			TupleKeys: deleteTuples,
+		}
+	}
+	_, err = client.Write(ctx, writeRequest)
+	if err != nil {
+		// The connection might be stale, remove it from the cache.
+		removeClient(storeName)
+		return false, fmt.Errorf("gRPC call failed: %w", err)
+	}
+	return true, nil
+}
 
+//export write_tuples
+func write_tuples(fi *FuncInfo) Datum {
+	funcInfo := convFI(fi)
+	var storeName, writeTuples string
+	nargs := fi.nargs
+	if nargs == 2 {
+		if err := funcInfo.Scan(&storeName, &writeTuples); err != nil {
+			pgxs.LogNotice(fmt.Sprintf("[openfga] failed to scan arguments with write tuples: %v", err))
+			return Datum(pgxs.ToDatum(false))
+		}
+	} else {
+		pgxs.LogNotice(fmt.Sprintf("[openfga] write function called with invalid number of arguments: %d", nargs))
+		return Datum(pgxs.ToDatum(false))
+	}
+	success, err := _perform_write(storeName, writeTuples, "[]")
+	if err != nil {
+		pgxs.LogNotice(fmt.Sprintf("[openfga] write failed: %v", err))
+		return Datum(pgxs.ToDatum(false))
+	}
+	return Datum(pgxs.ToDatum(success))
+}
+
+//export delete_tuples
+func delete_tuples(fi *FuncInfo) Datum {
+	funcInfo := convFI(fi)
+	var storeName, deleteTuples string
+	nargs := fi.nargs
+	if nargs == 2 {
+		if err := funcInfo.Scan(&storeName, &deleteTuples); err != nil {
+			pgxs.LogNotice(fmt.Sprintf("[openfga] failed to scan arguments with delete tuples: %v", err))
+			return Datum(pgxs.ToDatum(false))
+		}
+	} else {
+		pgxs.LogNotice(fmt.Sprintf("[openfga] delete function called with invalid number of arguments: %d", nargs))
+		return Datum(pgxs.ToDatum(false))
+	}
+	success, err := _perform_write(storeName, "[]", deleteTuples)
+	if err != nil {
+		pgxs.LogNotice(fmt.Sprintf("[openfga] delete failed: %v", err))
+		return Datum(pgxs.ToDatum(false))
+	}
+	return Datum(pgxs.ToDatum(success))
+}
+
+// _perform_check is the internal implementation for checking permissions.
+func _perform_check(storeName, user, relation, object, contextualTuplesJSON string) (bool, error) {
+	// Create a context with a 5-second timeout.
+	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
+	defer cancel() // Important to release resources
+	client, storeId, err := getGrpcClient(ctx, storeName)
+	if err != nil {
+		return false, fmt.Errorf("failed to get gRPC client: %w", err)
+	}
 	checkRequest := &pb.CheckRequest{
 		StoreId: storeId,
 		TupleKey: &pb.CheckRequestTupleKey{
@@ -118,7 +202,6 @@ func _check(storeName, user, relation, object, contextualTuplesJSON string) (boo
 			Object:   object,
 		},
 	}
-
 	if contextualTuplesJSON != "" {
 		var contextualTuples []*pb.TupleKey
 		if err := json.Unmarshal([]byte(contextualTuplesJSON), &contextualTuples); err != nil {
@@ -130,15 +213,12 @@ func _check(storeName, user, relation, object, contextualTuplesJSON string) (boo
 			}
 		}
 	}
-
 	resp, err := client.Check(ctx, checkRequest)
-
 	if err != nil {
 		// The connection might be stale, remove it from the cache.
 		removeClient(storeName)
 		return false, fmt.Errorf("gRPC call failed: %w", err)
 	}
-
 	return resp.GetAllowed(), nil
 }
 
@@ -146,107 +226,23 @@ func _check(storeName, user, relation, object, contextualTuplesJSON string) (boo
 func check(fi *FuncInfo) Datum {
 	funcInfo := convFI(fi)
 	var storeName, user, relation, object, contextualTuples string
-	var contextualTuplesBytes []byte
 
 	nargs := fi.nargs
-	if nargs == 4 {
-		err := funcInfo.Scan(&storeName, &user, &relation, &object)
-		if err != nil {
-			pgxs.LogNotice(fmt.Sprintf("[openfga] failed to scan arguments: %v", err))
-			return Datum(pgxs.ToDatum(false))
-		}
-	} else if nargs == 5 {
-		// Assuming the 5th arg for the generic `check` is a single jsonb string
-		err := funcInfo.Scan(&storeName, &user, &relation, &object, &contextualTuplesBytes)
-		if err != nil {
+	if nargs == 5 {
+		if err := funcInfo.Scan(&storeName, &user, &relation, &object, &contextualTuples); err != nil {
 			pgxs.LogNotice(fmt.Sprintf("[openfga] failed to scan arguments with contextual tuples: %v", err))
 			return Datum(pgxs.ToDatum(false))
 		}
-		contextualTuples = string(contextualTuplesBytes)
 	} else {
 		pgxs.LogNotice(fmt.Sprintf("[openfga] check function called with invalid number of arguments: %d", nargs))
 		return Datum(pgxs.ToDatum(false))
 	}
 
-	allowed, err := _check(storeName, user, relation, object, contextualTuples)
+	allowed, err := _perform_check(storeName, user, relation, object, contextualTuples)
 	if err != nil {
 		pgxs.LogNotice(fmt.Sprintf("[openfga] check failed: %v", err))
 		return Datum(pgxs.ToDatum(false))
 	}
-	return Datum(pgxs.ToDatum(allowed))
-}
-
-//export checkCore
-func checkCore(fi *FuncInfo) Datum {
-	funcInfo := convFI(fi)
-	var user, relation, object string
-	var contextualTuples []string
-	tuplesJSON := ""
-
-	nargs := fi.nargs
-	if nargs == 3 {
-		err := funcInfo.Scan(&user, &relation, &object)
-		if err != nil {
-			pgxs.LogNotice(fmt.Sprintf("[openfga] failed to scan arguments for checkCore: %v", err))
-			return Datum(pgxs.ToDatum(false))
-		}
-	} else if nargs == 4 {
-		err := funcInfo.Scan(&user, &relation, &object, &contextualTuples)
-		if err != nil {
-			pgxs.LogNotice(fmt.Sprintf("[openfga] failed to scan arguments for checkCore with contextual tuples: %v", err))
-			return Datum(pgxs.ToDatum(false))
-		}
-		if len(contextualTuples) > 0 {
-			tuplesJSON = "[" + strings.Join(contextualTuples, ",") + "]"
-		}
-	} else {
-		pgxs.LogNotice(fmt.Sprintf("[openfga] checkCore function called with invalid number of arguments: %d", nargs))
-		return Datum(pgxs.ToDatum(false))
-	}
-
-	allowed, err := _check("core", user, relation, object, tuplesJSON)
-	if err != nil {
-		pgxs.LogNotice(fmt.Sprintf("[openfga] core check failed: %v", err))
-		return Datum(pgxs.ToDatum(false))
-	}
-
-	return Datum(pgxs.ToDatum(allowed))
-}
-
-//export checkCustom
-func checkCustom(fi *FuncInfo) Datum {
-	funcInfo := convFI(fi)
-	var user, relation, object string
-	var contextualTuples []string
-	tuplesJSON := ""
-
-	nargs := fi.nargs
-	if nargs == 3 {
-		err := funcInfo.Scan(&user, &relation, &object)
-		if err != nil {
-			pgxs.LogNotice(fmt.Sprintf("[openfga] failed to scan arguments for checkCustom: %v", err))
-			return Datum(pgxs.ToDatum(false))
-		}
-	} else if nargs == 4 {
-		err := funcInfo.Scan(&user, &relation, &object, &contextualTuples)
-		if err != nil {
-			pgxs.LogNotice(fmt.Sprintf("[openfga] failed to scan arguments for checkCustom with contextual tuples: %v", err))
-			return Datum(pgxs.ToDatum(false))
-		}
-		if len(contextualTuples) > 0 {
-			tuplesJSON = "[" + strings.Join(contextualTuples, ",") + "]"
-		}
-	} else {
-		pgxs.LogNotice(fmt.Sprintf("[openfga] checkCustom function called with invalid number of arguments: %d", nargs))
-		return Datum(pgxs.ToDatum(false))
-	}
-
-	allowed, err := _check("custom", user, relation, object, tuplesJSON)
-	if err != nil {
-		pgxs.LogNotice(fmt.Sprintf("[openfga] custom check failed: %v", err))
-		return Datum(pgxs.ToDatum(false))
-	}
-
 	return Datum(pgxs.ToDatum(allowed))
 }
 

@@ -1,6 +1,6 @@
 # https://www.postgresql.org/docs/current/extend-pgxs.html
 EXTENSION = openfga
-EXTVERSION = 0.1
+EXTVERSION = 0.2
 DATA = $(wildcard sql/*--*.sql)
 MODULES = openfga
 
