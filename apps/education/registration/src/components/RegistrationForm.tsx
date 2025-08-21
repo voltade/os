@@ -76,6 +76,9 @@ const formatClassLabel = (c: {
 
 interface RegistrationFormValues {
   name: string;
+  school: string;
+  phone: string;
+  email: string;
   classIds: string[];
 }
 
@@ -83,6 +86,9 @@ export default function RegistrationForm() {
   const form = useForm<RegistrationFormValues>({
     defaultValues: {
       name: '',
+      school: '',
+      phone: '',
+      email: '',
       classIds: [],
     },
     mode: 'onChange',
@@ -116,6 +122,9 @@ export default function RegistrationForm() {
   const { mutate, status: mutationStatus } = useMutation({
     mutationFn: async (payload: {
       name: string;
+      school: string;
+      phone: string;
+      email: string;
       selected_class_ids: number[];
     }) => {
       const res = await api['register-student'].$post({ json: payload });
@@ -135,6 +144,9 @@ export default function RegistrationForm() {
   const handleSubmit = (values: RegistrationFormValues) => {
     mutate({
       name: values.name,
+      school: values.school,
+      phone: values.phone,
+      email: values.email,
       selected_class_ids: values.classIds.map((id) => Number(id)),
     });
   };
@@ -159,6 +171,51 @@ export default function RegistrationForm() {
                   <FormLabel>Student Name</FormLabel>
                   <FormControl>
                     <Input placeholder="Enter student name" {...field} />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+
+            <FormField
+              control={form.control}
+              name="school"
+              rules={{ required: 'School is required' }}
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>School</FormLabel>
+                  <FormControl>
+                    <Input placeholder="Enter school" {...field} />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+
+            <FormField
+              control={form.control}
+              name="phone"
+              rules={{ required: 'Phone is required' }}
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Phone</FormLabel>
+                  <FormControl>
+                    <Input placeholder="Enter phone number" {...field} />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+
+            <FormField
+              control={form.control}
+              name="email"
+              rules={{ required: 'Email is required' }}
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Email</FormLabel>
+                  <FormControl>
+                    <Input type="email" placeholder="Enter email" {...field} />
                   </FormControl>
                   <FormMessage />
                 </FormItem>

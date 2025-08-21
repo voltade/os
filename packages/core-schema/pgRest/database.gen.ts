@@ -155,7 +155,7 @@ export type Database = {
     }
     Functions: {
       allow: {
-        Args: { p_object: string; p_relation: string }
+        Args: { p_relation: string; p_object: string }
         Returns: boolean
       }
     }
