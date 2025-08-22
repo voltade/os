@@ -52,7 +52,7 @@ export const route = factory
       const envVars = EnvVarIds.reduce(
         (acc, e) => {
           // biome-ignore lint/style/noNonNullAssertion: secret_id is guaranteed to be set by filter
-          acc[e.name] = decryptedEnvVars[e.secret_id!];
+          acc[e.name] = decryptedEnvVars[e.secret_id!]!;
           return acc;
         },
         {} as Record<string, string>,
@@ -171,7 +171,7 @@ export const route = factory
         )
         .limit(1);
 
-      if (existingVariable.length === 0) {
+      if (existingVariable.length === 0 || !existingVariable[0]) {
         return c.json({ error: 'Environment variable not found' }, 404);
       }
 
@@ -219,7 +219,7 @@ export const route = factory
         )
         .limit(1);
 
-      if (existingVariable.length === 0) {
+      if (existingVariable.length === 0 || !existingVariable[0]) {
         return c.json({ error: 'Environment variable not found' }, 404);
       }
 
@@ -281,7 +281,7 @@ export const route = factory
           acc.push({
             ...e,
             // biome-ignore lint/style/noNonNullAssertion: secret_id is guaranteed to be set by filter
-            value: decryptedEnvVars[e.secret_id!],
+            value: decryptedEnvVars[e.secret_id!]!,
           });
           return acc;
         },
