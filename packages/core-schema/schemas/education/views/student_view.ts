@@ -17,6 +17,7 @@ export const studentView = pgView('student_view')
         phone: educationStudentTable.phone,
         school: educationStudentTable.school,
         email: educationStudentTable.email,
+        is_active: educationStudentTable.is_active,
         class_ids:
           sql`coalesce(array_agg(distinct ${educationStudentJoinClassTable.class_id}), '{}'::int[])`.as(
             'class_ids',
@@ -33,5 +34,6 @@ export const studentView = pgView('student_view')
         educationStudentTable.phone,
         educationStudentTable.school,
         educationStudentTable.email,
+        educationStudentTable.is_active,
       ),
   );
