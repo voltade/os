@@ -20,6 +20,7 @@ import { Route as AuthSigninRouteImport } from './routes/_auth.signin'
 import { Route as AuthOnboardingRouteImport } from './routes/_auth.onboarding'
 import { Route as MainSettingsIndexRouteImport } from './routes/_main.settings.index'
 import { Route as MainDevIndexRouteImport } from './routes/_main.dev.index'
+import { Route as MainAppsIndexRouteImport } from './routes/_main.apps.index'
 import { Route as MainAdminIndexRouteImport } from './routes/_main.admin.index'
 import { Route as MainSettingsOrganizationsRouteImport } from './routes/_main.settings.organizations'
 import { Route as MainDevGitProvidersRouteImport } from './routes/_main.dev.git-providers'
@@ -89,6 +90,11 @@ const MainDevIndexRoute = MainDevIndexRouteImport.update({
   id: '/',
   path: '/',
   getParentRoute: () => MainDevRoute,
+} as any)
+const MainAppsIndexRoute = MainAppsIndexRouteImport.update({
+  id: '/apps/',
+  path: '/apps/',
+  getParentRoute: () => MainRoute,
 } as any)
 const MainAdminIndexRoute = MainAdminIndexRouteImport.update({
   id: '/',
@@ -194,6 +200,7 @@ export interface FileRoutesByFullPath {
   '/dev/git-providers': typeof MainDevGitProvidersRoute
   '/settings/organizations': typeof MainSettingsOrganizationsRoute
   '/admin/': typeof MainAdminIndexRoute
+  '/apps': typeof MainAppsIndexRoute
   '/dev/': typeof MainDevIndexRoute
   '/settings/': typeof MainSettingsIndexRoute
   '/dev/apps/$appId': typeof MainDevAppsAppIdRoute
@@ -218,6 +225,7 @@ export interface FileRoutesByTo {
   '/dev/git-providers': typeof MainDevGitProvidersRoute
   '/settings/organizations': typeof MainSettingsOrganizationsRoute
   '/admin': typeof MainAdminIndexRoute
+  '/apps': typeof MainAppsIndexRoute
   '/dev': typeof MainDevIndexRoute
   '/settings': typeof MainSettingsIndexRoute
   '/dev/apps/$appId': typeof MainDevAppsAppIdRoute
@@ -247,6 +255,7 @@ export interface FileRoutesById {
   '/_main/dev/git-providers': typeof MainDevGitProvidersRoute
   '/_main/settings/organizations': typeof MainSettingsOrganizationsRoute
   '/_main/admin/': typeof MainAdminIndexRoute
+  '/_main/apps/': typeof MainAppsIndexRoute
   '/_main/dev/': typeof MainDevIndexRoute
   '/_main/settings/': typeof MainSettingsIndexRoute
   '/_main/dev/apps/$appId': typeof MainDevAppsAppIdRoute
@@ -276,6 +285,7 @@ export interface FileRouteTypes {
     | '/dev/git-providers'
     | '/settings/organizations'
     | '/admin/'
+    | '/apps'
     | '/dev/'
     | '/settings/'
     | '/dev/apps/$appId'
@@ -300,6 +310,7 @@ export interface FileRouteTypes {
     | '/dev/git-providers'
     | '/settings/organizations'
     | '/admin'
+    | '/apps'
     | '/dev'
     | '/settings'
     | '/dev/apps/$appId'
@@ -328,6 +339,7 @@ export interface FileRouteTypes {
     | '/_main/dev/git-providers'
     | '/_main/settings/organizations'
     | '/_main/admin/'
+    | '/_main/apps/'
     | '/_main/dev/'
     | '/_main/settings/'
     | '/_main/dev/apps/$appId'
@@ -424,6 +436,13 @@ declare module '@tanstack/react-router' {
       fullPath: '/dev/'
       preLoaderRoute: typeof MainDevIndexRouteImport
       parentRoute: typeof MainDevRoute
+    }
+    '/_main/apps/': {
+      id: '/_main/apps/'
+      path: '/apps'
+      fullPath: '/apps'
+      preLoaderRoute: typeof MainAppsIndexRouteImport
+      parentRoute: typeof MainRoute
     }
     '/_main/admin/': {
       id: '/_main/admin/'
@@ -638,6 +657,7 @@ interface MainRouteChildren {
   MainSettingsRoute: typeof MainSettingsRouteWithChildren
   MainIndexRoute: typeof MainIndexRoute
   MainAcceptInvitationInvitationIdRoute: typeof MainAcceptInvitationInvitationIdRoute
+  MainAppsIndexRoute: typeof MainAppsIndexRoute
   MainAppsSlugIndexRoute: typeof MainAppsSlugIndexRoute
 }
 
@@ -647,6 +667,7 @@ const MainRouteChildren: MainRouteChildren = {
   MainSettingsRoute: MainSettingsRouteWithChildren,
   MainIndexRoute: MainIndexRoute,
   MainAcceptInvitationInvitationIdRoute: MainAcceptInvitationInvitationIdRoute,
+  MainAppsIndexRoute: MainAppsIndexRoute,
   MainAppsSlugIndexRoute: MainAppsSlugIndexRoute,
 }
 
