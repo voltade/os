@@ -1,11 +1,8 @@
-import { readFileSync } from 'node:fs';
-import path from 'node:path';
 import { zValidator } from '@hono/zod-validator';
 import { symmetricDecrypt } from 'better-auth/crypto';
 import { and, desc, eq } from 'drizzle-orm';
 import { bearerAuth } from 'hono/bearer-auth';
 import * as jose from 'jose';
-import yaml from 'yaml';
 import z from 'zod';
 
 import {
@@ -33,7 +30,6 @@ type Common = {
 };
 
 type Variables = Common & {
-  environmentChartVersion: string;
   isProduction: boolean;
 };
 
@@ -52,6 +48,8 @@ interface Parameters {
 
 export const route = factory
   .createApp()
+  // POST /api/v1/getparams.execute endpoint is used by the ArgoCD ApplicationSet to generate the parameters for each environment
+  // https://argo-cd.readthedocs.io/en/stable/operator-manual/applicationset/Generators-Plugin/
   .post(
     '/api/v1/getparams.execute',
     bearerAuth({
@@ -66,20 +64,6 @@ export const route = factory
           organizationTable,
           eq(environmentTable.organization_id, organizationTable.id),
         );
-
-      let environmentChartVersion =
-        platformEnvVariables.ENVIRONMENT_CHART_VERSION;
-      if (
-        !environmentChartVersion ||
-        import.meta.env.NODE_ENV === 'development'
-      ) {
-        const chartYaml = readFileSync(
-          path.resolve(process.cwd(), '../../charts/environment/Chart.yaml'),
-          'utf8',
-        );
-        const chartDocument = yaml.parseDocument(chartYaml);
-        environmentChartVersion = chartDocument.get('version') as string;
-      }
 
       // Pass the latest two JWKs to the PostgREST to be used as the JWT_SECRET config: https://docs.postgrest.org/en/v13/references/auth.html#asym-keys
       const jwks = await db
@@ -124,7 +108,6 @@ export const route = factory
           return {
             variables: {
               ...common,
-              environmentChartVersion,
               isProduction: environment.is_production,
             },
             values: {
