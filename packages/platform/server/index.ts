@@ -23,6 +23,7 @@ app.get('/healthz', (c) => {
 export const apiRoutes = app
   .basePath('/api')
   .route('/auth', authRoute)
+  .route('/organization', organizationRoute)
   .route('/environment', environmentRoute)
   .route('/environment_variable', environmentVariableRoute)
   .route('/app', appRoute)

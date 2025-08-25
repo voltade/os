@@ -7,15 +7,18 @@ import {
   appInstallationSchema,
   appInstallationTable,
 } from '#drizzle/app_installation.ts';
+import { organization as organizationTable } from '#drizzle/auth.ts';
+import { environmentTable } from '#drizzle/environment.ts';
 import { factory } from '#server/factory.ts';
+import { db } from '#server/lib/db.ts';
 import { auth } from '#server/middlewares/auth.ts';
 import { drizzle } from '#server/middlewares/drizzle.ts';
 
 export const route = factory
   .createApp()
-  .use(auth({ requireActiveOrganization: true }))
   .post(
     '/',
+    auth({ requireActiveOrganization: true }),
     zValidator('json', appInstallationSchema.create),
     drizzle(),
     async (c) => {
@@ -45,6 +48,7 @@ export const route = factory
   )
   .put(
     '/',
+    auth({ requireActiveOrganization: true }),
     zValidator(
       'json',
       z.object({
@@ -75,7 +79,48 @@ export const route = factory
     },
   )
   .get(
+    '/public',
+    zValidator(
+      'query',
+      z.object({
+        organizationSlug: z.string(),
+        appSlug: z.string(),
+      }),
+    ),
+    async (c) => {
+      const { organizationSlug, appSlug } = c.req.valid('query');
+
+      //TODO: Optimise query to not over expose data
+      const appInstallation = await db
+        .select()
+        .from(appInstallationTable)
+        .innerJoin(appTable, eq(appInstallationTable.app_id, appTable.id))
+        .innerJoin(
+          organizationTable,
+          eq(appInstallationTable.organization_id, organizationTable.id),
+        )
+        .innerJoin(
+          environmentTable,
+          eq(appInstallationTable.environment_id, environmentTable.id),
+        )
+        .where(
+          and(
+            eq(organizationTable.slug, organizationSlug),
+            eq(appTable.slug, appSlug),
+            eq(environmentTable.is_production, true),
+            eq(appTable.is_public, true),
+          ),
+        )
+        .limit(1);
+
+      if (!appInstallation[0]) return c.json(null);
+      const { organization, ...rest } = appInstallation[0];
+      return c.json(rest);
+    },
+  )
+  .get(
     '/',
+    auth({ requireActiveOrganization: true }),
     zValidator(
       'query',
       z.object({
@@ -104,6 +149,7 @@ export const route = factory
   )
   .delete(
     '/',
+    auth({ requireActiveOrganization: true }),
     zValidator(
       'query',
       z.object({
