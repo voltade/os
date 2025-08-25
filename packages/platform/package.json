@@ -44,8 +44,8 @@
     "@tanstack/zod-adapter": "^1.131.27",
     "@types/bun": "latest",
     "@types/nodemailer": "^7.0.1",
-    "@types/react": "^19.1.10",
     "@types/pg": "^8.15.5",
+    "@types/react": "^19.1.11",
     "@types/react-dom": "^19.1.7",
     "@vitejs/plugin-react-swc": "^4.0.1",
     "@voltade/ui": "workspace:*",
@@ -75,7 +75,7 @@
     "hono": "^4.9.4",
     "nanoid": "^5.1.5",
     "nodemailer": "^7.0.5",
-    "zod": "^4.0.17",
+    "zod": "^4.1.1",
     "zustand": "^5.0.8"
   }
 }

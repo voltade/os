@@ -36,7 +36,7 @@
     "scule": "^1.3.0",
     "slug": "^11.0.0",
     "tar": "^7.4.3",
-    "zod": "^4.0.17"
+    "zod": "^4.1.1"
   },
   "devDependencies": {
     "@types/slug": "^5.0.9",

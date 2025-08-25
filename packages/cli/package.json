@@ -21,13 +21,13 @@
   },
   "dependencies": {
     "@fig/complete-commander": "^3.2.0",
-    "@inquirer/prompts": "^7.8.3",
+    "@inquirer/prompts": "^7.8.4",
     "@voltade/platform": "workspace:*",
     "commander": "^14.0.0",
     "drizzle-orm": "^0.44.4",
     "js-yaml": "^4.1.0",
     "omelette": "^0.4.17",
-    "zod": "^4.0.17",
+    "zod": "^4.1.1",
     "hono": "^4.9.4"
   }
 }

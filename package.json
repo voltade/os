@@ -22,8 +22,8 @@
     "clean": "rm -rf node_modules packages/*/node_modules apps/*/node_modules"
   },
   "devDependencies": {
-    "@biomejs/biome": "^2.2.0",
-    "@inquirer/prompts": "^7.8.3",
+    "@biomejs/biome": "^2.2.2",
+    "@inquirer/prompts": "^7.8.4",
     "@types/bun": "latest",
     "@types/semver": "^7.7.0",
     "concurrently": "^9.2.0",
