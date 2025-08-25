@@ -1,16 +1,16 @@
 import nodemailer from 'nodemailer';
 
-import { appEnvVariables } from '#server/env.ts';
+import { platformEnvVariables } from '#server/env.ts';
 
 export const mailer = nodemailer.createTransport({
-  host: appEnvVariables.SMTP_HOST,
-  port: appEnvVariables.SMTP_PORT,
-  secure: appEnvVariables.SMTP_SECURE,
+  host: platformEnvVariables.SMTP_HOST,
+  port: platformEnvVariables.SMTP_PORT,
+  secure: platformEnvVariables.SMTP_SECURE,
   // TODO: remove this for production
   tls: { rejectUnauthorized: false },
   auth: {
-    user: appEnvVariables.SMTP_USER,
-    pass: appEnvVariables.SMTP_PASS,
+    user: platformEnvVariables.SMTP_USER,
+    pass: platformEnvVariables.SMTP_PASS,
   },
-  from: appEnvVariables.SMTP_FROM,
+  from: platformEnvVariables.SMTP_FROM,
 });

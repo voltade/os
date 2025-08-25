@@ -3,6 +3,7 @@ import path from 'node:path';
 import { zValidator } from '@hono/zod-validator';
 import { symmetricDecrypt } from 'better-auth/crypto';
 import { and, desc, eq } from 'drizzle-orm';
+import { bearerAuth } from 'hono/bearer-auth';
 import * as jose from 'jose';
 import yaml from 'yaml';
 import z from 'zod';
@@ -12,7 +13,7 @@ import {
   organization as organizationTable,
 } from '#drizzle/auth.ts';
 import { environmentTable } from '#drizzle/environment.ts';
-import { appEnvVariables } from '#server/env.ts';
+import { platformEnvVariables } from '#server/env.ts';
 import { factory } from '#server/factory.ts';
 import { db } from '#server/lib/db.ts';
 import { signJwt } from '#server/lib/jwk.ts';
@@ -51,98 +52,105 @@ interface Parameters {
 
 export const route = factory
   .createApp()
-  // TODO: add api key auth
-  .post('/api/v1/getparams.execute', async (c) => {
-    const results = await db
-      .select()
-      .from(environmentTable)
-      .innerJoin(
-        organizationTable,
-        eq(environmentTable.organization_id, organizationTable.id),
-      );
+  .post(
+    '/api/v1/getparams.execute',
+    bearerAuth({
+      // The token is configured in terraform/kind-local/argocd-environment-generator.yaml, the values is referring to the "environment-generator.token" key in the "argocd-extra-secret" secret.
+      token: platformEnvVariables.ARGOCD_ENVIRONMENT_GENERATOR_TOKEN,
+    }),
+    async (c) => {
+      const results = await db
+        .select()
+        .from(environmentTable)
+        .innerJoin(
+          organizationTable,
+          eq(environmentTable.organization_id, organizationTable.id),
+        );
 
-    let environmentChartVersion = appEnvVariables.ENVIRONMENT_CHART_VERSION;
-    if (
-      !environmentChartVersion ||
-      import.meta.env.NODE_ENV === 'development'
-    ) {
-      const chartYaml = readFileSync(
-        path.resolve(process.cwd(), '../../charts/environment/Chart.yaml'),
-        'utf8',
-      );
-      const chartDocument = yaml.parseDocument(chartYaml);
-      environmentChartVersion = chartDocument.get('version') as string;
-    }
+      let environmentChartVersion =
+        platformEnvVariables.ENVIRONMENT_CHART_VERSION;
+      if (
+        !environmentChartVersion ||
+        import.meta.env.NODE_ENV === 'development'
+      ) {
+        const chartYaml = readFileSync(
+          path.resolve(process.cwd(), '../../charts/environment/Chart.yaml'),
+          'utf8',
+        );
+        const chartDocument = yaml.parseDocument(chartYaml);
+        environmentChartVersion = chartDocument.get('version') as string;
+      }
 
-    // Pass the latest two JWKs to the PostgREST to be used as the JWT_SECRET config: https://docs.postgrest.org/en/v13/references/auth.html#asym-keys
-    const jwks = await db
-      .select()
-      .from(jwksTable)
-      .orderBy(desc(jwksTable.createdAt))
-      .limit(2);
-    const publicWebKeySet: jose.JSONWebKeySet = {
-      keys: jwks.map((jwk) => {
-        const publicKey = JSON.parse(jwk.publicKey) as jose.JWK_RSA_Public;
-        return {
-          ...publicKey,
-          kid: jwk.id,
-        };
-      }),
-    };
-    const publicKey = JSON.stringify(publicWebKeySet);
-    const alg = publicWebKeySet.keys[0]?.alg as string;
+      // Pass the latest two JWKs to the PostgREST to be used as the JWT_SECRET config: https://docs.postgrest.org/en/v13/references/auth.html#asym-keys
+      const jwks = await db
+        .select()
+        .from(jwksTable)
+        .orderBy(desc(jwksTable.createdAt))
+        .limit(2);
+      const publicWebKeySet: jose.JSONWebKeySet = {
+        keys: jwks.map((jwk) => {
+          const publicKey = JSON.parse(jwk.publicKey) as jose.JWK_RSA_Public;
+          return {
+            ...publicKey,
+            kid: jwk.id,
+          };
+        }),
+      };
+      const publicKey = JSON.stringify(publicWebKeySet);
+      const alg = publicWebKeySet.keys[0]?.alg as string;
 
-    // Decrypt the private key to be used for signing long-live anon and service_role tokens
-    const decryptedPrivateKey = await symmetricDecrypt({
-      key: appEnvVariables.AUTH_SECRET,
-      data: JSON.parse(jwks[0]?.privateKey ?? ''),
-    });
-    const privateWebKey = JSON.parse(
-      decryptedPrivateKey,
-    ) as jose.JWK_RSA_Private;
-    const privateKey = await jose.importJWK(privateWebKey, alg);
+      // Decrypt the private key to be used for signing long-live anon and service_role tokens
+      const decryptedPrivateKey = await symmetricDecrypt({
+        key: platformEnvVariables.AUTH_SECRET,
+        data: JSON.parse(jwks[0]?.privateKey ?? ''),
+      });
+      const privateWebKey = JSON.parse(
+        decryptedPrivateKey,
+      ) as jose.JWK_RSA_Private;
+      const privateKey = await jose.importJWK(privateWebKey, alg);
 
-    const parameters: Parameters[] = await Promise.all(
-      results.map(async ({ organization, environment }) => {
-        const common: Common = {
-          id: `${organization.id}-${environment.id}`,
-          slug: `${organization.slug}-${environment.slug}`,
-          organizationId: organization.id,
-          organizationSlug: organization.slug,
-          organizationName: organization.name,
-          environmentId: environment.id,
-          environmentSlug: environment.slug,
-          environmentName: environment.name,
-        };
-        return {
-          variables: {
-            ...common,
-            environmentChartVersion,
-            isProduction: environment.is_production,
-          },
-          values: {
-            global: {
+      const parameters: Parameters[] = await Promise.all(
+        results.map(async ({ organization, environment }) => {
+          const common: Common = {
+            id: `${organization.id}-${environment.id}`,
+            slug: `${organization.slug}-${environment.slug}`,
+            organizationId: organization.id,
+            organizationSlug: organization.slug,
+            organizationName: organization.name,
+            environmentId: environment.id,
+            environmentSlug: environment.slug,
+            environmentName: environment.name,
+          };
+          return {
+            variables: {
               ...common,
-              publicKey,
-              anonKey: await signJwt(alg, privateKey, 'anon', [
-                organization.slug,
-              ]),
-              serviceKey: await signJwt(alg, privateKey, 'service_role', [
-                organization.slug,
-              ]),
+              environmentChartVersion,
+              isProduction: environment.is_production,
             },
-          },
-        };
-      }),
-    );
+            values: {
+              global: {
+                ...common,
+                publicKey,
+                anonKey: await signJwt(alg, privateKey, 'anon', [
+                  organization.slug,
+                ]),
+                serviceKey: await signJwt(alg, privateKey, 'service_role', [
+                  organization.slug,
+                ]),
+              },
+            },
+          };
+        }),
+      );
 
-    // https://argo-cd.readthedocs.io/en/stable/operator-manual/applicationset/Generators-Plugin/#http-server
-    return c.json({
-      output: {
-        parameters,
-      },
-    });
-  })
+      // https://argo-cd.readthedocs.io/en/stable/operator-manual/applicationset/Generators-Plugin/#http-server
+      return c.json({
+        output: {
+          parameters,
+        },
+      });
+    },
+  )
   .use(auth({ requireActiveOrganization: true }))
   .get('/:environmentSlug', async (c) => {
     const { activeOrganizationId } = c.get('session');
@@ -183,7 +191,7 @@ export const route = factory
     if (!environment) {
       return c.json({ error: 'Environment not found' }, 404);
     }
-    await fetch(`${appEnvVariables.DRIZZLE_GATEWAY_URL}`, {
+    await fetch(`${platformEnvVariables.DRIZZLE_GATEWAY_URL}`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',

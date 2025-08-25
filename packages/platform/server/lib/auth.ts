@@ -16,19 +16,19 @@ import {
   member as memberTable,
   organization as organizationTable,
 } from '#drizzle/auth.ts';
-import { appEnvVariables } from '#server/env.ts';
+import { platformEnvVariables } from '#server/env.ts';
 import { db } from '#server/lib/db.ts';
 import { mailer } from '#server/lib/mailer.ts';
 import { nanoid } from '#server/lib/nanoid.ts';
 
-export const BASE_URL = `${appEnvVariables.VITE_APP_URL}/api/auth`;
+export const BASE_URL = `${platformEnvVariables.VITE_APP_URL}/api/auth`;
 
 // https://www.better-auth.com/docs/reference/options
 export const auth = betterAuth({
   appName: 'Voltade OS',
   baseURL: BASE_URL,
-  trustedOrigins: [appEnvVariables.VITE_APP_URL],
-  secret: appEnvVariables.AUTH_SECRET,
+  trustedOrigins: [platformEnvVariables.VITE_APP_URL],
+  secret: platformEnvVariables.AUTH_SECRET,
   database: drizzleAdapter(db, {
     provider: 'pg',
   }),
@@ -107,7 +107,7 @@ export const auth = betterAuth({
             `Sending invitation email to ${data.email} for organization ${data.organization.name}`,
           );
         }
-        const inviteLink = `${appEnvVariables.VITE_APP_URL}/accept-invitation/${data.id}`;
+        const inviteLink = `${platformEnvVariables.VITE_APP_URL}/accept-invitation/${data.id}`;
         console.log(`Invite link: ${inviteLink}`);
         await mailer.sendMail({
           to: data.email,
@@ -144,7 +144,7 @@ export const auth = betterAuth({
     cookiePrefix: 'platform',
     crossSubDomainCookies: {
       enabled: true,
-      domain: new URL(appEnvVariables.VITE_APP_URL).hostname,
+      domain: new URL(platformEnvVariables.VITE_APP_URL).hostname,
     },
   },
 });

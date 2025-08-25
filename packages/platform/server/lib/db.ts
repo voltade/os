@@ -1,9 +1,10 @@
 import { drizzle } from 'drizzle-orm/bun-sql';
 
 import * as schema from '#drizzle/index.ts';
-import { appEnvVariables } from '#server/env.ts';
+import { platformEnvVariables } from '#server/env.ts';
 
-const { DB_NAME, DB_USER, DB_HOST, DB_PORT, DB_PASSWORD } = appEnvVariables;
+const { DB_NAME, DB_USER, DB_HOST, DB_PORT, DB_PASSWORD } =
+  platformEnvVariables;
 
 export const db = drizzle({
   // https://bun.com/docs/api/sql#connection-options

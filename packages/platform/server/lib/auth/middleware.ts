@@ -1,6 +1,6 @@
 import { createRemoteJWKSet, jwtVerify } from 'jose';
 
-import { appEnvVariables, type Oauth2Payload } from '#server/env.ts';
+import { type Oauth2Payload, platformEnvVariables } from '#server/env.ts';
 import { factory } from '#server/factory.ts';
 import { auth, BASE_URL } from './index.ts';
 
@@ -28,9 +28,9 @@ export const authMiddleware = (force: boolean = false) =>
     // 1) Static Bearer token(s)
     if (maybeToken) {
       const staticTokens = [
-        appEnvVariables.ARGOCD_ENVIRONMENT_GENERATOR_TOKEN,
-        appEnvVariables.RUNNER_SECRET_TOKEN,
-        appEnvVariables.PROXY_SECRET_TOKEN,
+        platformEnvVariables.ARGOCD_ENVIRONMENT_GENERATOR_TOKEN,
+        platformEnvVariables.RUNNER_SECRET_TOKEN,
+        platformEnvVariables.PROXY_SECRET_TOKEN,
       ];
       if (staticTokens.length > 0 && staticTokens.includes(maybeToken)) {
         c.set('oauth2', null);

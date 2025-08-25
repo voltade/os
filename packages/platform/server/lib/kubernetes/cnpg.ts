@@ -1,4 +1,4 @@
-import { appEnvVariables } from '#server/env.ts';
+import { platformEnvVariables } from '#server/env.ts';
 import { getK8sObjectClient } from './kubeapi.ts';
 
 type CnpgCluster = {
@@ -11,25 +11,27 @@ type CnpgCluster = {
 export async function checkCnpgHealth(namespace: string) {
   const k8sConfig = {
     cluster: {
-      name: appEnvVariables.CLUSTER_NAME,
-      server: appEnvVariables.CLUSTER_SERVER,
-      skipTLSVerify: appEnvVariables.CLUSTER_SKIP_TLS_VERIFY,
-      caData: appEnvVariables.CLUSTER_CA_DATA,
+      name: platformEnvVariables.CLUSTER_NAME,
+      server: platformEnvVariables.CLUSTER_SERVER,
+      skipTLSVerify: platformEnvVariables.CLUSTER_SKIP_TLS_VERIFY,
+      caData: platformEnvVariables.CLUSTER_CA_DATA,
     },
     user: {
-      name: appEnvVariables.USER_NAME,
-      token: appEnvVariables.USER_TOKEN,
+      name: platformEnvVariables.USER_NAME,
+      token: platformEnvVariables.USER_TOKEN,
     },
     context: {
       name: 'default',
-      cluster: appEnvVariables.CLUSTER_NAME,
-      user: appEnvVariables.USER_NAME,
+      cluster: platformEnvVariables.CLUSTER_NAME,
+      user: platformEnvVariables.USER_NAME,
     },
   } as const;
 
   const k8sClient = getK8sObjectClient({
     env:
-      appEnvVariables.NODE_ENV === 'development' ? 'development' : 'production',
+      platformEnvVariables.NODE_ENV === 'development'
+        ? 'development'
+        : 'production',
     config: k8sConfig,
   });
 

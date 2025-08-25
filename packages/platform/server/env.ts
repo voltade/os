@@ -3,7 +3,7 @@ import {
   appEnvVariablesSchema,
 } from '#server/zod/env.ts';
 
-export const appEnvVariables = appEnvVariablesSchema.parse(process.env);
+export const platformEnvVariables = appEnvVariablesSchema.parse(process.env);
 
 export type Oauth2Payload = {
   sub: string;

@@ -1,5 +1,5 @@
 /** biome-ignore-all lint/suspicious/noExplicitAny: TO DO typecheck drizzle gateway inputs and outputs */
-import { appEnvVariables } from '#server/env.ts';
+import { platformEnvVariables } from '#server/env.ts';
 
 export async function slots({
   type,
@@ -20,7 +20,7 @@ export async function slots({
     };
   }
   if (type === 'slots') {
-    const res = await fetch(appEnvVariables.DRIZZLE_GATEWAY_URL, {
+    const res = await fetch(platformEnvVariables.DRIZZLE_GATEWAY_URL, {
       method,
       headers: {
         'Content-Type': 'application/json',
@@ -42,7 +42,7 @@ export async function slots({
   }
 
   if (type === 'slots:get') {
-    const res = await fetch(appEnvVariables.DRIZZLE_GATEWAY_URL, {
+    const res = await fetch(platformEnvVariables.DRIZZLE_GATEWAY_URL, {
       method,
       headers: {
         'Content-Type': 'application/json',
@@ -63,7 +63,7 @@ export async function slots({
     throw new Error('Unauthorized');
   }
 
-  const res = await fetch(appEnvVariables.DRIZZLE_GATEWAY_URL, {
+  const res = await fetch(platformEnvVariables.DRIZZLE_GATEWAY_URL, {
     method,
     headers: {
       'Content-Type': 'application/json',

@@ -4,7 +4,7 @@ import { bearerAuth } from 'hono/bearer-auth';
 import { z } from 'zod';
 
 import { environmentVariableTable } from '#drizzle/environment_variable.ts';
-import { appEnvVariables } from '#server/env.ts';
+import { platformEnvVariables } from '#server/env.ts';
 import { factory } from '#server/factory.ts';
 import { db } from '#server/lib/db.ts';
 import { Vault } from '#server/lib/vault.ts';
@@ -18,7 +18,7 @@ export const route = factory
   .createApp()
   .get(
     '/:organization_id/:environment_id',
-    bearerAuth({ token: appEnvVariables.RUNNER_SECRET_TOKEN }),
+    bearerAuth({ token: platformEnvVariables.RUNNER_SECRET_TOKEN }),
     zValidator(
       'param',
       z.object({
@@ -61,6 +61,7 @@ export const route = factory
       return c.json(envVars);
     },
   )
+  .use(auth({ requireActiveOrganization: true }))
   .get(
     '/',
     zValidator(

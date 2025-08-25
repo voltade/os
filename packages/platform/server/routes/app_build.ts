@@ -4,7 +4,7 @@ import { z } from 'zod';
 
 import { appTable } from '#drizzle/app.ts';
 import { appBuildTable } from '#drizzle/app_build.ts';
-import { appEnvVariables } from '#server/env.ts';
+import { platformEnvVariables } from '#server/env.ts';
 import { factory } from '#server/factory.ts';
 import {
   type BuildJobOptions,
@@ -63,25 +63,25 @@ export const route = factory
         // Prepare Kubernetes client
         const k8sConfig = {
           cluster: {
-            name: appEnvVariables.CLUSTER_NAME,
-            server: appEnvVariables.CLUSTER_SERVER,
-            skipTLSVerify: appEnvVariables.CLUSTER_SKIP_TLS_VERIFY,
-            caData: appEnvVariables.CLUSTER_CA_DATA,
+            name: platformEnvVariables.CLUSTER_NAME,
+            server: platformEnvVariables.CLUSTER_SERVER,
+            skipTLSVerify: platformEnvVariables.CLUSTER_SKIP_TLS_VERIFY,
+            caData: platformEnvVariables.CLUSTER_CA_DATA,
           },
           user: {
-            name: appEnvVariables.USER_NAME,
-            token: appEnvVariables.USER_TOKEN,
+            name: platformEnvVariables.USER_NAME,
+            token: platformEnvVariables.USER_TOKEN,
           },
           context: {
             name: 'default',
-            cluster: appEnvVariables.CLUSTER_NAME,
-            user: appEnvVariables.USER_NAME,
+            cluster: platformEnvVariables.CLUSTER_NAME,
+            user: platformEnvVariables.USER_NAME,
           },
         };
 
         const k8sClient = getK8sObjectClient({
           env:
-            appEnvVariables.NODE_ENV === 'development'
+            platformEnvVariables.NODE_ENV === 'development'
               ? 'development'
               : 'production',
           config: k8sConfig,
@@ -239,25 +239,25 @@ export const route = factory
       // Prepare Kubernetes client (reuse config from /git route)
       const k8sConfig = {
         cluster: {
-          name: appEnvVariables.CLUSTER_NAME,
-          server: appEnvVariables.CLUSTER_SERVER,
-          skipTLSVerify: appEnvVariables.CLUSTER_SKIP_TLS_VERIFY,
-          caData: appEnvVariables.CLUSTER_CA_DATA,
+          name: platformEnvVariables.CLUSTER_NAME,
+          server: platformEnvVariables.CLUSTER_SERVER,
+          skipTLSVerify: platformEnvVariables.CLUSTER_SKIP_TLS_VERIFY,
+          caData: platformEnvVariables.CLUSTER_CA_DATA,
         },
         user: {
-          name: appEnvVariables.USER_NAME,
-          token: appEnvVariables.USER_TOKEN,
+          name: platformEnvVariables.USER_NAME,
+          token: platformEnvVariables.USER_TOKEN,
         },
         context: {
           name: 'default',
-          cluster: appEnvVariables.CLUSTER_NAME,
-          user: appEnvVariables.USER_NAME,
+          cluster: platformEnvVariables.CLUSTER_NAME,
+          user: platformEnvVariables.USER_NAME,
         },
       } as const;
 
       const k8sClient = getK8sObjectClient({
         env:
-          appEnvVariables.NODE_ENV === 'development'
+          platformEnvVariables.NODE_ENV === 'development'
             ? 'development'
             : 'production',
         config: k8sConfig,
