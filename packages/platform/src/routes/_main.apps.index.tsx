@@ -39,7 +39,8 @@ function RouteComponent() {
 
   return (
     <div className="pt-16 sm:pt-24 lg:pt-32">
-      {appInstallations?.length === 0 ? (
+      {appInstallations?.length === 0 &&
+      import.meta.env.MODE !== 'development' ? (
         <div className="text-center p-12">
           <PackageIcon
             size={48}
