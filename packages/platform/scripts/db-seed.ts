@@ -3,7 +3,7 @@ import { hashPassword } from 'better-auth/crypto';
 import { appTable } from '#drizzle/app.ts';
 import { account as accountTable, user as userTable } from '#drizzle/auth.ts';
 import { environmentTable } from '#drizzle/index.ts';
-import { auth } from '#server/lib/auth/index.ts';
+import { auth } from '#server/lib/auth.ts';
 import { db } from '#server/lib/db.ts';
 
 await db.transaction(async (tx) => {
