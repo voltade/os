@@ -29,9 +29,10 @@ spec:
       project: default
       source:
         # https://argo-cd.readthedocs.io/en/stable/user-guide/helm/
-        repoURL: registry.127.0.0.1.nip.io
-        chart: environment
-        targetRevision: "{{ .variables.environmentChartVersion }}"
+        repoURL: file:///mnt/voltade-os.git
+        path: charts/environment
+        # targetRevision: "{{ .variables.environmentChartVersion }}"
+        targetRevision: HEAD
         helm:
           values: |
             {{ .values | toYaml }}
