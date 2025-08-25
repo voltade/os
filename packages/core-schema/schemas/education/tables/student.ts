@@ -12,6 +12,8 @@ export const educationStudentTable = educationSchema.table(
     platform_id: text('platform_id').unique(),
     name: text('name').notNull(),
     email: text('email'),
+    school: text('school'),
+    phone: text('phone'),
   },
   (table) => ({
     platformEmailCheck: check(

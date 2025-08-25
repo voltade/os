@@ -10,6 +10,11 @@ import {
   FormMessage,
 } from '@voltade/ui/form.tsx';
 import { Input } from '@voltade/ui/input.tsx';
+import {
+  InputOTP,
+  InputOTPGroup,
+  InputOTPSlot,
+} from '@voltade/ui/input-otp.tsx';
 import { MultiSelect } from '@voltade/ui/multiselect.tsx';
 import dayjs from 'dayjs';
 import customParseFormat from 'dayjs/plugin/customParseFormat';
@@ -19,6 +24,7 @@ import { useForm } from 'react-hook-form';
 import { toast } from 'sonner';
 
 import { api } from '#src/lib/api.ts';
+import { authClient } from '#src/lib/auth.ts';
 import { pgRest } from '#src/lib/pg-rest.ts';
 
 dayjs.extend(customParseFormat);
@@ -75,20 +81,50 @@ const formatClassLabel = (c: {
 };
 
 interface RegistrationFormValues {
-  name: string;
+  studentName: string;
   school: string;
-  phone: string;
-  email: string;
+  parentPhone: string;
+  parentEmail: string;
   classIds: string[];
+  parentName: string;
+  parentOtp: string;
+  studentEmail?: string;
+  studentOtp?: string;
 }
 
 export default function RegistrationForm() {
+  const sendOTP = async (email: string) => {
+    const { error } = await authClient.emailOtp.sendVerificationOtp({
+      email,
+      type: 'sign-in',
+    });
+  };
+
+  const handleParentVerification = async (email: string, otp: string) => {
+    const { error } = await authClient.emailOtp.checkVerificationOtp({
+      email,
+      otp,
+      type: 'email-verification',
+    });
+    if (error) {
+      toast.error(
+        'Parent verification failed. Please check the OTP and try again.',
+      );
+      return false; // ?
+    }
+    //TODO: assign user to parent role (environment) & customer role (platform)
+  };
+
   const form = useForm<RegistrationFormValues>({
     defaultValues: {
-      name: '',
+      parentEmail: '',
+      parentOtp: '',
+      parentName: '',
+      parentPhone: '',
+      studentName: '',
+      studentEmail: '',
+      studentOtp: '',
       school: '',
-      phone: '',
-      email: '',
       classIds: [],
     },
     mode: 'onChange',
@@ -121,10 +157,10 @@ export default function RegistrationForm() {
 
   const { mutate, status: mutationStatus } = useMutation({
     mutationFn: async (payload: {
-      name: string;
+      studentName: string;
       school: string;
-      phone: string;
-      email: string;
+      studentPhone: string;
+      studentEmail: string;
       selected_class_ids: number[];
     }) => {
       const res = await api['register-student'].$post({ json: payload });
@@ -162,66 +198,165 @@ export default function RegistrationForm() {
             onSubmit={form.handleSubmit(handleSubmit)}
             className="grid gap-4"
           >
+            {/* Parent's Email */}
             <FormField
               control={form.control}
-              name="name"
-              rules={{ required: 'Name is required' }}
+              name="parentEmail"
+              rules={{ required: "Parent's email is required" }}
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Student Name</FormLabel>
+                  <FormLabel>Parent's Email</FormLabel>
                   <FormControl>
-                    <Input placeholder="Enter student name" {...field} />
+                    <Input
+                      type="email"
+                      placeholder="Enter parent's email"
+                      {...field}
+                    />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
               )}
             />
 
+            {/* Parent's Email OTP */}
+            <FormField
+              control={form.control}
+              name="parentOtp"
+              rules={{ required: 'OTP is required' }}
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>OTP</FormLabel>
+                  <FormControl>
+                    <InputOTP
+                      maxLength={6}
+                      value={field.value}
+                      onChange={field.onChange}
+                      aria-label="Parent OTP"
+                    >
+                      <InputOTPGroup>
+                        {['d1', 'd2', 'd3', 'd4', 'd5', 'd6'].map((k, i) => (
+                          <InputOTPSlot key={k} index={i} />
+                        ))}
+                      </InputOTPGroup>
+                    </InputOTP>
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+
+            {/* Parent's Name */}
+            <FormField
+              control={form.control}
+              name="parentName"
+              rules={{ required: "Parent's name is required" }}
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Parent's Name</FormLabel>
+                  <FormControl>
+                    <Input placeholder="Enter parent's name" {...field} />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+
+            {/* Parent's Phone */}
+            <FormField
+              control={form.control}
+              name="parentPhone"
+              rules={{ required: "Parent's phone is required" }}
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Parent's Phone</FormLabel>
+                  <FormControl>
+                    <Input placeholder="Enter parent's phone" {...field} />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+
+            {/* Student's Name */}
+            <FormField
+              control={form.control}
+              name="studentName"
+              rules={{ required: "Student's name is required" }}
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Student's Name</FormLabel>
+                  <FormControl>
+                    <Input placeholder="Enter student's name" {...field} />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+
+            {/* Student's Email (optional) */}
+            <FormField
+              control={form.control}
+              name="studentEmail"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Student's Email (Optional)</FormLabel>
+                  <FormControl>
+                    <Input
+                      type="email"
+                      placeholder="Enter student's email"
+                      {...field}
+                    />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+
+            {/* Student's Email OTP (optional) */}
+            <FormField
+              control={form.control}
+              name="studentOtp"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>OTP (Optional)</FormLabel>
+                  <FormControl>
+                    <InputOTP
+                      maxLength={6}
+                      value={field.value}
+                      onChange={field.onChange}
+                      aria-label="Student OTP"
+                    >
+                      <InputOTPGroup>
+                        {['sd1', 'sd2', 'sd3', 'sd4', 'sd5', 'sd6'].map(
+                          (k, i) => (
+                            <InputOTPSlot key={k} index={i} />
+                          ),
+                        )}
+                      </InputOTPGroup>
+                    </InputOTP>
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+
+            {/* Student's School */}
             <FormField
               control={form.control}
               name="school"
-              rules={{ required: 'School is required' }}
+              rules={{ required: "Student's school is required" }}
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>School</FormLabel>
+                  <FormLabel>Student's School</FormLabel>
                   <FormControl>
-                    <Input placeholder="Enter school" {...field} />
+                    <Input placeholder="Enter student's school" {...field} />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
               )}
             />
 
-            <FormField
-              control={form.control}
-              name="phone"
-              rules={{ required: 'Phone is required' }}
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Phone</FormLabel>
-                  <FormControl>
-                    <Input placeholder="Enter phone number" {...field} />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-
-            <FormField
-              control={form.control}
-              name="email"
-              rules={{ required: 'Email is required' }}
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Email</FormLabel>
-                  <FormControl>
-                    <Input type="email" placeholder="Enter email" {...field} />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-
+            {/* Classes */}
             <FormField
               control={form.control}
               name="classIds"
@@ -249,7 +384,7 @@ export default function RegistrationForm() {
               <Button
                 type="submit"
                 disabled={
-                  !form.watch('name') ||
+                  !form.watch('studentName') ||
                   !(form.watch('classIds')?.length > 0) ||
                   mutationStatus === 'pending' ||
                   classesLoading

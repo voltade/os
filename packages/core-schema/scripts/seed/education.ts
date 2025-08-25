@@ -446,19 +446,19 @@ async function seedStudents(classIds: ClassIds) {
       name: 'Alice Tan',
       school: 'Raffles Institution',
       phone: '+65 9123 4567',
-      email: 'alice.tan@lioncity.edu.sg',
+      // email: 'alice.tan@lioncity.edu.sg',
     },
     {
       name: 'Bob Lim',
       school: 'Anglo-Chinese School (Independent)',
       phone: '+65 9876 5432',
-      email: 'bob.lim@lioncity.edu.sg',
+      // email: 'bob.lim@lioncity.edu.sg',
     },
     {
       name: 'Charlie Ng',
       school: 'Hwa Chong Institution',
       phone: '+65 8765 4321',
-      email: 'charlie.ng@lioncity.edu.sg',
+      // email: 'charlie.ng@lioncity.edu.sg',
     },
   ];
 
