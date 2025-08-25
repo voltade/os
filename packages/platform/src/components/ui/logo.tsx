@@ -2,7 +2,11 @@ import { useNavigate } from '@tanstack/react-router';
 import { useTheme } from '@voltade/ui/theme-provider.js';
 import { useEffect, useState } from 'react';
 
-export function Logo() {
+interface LogoProps {
+  navigateTo?: string;
+}
+
+export function Logo({ navigateTo }: LogoProps) {
   const navigate = useNavigate();
   const { theme } = useTheme(); // app theme
   const [systemTheme, setSystemTheme] = useState<'dark' | 'light'>('light');
@@ -28,7 +32,9 @@ export function Logo() {
       fill="none"
       xmlns="http://www.w3.org/2000/svg"
       onClick={() => {
-        navigate({ to: '/' });
+        if (navigateTo) {
+          navigate({ to: navigateTo });
+        }
       }}
     >
       <title>Voltade</title>
@@ -44,6 +50,7 @@ export function Logo() {
         fillOpacity=".9"
       />
       <defs>
+        {/** biome-ignore lint/correctness/useUniqueElementIds: Ignore this for voltade logo gradient. TODO: Fix this later */}
         <linearGradient
           id="paint0_linear_128_163"
           x1="61.7"

@@ -31,7 +31,7 @@ export function Header({ className }: { className?: string }) {
       <div className="h-full flex items-center justify-between px-4">
         <div className="flex items-center gap-2 text-sm min-w-0 flex-1">
           <div className="flex-shrink-0">
-            <Logo />
+            <Logo navigateTo="/apps" />
           </div>
           <span className="text-muted-foreground flex-shrink-0">/</span>
           <div className="min-w-0">
