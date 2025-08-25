@@ -16,7 +16,6 @@ import {
 
 export const route = factory
   .createApp()
-  .use(auth({ requireActiveOrganization: true }))
   .get(
     '/:organization_id/:environment_id',
     bearerAuth({ token: appEnvVariables.RUNNER_SECRET_TOKEN }),
