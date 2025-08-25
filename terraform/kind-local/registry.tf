@@ -35,17 +35,9 @@ resource "docker_container" "registry" {
   restart = "always"
 }
 
-resource "null_resource" "run_bun_charts" {
-  depends_on = [docker_container.registry]
-  provisioner "local-exec" {
-    command = "bun charts --force --yes"
-  }
-}
-
 resource "null_resource" "run_runner_docker" {
   depends_on = [docker_container.registry]
   provisioner "local-exec" {
     command = "bun --cwd ../../packages/runner docker"
   }
 }
-
