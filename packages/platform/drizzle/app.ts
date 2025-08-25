@@ -1,5 +1,5 @@
 import { sql } from 'drizzle-orm';
-import { check, pgTable, text, unique } from 'drizzle-orm/pg-core';
+import { boolean, pgTable, text, unique } from 'drizzle-orm/pg-core';
 
 import { DEFAULT_COLUMNS, zodSchemaFactory } from './_helpers.ts';
 import { organization as organizationTable } from './auth.ts';
@@ -18,6 +18,7 @@ export const appTable = pgTable(
     slug: text().notNull(),
     name: text(),
     description: text(),
+    is_public: boolean().notNull().default(false),
 
     // App build settings
     build_command: text().notNull().default('bun run build'),

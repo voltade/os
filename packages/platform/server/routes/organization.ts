@@ -12,6 +12,31 @@ import { db } from '#server/lib/db.ts';
 
 export const route = factory
   .createApp()
+  //No authentication needed to get public organization info
+  .get(
+    '/public',
+    authMiddleware(false),
+    zValidator(
+      'query',
+      z.object({
+        organizationSlug: z.string(),
+      }),
+    ),
+    async (c) => {
+      const organizations = await db
+        .select({
+          slug: organizationTable.slug,
+          name: organizationTable.name,
+          logo: organizationTable.logo,
+        })
+        .from(organizationTable)
+        .where(
+          eq(organizationTable.slug, c.req.valid('query').organizationSlug),
+        )
+        .limit(1);
+      return c.json(organizations[0] || null);
+    },
+  )
   .get('/', authMiddleware(true), async (c) => {
     // biome-ignore lint/style/noNonNullAssertion: this is guaranteed by the auth middleware
     const { id: userId } = c.get('user')!;

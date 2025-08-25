@@ -13,7 +13,7 @@ sed -i '' "s/^DB_PASSWORD=.*/DB_PASSWORD=$DB_PASSWORD/" "$ENV_FILE"
 
 kubectl cnpg psql cnpg-cluster \
   -n platform \
-  -- -c "drop database platform with (force)"
+  -- -c "drop database if exists platform with (force)"
 
 kubectl patch database platform \
   --type='merge' \

@@ -33,6 +33,7 @@ import { Route as MainDevAppsIndexRouteImport } from './routes/_main.dev.apps.in
 import { Route as MainAppsSlugIndexRouteImport } from './routes/_main.apps.$slug.index'
 import { Route as MainDevEnvironmentsEnvironmentSlugRouteImport } from './routes/_main.dev.environments.$environmentSlug'
 import { Route as MainDevAppsAppIdRouteImport } from './routes/_main.dev.apps.$appId'
+import { Route as AuthOOrganizationSlugAppIdRouteImport } from './routes/_auth.o.$organizationSlug.$appId'
 import { Route as MainDevEnvironmentsEnvironmentSlugIndexRouteImport } from './routes/_main.dev.environments.$environmentSlug.index'
 import { Route as MainDevEnvironmentsEnvironmentSlugEnvironment_variablesRouteImport } from './routes/_main.dev.environments.$environmentSlug.environment_variables'
 import { Route as MainDevEnvironmentsEnvironmentSlugDatabaseRouteImport } from './routes/_main.dev.environments.$environmentSlug.database'
@@ -160,6 +161,12 @@ const MainDevAppsAppIdRoute = MainDevAppsAppIdRouteImport.update({
   path: '/apps/$appId',
   getParentRoute: () => MainDevRoute,
 } as any)
+const AuthOOrganizationSlugAppIdRoute =
+  AuthOOrganizationSlugAppIdRouteImport.update({
+    id: '/o/$organizationSlug/$appId',
+    path: '/o/$organizationSlug/$appId',
+    getParentRoute: () => AuthRoute,
+  } as any)
 const MainDevEnvironmentsEnvironmentSlugIndexRoute =
   MainDevEnvironmentsEnvironmentSlugIndexRouteImport.update({
     id: '/',
@@ -203,6 +210,7 @@ export interface FileRoutesByFullPath {
   '/apps': typeof MainAppsIndexRoute
   '/dev/': typeof MainDevIndexRoute
   '/settings/': typeof MainSettingsIndexRoute
+  '/o/$organizationSlug/$appId': typeof AuthOOrganizationSlugAppIdRoute
   '/dev/apps/$appId': typeof MainDevAppsAppIdRoute
   '/dev/environments/$environmentSlug': typeof MainDevEnvironmentsEnvironmentSlugRouteWithChildren
   '/apps/$slug': typeof MainAppsSlugIndexRoute
@@ -228,6 +236,7 @@ export interface FileRoutesByTo {
   '/apps': typeof MainAppsIndexRoute
   '/dev': typeof MainDevIndexRoute
   '/settings': typeof MainSettingsIndexRoute
+  '/o/$organizationSlug/$appId': typeof AuthOOrganizationSlugAppIdRoute
   '/dev/apps/$appId': typeof MainDevAppsAppIdRoute
   '/apps/$slug': typeof MainAppsSlugIndexRoute
   '/dev/apps': typeof MainDevAppsIndexRoute
@@ -258,6 +267,7 @@ export interface FileRoutesById {
   '/_main/apps/': typeof MainAppsIndexRoute
   '/_main/dev/': typeof MainDevIndexRoute
   '/_main/settings/': typeof MainSettingsIndexRoute
+  '/_auth/o/$organizationSlug/$appId': typeof AuthOOrganizationSlugAppIdRoute
   '/_main/dev/apps/$appId': typeof MainDevAppsAppIdRoute
   '/_main/dev/environments/$environmentSlug': typeof MainDevEnvironmentsEnvironmentSlugRouteWithChildren
   '/_main/apps/$slug/': typeof MainAppsSlugIndexRoute
@@ -288,6 +298,7 @@ export interface FileRouteTypes {
     | '/apps'
     | '/dev/'
     | '/settings/'
+    | '/o/$organizationSlug/$appId'
     | '/dev/apps/$appId'
     | '/dev/environments/$environmentSlug'
     | '/apps/$slug'
@@ -313,6 +324,7 @@ export interface FileRouteTypes {
     | '/apps'
     | '/dev'
     | '/settings'
+    | '/o/$organizationSlug/$appId'
     | '/dev/apps/$appId'
     | '/apps/$slug'
     | '/dev/apps'
@@ -342,6 +354,7 @@ export interface FileRouteTypes {
     | '/_main/apps/'
     | '/_main/dev/'
     | '/_main/settings/'
+    | '/_auth/o/$organizationSlug/$appId'
     | '/_main/dev/apps/$appId'
     | '/_main/dev/environments/$environmentSlug'
     | '/_main/apps/$slug/'
@@ -528,6 +541,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof MainDevAppsAppIdRouteImport
       parentRoute: typeof MainDevRoute
     }
+    '/_auth/o/$organizationSlug/$appId': {
+      id: '/_auth/o/$organizationSlug/$appId'
+      path: '/o/$organizationSlug/$appId'
+      fullPath: '/o/$organizationSlug/$appId'
+      preLoaderRoute: typeof AuthOOrganizationSlugAppIdRouteImport
+      parentRoute: typeof AuthRoute
+    }
     '/_main/dev/environments/$environmentSlug/': {
       id: '/_main/dev/environments/$environmentSlug/'
       path: '/'
@@ -564,6 +584,7 @@ interface AuthRouteChildren {
   AuthSigninRoute: typeof AuthSigninRoute
   AuthSignupRoute: typeof AuthSignupRoute
   AuthOauthConsentRoute: typeof AuthOauthConsentRoute
+  AuthOOrganizationSlugAppIdRoute: typeof AuthOOrganizationSlugAppIdRoute
 }
 
 const AuthRouteChildren: AuthRouteChildren = {
@@ -571,6 +592,7 @@ const AuthRouteChildren: AuthRouteChildren = {
   AuthSigninRoute: AuthSigninRoute,
   AuthSignupRoute: AuthSignupRoute,
   AuthOauthConsentRoute: AuthOauthConsentRoute,
+  AuthOOrganizationSlugAppIdRoute: AuthOOrganizationSlugAppIdRoute,
 }
 
 const AuthRouteWithChildren = AuthRoute._addFileChildren(AuthRouteChildren)

@@ -26,13 +26,13 @@ export const apiRoutes = app
   .basePath('/api')
   .route('/auth', authRoute)
   .route('/registry', registryRoute)
+  .route('/organization', organizationRoute)
   .use(authMiddleware(true))
   .route('/environment', environmentRoute)
   .route('/environment_variable', environmentVariableRoute)
   .route('/app', appRoute)
   .route('/app_build', appBuildRoute)
   .route('/app_installation', appInstallationRoute)
-  .route('/organization', organizationRoute)
   .route('/user', userRoute);
 
 app

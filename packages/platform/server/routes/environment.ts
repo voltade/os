@@ -148,6 +148,7 @@ export const route = factory
     if (!activeOrganizationId) {
       return c.json({ error: 'No active organization' }, 400);
     }
+
     const { environmentSlug } = c.req.param();
     const [environment] = await db
       .select()
