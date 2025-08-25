@@ -18,7 +18,8 @@
     "db:pull": "drizzle-kit pull && bun run scripts/drizzle-regex-fix.ts && bun run db:typegen",
     "db:push": "echo 'DO NOT USE THIS COMMAND' && echo 'Use `bun run db:pull` instead.'",
     "db:studio": "drizzle-kit studio",
-    "db:typegen": "source .env && curl -s http://localhost:4000/generators/typescript?included_schemas=public > src/database.gen.ts"
+    "db:typegen": "source .env && curl -s http://localhost:4000/generators/typescript?included_schemas=public > src/database.gen.ts",
+    "clean": "rm -rf .tanstack .vite dist node_modules"
   },
   "dependencies": {
     "@dnd-kit/core": "^6.3.1",

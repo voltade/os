@@ -9,7 +9,8 @@
   },
   "scripts": {
     "voltade": "bun src/index.ts",
-    "build": "bun build src/index.ts --outdir=dist --target=bun"
+    "build": "bun build src/index.ts --outdir=dist --target=bun",
+    "clean": "rm -rf dist node_modules"
   },
   "devDependencies": {
     "@types/bun": "latest",

@@ -22,7 +22,8 @@
     "build": "shx rm -rf dist && esbuild --outdir=dist 'src/**/*.ts'",
     "postpack": "shx rm -f oclif.manifest.json",
     "prepack": "oclif manifest && oclif readme",
-    "version": "oclif readme && git add README.md"
+    "version": "oclif readme && git add README.md",
+    "clean": "rm -rf dist node_modules"
   },
   "dependencies": {
     "@oclif/core": "^4",

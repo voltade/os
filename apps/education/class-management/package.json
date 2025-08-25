@@ -12,7 +12,8 @@
     "build:server": "bun build --minify --sourcemap --target=bun --outdir=dist server/index.ts",
     "build": "rm -rf dist && bun build:server && vite build",
     "serve": "VITE_NODE_ENV=production bun run dist/index.js",
-    "format": "biome format --write ."
+    "format": "biome format --write .",
+    "clean": "rm -rf .tanstack .vite dist node_modules"
   },
   "dependencies": {
     "@dnd-kit/core": "^6.3.1",

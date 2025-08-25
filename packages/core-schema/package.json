@@ -70,7 +70,8 @@
     "fga:push": "cd openfga && fga model write --store-id $FGA_STORE_ID --file fga.mod && cd ..",
     "fga:init": "bun fga:migrate && bun fga:create && bun fga:push",
     "build": "tsc --noEmit",
-    "prepublishOnly": "bun run build"
+    "prepublishOnly": "bun run build",
+    "clean": "rm -rf dist node_modules"
   },
   "dependencies": {
     "@faker-js/faker": "^9.9.0",

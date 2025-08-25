@@ -19,7 +19,7 @@
     "charts:patch": "bun run scripts/charts.ts --patch",
     "voltade": "bun packages/voltade-cli/bin/dev.ts",
     "prepare": "lefthook install",
-    "clean": "rm -rf node_modules packages/*/node_modules apps/*/node_modules"
+    "clean:all": "rm -rf node_modules && bun --filter='*' clean"
   },
   "devDependencies": {
     "@biomejs/biome": "^2.2.2",

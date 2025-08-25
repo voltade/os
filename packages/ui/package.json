@@ -14,7 +14,8 @@
     "./*": "./src/components/*"
   },
   "scripts": {
-    "add:all": "shadcn add --all && biome check --write --unsafe --no-errors-on-unmatched components/*"
+    "add:all": "shadcn add --all && biome check --write --unsafe --no-errors-on-unmatched components/*",
+    "clean": "rm -rf dist node_modules"
   },
   "devDependencies": {
     "@types/bun": "latest",
