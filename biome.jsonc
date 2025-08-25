@@ -2,7 +2,7 @@
   "$schema": "node_modules/@biomejs/biome/configuration_schema.json",
   // https://next.biomejs.dev/reference/configuration/#files
   "files": {
-    "includes": ["**", "!dist/**", "!**/*.gen.ts"],
+    "includes": ["**", "!dist", "!**/*.gen.ts"],
     "ignoreUnknown": true
   },
   // https://next.biomejs.dev/reference/configuration/#vcs
@@ -17,7 +17,8 @@
     "rules": {
       "recommended": true,
       "correctness": {
-        "useImportExtensions": "error"
+        "useImportExtensions": "error",
+        "useUniqueElementIds": "off"
       }
     }
   },
