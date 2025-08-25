@@ -6,16 +6,18 @@ import { appTable } from '#drizzle/app.ts';
 import { appBuildTable } from '#drizzle/app_build.ts';
 import { appEnvVariables } from '#server/env.ts';
 import { factory } from '#server/factory.ts';
-import { db } from '#server/lib/db.ts';
 import {
   type BuildJobOptions,
   createBuildJob,
 } from '#server/lib/kubernetes/build/job.ts';
 import { getK8sObjectClient } from '#server/lib/kubernetes/kubeapi.ts';
 import { s3Client } from '#server/lib/s3.ts';
+import { auth } from '#server/middlewares/auth.ts';
+import { drizzle } from '#server/middlewares/drizzle.ts';
 
 export const route = factory
   .createApp()
+  .use(auth())
   .post(
     '/git',
     zValidator(
@@ -25,11 +27,13 @@ export const route = factory
         orgId: z.string(),
       }),
     ),
+    drizzle(),
     async (c) => {
       const { appId, orgId } = c.req.valid('json');
+      const { tx } = c.var;
 
       // Find the app
-      const app = await db.query.appTable.findFirst({
+      const app = await tx.query.appTable.findFirst({
         where: and(eq(appTable.id, appId), eq(appTable.organization_id, orgId)),
       });
 
@@ -40,7 +44,7 @@ export const route = factory
       let buildRecord: typeof appBuildTable.$inferSelect | undefined;
       try {
         // Create build record
-        const [newBuildRecord] = await db
+        const [newBuildRecord] = await tx
           .insert(appBuildTable)
           .values({
             app_id: appId,
@@ -84,7 +88,7 @@ export const route = factory
         });
 
         // Update build status to building
-        await db
+        await tx
           .update(appBuildTable)
           .set({ status: 'building' })
           .where(
@@ -124,7 +128,7 @@ export const route = factory
         // Try to update build status to error if we have a build record
         if (buildRecord?.id) {
           try {
-            await db
+            await tx
               .update(appBuildTable)
               .set({ status: 'error' })
               .where(
@@ -159,10 +163,12 @@ export const route = factory
         orgId: z.string(),
       }),
     ),
+    drizzle(),
     async (c) => {
       const { type, appId, orgId } = c.req.valid('json');
+      const { tx } = c.var;
 
-      const [appBuild] = await db
+      const [appBuild] = await tx
         .insert(appBuildTable)
         .values({
           app_id: appId,
@@ -199,10 +205,12 @@ export const route = factory
         buildId: z.string(),
       }),
     ),
+    drizzle(),
     async (c) => {
       const { appId, orgId, buildId } = c.req.valid('json');
+      const { tx } = c.var;
 
-      const appBuild = await db.query.appBuildTable.findFirst({
+      const appBuild = await tx.query.appBuildTable.findFirst({
         where: and(
           eq(appBuildTable.id, buildId),
           eq(appBuildTable.app_id, appId),
@@ -213,7 +221,7 @@ export const route = factory
         return c.json({ error: 'Build not found' }, 404);
       }
 
-      await db
+      await tx
         .update(appBuildTable)
         .set({
           status: 'building',
@@ -221,7 +229,7 @@ export const route = factory
         .where(eq(appBuildTable.id, buildId));
 
       // Find the app, needed for job
-      const app = await db.query.appTable.findFirst({
+      const app = await tx.query.appTable.findFirst({
         where: and(eq(appTable.id, appId), eq(appTable.organization_id, orgId)),
       });
       if (!app) {
@@ -286,12 +294,14 @@ export const route = factory
         status: z.enum(['pending', 'building', 'ready', 'error']),
       }),
     ),
+    drizzle(),
     async (c) => {
       const { buildId } = c.req.valid('param');
       const { appId, orgId, status } = c.req.valid('json');
+      const { tx } = c.var;
 
       // Verify build exists and belongs to the org/app
-      const existingBuild = await db.query.appBuildTable.findFirst({
+      const existingBuild = await tx.query.appBuildTable.findFirst({
         where: and(
           eq(appBuildTable.id, buildId),
           eq(appBuildTable.app_id, appId),
@@ -304,7 +314,7 @@ export const route = factory
       }
 
       // Update build status
-      const [updatedBuild] = await db
+      const [updatedBuild] = await tx
         .update(appBuildTable)
         .set({
           status,
@@ -341,11 +351,13 @@ export const route = factory
         orgId: z.string(),
       }),
     ),
+    drizzle(),
     async (c) => {
       const { buildId } = c.req.valid('param');
       const { appId, orgId } = c.req.valid('query');
+      const { tx } = c.var;
 
-      const build = await db.query.appBuildTable.findFirst({
+      const build = await tx.query.appBuildTable.findFirst({
         where: and(
           eq(appBuildTable.id, buildId),
           eq(appBuildTable.app_id, appId),
@@ -369,10 +381,12 @@ export const route = factory
         orgId: z.string(),
       }),
     ),
+    drizzle(),
     async (c) => {
       const { appId, orgId } = c.req.valid('query');
+      const { tx } = c.var;
 
-      const builds = await db.query.appBuildTable.findMany({
+      const builds = await tx.query.appBuildTable.findMany({
         where: and(
           eq(appBuildTable.app_id, appId),
           eq(appBuildTable.organization_id, orgId),

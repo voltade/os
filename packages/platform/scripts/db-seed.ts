@@ -14,6 +14,7 @@ await db.transaction(async (tx) => {
       name: 'Admin',
       email: 'admin@voltade.com',
       emailVerified: true,
+      role: 'system_admin',
     })
     .onConflictDoNothing();
   await tx

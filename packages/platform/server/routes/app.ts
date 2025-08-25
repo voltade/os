@@ -4,11 +4,13 @@ import { z } from 'zod';
 
 import { appTable } from '#drizzle/app.ts';
 import { factory } from '#server/factory.ts';
-import { db } from '#server/lib/db.ts';
+import { auth } from '#server/middlewares/auth.ts';
+import { drizzle } from '#server/middlewares/drizzle.ts';
 import { createAppSchema, updateAppSchema } from '#shared/schemas/app.ts';
 
 export const route = factory
   .createApp()
+  .use(auth({ requireActiveOrganization: true }))
   .get(
     '/',
     zValidator(
@@ -17,26 +19,24 @@ export const route = factory
         org_id: z.string().optional(),
       }),
     ),
+    drizzle(),
     async (c) => {
       const { org_id } = c.req.valid('query');
+      const { tx } = c.var;
 
-      const apps = await db.query.appTable.findMany({
+      const apps = await tx.query.appTable.findMany({
         where: org_id ? eq(appTable.organization_id, org_id) : undefined,
       });
 
       return c.json<(typeof appTable.$inferSelect)[]>(apps);
     },
   )
-  .post('/', zValidator('json', createAppSchema), async (c) => {
-    // biome-ignore lint/style/noNonNullAssertion: session is guaranteed by auth middleware
-    const { activeOrganizationId } = c.get('session')!;
-    if (!activeOrganizationId) {
-      return c.json({ error: 'No active organization' }, 400);
-    }
-
+  .post('/', zValidator('json', createAppSchema), drizzle(), async (c) => {
+    const { activeOrganizationId } = c.get('session');
     const body = c.req.valid('json');
+    const { tx } = c.var;
 
-    const [created] = await db
+    const [created] = await tx
       .insert(appTable)
       .values({
         organization_id: activeOrganizationId,
@@ -46,16 +46,12 @@ export const route = factory
 
     return c.json(created);
   })
-  .put('/', zValidator('json', updateAppSchema), async (c) => {
-    // biome-ignore lint/style/noNonNullAssertion: session is guaranteed by auth middleware
-    const { activeOrganizationId } = c.get('session')!;
-    if (!activeOrganizationId) {
-      return c.json({ error: 'No active organization' }, 400);
-    }
-
+  .put('/', zValidator('json', updateAppSchema), drizzle(), async (c) => {
+    const { activeOrganizationId } = c.get('session');
+    const { tx } = c.var;
     const { id, ...rest } = c.req.valid('json');
 
-    const existing = await db
+    const existing = await tx
       .select()
       .from(appTable)
       .where(
@@ -70,7 +66,7 @@ export const route = factory
       return c.json({ error: 'App not found' }, 404);
     }
 
-    const updated = await db
+    const updated = await tx
       .update(appTable)
       .set({ ...rest })
       .where(

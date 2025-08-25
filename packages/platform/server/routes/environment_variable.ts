@@ -6,9 +6,9 @@ import { z } from 'zod';
 import { environmentVariableTable } from '#drizzle/environment_variable.ts';
 import { appEnvVariables } from '#server/env.ts';
 import { factory } from '#server/factory.ts';
-import { authMiddleware } from '#server/lib/auth/index.ts';
 import { db } from '#server/lib/db.ts';
 import { Vault } from '#server/lib/vault.ts';
+import { auth } from '#server/middlewares/auth.ts';
 import {
   checkReservedEnvironmentVariableNames,
   reservedNames,
@@ -16,6 +16,7 @@ import {
 
 export const route = factory
   .createApp()
+  .use(auth({ requireActiveOrganization: true }))
   .get(
     '/:organization_id/:environment_id',
     bearerAuth({ token: appEnvVariables.RUNNER_SECRET_TOKEN }),
@@ -69,13 +70,8 @@ export const route = factory
         environment_id: z.string(),
       }),
     ),
-    authMiddleware(true),
     async (c) => {
-      // biome-ignore lint/style/noNonNullAssertion: session is guaranteed to be set by the authMiddleware
-      const { activeOrganizationId } = c.get('session')!;
-      if (!activeOrganizationId) {
-        return c.json({ error: 'No active organization' }, 400);
-      }
+      const { activeOrganizationId } = c.get('session');
       const { environment_id } = c.req.valid('query');
 
       const environmentVariable = await db
@@ -102,14 +98,9 @@ export const route = factory
         value: z.string(),
       }),
     ),
-    authMiddleware(true),
+    auth(),
     async (c) => {
-      // biome-ignore lint/style/noNonNullAssertion: session is guaranteed to be set by the authMiddleware
-      const { activeOrganizationId } = c.get('session')!;
-      if (!activeOrganizationId) {
-        return c.json({ error: 'No active organization' }, 400);
-      }
-
+      const { activeOrganizationId } = c.get('session');
       const { environment_id, name, description, value } = c.req.valid('json');
 
       if (checkReservedEnvironmentVariableNames(name)) {
@@ -149,14 +140,9 @@ export const route = factory
         value: z.string(),
       }),
     ),
-    authMiddleware(true),
+    auth(),
     async (c) => {
-      // biome-ignore lint/style/noNonNullAssertion: session is guaranteed to be set by the authMiddleware
-      const { activeOrganizationId } = c.get('session')!;
-      if (!activeOrganizationId) {
-        return c.json({ error: 'No active organization' }, 400);
-      }
-
+      const { activeOrganizationId } = c.get('session');
       const { id, name, description, value } = c.req.valid('json');
 
       // First verify the environment variable exists and belongs to the org
@@ -197,14 +183,9 @@ export const route = factory
   .delete(
     '/',
     zValidator('query', z.object({ id: z.string() })),
-    authMiddleware(true),
+    auth(),
     async (c) => {
-      // biome-ignore lint/style/noNonNullAssertion: session is guaranteed to be set by the authMiddleware
-      const { activeOrganizationId } = c.get('session')!;
-      if (!activeOrganizationId) {
-        return c.json({ error: 'No active organization' }, 400);
-      }
-
+      const { activeOrganizationId } = c.get('session');
       const { id } = c.req.valid('query');
 
       // First get the environment variable to check ownership and get secret_id
@@ -246,14 +227,9 @@ export const route = factory
         environment_variable_id: z.string().optional(),
       }),
     ),
-    authMiddleware(true),
+    auth(),
     async (c) => {
-      // biome-ignore lint/style/noNonNullAssertion: session is guaranteed to be set by the authMiddleware
-      const { activeOrganizationId } = c.get('session')!;
-      if (!activeOrganizationId) {
-        return c.json({ error: 'No active organization' }, 400);
-      }
-
+      const { activeOrganizationId } = c.get('session');
       const { environment_id, environment_variable_id } = c.req.valid('query');
 
       const environmentVariable = await db

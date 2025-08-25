@@ -2,7 +2,7 @@ import { cors } from 'hono/cors';
 
 import { appEnvVariables } from '#server/env.ts';
 import { factory } from '#server/factory.ts';
-import { auth, authMiddleware } from '#server/lib/auth/index.ts';
+import { auth } from '#server/lib/auth.ts';
 
 export const route = factory
   .createApp()

@@ -7,15 +7,13 @@ import {
   organization as organizationTable,
 } from '#drizzle/auth.ts';
 import { factory } from '#server/factory.ts';
-import { authMiddleware } from '#server/lib/auth/index.ts';
 import { db } from '#server/lib/db.ts';
+import { auth } from '#server/middlewares/auth.ts';
 
 export const route = factory
   .createApp()
-  //No authentication needed to get public organization info
   .get(
     '/public',
-    authMiddleware(false),
     zValidator(
       'query',
       z.object({
@@ -37,9 +35,8 @@ export const route = factory
       return c.json(organizations[0] || null);
     },
   )
-  .get('/', authMiddleware(true), async (c) => {
-    // biome-ignore lint/style/noNonNullAssertion: this is guaranteed by the auth middleware
-    const { id: userId } = c.get('user')!;
+  .get('/', auth(), async (c) => {
+    const { id: userId } = c.get('user');
 
     const memberships = await db
       .select()
@@ -62,10 +59,9 @@ export const route = factory
         logo: z.string().optional(),
       }),
     ),
-    authMiddleware(true),
+    auth(),
     async (c) => {
-      // biome-ignore lint/style/noNonNullAssertion: this is guaranteed by the auth middleware
-      const { id: userId } = c.get('user')!;
+      const { id: userId } = c.get('user');
       const { organizationId, name, logo } = c.req.valid('json');
 
       // Check if the user is a member of the organization

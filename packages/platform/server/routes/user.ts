@@ -5,9 +5,11 @@ import { z } from 'zod';
 import { member, user } from '#drizzle/auth.ts';
 import { factory } from '#server/factory.ts';
 import { db } from '#server/lib/db.ts';
+import { auth } from '#server/middlewares/auth.ts';
 
 export const route = factory.createApp().get(
   '/user',
+  auth(),
   zValidator(
     'query',
     z.object({

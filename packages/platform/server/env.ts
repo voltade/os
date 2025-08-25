@@ -1,4 +1,3 @@
-import type { Session } from '#server/lib/auth/index.ts';
 import {
   type AppEnvVariables,
   appEnvVariablesSchema,
@@ -21,9 +20,4 @@ export type Oauth2Payload = {
   exp: number;
 };
 
-export type Variables = AppEnvVariables & {
-  session: Session['session'] | null;
-  user: Session['user'] | null;
-  oauth2: Oauth2Payload | null;
-  authType: 'static' | 'jwt' | 'session' | 'none';
-};
+export type Variables = Record<string, unknown> & AppEnvVariables;

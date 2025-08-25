@@ -1,10 +1,15 @@
 import {
   boolean,
   integer,
+  pgEnum,
   pgTable,
   text,
   timestamp,
 } from 'drizzle-orm/pg-core';
+
+import { MemberRole } from '#shared/schemas/auth.ts';
+
+export const memberRoleEnum = pgEnum('member_role', MemberRole);
 
 export const user = pgTable('user', {
   id: text('id').primaryKey(),
@@ -156,7 +161,7 @@ export const member = pgTable('member', {
   userId: text('user_id')
     .notNull()
     .references(() => user.id, { onDelete: 'cascade' }),
-  role: text('role').default('member').notNull(),
+  role: memberRoleEnum('role').default('member').notNull(),
   createdAt: timestamp('created_at').notNull(),
 });
 

@@ -1,6 +1,5 @@
 import { betterAuth } from 'better-auth';
 import { drizzleAdapter } from 'better-auth/adapters/drizzle';
-import { createAuthMiddleware } from 'better-auth/api';
 import {
   admin,
   apiKey,
@@ -21,10 +20,8 @@ import { appEnvVariables } from '#server/env.ts';
 import { db } from '#server/lib/db.ts';
 import { mailer } from '#server/lib/mailer.ts';
 import { nanoid } from '#server/lib/nanoid.ts';
-import { ac, roles } from './permissions.ts';
 
 export const BASE_URL = `${appEnvVariables.VITE_APP_URL}/api/auth`;
-export const JWT_COOKIE_NAME = 'voltade-jwt';
 
 // https://www.better-auth.com/docs/reference/options
 export const auth = betterAuth({
@@ -40,7 +37,10 @@ export const auth = betterAuth({
     disableSignUp: true,
   },
   plugins: [
-    admin(),
+    admin({
+      adminRoles: ['system_admin'],
+      adminUserIds: ['admin'],
+    }),
     apiKey(),
     bearer(),
     emailOTP({
@@ -68,10 +68,11 @@ export const auth = betterAuth({
     }),
     jwt({
       jwt: {
+        expirationTime: '1h',
         definePayload: async ({ user }) => {
-          const mappings = await db
+          const memberships = await db
             .select({
-              organization_slug: organizationTable.slug,
+              organization_slug: organizationTable.id,
               member_role: memberTable.role,
             })
             .from(memberTable)
@@ -80,21 +81,26 @@ export const auth = betterAuth({
               eq(organizationTable.id, memberTable.organizationId),
             )
             .where(eq(memberTable.userId, user.id));
-
-          const aud = mappings.map((mapping) => mapping.organization_slug);
           return {
+            // array of organization slugs, for https://docs.postgrest.org/en/v13/references/auth.html#jwt-aud-claim-validation
+            aud: memberships.map(({ organization_slug }) => organization_slug),
+            // for postgrest user impersonation: https://docs.postgrest.org/en/v13/references/auth.html#jwt-based-user-impersonation
             role: 'authenticated',
-            roles: mappings.reduce<Record<string, string>>((acc, mapping) => {
-              acc[mapping.organization_slug] = mapping.member_role;
-              return acc;
-            }, {}),
-            aud,
+            // pass platform's organization member roles, for runner to check permissions
+            roles: Object.fromEntries(
+              memberships.map(({ organization_slug, member_role }) => [
+                organization_slug,
+                member_role,
+              ]),
+            ),
           };
         },
-        expirationTime: Math.floor(Date.now() / 1000) + 60 * 60 * 24 * 30, // 30 days
       },
     }),
     organization({
+      allowUserToCreateOrganization: (user) => user.role === 'system_admin',
+      membershipLimit: 10000,
+      requireEmailVerificationOnInvitation: true,
       async sendInvitationEmail(data) {
         if (import.meta.env.NODE_ENV === 'development') {
           console.log(
@@ -112,13 +118,8 @@ export const auth = betterAuth({
           `,
         });
       },
-      ac,
-      roles,
     }),
   ],
-  user: {
-    additionalFields: {},
-  },
   session: {
     cookieCache: {
       enabled: true,
@@ -140,58 +141,13 @@ export const auth = betterAuth({
         return nanoid(size);
       },
     },
+    cookiePrefix: 'platform',
     crossSubDomainCookies: {
       enabled: true,
       domain: new URL(appEnvVariables.VITE_APP_URL).hostname,
     },
   },
-  hooks: {
-    after: createAuthMiddleware(async (ctx) => {
-      if (ctx.path === '/get-session') {
-        const headers = ctx.headers;
-        if (!ctx.context.session) {
-          return;
-        }
-        if (
-          ctx.context.session.session.id === ctx.context.newSession?.session.id
-        ) {
-          const jwtCookie = ctx.getCookie(JWT_COOKIE_NAME);
-          if (jwtCookie) {
-            return;
-          }
-        }
-        console.log('Setting JWT cookie');
-        const jwt = await fetch(
-          `http://${headers?.get('host')}/api/auth/token`,
-          {
-            method: 'GET',
-            headers,
-          },
-        );
-        const jwtData = (await jwt.json()) as {
-          token: string;
-        };
-        console.log('jwtData', jwtData);
-        ctx.setCookie(JWT_COOKIE_NAME, jwtData.token, {
-          httpOnly: true,
-          sameSite: 'lax',
-          path: '/',
-          domain: new URL(appEnvVariables.VITE_APP_URL).hostname,
-          expires: ctx.context.session?.session.expiresAt,
-        });
-        ctx.setCookie(JWT_COOKIE_NAME, jwtData.token, {
-          httpOnly: true,
-          sameSite: 'lax',
-          path: '/',
-          domain: `.${new URL(appEnvVariables.VITE_APP_URL).hostname}`,
-          expires: ctx.context.session?.session.expiresAt,
-        });
-      }
-    }),
-  },
 });
 
 export type Auth = typeof auth;
 export type Session = Auth['$Infer']['Session'];
-
-export { authMiddleware } from './middleware.ts';

@@ -14,10 +14,10 @@ import {
 import { environmentTable } from '#drizzle/environment.ts';
 import { appEnvVariables } from '#server/env.ts';
 import { factory } from '#server/factory.ts';
-import { authMiddleware } from '#server/lib/auth/index.ts';
 import { db } from '#server/lib/db.ts';
 import { signJwt } from '#server/lib/jwk.ts';
 import { checkCnpgHealth } from '#server/lib/kubernetes/cnpg.ts';
+import { auth } from '#server/middlewares/auth.ts';
 import { createEnvironmentSchema } from '#shared/schemas/environment.ts';
 
 type Common = {
@@ -51,6 +51,7 @@ interface Parameters {
 
 export const route = factory
   .createApp()
+  // TODO: add api key auth
   .post('/api/v1/getparams.execute', async (c) => {
     const results = await db
       .select()
@@ -142,13 +143,9 @@ export const route = factory
       },
     });
   })
-  .get('/:environmentSlug', authMiddleware(true), async (c) => {
-    // biome-ignore lint/style/noNonNullAssertion: session is guaranteed to be set by the authMiddleware
-    const { activeOrganizationId } = c.get('session')!;
-    if (!activeOrganizationId) {
-      return c.json({ error: 'No active organization' }, 400);
-    }
-
+  .use(auth({ requireActiveOrganization: true }))
+  .get('/:environmentSlug', async (c) => {
+    const { activeOrganizationId } = c.get('session');
     const { environmentSlug } = c.req.param();
     const [environment] = await db
       .select()
@@ -171,12 +168,8 @@ export const route = factory
       cnpgHealth,
     });
   })
-  .delete('/:environmentSlug', authMiddleware(true), async (c) => {
-    // biome-ignore lint/style/noNonNullAssertion: session is guaranteed to be set by the authMiddleware
-    const { activeOrganizationId } = c.get('session')!;
-    if (!activeOrganizationId) {
-      return c.json({ error: 'No active organization' }, 400);
-    }
+  .delete('/:environmentSlug', async (c) => {
+    const { activeOrganizationId } = c.get('session');
     const { environmentSlug } = c.req.param();
     const [environment] = await db
       .delete(environmentTable)
@@ -206,7 +199,7 @@ export const route = factory
   })
   .get(
     '/',
-    authMiddleware(true),
+    auth(),
     zValidator(
       'query',
       z.object({
@@ -222,24 +215,15 @@ export const route = factory
       return c.json(environments);
     },
   )
-  .post(
-    '/',
-    authMiddleware(true),
-    zValidator('json', createEnvironmentSchema),
-    async (c) => {
-      // biome-ignore lint/style/noNonNullAssertion: session is guaranteed by the authMiddleware
-      const { activeOrganizationId } = c.get('session')!;
-      if (!activeOrganizationId) {
-        return c.json({ error: 'No active organization' }, 400);
-      }
-      const body = c.req.valid('json');
-      const [created] = await db
-        .insert(environmentTable)
-        .values({
-          organization_id: activeOrganizationId,
-          ...body,
-        })
-        .returning();
-      return c.json(created);
-    },
-  );
+  .post('/', zValidator('json', createEnvironmentSchema), async (c) => {
+    const { activeOrganizationId } = c.get('session');
+    const body = c.req.valid('json');
+    const [created] = await db
+      .insert(environmentTable)
+      .values({
+        organization_id: activeOrganizationId,
+        ...body,
+      })
+      .returning();
+    return c.json(created);
+  });
