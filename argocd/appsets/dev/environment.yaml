@@ -31,7 +31,6 @@ spec:
         # https://argo-cd.readthedocs.io/en/stable/user-guide/helm/
         repoURL: file:///mnt/voltade-os.git
         path: charts/environment
-        # targetRevision: "{{ .variables.environmentChartVersion }}"
         targetRevision: HEAD
         helm:
           values: |

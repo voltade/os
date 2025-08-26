@@ -3,16 +3,16 @@ kind: Deployment
 metadata:
   name: socat
   labels:
-    app: socat
+    app: platform
 spec:
   replicas: 1
   selector:
     matchLabels:
-      app: socat
+      app: platform
   template:
     metadata:
       labels:
-        app: socat
+        app: platform
     spec:
       containers:
         - name: socat-platform

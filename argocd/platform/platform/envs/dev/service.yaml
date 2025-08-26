@@ -4,7 +4,7 @@ metadata:
   name: socat
 spec:
   selector:
-    app: socat
+    app: platform
   ports:
     - name: http-5173
       protocol: TCP

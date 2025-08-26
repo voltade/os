@@ -3,6 +3,8 @@ kind: Kustomization
 
 resources:
   - ../../base
+  - ./deployment.yaml
+  - ./httproute.yaml
   - ./s3-secrets.yaml
+  - ./service.yaml
   - ./shared-secrets.yaml
-  - ./drizzle-gateway-httproute.yaml
