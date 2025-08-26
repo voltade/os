@@ -35,6 +35,7 @@ deployment:
 
   environment:
     PLATFORM_URL: "http://socat.platform.svc.cluster.local:5173"
+    VITE_PLATFORM_URL: "http://127.0.0.1.nip.io"
 
   # This is for the secrets for pulling an image from a private repository more information can be found here: https://kubernetes.io/docs/tasks/configure-pod-container/pull-image-private-registry/
   imagePullSecrets: []

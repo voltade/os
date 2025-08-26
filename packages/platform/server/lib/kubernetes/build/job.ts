@@ -37,23 +37,23 @@ export function createBuildJob(
 
 # Function to report status to callback URL
 report_status() {
-  local status="\$1"
-  local message="\$2"
+  local status="$1"
+  local message="$2"
   
   ${
     statusCallbackUrl
       ? `
-  echo "Reporting status: \$status - \$message"
+  echo "Reporting status: $status - $message"
   payload=$(jq -n \
     --arg appId "${app.id}" \
     --arg orgId "${app.organization_id}" \
-    --arg status "\$status" \
-    --arg logs "\$message" \
+    --arg status "$status" \
+    --arg logs "$message" \
     '{appId:$appId, orgId:$orgId, status:$status, logs:$logs}')
   curl --globoff -sS -X PATCH "${statusCallbackUrl}" \\
     -H "Content-Type: application/json" \\
-    -H "Authorization: Bearer \$RUNNER_SECRET_TOKEN" \\
-    -d "\$payload" || echo "Failed to report status"
+    -H "Authorization: Bearer $RUNNER_SECRET_TOKEN" \\
+    -d "$payload" || echo "Failed to report status"
   `
       : 'echo "Status: $status - $message"'
   }
@@ -61,9 +61,9 @@ report_status() {
 
 # Function to handle errors
 handle_error() {
-  local error_message="\$1"
-  echo "ERROR: \$error_message"
-  report_status "error" "\$error_message"
+  local error_message="$1"
+  echo "ERROR: $error_message"
+  report_status "error" "$error_message"
   exit 1
 }
 
@@ -75,7 +75,7 @@ echo "App ID: ${app.id}"
 echo "Build ID: ${buildId}"
 ${
   s3SourceKey
-    ? 'echo "Source: s3://$S3_BUCKET/' + s3SourceKey + '"'
+    ? `echo "Source: s3://$S3_BUCKET/${s3SourceKey}"`
     : `echo "Repository: ${app.git_repo_url}"
 echo "Branch: ${app.git_repo_branch}"`
 }

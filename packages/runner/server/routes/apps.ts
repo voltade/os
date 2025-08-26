@@ -9,23 +9,23 @@ import { downloadPackage } from '#server/utils/package/index.ts';
 import { createWorker, getWorker } from '#server/utils/worker/index.ts';
 
 export const routes = factory.createApp().all(
-  '/:appId/:releaseId/*',
+  '/:appSlug/:releaseId/*',
   cors(),
   zValidator(
     'param',
     z.object({
-      appId: z.string(),
+      appSlug: z.string(),
       releaseId: z.string(),
     }),
   ),
   async (c) => {
-    const { appId, releaseId } = c.req.valid('param');
+    const { appSlug, releaseId } = c.req.valid('param');
     const truncatedReleaseId = releaseId.slice(0, 8);
-    const workerPath = `${c.env.NODE_ENV === 'development' ? process.cwd() : '/tmp'}/data/${appId}-${truncatedReleaseId}`;
+    const workerPath = `${c.env.NODE_ENV === 'development' ? process.cwd() : '/tmp'}/data/${appSlug}-${truncatedReleaseId}`;
 
     console.log(workerPath);
 
-    let worker = getWorker(appId, truncatedReleaseId);
+    let worker = getWorker(appSlug, truncatedReleaseId);
 
     if (!worker) {
       const folderExists =
@@ -35,7 +35,7 @@ export const routes = factory.createApp().all(
         await downloadPackage(
           {
             orgId: c.env.ORGANIZATION_ID,
-            appId,
+            appSlug,
             releaseId,
           },
           workerPath,
@@ -55,11 +55,11 @@ export const routes = factory.createApp().all(
 
       console.log(c.req.raw.headers.get('origin'));
 
-      worker = await createWorker(appId, truncatedReleaseId, workerPath, {
-        VITE_APP_URL: `${c.req.raw.headers.get('origin')}/${appId}/${releaseId}`,
+      worker = await createWorker(appSlug, truncatedReleaseId, workerPath, {
         ...envs,
         ...k8sEnvs,
         PLATFORM_URL: c.env.PLATFORM_URL,
+        VITE_PLATFORM_URL: c.env.VITE_PLATFORM_URL,
         ORGANIZATION_ID: c.env.ORGANIZATION_ID,
         ORGANIZATION_SLUG: c.env.ORGANIZATION_SLUG,
         ENVIRONMENT_ID: c.env.ENVIRONMENT_ID,
@@ -68,7 +68,7 @@ export const routes = factory.createApp().all(
       });
     }
 
-    const reqUrl = c.req.url.replace(`/apps/${appId}/${releaseId}`, '');
+    const reqUrl = c.req.url.replace(`/apps/${appSlug}/${releaseId}`, '');
 
     try {
       const response = await fetch(reqUrl, {
@@ -79,8 +79,8 @@ export const routes = factory.createApp().all(
 
       return response;
     } catch (error) {
-      const errorMsg = `Error proxying to worker for ${appId}: ${error}`;
-      console.info(appId, 'error', errorMsg);
+      const errorMsg = `Error proxying to worker for ${appSlug}: ${error}`;
+      console.info(appSlug, 'error', errorMsg);
       console.error(errorMsg);
       return c.text('Worker communication error', 500);
     }

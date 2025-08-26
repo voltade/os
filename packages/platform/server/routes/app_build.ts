@@ -168,6 +168,14 @@ export const route = factory
       const { type, appId, orgId } = c.req.valid('json');
       const { tx } = c.var;
 
+      const app = await tx.query.appTable.findFirst({
+        where: and(eq(appTable.id, appId), eq(appTable.organization_id, orgId)),
+      });
+
+      if (!app) {
+        return c.json({ error: 'App not found' }, 404);
+      }
+
       const [appBuild] = await tx
         .insert(appBuildTable)
         .values({
@@ -183,8 +191,8 @@ export const route = factory
 
       const uploadUrl = s3Client.presign(
         type === 'source'
-          ? `/source/${appId}/${orgId}/${appBuild.id}.zip`
-          : `/builds/${orgId}/${appId}/${appBuild.id}/artifact.tar.gz`,
+          ? `/source/${orgId}/${app.slug}/${appBuild.id}.zip`
+          : `/builds/${orgId}/${app.slug}/${appBuild.id}/artifact.tar.gz`,
         {
           method: 'PUT',
           expiresIn: 3600,
@@ -264,7 +272,7 @@ export const route = factory
       });
 
       // Build will use S3 source zip we asked the client to upload earlier
-      const s3SourceKey = `source/${appId}/${orgId}/${buildId}.zip`;
+      const s3SourceKey = `source/${orgId}/${app.slug}/${buildId}.zip`;
 
       const jobOptions: BuildJobOptions = {
         resources: {},

@@ -7,14 +7,14 @@ import { s3Client } from './s3.ts';
 export const downloadPackage = async (
   packageDetails: {
     orgId: string;
-    appId: string;
+    appSlug: string;
     releaseId: string;
   },
   outputPath: string,
 ) => {
-  const s3Key = `builds/${packageDetails.orgId}/${packageDetails.appId}/${packageDetails.releaseId}/artifact.tar.gz`;
+  const s3Key = `builds/${packageDetails.orgId}/${packageDetails.appSlug}/${packageDetails.releaseId}/artifact.tar.gz`;
   console.info(
-    packageDetails.appId,
+    packageDetails.appSlug,
     'info',
     `Downloading artifact from S3: ${s3Key}`,
   );
@@ -25,13 +25,13 @@ export const downloadPackage = async (
   try {
     buffer = await s3file.arrayBuffer();
     console.info(
-      packageDetails.appId,
+      packageDetails.appSlug,
       'info',
       `Successfully downloaded artifact: ${s3Key}`,
     );
   } catch (error) {
     console.error(
-      packageDetails.appId,
+      packageDetails.appSlug,
       'error',
       `Failed to download artifact from S3: ${s3Key}`,
       error,
@@ -57,6 +57,10 @@ export const downloadPackage = async (
     readable.pipe(extractStream);
   });
 
-  console.info(packageDetails.appId, 'info', 'Package extracted successfully');
+  console.info(
+    packageDetails.appSlug,
+    'info',
+    'Package extracted successfully',
+  );
   return outputPath;
 };

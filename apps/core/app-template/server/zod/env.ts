@@ -4,10 +4,11 @@ import { z } from 'zod';
 export const appEnvVariablesSchema = z.object({
   VITE_NODE_ENV: z.string().default('production'),
 
-  VITE_APP_URL: z.string().url(),
-  VITE_PGREST_URL: z.string(),
+  VITE_PGREST_URL: z.url(),
 
   PLATFORM_URL: z.url(),
+  VITE_PLATFORM_URL: z.url(),
+
   ORGANIZATION_ID: z.string(),
   ORGANIZATION_SLUG: z.string(),
   ENVIRONMENT_ID: z.string(),

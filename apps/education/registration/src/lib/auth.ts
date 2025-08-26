@@ -9,7 +9,7 @@ import { createAuthClient } from 'better-auth/react';
 import { runTimeEnv } from './runtime-env.ts';
 
 export const authClient = createAuthClient({
-  baseURL: `${runTimeEnv.VITE_APP_URL}/api/auth`,
+  baseURL: `${runTimeEnv.VITE_PLATFORM_URL}/api/auth`,
   plugins: [emailOTPClient(), organizationClient(), jwt(), oidcClient()],
 });
 

@@ -121,6 +121,11 @@ export const route = factory
                   organization.slug,
                 ]),
               },
+              deployment: {
+                environment: {
+                  VITE_PLATFORM_URL: platformEnvVariables.VITE_APP_URL,
+                },
+              },
             },
           };
         }),

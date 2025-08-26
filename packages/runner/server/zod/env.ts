@@ -3,6 +3,7 @@ import { z } from 'zod';
 export const appEnvVariablesSchema = z.object({
   NODE_ENV: z.enum(['development', 'production']).default('development'),
   PLATFORM_URL: z.url(),
+  VITE_PLATFORM_URL: z.url(),
 
   // Environment variables
   ORGANIZATION_ID: z.string(),
