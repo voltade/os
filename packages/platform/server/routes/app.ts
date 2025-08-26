@@ -51,7 +51,7 @@ export const route = factory
     const { tx } = c.var;
     const { id, ...rest } = c.req.valid('json');
 
-    const existing = await tx
+    const [existing] = await tx
       .select()
       .from(appTable)
       .where(
@@ -62,7 +62,7 @@ export const route = factory
       )
       .limit(1);
 
-    if (existing.length === 0) {
+    if (!existing) {
       return c.json({ error: 'App not found' }, 404);
     }
 

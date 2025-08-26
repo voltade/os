@@ -1,5 +1,6 @@
 import { zValidator } from '@hono/zod-validator';
 import { and, eq } from 'drizzle-orm';
+import { bearerAuth } from 'hono/bearer-auth';
 import { z } from 'zod';
 
 import { appTable } from '#drizzle/app.ts';
@@ -9,6 +10,7 @@ import {
 } from '#drizzle/app_installation.ts';
 import { organization as organizationTable } from '#drizzle/auth.ts';
 import { environmentTable } from '#drizzle/environment.ts';
+import { platformEnvVariables } from '#server/env.ts';
 import { factory } from '#server/factory.ts';
 import { db } from '#server/lib/db.ts';
 import { auth } from '#server/middlewares/auth.ts';
@@ -75,6 +77,45 @@ export const route = factory
         )
         .returning();
 
+      const [existing] = await tx
+        .select()
+        .from(appInstallationTable)
+        .where(
+          and(
+            eq(appInstallationTable.app_id, updateObj.app_id),
+            eq(appInstallationTable.environment_id, updateObj.environment_id),
+            eq(appInstallationTable.organization_id, updateObj.organization_id),
+          ),
+        )
+        .innerJoin(appTable, eq(appInstallationTable.app_id, appTable.id))
+        .innerJoin(
+          organizationTable,
+          eq(appInstallationTable.organization_id, organizationTable.id),
+        )
+        .innerJoin(
+          environmentTable,
+          eq(appInstallationTable.environment_id, environmentTable.id),
+        );
+
+      if (!existing) {
+        return c.json({ error: 'App installation not found' }, 404);
+      }
+
+      const appUrl = new URL(c.env.VITE_APP_URL);
+
+      const res = await fetch(
+        `${appUrl.protocol}//${existing.organization.slug}-${existing.environment.slug}.${c.env.RUNNER_BASE_DOMAIN}/apps/update/${existing.app.slug}`,
+        {
+          method: 'PUT',
+          body: JSON.stringify({ buildId: updateObj.app_build_id }),
+          headers: {
+            Authorization: `Bearer ${c.env.RUNNER_SECRET_TOKEN}`,
+            'Content-Type': 'application/json',
+          },
+        },
+      );
+      console.log(res);
+      console.log(await res.json());
       return c.json(appInstallation);
     },
   )
@@ -91,18 +132,10 @@ export const route = factory
       const { organizationSlug, appSlug } = c.req.valid('query');
 
       //TODO: Optimise query to not over expose data
-      const appInstallation = await db
+      const [appInstallation] = await db
         .select()
         .from(appInstallationTable)
         .innerJoin(appTable, eq(appInstallationTable.app_id, appTable.id))
-        .innerJoin(
-          organizationTable,
-          eq(appInstallationTable.organization_id, organizationTable.id),
-        )
-        .innerJoin(
-          environmentTable,
-          eq(appInstallationTable.environment_id, environmentTable.id),
-        )
         .where(
           and(
             eq(organizationTable.slug, organizationSlug),
@@ -111,11 +144,57 @@ export const route = factory
             eq(appTable.is_public, true),
           ),
         )
+        .innerJoin(
+          organizationTable,
+          eq(appInstallationTable.organization_id, organizationTable.id),
+        )
+        .innerJoin(
+          environmentTable,
+          eq(appInstallationTable.environment_id, environmentTable.id),
+        )
         .limit(1);
 
-      if (!appInstallation[0]) return c.json(null);
-      const { organization, ...rest } = appInstallation[0];
+      if (!appInstallation) return c.json(null);
+      const { organization: _, ...rest } = appInstallation;
       return c.json(rest);
+    },
+  )
+  .get(
+    '/runner',
+    bearerAuth({
+      token: [platformEnvVariables.RUNNER_SECRET_TOKEN],
+    }),
+    zValidator(
+      'query',
+      z.object({
+        organizationSlug: z.string(),
+        environmentSlug: z.string(),
+      }),
+    ),
+    async (c) => {
+      const { organizationSlug, environmentSlug } = c.req.valid('query');
+
+      //TODO: Optimise query to not over expose data
+      const appInstallations = await db
+        .select()
+        .from(appInstallationTable)
+        .innerJoin(appTable, eq(appInstallationTable.app_id, appTable.id))
+        .innerJoin(
+          environmentTable,
+          eq(appInstallationTable.environment_id, environmentTable.id),
+        )
+        .innerJoin(
+          organizationTable,
+          eq(appInstallationTable.organization_id, organizationTable.id),
+        )
+        .where(
+          and(
+            eq(organizationTable.slug, organizationSlug),
+            eq(environmentTable.slug, environmentSlug),
+          ),
+        );
+
+      return c.json(appInstallations);
     },
   )
   .get(

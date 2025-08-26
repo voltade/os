@@ -13,12 +13,12 @@ export function PublicMicroApp({ appSlug, organizationSlug }: Props) {
     appSlug,
   );
 
-  const { app, app_installation, environment } = appInstallation ?? {};
+  const { app, environment } = appInstallation ?? {};
 
   const { containerRef, isLoading } = useMicroApp({
     enabled: !!environment?.slug && !!appInstallation,
     name: appSlug,
-    entry: `//${organizationSlug}-${environment?.slug}.127.0.0.1.nip.io/apps/${app?.slug}/${app_installation?.app_build_id}/`,
+    entry: `//${organizationSlug}-${environment?.slug}.127.0.0.1.nip.io/apps/${app?.slug}/`,
   });
 
   return (

@@ -59,3 +59,11 @@ export const createWorker = async (
   workerMap.set(`${appId}-${truncatedReleaseId}`, worker);
   return worker;
 };
+
+export const deleteWorker = (appId: string, truncatedReleaseId: string) => {
+  const worker = workerMap.get(`${appId}-${truncatedReleaseId}`);
+  if (worker) {
+    worker.terminate();
+    workerMap.delete(`${appId}-${truncatedReleaseId}`);
+  }
+};

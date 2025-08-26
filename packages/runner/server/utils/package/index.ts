@@ -8,11 +8,11 @@ export const downloadPackage = async (
   packageDetails: {
     orgId: string;
     appSlug: string;
-    releaseId: string;
+    buildId: string;
   },
   outputPath: string,
 ) => {
-  const s3Key = `builds/${packageDetails.orgId}/${packageDetails.appSlug}/${packageDetails.releaseId}/artifact.tar.gz`;
+  const s3Key = `builds/${packageDetails.orgId}/${packageDetails.appSlug}/${packageDetails.buildId}/artifact.tar.gz`;
   console.info(
     packageDetails.appSlug,
     'info',

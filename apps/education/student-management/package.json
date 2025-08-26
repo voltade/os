@@ -10,7 +10,7 @@
     "dev": "conc bun:dev:*",
     "start": "VITE_NODE_ENV=production bun server/index.ts",
     "build:server": "bun build --minify --sourcemap --target=bun --outdir=dist server/index.ts",
-    "build": "rm -rf dist && bun build:server && vite build",
+    "build": "rm -rf dist && bun build:server && vite build && bun run scripts/post-build.ts",
     "serve": "VITE_NODE_ENV=production bun run dist/index.js",
     "format": "biome format --write .",
     "db:generate": "echo 'DO NOT USE THIS COMMAND' && echo 'Use `bun run db:pull` instead.'",
