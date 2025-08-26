@@ -30,23 +30,23 @@ kubeVersion: ">=1.19.0"
 dependencies:
   - name: postgrest
     version: "*"
-    repository: file://../postgrest
+    repository: file:///mnt/voltade-os.git/charts/postgrest
     condition: postgrest.enabled
   - name: supabase-meta
     version: "*"
-    repository: file://../supabase-meta
+    repository: file:///mnt/voltade-os.git/charts/supabase-meta
     condition: supabase-meta.enabled
   - name: supabase-storage
     version: "*"
-    repository: file://../supabase-storage
+    repository: file:///mnt/voltade-os.git/charts/supabase-storage
     condition: supabase-storage.enabled
   - name: supabase-studio
     version: "*"
-    repository: file://../supabase-studio
+    repository: file:///mnt/voltade-os.git/charts/supabase-studio
     condition: supabase-studio.enabled
   - name: drizzle-gateway
     version: "*"
-    repository: file://../drizzle-gateway
+    repository: file:///mnt/voltade-os.git/charts/drizzle-gateway
     condition: drizzle-gateway.enabled
   - name: openfga
     # https://artifacthub.io/packages/helm/openfga/openfga
