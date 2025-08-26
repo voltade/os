@@ -79,12 +79,12 @@ export default function RegistrationForm() {
     const isEmailValid = await trigger('parentEmail');
     if (!isEmailValid) return;
 
-    await otpUtils.sendOtp(email);
+    await otpUtils.sendParentOtp(email);
     updateOtpStates({ parentOtpSent: true });
   };
 
   const handleVerifyParentOtp = async (email: string, otp: string) => {
-    const isValid = await otpUtils.verifyOtp(email, otp);
+    const isValid = await otpUtils.verifyParentOtp(email, otp);
     if (isValid) {
       updateOtpStates({ parentOtpVerified: true });
     }

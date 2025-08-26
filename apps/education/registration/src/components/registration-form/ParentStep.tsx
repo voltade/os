@@ -12,8 +12,10 @@ import {
   InputOTPGroup,
   InputOTPSlot,
 } from '@voltade/ui/input-otp.tsx';
+import { useEffect } from 'react';
 import { useFormContext } from 'react-hook-form';
 
+import { authClient } from '#src/lib/auth.ts';
 import type { RegistrationFormData } from './schema.ts';
 import type { OtpStates } from './types.ts';
 
@@ -28,8 +30,18 @@ export function ParentStep({
   sendParentOtp,
   verifyParentOtp,
 }: ParentStepProps) {
-  const { control, getValues } = useFormContext<RegistrationFormData>();
+  const { control, getValues, setValue } =
+    useFormContext<RegistrationFormData>();
   const { parentOtpSent, parentOtpVerified } = otpStates;
+  const { data: sessionData } = authClient.useSession();
+  const isUserLoggedIn = !!sessionData?.user;
+  const isParentVerified = parentOtpVerified || isUserLoggedIn;
+
+  useEffect(() => {
+    if (isUserLoggedIn && sessionData?.user?.email) {
+      setValue('parentEmail', sessionData.user.email);
+    }
+  }, [isUserLoggedIn, sessionData?.user?.email, setValue]);
 
   return (
     <div className="grid gap-4">
@@ -41,15 +53,21 @@ export function ParentStep({
             <FormLabel>Parent's Email</FormLabel>
             <div className="flex gap-2">
               <FormControl>
-                <Input type="email" placeholder="name@example.com" {...field} />
+                <Input
+                  type="email"
+                  placeholder="name@example.com"
+                  {...field}
+                  disabled={isUserLoggedIn}
+                  className={isUserLoggedIn ? 'opacity-50' : ''}
+                />
               </FormControl>
               <Button
                 type="button"
                 variant="outline"
                 onClick={() => field.value && sendParentOtp(field.value)}
-                disabled={!field.value}
+                disabled={!field.value || isUserLoggedIn}
               >
-                Send OTP
+                {isUserLoggedIn ? 'Authenticated' : 'Send OTP'}
               </Button>
             </div>
             <FormMessage />
@@ -57,7 +75,7 @@ export function ParentStep({
         )}
       />
 
-      {parentOtpSent && (
+      {parentOtpSent && !isUserLoggedIn && (
         <FormField
           control={control}
           name="parentOtp"
@@ -68,8 +86,10 @@ export function ParentStep({
                 <FormControl>
                   <InputOTP
                     maxLength={6}
-                    value={field.value || ''}
+                    value={isUserLoggedIn ? '000000' : field.value || ''}
                     onChange={field.onChange}
+                    disabled={isUserLoggedIn}
+                    className={isUserLoggedIn ? 'opacity-50' : ''}
                   >
                     <InputOTPGroup>
                       <InputOTPSlot index={0} />
@@ -91,13 +111,14 @@ export function ParentStep({
                     }
                   }}
                   disabled={
+                    isUserLoggedIn ||
                     !getValues('parentEmail') ||
                     !field.value ||
                     field.value.length !== 6 ||
-                    parentOtpVerified
+                    isParentVerified
                   }
                 >
-                  {parentOtpVerified ? 'Verified' : 'Verify'}
+                  {isParentVerified ? 'Verified' : 'Verify'}
                 </Button>
               </div>
               <FormMessage />
@@ -116,8 +137,8 @@ export function ParentStep({
               <Input
                 placeholder="Full name"
                 {...field}
-                disabled={!parentOtpVerified}
-                className={!parentOtpVerified ? 'opacity-50' : ''}
+                disabled={!isParentVerified}
+                className={!isParentVerified ? 'opacity-50' : ''}
               />
             </FormControl>
             <FormMessage />
@@ -135,8 +156,8 @@ export function ParentStep({
               <Input
                 placeholder="+65 9XXXXXXX"
                 {...field}
-                disabled={!parentOtpVerified}
-                className={!parentOtpVerified ? 'opacity-50' : ''}
+                disabled={!isParentVerified}
+                className={!isParentVerified ? 'opacity-50' : ''}
               />
             </FormControl>
             <FormMessage />

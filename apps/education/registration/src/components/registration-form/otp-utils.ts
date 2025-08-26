@@ -3,9 +3,29 @@ import { authClient } from '#src/lib/auth.ts';
 export const sendOtp = async (email: string): Promise<void> => {
   await authClient.emailOtp.sendVerificationOtp({
     email,
-    type: 'email-verification',
+    type: 'sign-in',
   });
   return Promise.resolve();
+};
+
+export const sendParentOtp = async (email: string): Promise<void> => {
+  await authClient.emailOtp.sendVerificationOtp({
+    email,
+    type: 'sign-in',
+  });
+  return Promise.resolve();
+};
+
+export const verifyParentOtp = async (
+  email: string,
+  otp: string,
+): Promise<boolean> => {
+  try {
+    await authClient.signIn.emailOtp({ email, otp });
+    return true;
+  } catch (e) {
+    return false;
+  }
 };
 
 export const verifyOtp = async (
