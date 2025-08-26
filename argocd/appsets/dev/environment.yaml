@@ -18,13 +18,13 @@ spec:
         requeueAfterSeconds: 15
   template:
     metadata:
-      name: "org-{{ .variables.slug }}"
+      name: "org-{{ .slug }}"
       labels:
-        organizationId: "{{ .variables.organizationId }}"
-        organizationSlug: "{{ .variables.organizationSlug }}"
-        environmentId: "{{ .variables.environmentId }}"
-        environmentSlug: "{{ .variables.environmentSlug }}"
-        isProduction: "{{ .variables.isProduction }}"
+        organizationId: "{{ .organizationId }}"
+        organizationSlug: "{{ .organizationSlug }}"
+        environmentId: "{{ .environmentId }}"
+        environmentSlug: "{{ .environmentSlug }}"
+        isProduction: "{{ .isProduction }}"
     spec:
       project: default
       source:
@@ -34,7 +34,7 @@ spec:
         targetRevision: HEAD
         helm:
           values: |
-            {{ .values | toYaml }}
+            {{ . | toYaml }}
       syncPolicy:
         automated:
           prune: true
@@ -45,4 +45,4 @@ spec:
           - ApplyOutOfSyncOnly=true
       destination:
         server: https://kubernetes.default.svc
-        namespace: "org-{{ .variables.id }}"
+        namespace: "org-{{ .id }}"

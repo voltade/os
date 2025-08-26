@@ -60,6 +60,12 @@ service:
 ingress:
   enabled: false
 
+httproute:
+  enabled: false
+  gatewayName: ""
+  gatewayNamespace: ""
+  hostnames: []
+
 resources:
   {}
   # We usually recommend not to specify default resources and to leave this as a conscious
@@ -72,6 +78,16 @@ resources:
   # requests:
   #   cpu: 100m
   #   memory: 128Mi
+
+# This is to setup the liveness and readiness probes more information can be found here: https://kubernetes.io/docs/tasks/configure-pod-container/configure-liveness-readiness-startup-probes/
+livenessProbe:
+  httpGet:
+    path: /live
+    port: http-admin
+readinessProbe:
+  httpGet:
+    path: /ready
+    port: http-admin
 
 # This section is for setting up autoscaling more information can be found here: https://kubernetes.io/docs/concepts/workloads/autoscaling/
 autoscaling:
@@ -101,4 +117,5 @@ tolerations: []
 affinity: {}
 
 # Environment variables for the postgrest container
-environment: {}
+environment:
+  PGRST_ADMIN_SERVER_PORT: "3001"

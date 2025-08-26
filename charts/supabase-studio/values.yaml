@@ -7,7 +7,7 @@ replicaCount: 1
 
 # This sets the container image more information can be found here: https://kubernetes.io/docs/concepts/containers/images/
 image:
-  repository: supabase/studio
+  repository: ghcr.io/supabase/studio
   # This sets the pull policy for images.
   pullPolicy: IfNotPresent
 
@@ -60,6 +60,12 @@ service:
 ingress:
   enabled: false
 
+httproute:
+  enabled: false
+  gatewayName: ""
+  gatewayNamespace: ""
+  hostnames: []
+
 environment: {}
 
 resources:
@@ -78,8 +84,9 @@ resources:
 # This is to setup the liveness and readiness probes more information can be found here: https://kubernetes.io/docs/tasks/configure-pod-container/configure-liveness-readiness-startup-probes/
 livenessProbe:
   httpGet:
-    path: /
-    port: http
+    path: /api/platform/profile
+    port: 3000
+  initialDelaySeconds: 30
 readinessProbe:
   httpGet:
     path: /

@@ -1,23 +1,13 @@
-# Default values for platform.
+# Default values for runner.
 # This is a YAML-formatted file.
 # Declare variables to be passed into your templates.
-
-secret:
-  enabled: true
-  clusterAdmin:
-    username: &cluster_admin_username app
-    password: &cluster_admin_password password
-  jwt:
-    secret: super-secret-jwt-token-with-at-least-32-characters-long
-    service_key: &service_key eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsImlhdCI6MTc1MzE3NzYyMSwiZXhwIjoyMDY4NTM3NjIxLCJhdWQiOiJhdXRoZW50aWNhdGVkIiwicm9sZSI6InNlcnZpY2Vfcm9sZSJ9.1fOo-4HVWxITiSvS1hYa5Hnz3UTYLVyWhsYCh_BlUmE
-    anon_key: &anon_key eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsImlhdCI6MTc1MzE3NzYyMSwiZXhwIjoyMDY4NTM3NjIxLCJhdWQiOiJhdXRoZW50aWNhdGVkIiwicm9sZSI6ImFub24ifQ.ET6EM66WagMXqibKlMJPF0tsXtKatIpTgA8R2S6sSOo
 
 # This will set the replicaset count more information can be found here: https://kubernetes.io/docs/concepts/workloads/controllers/replicaset/
 replicaCount: 1
 
 # This sets the container image more information can be found here: https://kubernetes.io/docs/concepts/containers/images/
 image:
-  repository: nginx
+  repository: ghcr.io/voltade/runner
   # This sets the pull policy for images.
   pullPolicy: IfNotPresent
   # Overrides the image tag whose default is the chart appVersion.
@@ -48,12 +38,10 @@ podAnnotations: {}
 # For more information checkout: https://kubernetes.io/docs/concepts/overview/working-with-objects/labels/
 podLabels: {}
 
-podSecurityContext:
-  {}
+podSecurityContext: {}
   # fsGroup: 2000
 
-securityContext:
-  {}
+securityContext: {}
   # capabilities:
   #   drop:
   #   - ALL
@@ -66,10 +54,19 @@ service:
   # This sets the service type more information can be found here: https://kubernetes.io/docs/concepts/services-networking/service/#publishing-services-service-types
   type: ClusterIP
   # This sets the ports more information can be found here: https://kubernetes.io/docs/concepts/services-networking/service/#field-spec-ports
-  port: 80
+  port: 3001
 
-resources:
-  {}
+# This block is for setting up the ingress for more information can be found here: https://kubernetes.io/docs/concepts/services-networking/ingress/
+ingress:
+  enabled: false
+
+httproute:
+  enabled: false
+  gatewayName: ""
+  gatewayNamespace: ""
+  hostnames: []
+
+resources: {}
   # We usually recommend not to specify default resources and to leave this as a conscious
   # choice for the user. This also increases chances charts run on environments with little
   # resources, such as Minikube. If you do want to specify resources, uncomment the following
@@ -117,3 +114,5 @@ nodeSelector: {}
 tolerations: []
 
 affinity: {}
+
+environment: {}

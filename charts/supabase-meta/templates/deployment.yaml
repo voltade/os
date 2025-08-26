@@ -4,9 +4,6 @@ metadata:
   name: {{ include "supabase-meta.fullname" . }}
   labels:
     {{- include "supabase-meta.labels" . | nindent 4 }}
-  annotations:
-    argocd.argoproj.io/sync-options: SkipDryRunOnMissingResource=true
-    argocd.argoproj.io/sync-wave: "1"
 spec:
   {{- if not .Values.autoscaling.enabled }}
   replicas: {{ .Values.replicaCount }}

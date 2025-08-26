@@ -4,9 +4,6 @@ metadata:
   name: {{ include "postgrest.fullname" . }}
   labels:
     {{- include "postgrest.labels" . | nindent 4 }}
-  annotations:
-    argocd.argoproj.io/sync-options: SkipDryRunOnMissingResource=true
-    argocd.argoproj.io/sync-wave: "1"
 spec:
   {{- if not .Values.autoscaling.enabled }}
   replicas: {{ .Values.replicaCount }}
@@ -69,12 +66,11 @@ spec:
             - name: http
               containerPort: {{ .Values.service.port }}
               protocol: TCP
+            - name: http-admin
+              containerPort: {{ .Values.environment.PGRST_ADMIN_SERVER_PORT | int }}
+              protocol: TCP
           {{- if .Values.environment }}
           env:
-            - name: PGRST_JWT_SECRET
-              value: {{ .Values.global.publicKey | quote }}
-            - name: PGRST_JWT_AUD
-              value: {{ .Values.global.organizationSlug | quote }}
             {{- range $key, $value := .Values.environment }}
             {{- if kindIs "map" $value }}
             - name: {{ $key }}

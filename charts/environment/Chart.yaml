@@ -28,6 +28,13 @@ kubeVersion: ">=1.19.0"
 
 # Dependencies on individual service charts
 dependencies:
+  - name: runner
+    version: "*"
+    repository: file:///mnt/voltade-os.git/charts/runner
+  - name: openfga
+    # https://artifacthub.io/packages/helm/openfga/openfga
+    version: 0.2.42
+    repository: https://openfga.github.io/helm-charts
   - name: postgrest
     version: "*"
     repository: file:///mnt/voltade-os.git/charts/postgrest
@@ -48,8 +55,3 @@ dependencies:
     version: "*"
     repository: file:///mnt/voltade-os.git/charts/drizzle-gateway
     condition: drizzle-gateway.enabled
-  - name: openfga
-    # https://artifacthub.io/packages/helm/openfga/openfga
-    version: 0.2.39
-    repository: https://openfga.github.io/helm-charts
-    condition: openfga.enabled

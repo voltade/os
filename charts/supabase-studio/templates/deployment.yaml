@@ -4,9 +4,6 @@ metadata:
   name: {{ include "supabase-studio.fullname" . }}
   labels:
     {{- include "supabase-studio.labels" . | nindent 4 }}
-  annotations:
-    argocd.argoproj.io/sync-options: SkipDryRunOnMissingResource=true
-    argocd.argoproj.io/sync-wave: "1"
 spec:
   {{- if not .Values.autoscaling.enabled }}
   replicas: {{ .Values.replicaCount }}
@@ -49,20 +46,6 @@ spec:
               protocol: TCP
           {{- if .Values.environment }}
           env:
-            - name: SUPABASE_PUBLIC_URL
-              value: http://supabase.{{ .Values.global.slug }}.{{ .Values.global.baseDomain }}
-            - name: NEXT_PUBLIC_STUDIO_URL
-              value: http://supabase.{{ .Values.global.slug }}.{{ .Values.global.baseDomain }}
-            - name: SUPABASE_URL
-              value: http://supabase.{{ .Values.global.slug }}.{{ .Values.global.baseDomain }}
-            - name: SUPABASE_ANON_KEY
-              value: {{ .Values.global.anonKey | quote }}
-            - name: SUPABASE_SERVICE_KEY
-              value: {{ .Values.global.serviceKey | quote }}
-            - name: DEFAULT_ORGANIZATION_NAME
-              value: Voltade OS
-            - name: DEFAULT_PROJECT_NAME
-              value: {{ .Values.global.organizationName | quote }}
             {{- range $key, $value := .Values.environment }}
             {{- if kindIs "map" $value }}
             - name: {{ $key }}

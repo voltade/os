@@ -7,10 +7,12 @@ metadata:
     {{- include "supabase-meta.labels" . | nindent 4 }}
 spec:
   parentRefs:
-    - name: {{ .Values.global.gatewayName }}
-      namespace: {{ .Values.global.gatewayNamespace }}
+    - name: {{ .Values.httproute.gatewayName }}
+      namespace: {{ .Values.httproute.gatewayNamespace }}
   hostnames:
-    - "{{ include "supabase-meta.fullname" . }}.{{ .Values.global.slug }}.{{ .Values.global.baseDomain }}"
+    {{- range .Values.httproute.hostnames }}
+    - "{{ . }}"
+    {{- end }}
   rules:
     - backendRefs:
         - name: {{ include "supabase-meta.fullname" . }}

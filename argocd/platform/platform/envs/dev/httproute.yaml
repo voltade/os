@@ -1,7 +1,7 @@
 apiVersion: gateway.networking.k8s.io/v1
 kind: HTTPRoute
 metadata:
-  name: socat-platform
+  name: platform
 spec:
   parentRefs:
     - name: cilium-gateway
@@ -10,7 +10,7 @@ spec:
     - 127.0.0.1.nip.io
   rules:
     - backendRefs:
-        - name: socat
+        - name: platform
           port: 5173
       matches:
         - path:
@@ -21,7 +21,7 @@ spec:
 apiVersion: gateway.networking.k8s.io/v1
 kind: HTTPRoute
 metadata:
-  name: socat-app-template
+  name: app-template
 spec:
   parentRefs:
     - name: cilium-gateway
@@ -30,7 +30,7 @@ spec:
     - app-template.127.0.0.1.nip.io
   rules:
     - backendRefs:
-        - name: socat
+        - name: platform
           port: 51733
       matches:
         - path:

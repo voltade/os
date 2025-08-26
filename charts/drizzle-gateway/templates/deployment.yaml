@@ -4,8 +4,6 @@ metadata:
   name: {{ include "drizzle-gateway.fullname" . }}
   labels:
     {{- include "drizzle-gateway.labels" . | nindent 4 }}
-  annotations:
-    argocd.argoproj.io/sync-wave: "2"
 spec:
   {{- if not .Values.autoscaling.enabled }}
   replicas: {{ .Values.replicaCount }}
@@ -80,7 +78,7 @@ spec:
       volumes:
         - name: store-secret
           secret:
-            secretName: {{ include "drizzle-gateway.fullname" . }}-store
+            secretName: {{ include "drizzle-gateway.fullname" . }}
       {{- with .Values.volumes }}
         {{- toYaml . | nindent 8 }}
       {{- end }}

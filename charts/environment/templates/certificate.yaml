@@ -15,4 +15,4 @@ spec:
   usages:
     - server auth
   dnsNames:
-    - {{ .Values.global.slug }}.{{ .Values.global.baseDomain }}
+    - "{{ .Values.slug }}.{{ .Values.baseDomain }}"

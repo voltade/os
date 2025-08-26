@@ -2,9 +2,9 @@
 apiVersion: gateway.networking.k8s.io/v1
 kind: HTTPRoute
 metadata:
-  name: {{ include "supabase-studio.fullname" . }}
+  name: {{ include "runner.fullname" . }}
   labels:
-    {{- include "supabase-studio.labels" . | nindent 4 }}
+    {{- include "runner.labels" . | nindent 4 }}
 spec:
   parentRefs:
     - name: {{ .Values.httproute.gatewayName }}
@@ -15,7 +15,7 @@ spec:
     {{- end }}
   rules:
     - backendRefs:
-        - name: {{ include "supabase-studio.fullname" . }}
+        - name: {{ include "runner.fullname" . }}
           port: {{ .Values.service.port }}
       matches:
         - path:
