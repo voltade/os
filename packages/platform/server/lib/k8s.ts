@@ -20,14 +20,3 @@ if (process.env.NODE_ENV === 'production') {
     token: token.trim(),
   });
 }
-
-const k8sClient = kc.makeApiClient(k8s.CustomObjectsApi);
-const cnpgCluster = await k8sClient.getNamespacedCustomObjectStatus({
-  group: 'postgresql.cnpg.io',
-  version: 'v1',
-  plural: 'clusters',
-  namespace: 'org-tfcd169-t3ru0wqv',
-  name: 'cnpg-cluster',
-});
-
-console.log('cnpgCluster:', cnpgCluster);
