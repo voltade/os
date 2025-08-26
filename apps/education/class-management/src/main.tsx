@@ -10,7 +10,7 @@ import { Toaster } from '@voltade/ui/sonner.tsx';
 import { StrictMode } from 'react';
 import ReactDOM from 'react-dom/client';
 
-import type { RuntimeEnv } from './lib/get-runtime-env.ts';
+import type { RunTimeEnv } from './lib/runtime-env.ts';
 import reportWebVitals from './reportWebVitals.ts';
 // Import the generated route tree
 import { routeTree } from './routeTree.gen.ts';
@@ -42,7 +42,7 @@ declare global {
     __POWERED_BY_QIANKUN__?: boolean;
     __BASE_URL__?: string;
     __env: {
-      [key: string]: RuntimeEnv;
+      [key: string]: RunTimeEnv;
     };
   }
 }
