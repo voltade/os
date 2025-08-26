@@ -1,23 +1,19 @@
 apiVersion: kustomize.config.k8s.io/v1beta1
 kind: Kustomization
 
+resources:
+  - httproute-console.yaml
+  - httproute-api.yaml
+
 helmCharts:
   - repo: oci://registry-1.docker.io/bitnamicharts
     name: minio
     # https://artifacthub.io/packages/helm/bitnami/minio
-    version: 17.0.11
+    version: 17.0.21
     releaseName: minio
     namespace: minio
-
-resources:
-  - httproute.yaml
-  - httproute-api.yaml
-
-patches:
-  - target:
-      kind: Secret
-      name: minio
-    patch: |-
-      - op: add
-        path: /metadata/annotations/reflector.v1.k8s.emberstack.com~1reflection-allowed
-        value: "true"
+    valuesInline:
+      auth:
+        rootUser: username
+        rootPassword: password
+      defaultBuckets: voltade-os
