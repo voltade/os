@@ -1,0 +1,21 @@
+dependencies:
+  - name: postgrest
+    repository: file://../postgrest
+    version: 0.1.7
+  - name: supabase-meta
+    repository: file://../supabase-meta
+    version: 0.1.7
+  - name: supabase-storage
+    repository: file://../supabase-storage
+    version: 0.1.9
+  - name: supabase-studio
+    repository: file://../supabase-studio
+    version: 0.1.12
+  - name: drizzle-gateway
+    repository: file://../drizzle-gateway
+    version: 0.1.7
+  - name: openfga
+    repository: https://openfga.github.io/helm-charts
+    version: 0.2.39
+digest: sha256:4975870b96b7b8c4da70463ef4bd5a08cae1c7f49db8d44a80b62c712ea84f47
+generated: "2025-08-26T10:55:55.29238+08:00"
