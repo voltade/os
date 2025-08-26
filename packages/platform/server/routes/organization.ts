@@ -1,12 +1,15 @@
 import { zValidator } from '@hono/zod-validator';
 import { and, eq } from 'drizzle-orm';
+import { bearerAuth } from 'hono/bearer-auth';
 import { z } from 'zod';
 
 import {
   member as memberTable,
   organization as organizationTable,
 } from '#drizzle/auth.ts';
+import { platformEnvVariables } from '#server/env.ts';
 import { factory } from '#server/factory.ts';
+import { auth as authClient } from '#server/lib/auth.ts';
 import { db } from '#server/lib/db.ts';
 import { auth } from '#server/middlewares/auth.ts';
 
@@ -49,6 +52,31 @@ export const route = factory
 
     return c.json(memberships.map((m) => m.organization));
   })
+  .post(
+    '/guest',
+    zValidator(
+      'json',
+      z.object({
+        organizationId: z.string(),
+        userId: z.string(),
+      }),
+    ),
+    bearerAuth({
+      token: [platformEnvVariables.RUNNER_SECRET_TOKEN],
+    }),
+    async (c) => {
+      await authClient.api.addMember({
+        body: {
+          userId: c.req.valid('json').userId,
+          //@ts-expect-error TODO: will be fixed with openFGA
+          role: ['guest'] as const,
+          organizationId: c.req.valid('json').organizationId,
+        },
+      });
+
+      return c.json({ success: true });
+    },
+  )
   .put(
     '/',
     zValidator(

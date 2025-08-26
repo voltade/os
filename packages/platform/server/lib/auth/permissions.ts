@@ -24,9 +24,13 @@ const developer = ac.newRole({
   ...adminAc.statements,
 });
 
+const guest = ac.newRole({
+  ...memberAc.statements,
+});
+
 const member = ac.newRole({
   ...memberAc.statements,
 });
 
-export const roles = { owner, admin, developer, member };
+export const roles = { owner, admin, developer, member, guest };
 export const statements = statement;
