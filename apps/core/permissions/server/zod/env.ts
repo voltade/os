@@ -13,7 +13,4 @@ export const appEnvVariablesSchema = z.object({
   DB_NAME: z.string(),
 });
 
-// Validate and export the environment
-export const env = appEnvVariablesSchema.parse(process.env);
-
 export type AppEnvVariables = z.infer<typeof appEnvVariablesSchema>;
