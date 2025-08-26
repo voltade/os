@@ -5,6 +5,5 @@ resources:
   - ../../base
   - ./deployment.yaml
   - ./httproute.yaml
-  - ./s3-secrets.yaml
+  - ./secret-token.yaml
   - ./service.yaml
-  - ./shared-secrets.yaml
