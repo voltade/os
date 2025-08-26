@@ -24,9 +24,9 @@ function RouteComponent() {
   };
 
   const healthBadgeColor =
-    environment?.cnpgHealth.readyInstances === environment?.cnpgHealth.instances
+    environment?.cnpgStatus.readyInstances === environment?.cnpgStatus.instances
       ? 'bg-emerald-500'
-      : environment?.cnpgHealth.readyInstances === 0
+      : environment?.cnpgStatus.readyInstances === 0
         ? 'bg-amber-500'
         : 'bg-red-500';
 
@@ -87,15 +87,15 @@ function RouteComponent() {
               className={`inline-block h-2 w-2 rounded-full ${healthBadgeColor}`}
             />
             <span className="text-sm capitalize">
-              {environment.cnpgHealth.readyInstances ===
-              environment.cnpgHealth.instances
+              {environment.cnpgStatus.readyInstances ===
+              environment.cnpgStatus.instances
                 ? 'healthy'
                 : 'degraded'}
             </span>
           </div>
           <div className="mt-2 text-sm text-muted-foreground">
-            {environment.cnpgHealth.readyInstances} of{' '}
-            {environment.cnpgHealth.instances} instances are ready
+            {environment.cnpgStatus.readyInstances} of{' '}
+            {environment.cnpgStatus.instances} instances are ready
           </div>
         </div>
 

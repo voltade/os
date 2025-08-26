@@ -12,13 +12,13 @@ import {
 import { environmentTable } from '#drizzle/environment.ts';
 import { platformEnvVariables } from '#server/env.ts';
 import { factory } from '#server/factory.ts';
+import { getCnpgStatus } from '#server/lib/cnpg.ts';
 import { db } from '#server/lib/db.ts';
 import { signJwt } from '#server/lib/jwk.ts';
-import { checkCnpgHealth } from '#server/lib/kubernetes/cnpg.ts';
 import { auth } from '#server/middlewares/auth.ts';
 import { createEnvironmentSchema } from '#shared/schemas/environment.ts';
 
-type Common = {
+type Values = Record<string, unknown> & {
   id: string;
   slug: string;
   organizationId: string;
@@ -27,24 +27,10 @@ type Common = {
   environmentId: string;
   environmentSlug: string;
   environmentName: string | null;
-};
-
-type Variables = Common & {
   isProduction: boolean;
 };
 
-type Values = Record<string, unknown> & {
-  global: Common & {
-    publicKey: string;
-    anonKey: string;
-    serviceKey: string;
-  };
-};
-
-interface Parameters {
-  variables: Variables;
-  values: Values;
-}
+const baseDomain = new URL(platformEnvVariables.VITE_APP_URL).hostname;
 
 export const route = factory
   .createApp()
@@ -57,6 +43,14 @@ export const route = factory
       token: platformEnvVariables.ARGOCD_ENVIRONMENT_GENERATOR_TOKEN,
     }),
     async (c) => {
+      const host = c.req.header('host');
+      if (
+        import.meta.env.MODE === 'production' &&
+        host !== 'platform.platform.svc.cluster.local'
+      ) {
+        return c.json({ error: 'Unauthorized' }, 401);
+      }
+
       const results = await db
         .select()
         .from(environmentTable)
@@ -93,9 +87,16 @@ export const route = factory
       ) as jose.JWK_RSA_Private;
       const privateKey = await jose.importJWK(privateWebKey, alg);
 
-      const parameters: Parameters[] = await Promise.all(
+      const parameters: Values[] = await Promise.all(
         results.map(async ({ organization, environment }) => {
-          const common: Common = {
+          const anonKey = await signJwt(alg, privateKey, 'anon', [
+            organization.slug,
+          ]);
+          const serviceKey = await signJwt(alg, privateKey, 'service_role', [
+            organization.slug,
+          ]);
+          const baseHostname = `${organization.slug}-${environment.slug}.${baseDomain}`;
+          const values = {
             id: `${organization.id}-${environment.id}`,
             slug: `${organization.slug}-${environment.slug}`,
             organizationId: organization.id,
@@ -104,30 +105,68 @@ export const route = factory
             environmentId: environment.id,
             environmentSlug: environment.slug,
             environmentName: environment.name,
-          };
-          return {
-            variables: {
-              ...common,
-              isProduction: environment.is_production,
+            isProduction: environment.is_production,
+            baseDomain,
+            jwt: {
+              publicKey,
+              anonKey,
+              serviceKey,
             },
-            values: {
-              global: {
-                ...common,
-                publicKey,
-                anonKey: await signJwt(alg, privateKey, 'anon', [
-                  organization.slug,
-                ]),
-                serviceKey: await signJwt(alg, privateKey, 'service_role', [
-                  organization.slug,
-                ]),
+            runner: {
+              httproute: {
+                hostnames: [`runner.${baseHostname}`],
               },
-              deployment: {
-                environment: {
-                  VITE_PLATFORM_URL: platformEnvVariables.VITE_APP_URL,
-                },
+              environment: {
+                IS_PRODUCTION: environment.is_production.toString(),
+                VITE_PLATFORM_URL: platformEnvVariables.VITE_APP_URL,
+                ORGANIZATION_ID: organization.id,
+                ORGANIZATION_SLUG: organization.slug,
+                ENVIRONMENT_ID: environment.id,
+                ENVIRONMENT_SLUG: environment.slug,
               },
             },
+            postgrest: {
+              httproute: {
+                hostnames: [`runner.${baseHostname}`],
+              },
+              environment: {
+                PGRST_JWT_SECRET: publicKey,
+                PGRST_JWT_AUD: organization.slug,
+              },
+            },
+            'supabase-meta': {
+              httproute: {
+                hostnames: [`supabase-meta.${baseHostname}`],
+              },
+            },
+            'supabase-storage': {
+              httproute: {
+                hostnames: [`supabase-storage.${baseHostname}`],
+              },
+              environment: {
+                PGRST_JWT_SECRET: publicKey,
+              },
+            },
+            'supabase-studio': {
+              httproute: {
+                hostnames: [`supabase.${baseHostname}`],
+              },
+              environment: {
+                SUPABASE_PUBLIC_URL: `http://supabase.${baseHostname}`,
+                NEXT_PUBLIC_STUDIO_URL: `http://supabase.${baseHostname}`,
+                SUPABASE_URL: `http://supabase.${baseHostname}`,
+                SUPABASE_ANON_KEY: anonKey,
+                SUPABASE_SERVICE_KEY: serviceKey,
+                DEFAULT_PROJECT_NAME: organization.name,
+              },
+            },
+            'drizzle-gateway': {
+              httproute: {
+                hostnames: [`drizzle.${baseHostname}`],
+              },
+            },
           };
+          return values;
         }),
       );
 
@@ -156,42 +195,13 @@ export const route = factory
     if (!environment) {
       return c.json({ error: 'Environment not found' }, 404);
     }
-    const cnpgHealth = await checkCnpgHealth(
+    const cnpgStatus = await getCnpgStatus(
       `org-${environment.organization_id}-${environment.id}`,
     );
     return c.json({
       ...environment,
-      cnpgHealth,
+      cnpgStatus,
     });
-  })
-  .delete('/:environmentSlug', async (c) => {
-    const { activeOrganizationId } = c.get('session');
-    const { environmentSlug } = c.req.param();
-    const [environment] = await db
-      .delete(environmentTable)
-      .where(
-        and(
-          eq(environmentTable.slug, environmentSlug),
-          eq(environmentTable.organization_id, activeOrganizationId),
-        ),
-      )
-      .returning();
-    if (!environment) {
-      return c.json({ error: 'Environment not found' }, 404);
-    }
-    await fetch(`${platformEnvVariables.DRIZZLE_GATEWAY_URL}`, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({
-        type: 'slots:delete',
-        data: {
-          id: `org-${environment.organization_id}-${environment.id}`,
-        },
-      }),
-    });
-    return c.json({ success: true });
   })
   .get(
     '/',

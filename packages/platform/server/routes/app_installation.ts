@@ -100,18 +100,18 @@ export const route = factory
       if (!existing) {
         return c.json({ error: 'App installation not found' }, 404);
       }
-
-      const appUrl = new URL(c.env.VITE_APP_URL);
+      const { organization, environment } = existing;
+      const runnerBaseUrl = `http://runner.org-${organization.id}-${environment.id}.svc.cluster.local`;
 
       const res = await fetch(
-        `${appUrl.protocol}//${existing.organization.slug}-${existing.environment.slug}.${c.env.RUNNER_BASE_DOMAIN}/apps/update/${existing.app.slug}`,
+        `${runnerBaseUrl}/apps/update/${existing.app.slug}`,
         {
           method: 'PUT',
-          body: JSON.stringify({ buildId: updateObj.app_build_id }),
           headers: {
             Authorization: `Bearer ${c.env.RUNNER_SECRET_TOKEN}`,
             'Content-Type': 'application/json',
           },
+          body: JSON.stringify({ buildId: updateObj.app_build_id }),
         },
       );
       console.log(res);
