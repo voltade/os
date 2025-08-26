@@ -5,5 +5,9 @@ export const Route = createRootRouteWithContext()({
 });
 
 function RouteComponent() {
-  return <Outlet />;
+  return (
+    <div className="mx-auto max-w-7xl p-4 lg:px-8">
+      <Outlet />
+    </div>
+  );
 }
