@@ -1,8 +1,8 @@
 import { createClient } from '@voltade/core-schema/pgRest';
 
-import { getRuntimeEnv } from './get-runtime-env.ts';
+import { runTimeEnv } from './runtime-env.ts';
 
-const pgRestUrl = getRuntimeEnv().VITE_PGREST_URL;
+const pgRestUrl = runTimeEnv.VITE_PGREST_URL;
 const jwtToken = localStorage.getItem('voltade-jwt') || '';
 
 if (!pgRestUrl) {
