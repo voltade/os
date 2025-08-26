@@ -96,7 +96,7 @@ export default function RegistrationForm() {
     if (!isEmailValid) return;
 
     await otpUtils.sendOtp(email);
-    updateOtpStates({ studentOtpSent: true });
+    updateOtpStates({ studentOtpSent: true, studentOtpRequired: true });
   };
 
   const handleVerifyStudentOtp = async (email: string, otp: string) => {
@@ -145,6 +145,21 @@ export default function RegistrationForm() {
 
   const nextStep = async () => {
     if (currentStep < 3) {
+      // On step 2, if a student email is present and OTP hasn't been sent yet,
+      // send the OTP and stay on the same step to allow entering the OTP.
+      if (
+        currentStep === 2 &&
+        studentEmail &&
+        studentEmail.trim() &&
+        !otpStates.studentOtpSent
+      ) {
+        const isEmailValid = await trigger('studentEmail');
+        if (isEmailValid) {
+          await handleSendStudentOtp(studentEmail);
+        }
+        return;
+      }
+
       const isStepValid = await validateStep(currentStep);
       if (isStepValid) {
         setCurrentStep((currentStep + 1) as Step);
@@ -188,7 +203,6 @@ export default function RegistrationForm() {
           <StudentStep
             otpStates={otpStates}
             handleStudentEmailChange={handleStudentEmailChange}
-            sendStudentOtp={handleSendStudentOtp}
             verifyStudentOtp={handleVerifyStudentOtp}
           />
         );

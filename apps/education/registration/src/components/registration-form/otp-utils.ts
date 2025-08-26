@@ -28,6 +28,14 @@ export const verifyParentOtp = async (
   }
 };
 
+export const sendChildOtp = async (email: string): Promise<void> => {
+  await authClient.emailOtp.sendVerificationOtp({
+    email,
+    type: 'sign-in',
+  });
+  return Promise.resolve();
+};
+
 export const verifyOtp = async (
   email: string,
   otp: string,

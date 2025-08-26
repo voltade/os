@@ -20,14 +20,12 @@ import type { OtpStates } from './types.ts';
 interface StudentStepProps {
   otpStates: OtpStates;
   handleStudentEmailChange: (email: string) => void;
-  sendStudentOtp: (email: string) => Promise<void>;
   verifyStudentOtp: (email: string, otp: string) => Promise<void>;
 }
 
 export function StudentStep({
   otpStates,
   handleStudentEmailChange,
-  sendStudentOtp,
   verifyStudentOtp,
 }: StudentStepProps) {
   const { control, getValues } = useFormContext<RegistrationFormData>();
@@ -67,14 +65,6 @@ export function StudentStep({
                   }}
                 />
               </FormControl>
-              <Button
-                type="button"
-                variant="outline"
-                onClick={() => field.value && sendStudentOtp(field.value)}
-                disabled={!field.value}
-              >
-                Send OTP
-              </Button>
             </div>
             <FormMessage />
           </FormItem>
