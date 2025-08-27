@@ -211,8 +211,12 @@ export const route = factory
     jwt(),
     async (c) => {
       const { organizationSlug, environmentSlug } = c.req.valid('query');
-      const { role, aud } = c.get('jwtPayload');
-      if (role !== 'runner' || !aud?.includes(organizationSlug)) {
+      const jwtPayload = c.get('jwtPayload');
+      if (
+        jwtPayload.role !== 'runner' ||
+        jwtPayload.orgSlug !== organizationSlug ||
+        jwtPayload.envSlug !== environmentSlug
+      ) {
         return c.json({ error: 'Unauthorized' }, 401);
       }
 
@@ -320,8 +324,10 @@ async function updateAppInstallation({
   }
   const runnerKey = await signJwt({
     role: 'runner',
-    sub: `${orgId}:${envId}`,
-    aud: [orgSlug],
+    orgId,
+    orgSlug,
+    envId,
+    envSlug,
   });
   const res = await fetch(`${runnerBaseUrl}/apps/update/${appSlug}`, {
     method: 'PUT',

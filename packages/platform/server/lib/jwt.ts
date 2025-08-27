@@ -54,18 +54,22 @@ export type JwtPayload =
       role: 'anon' | 'service_role';
       aud: string[]; // [organizationSlug]
     })
-  | {
+  | (jose.JWTPayload & {
       role: 'runner';
-      sub: string; // `${organizationId}:${environmentId}`
-      aud: string[]; // [organizationSlug]
-    };
+      orgId: string;
+      orgSlug: string;
+      envId: string;
+      envSlug: string;
+    });
 
-export async function signJwt({ role, aud }: JwtPayload) {
+export async function signJwt({ role, aud, ...payload }: JwtPayload) {
   const { privateKey, alg } = await getKeyPair();
-  return new jose.SignJWT({ role })
+  const signer = new jose.SignJWT({ role, ...payload })
     .setProtectedHeader({ alg })
     .setIssuedAt(new Date('2025-08-01'))
-    .setExpirationTime(new Date('2035-08-01'))
-    .setAudience(aud)
-    .sign(privateKey);
+    .setExpirationTime(new Date('2035-08-01'));
+  if (aud) {
+    signer.setAudience(aud);
+  }
+  return signer.sign(privateKey);
 }

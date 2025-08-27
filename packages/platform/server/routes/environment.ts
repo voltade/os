@@ -62,8 +62,10 @@ export const route = factory
           });
           const runnerKey = await signJwt({
             role: 'runner',
-            sub: `${organization.id}:${environment.id}`,
-            aud: [organization.slug],
+            orgId: organization.id,
+            orgSlug: organization.slug,
+            envId: environment.id,
+            envSlug: environment.slug,
           });
           const serviceKey = await signJwt({
             role: 'service_role',

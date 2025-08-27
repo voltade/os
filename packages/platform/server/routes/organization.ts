@@ -63,8 +63,8 @@ export const route = factory
     jwt(),
     async (c) => {
       const { userId, organizationId } = c.req.valid('json');
-      const { role, sub } = c.get('jwtPayload');
-      if (role !== 'runner' || sub.split(':')[0] !== organizationId) {
+      const jwtPayload = c.get('jwtPayload');
+      if (jwtPayload.role !== 'runner' || jwtPayload.orgId !== organizationId) {
         return c.json({ error: 'Unauthorized' }, 401);
       }
 
