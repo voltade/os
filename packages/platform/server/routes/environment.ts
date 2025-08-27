@@ -114,7 +114,7 @@ export const route = factory
             },
             runner: {
               httproute: {
-                hostnames: [`runner.${baseHostname}`],
+                hostnames: [baseHostname],
               },
               environment: {
                 IS_PRODUCTION: environment.is_production.toString(),
