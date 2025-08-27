@@ -1,7 +1,7 @@
 import { createRemoteJWKSet, jwtVerify } from 'jose';
 
-import { appEnvVariables } from '#server/env.ts';
 import { factory, type Oauth2Payload } from '#server/factory.ts';
+import { appEnvVariables } from '#server/zod/env.ts';
 
 const PLATFORM_AUTH_URL = `${appEnvVariables.PLATFORM_URL}/api/auth`;
 

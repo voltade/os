@@ -1,7 +1,7 @@
 import { createMiddleware } from 'hono/factory';
 import { createRemoteJWKSet, jwtVerify } from 'jose';
 
-import { appEnvVariables } from '#server/env.ts';
+import { appEnvVariables } from '#server/zod/env.ts';
 
 export type AuthVariables = {
   user?: {
