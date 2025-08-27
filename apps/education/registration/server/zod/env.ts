@@ -14,7 +14,7 @@ export const appEnvVariablesSchema = z.object({
 
   PLATFORM_URL: z.string(),
   ORGANIZATION_ID: z.string(),
-  RUNNER_SECRET_TOKEN: z.string(),
+  //RUNNER_SECRET_TOKEN: z.string(),
 });
 
 export const env = appEnvVariablesSchema.parse(process.env);
