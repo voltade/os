@@ -39,11 +39,6 @@ runner:
         secretKeyRef:
           name: shared-secrets
           key: runnerSecretToken
-    PROXY_SECRET_TOKEN:
-      valueFrom:
-        secretKeyRef:
-          name: shared-secrets
-          key: proxySecretToken
     POSTGREST_URL: http://postgrest:3000
     SUPABASE_META_URL: http://supabase-meta:8080
     SUPABASE_STORAGE_URL: http://supabase-storage:8000

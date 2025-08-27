@@ -20,11 +20,12 @@ export const route = factory
         type: z.enum(['source', 'builds']).default('source'),
         appId: z.string(),
         orgId: z.string(),
+        coreSchemaVersion: z.string(),
       }),
     ),
     drizzle(),
     async (c) => {
-      const { type, appId, orgId } = c.req.valid('json');
+      const { type, appId, orgId, coreSchemaVersion } = c.req.valid('json');
       const { tx } = c.var;
 
       const app = await tx.query.appTable.findFirst({
@@ -41,6 +42,7 @@ export const route = factory
           app_id: appId,
           organization_id: orgId,
           status: 'pending',
+          core_schema_version: coreSchemaVersion,
         })
         .returning();
 

@@ -19,6 +19,7 @@ export async function loadCookies(dataDir: string) {
     const cookies = await fs.readFile(filePath, 'utf-8');
     return cookies.split('\n').filter(Boolean);
   } catch (error) {
+    console.error('Failed to load cookies:', error);
     return undefined;
   }
 }
