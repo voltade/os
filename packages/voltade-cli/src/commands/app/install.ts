@@ -9,6 +9,7 @@ import * as tar from 'tar';
 import z from 'zod';
 
 import { BaseCommand } from '#src/base.ts';
+import { getCoreSchemaVersion } from '#src/utils/app.ts';
 
 const packageJsonSchema = z.object({
   name: z.string().min(1),
@@ -132,12 +133,15 @@ export default class Install extends BaseCommand {
       await $`${{ raw: buildCommand }}`;
     }
 
+    const coreSchemaVersion = getCoreSchemaVersion(appFullPath) ?? '0.1.0';
+
     spinner.start(`Creating app build...`);
     const appBuildRes = await honoClient.app_build.s3.signed_url.$post({
       json: {
         orgId,
         appId: app.id,
         type: 'builds',
+        coreSchemaVersion,
       },
     });
     if (!appBuildRes.ok) {

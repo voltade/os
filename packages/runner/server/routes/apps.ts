@@ -7,7 +7,7 @@ import { z } from 'zod';
 import { appEnvVariables } from '#server/env.ts';
 import { factory } from '#server/factory.ts';
 import { appInstallations } from '#server/index.ts';
-import { getAppEnvs, getAppEnvsFromK8s } from '#server/utils/env/index.ts';
+import { getAppEnvs, getPgrestUrl } from '#server/utils/env/index.ts';
 import { downloadPackage } from '#server/utils/package/index.ts';
 import {
   createWorker,
@@ -100,13 +100,19 @@ export const routes = factory
           },
         );
 
-        const k8sEnvs = await getAppEnvsFromK8s();
-
         console.log(c.req.raw.headers.get('origin'));
 
         worker = await createWorker(appSlug, truncatedBuildId, workerPath, {
           ...envs,
-          ...k8sEnvs,
+          DB_USER: c.env.DB_USER_AUTHENTICATOR,
+          DB_PASSWORD: c.env.DB_PASSWORD_AUTHENTICATOR,
+          DB_HOST: c.env.DB_HOST,
+          DB_PORT: c.env.DB_PORT,
+          DB_NAME: c.env.DB_NAME,
+          VITE_PGREST_URL: getPgrestUrl({
+            orgSlug: c.env.ORGANIZATION_SLUG,
+            envSlug: c.env.ENVIRONMENT_SLUG,
+          }),
           PLATFORM_URL: c.env.PLATFORM_URL,
           VITE_PLATFORM_URL: c.env.VITE_PLATFORM_URL,
           ORGANIZATION_ID: c.env.ORGANIZATION_ID,

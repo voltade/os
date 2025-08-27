@@ -10,6 +10,7 @@ import {
 } from '#drizzle/app_installation.ts';
 import { organization as organizationTable } from '#drizzle/auth.ts';
 import { environmentTable } from '#drizzle/environment.ts';
+import { BASE_DOMAIN } from '#server/const.ts';
 import { platformEnvVariables } from '#server/env.ts';
 import { factory } from '#server/factory.ts';
 import { db } from '#server/lib/db.ts';
@@ -40,10 +41,51 @@ export const route = factory
         return c.json({ error: 'App installation already exists' }, 400);
       }
 
-      const appInstallation = await tx
+      const [appInstallation] = await tx
         .insert(appInstallationTable)
         .values(createObj)
         .returning();
+
+      if (!appInstallation) {
+        return c.json({ error: 'Failed to create app installation' }, 500);
+      }
+
+      const [existing] = await tx
+        .select()
+        .from(appInstallationTable)
+        .where(
+          and(
+            eq(appInstallationTable.app_id, appInstallation.app_id),
+            eq(
+              appInstallationTable.environment_id,
+              appInstallation.environment_id,
+            ),
+            eq(
+              appInstallationTable.organization_id,
+              appInstallation.organization_id,
+            ),
+          ),
+        )
+        .innerJoin(appTable, eq(appInstallationTable.app_id, appTable.id))
+        .innerJoin(
+          organizationTable,
+          eq(appInstallationTable.organization_id, organizationTable.id),
+        )
+        .innerJoin(
+          environmentTable,
+          eq(appInstallationTable.environment_id, environmentTable.id),
+        );
+
+      if (!existing) {
+        return c.json({ error: 'App installation not found' }, 404);
+      }
+
+      await updateAppInstallation({
+        orgSlug: existing.organization.slug,
+        envSlug: existing.environment.slug,
+        appSlug: existing.app.slug,
+        buildId: createObj.app_build_id,
+      });
 
       return c.json(appInstallation);
     },
@@ -100,22 +142,14 @@ export const route = factory
       if (!existing) {
         return c.json({ error: 'App installation not found' }, 404);
       }
-      const { organization, environment } = existing;
-      const runnerBaseUrl = `http://runner.org-${organization.id}-${environment.id}.svc.cluster.local`;
 
-      const res = await fetch(
-        `${runnerBaseUrl}/apps/update/${existing.app.slug}`,
-        {
-          method: 'PUT',
-          headers: {
-            Authorization: `Bearer ${c.env.RUNNER_SECRET_TOKEN}`,
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify({ buildId: updateObj.app_build_id }),
-        },
-      );
-      console.log(res);
-      console.log(await res.json());
+      await updateAppInstallation({
+        orgSlug: existing.organization.slug,
+        envSlug: existing.environment.slug,
+        appSlug: existing.app.slug,
+        buildId: updateObj.app_build_id,
+      });
+
       return c.json(appInstallation);
     },
   )
@@ -256,3 +290,32 @@ export const route = factory
       return c.json(appInstallation);
     },
   );
+
+async function updateAppInstallation({
+  orgSlug,
+  envSlug,
+  appSlug,
+  buildId,
+}: {
+  orgSlug: string;
+  envSlug: string;
+  appSlug: string;
+  buildId: string;
+}) {
+  const runnerBaseUrl = `http://${orgSlug}-${envSlug}.${BASE_DOMAIN}`;
+
+  const res = await fetch(`${runnerBaseUrl}/apps/update/${appSlug}`, {
+    method: 'PUT',
+    headers: {
+      Authorization: `Bearer ${platformEnvVariables.RUNNER_SECRET_TOKEN}`,
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify({ buildId }),
+  });
+  if (!res.ok) {
+    console.error('Failed to update app installation', res.statusText);
+    throw new Error('Failed to update app installation');
+  }
+  const data = await res.json();
+  return data;
+}

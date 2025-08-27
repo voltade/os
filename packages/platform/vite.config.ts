@@ -9,17 +9,13 @@ export default defineConfig({
     host: '0.0.0.0',
     allowedHosts: [
       '127.0.0.1.nip.io',
-      'socat',
-      'socat.platform',
-      'socat.platform.svc.cluster.local',
+      'platform',
+      'platform.platform',
+      'platform.platform.svc.cluster.local',
     ],
     open: 'http://127.0.0.1.nip.io',
     proxy: {
       '/api': {
-        target: 'http://localhost:3000',
-        changeOrigin: true,
-      },
-      '/drizzle': {
         target: 'http://localhost:3000',
         changeOrigin: true,
       },

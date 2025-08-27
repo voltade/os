@@ -72,7 +72,7 @@ export const auth = betterAuth({
         definePayload: async ({ user }) => {
           const memberships = await db
             .select({
-              organization_slug: organizationTable.id,
+              organization_slug: organizationTable.slug,
               member_role: memberTable.role,
             })
             .from(memberTable)

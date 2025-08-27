@@ -5,13 +5,19 @@ export const appEnvVariablesSchema = z.object({
   PLATFORM_URL: z.url(),
   VITE_PLATFORM_URL: z.url(),
 
+  // Database
+  DB_USER_AUTHENTICATOR: z.string(),
+  DB_PASSWORD_AUTHENTICATOR: z.string(),
+  DB_HOST: z.string(),
+  DB_PORT: z.string(),
+  DB_NAME: z.string(),
+
   // Environment variables
   ORGANIZATION_ID: z.string(),
   ORGANIZATION_SLUG: z.string(),
   ENVIRONMENT_ID: z.string(),
   ENVIRONMENT_SLUG: z.string(),
   RUNNER_SECRET_TOKEN: z.string(),
-  PROXY_SECRET_TOKEN: z.string(),
 
   // Supabase
   POSTGREST_URL: z.url(),

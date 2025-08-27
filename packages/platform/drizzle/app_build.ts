@@ -21,6 +21,7 @@ export const appBuildTable = pgTable('app_build', {
     .references(() => organizationTable.id)
     .notNull(),
   status: appBuildStatus().notNull(),
+  core_schema_version: text().notNull(),
   created_at: DEFAULT_COLUMNS.created_at,
   updated_at: DEFAULT_COLUMNS.updated_at,
 });

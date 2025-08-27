@@ -10,6 +10,7 @@ import {
   organization as organizationTable,
 } from '#drizzle/auth.ts';
 import { environmentTable } from '#drizzle/environment.ts';
+import { BASE_DOMAIN } from '#server/const.ts';
 import { platformEnvVariables } from '#server/env.ts';
 import { factory } from '#server/factory.ts';
 import { getCnpgStatus } from '#server/lib/cnpg.ts';
@@ -29,8 +30,6 @@ type Values = Record<string, unknown> & {
   environmentName: string | null;
   isProduction: boolean;
 };
-
-const baseDomain = new URL(platformEnvVariables.VITE_APP_URL).hostname;
 
 export const route = factory
   .createApp()
@@ -95,7 +94,7 @@ export const route = factory
           const serviceKey = await signJwt(alg, privateKey, 'service_role', [
             organization.slug,
           ]);
-          const baseHostname = `${organization.slug}-${environment.slug}.${baseDomain}`;
+          const baseHostname = `${organization.slug}-${environment.slug}.${BASE_DOMAIN}`;
           const values = {
             id: `${organization.id}-${environment.id}`,
             slug: `${organization.slug}-${environment.slug}`,
@@ -106,7 +105,7 @@ export const route = factory
             environmentSlug: environment.slug,
             environmentName: environment.name,
             isProduction: environment.is_production,
-            baseDomain,
+            baseDomain: BASE_DOMAIN,
             jwt: {
               publicKey,
               anonKey,
@@ -123,11 +122,12 @@ export const route = factory
                 ORGANIZATION_SLUG: organization.slug,
                 ENVIRONMENT_ID: environment.id,
                 ENVIRONMENT_SLUG: environment.slug,
+                RUNNER_SECRET_TOKEN: platformEnvVariables.RUNNER_SECRET_TOKEN,
               },
             },
             postgrest: {
               httproute: {
-                hostnames: [`runner.${baseHostname}`],
+                hostnames: [`postgrest.${baseHostname}`],
               },
               environment: {
                 PGRST_JWT_SECRET: publicKey,
