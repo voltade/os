@@ -19,6 +19,9 @@ spec:
       # https://external-secrets.io/latest/guides/templating/#examples
       engineVersion: v2
       type: kubernetes.io/basic-auth
+      metadata:
+        labels:
+          cnpg.io/reload: "true"
       data:
         dbname: app
         host: cnpg-cluster-rw
