@@ -45,8 +45,8 @@ runner:
     SUPABASE_STUDIO_URL: http://supabase-studio:3000
     AWS_S3_ENDPOINT: http://minio.minio.svc.cluster.local:9000
     AWS_REGION: ap-southeast-1
-    AWS_S3_BUCKET: builds
-    AWS_ACCESS_KEY_ID: admin
+    AWS_S3_BUCKET: voltade-os
+    AWS_ACCESS_KEY_ID: username
     AWS_SECRET_ACCESS_KEY: password
 
 openfga:

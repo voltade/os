@@ -18,7 +18,7 @@ export function PublicMicroApp({ appSlug, organizationSlug }: Props) {
   const { containerRef, isLoading } = useMicroApp({
     enabled: !!environment?.slug && !!appInstallation,
     name: appSlug,
-    entry: `//${organizationSlug}-${environment?.slug}.127.0.0.1.nip.io/apps/${app?.slug}/`,
+    entry: `//runner.${organizationSlug}-${environment?.slug}.127.0.0.1.nip.io/apps/${app?.slug}/`,
   });
 
   return (

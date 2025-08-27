@@ -29,7 +29,7 @@ export function MicroApp({ slug }: Props) {
     entry:
       slug === 'app-template'
         ? '//app-template.127.0.0.1.nip.io/'
-        : `//${activeOrganization?.slug}-${environment.slug}.127.0.0.1.nip.io/apps/${app?.slug}/`,
+        : `//runner.${activeOrganization?.slug}-${environment.slug}.127.0.0.1.nip.io/apps/${app?.slug}/`,
   });
 
   return (
