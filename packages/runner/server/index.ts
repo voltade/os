@@ -1,8 +1,8 @@
+import { appEnvVariables } from '#server/env.ts';
 import { factory } from '#server/factory.ts';
 import { routes as appsRoutes } from '#server/routes/apps.ts';
 import { routes as drizzleRoutes } from '#server/routes/drizzle.ts';
 import { routes as supabaseRoutes } from '#server/routes/supabase.ts';
-import { appEnvVariables } from './env.ts';
 
 export const appInstallations = new Map<string, string>();
 
@@ -11,7 +11,7 @@ async function initAppInstallations() {
     `${appEnvVariables.PLATFORM_URL}/api/app_installation/runner?organizationSlug=${appEnvVariables.ORGANIZATION_SLUG}&environmentSlug=${appEnvVariables.ENVIRONMENT_SLUG}`,
     {
       headers: {
-        Authorization: `Bearer ${appEnvVariables.RUNNER_SECRET_TOKEN}`,
+        Authorization: `Bearer ${appEnvVariables.RUNNER_KEY}`,
       },
     },
   );

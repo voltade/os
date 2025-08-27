@@ -69,7 +69,7 @@ export const route = factory
             role: 'service_role',
             aud: [organization.slug],
           });
-          const baseHostname = `${organization.slug}-${environment.slug}.${baseDomain}`;
+          const baseHostname = `${organization.slug}-${environment.slug}.${BASE_DOMAIN}`;
           const values = {
             id: `${organization.id}-${environment.id}`,
             slug: `${organization.slug}-${environment.slug}`,
@@ -98,7 +98,6 @@ export const route = factory
                 ORGANIZATION_SLUG: organization.slug,
                 ENVIRONMENT_ID: environment.id,
                 ENVIRONMENT_SLUG: environment.slug,
-                RUNNER_SECRET_TOKEN: platformEnvVariables.RUNNER_SECRET_TOKEN,
               },
             },
             postgrest: {

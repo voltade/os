@@ -18,7 +18,6 @@ export const appEnvVariablesSchema = z.object({
   ENVIRONMENT_ID: z.string(),
   ENVIRONMENT_SLUG: z.string(),
   RUNNER_KEY: z.string(),
-  RUNNER_SECRET_TOKEN: z.string(),
 
   // Supabase
   POSTGREST_URL: z.url(),

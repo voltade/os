@@ -20,7 +20,7 @@ export const routes = factory
   .put(
     '/update/:appSlug',
     bearerAuth({
-      token: [appEnvVariables.RUNNER_SECRET_TOKEN],
+      token: [appEnvVariables.RUNNER_KEY],
     }),
     zValidator(
       'json',
@@ -94,10 +94,6 @@ export const routes = factory
         const envs = await getAppEnvs(
           c.env.ORGANIZATION_ID,
           c.env.ENVIRONMENT_ID,
-          {
-            RUNNER_SECRET_TOKEN: c.env.RUNNER_SECRET_TOKEN,
-            platformUrl: c.env.PLATFORM_URL,
-          },
         );
 
         console.log(c.req.raw.headers.get('origin'));
@@ -119,7 +115,6 @@ export const routes = factory
           ORGANIZATION_SLUG: c.env.ORGANIZATION_SLUG,
           ENVIRONMENT_ID: c.env.ENVIRONMENT_ID,
           ENVIRONMENT_SLUG: c.env.ENVIRONMENT_SLUG,
-          RUNNER_SECRET_TOKEN: c.env.RUNNER_SECRET_TOKEN,
         });
       }
 
