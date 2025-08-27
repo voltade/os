@@ -14,10 +14,10 @@ export type Options = Parameters<typeof honoJwt>[0];
 
 export function jwt(options?: Options) {
   return createMiddleware<{ Variables: Variables }>(async (c, next) => {
-    const { publicKey, alg } = await getKeyPair();
+    const { publicJWK, alg } = await getKeyPair();
     return honoJwt({
       ...options,
-      secret: publicKey,
+      secret: publicJWK,
       alg: alg as AlgorithmTypes,
     })(c, next);
   });

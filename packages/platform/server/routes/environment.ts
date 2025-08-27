@@ -45,7 +45,9 @@ export const route = factory
         return c.json({ error: 'Unauthorized' }, 401);
       }
 
-      const { publicKey } = await getKeyPair();
+      const { publicJWK } = await getKeyPair();
+      const publicKey = JSON.stringify(publicJWK);
+
       const environments = await db
         .select()
         .from(environmentTable)

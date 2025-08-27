@@ -7,7 +7,8 @@ import { platformEnvVariables } from '#server/env.ts';
 import { db } from '#server/lib/db.ts';
 
 interface KeyPair {
-  publicKey: string;
+  publicJWKS: jose.JSONWebKeySet;
+  publicJWK: jose.JWK;
   privateKey: CryptoKey | Uint8Array<ArrayBufferLike>;
   alg: string;
 }
@@ -25,7 +26,7 @@ export async function getKeyPair() {
     .from(jwksTable)
     .orderBy(desc(jwksTable.createdAt))
     .limit(2);
-  const publicWebKeySet: jose.JSONWebKeySet = {
+  const publicJWKS: jose.JSONWebKeySet = {
     keys: jwks.map((jwk) => {
       const publicKey = JSON.parse(jwk.publicKey) as jose.JWK_RSA_Public;
       return {
@@ -34,8 +35,11 @@ export async function getKeyPair() {
       };
     }),
   };
-  const publicKey = JSON.stringify(publicWebKeySet);
-  const alg = publicWebKeySet.keys[0]?.alg as string;
+  const publicJWK = publicJWKS.keys[0];
+  if (!publicJWK) {
+    throw new Error('No JWK found');
+  }
+  const alg = publicJWKS.keys[0]?.alg as string;
 
   // Decrypt the private key to be used for signing long-live anon and service_role tokens
   const decryptedPrivateKey = await symmetricDecrypt({
@@ -45,8 +49,15 @@ export async function getKeyPair() {
   const privateWebKey = JSON.parse(decryptedPrivateKey) as jose.JWK_RSA_Private;
   const privateKey = await jose.importJWK(privateWebKey, alg);
 
-  keyPairCache = { publicKey, privateKey, alg };
-  return { publicKey, privateKey, alg };
+  const keyPair: KeyPair = {
+    publicJWKS,
+    publicJWK,
+    privateKey,
+    alg,
+  };
+
+  keyPairCache = keyPair;
+  return keyPair;
 }
 
 export type JwtPayload =
