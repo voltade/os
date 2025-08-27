@@ -1,13 +1,21 @@
 import z from 'zod';
 
-export type RunTimeEnv = z.infer<typeof runTimeEnvSchema>;
-
 import packageJson from '../../package.json';
 
 const runTimeEnvSchema = z.object({
   VITE_PGREST_URL: z.string(),
   VITE_PLATFORM_URL: z.string(),
 });
+
+export type RunTimeEnv = z.infer<typeof runTimeEnvSchema>;
+
+declare global {
+  interface Window {
+    __env: {
+      [packageJson.name]: RunTimeEnv & Record<string, string>;
+    };
+  }
+}
 
 export function getRunTimeEnv() {
   return runTimeEnvSchema.parse({
