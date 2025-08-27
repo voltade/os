@@ -4,8 +4,8 @@ import { createMiddleware } from 'hono/factory';
 import { HTTPException } from 'hono/http-exception';
 import { DatabaseError } from 'pg';
 
-import type { AppEnvVariables } from '#/env/app-env.ts';
-import { db, type Tx } from '#/lib/db.ts';
+import type { AppEnvVariables } from '../env/app-env.ts';
+import { db, type Tx } from '../lib/db.ts';
 import type { AuthVariables } from './auth.ts';
 
 export type Variables = AppEnvVariables &

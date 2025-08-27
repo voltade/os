@@ -1,6 +1,7 @@
 import { createFactory } from 'hono/factory';
 
-import { type AppEnvVariables, appEnvVariables } from './zod/env.ts';
+import { appEnvVariables } from './env.ts';
+import type { AppEnvVariables } from './zod/env.ts';
 
 export type Oauth2Payload = {
   role: string;

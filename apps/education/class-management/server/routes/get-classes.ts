@@ -1,8 +1,7 @@
 import { classView } from '@voltade/core-schema/schemas';
+import { auth, drizzle } from '@voltade/sdk';
 
 import { factory } from '#server/factory.ts';
-import { auth } from '#server/middlewares/auth.ts';
-import { drizzle } from '#server/middlewares/drizzle.ts';
 
 export const route = factory
   .createApp()

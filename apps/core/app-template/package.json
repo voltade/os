@@ -49,6 +49,7 @@
     "@types/react": "^19",
     "@types/react-dom": "^19",
     "@vitejs/plugin-react-swc": "^4.0.1",
+    "@voltade/sdk": "workspace:*",
     "@voltade/ui": "workspace:*",
     "concurrently": "^9.2.0",
     "drizzle-kit": "^0.31.4",

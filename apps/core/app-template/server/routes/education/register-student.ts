@@ -1,9 +1,9 @@
 import { zValidator } from '@hono/zod-validator';
 import { educationStudentTable } from '@voltade/core-schema/schemas';
+import { drizzle } from '@voltade/sdk';
 import { z } from 'zod';
 
 import { factory } from '#server/factory.ts';
-import { db } from '#server/lib/db.ts';
 
 const registrationSchema = z.object({
   name: z.string().min(1),
@@ -15,9 +15,12 @@ export const route = factory
   .post(
     '/register-student',
     zValidator('json', registrationSchema),
+    drizzle(),
     async (c) => {
       const { name, selected_class } = c.req.valid('json');
-      const [student] = await db
+
+      const tx = c.get('tx');
+      const [student] = await tx
         .insert(educationStudentTable)
         .values({ name, selected_class })
         .returning();

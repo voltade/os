@@ -1,9 +1,9 @@
 import { createCommonRouter } from '@voltade/core-schema/common-api';
+import { auth, db, drizzle } from '@voltade/sdk';
 import { Hono } from 'hono';
 import { serveStatic } from 'hono/bun';
 import { logger } from 'hono/logger';
 
-import { db } from '#server/lib/db.ts';
 import runtimeRoute from '#server/routes/runtime.ts';
 import { route as educationRoute } from './routes/education/index.ts';
 import { route as productRoute } from './routes/product/index.ts';
@@ -23,6 +23,8 @@ app.get('/healthz', (c) => {
 export const apiRoutes = app
   .basePath(API_BASE_ROUTE)
   .route('/runtime.js', runtimeRoute)
+  .use(auth)
+  .use(drizzle())
   .route('/product', productRoute) //DEMO purposes, should be using common one
   .route('/education', educationRoute)
   .route('/common', createCommonRouter(db));
