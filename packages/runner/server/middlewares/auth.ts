@@ -1,5 +1,5 @@
 import { createMiddleware } from 'hono/factory';
-import { jwtVerify } from 'jose';
+import { createRemoteJWKSet, jwtVerify } from 'jose';
 
 import { appEnvVariables } from '#server/zod/env.ts';
 
@@ -10,6 +10,10 @@ export type AuthVariables = {
     aud: string[];
   };
 };
+
+const jwks = createRemoteJWKSet(
+  new URL(`${appEnvVariables.PLATFORM_URL}/api/auth/jwks`),
+);
 
 export const auth = createMiddleware<{ Variables: AuthVariables }>(
   async (c, next) => {
@@ -30,7 +34,7 @@ export const auth = createMiddleware<{ Variables: AuthVariables }>(
         sub: string;
         roles: Record<string, string>;
         aud: string[];
-      }>(token, new TextEncoder().encode(appEnvVariables.PUBLIC_KEY));
+      }>(token, jwks);
 
       // Extract user information from JWT payload
       const user = {
