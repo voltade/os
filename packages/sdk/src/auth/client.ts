@@ -3,6 +3,7 @@ import {
   inferAdditionalFields,
   oidcClient,
   organizationClient,
+  phoneNumberClient,
 } from 'better-auth/client/plugins';
 import { jwt } from 'better-auth/plugins';
 import { createAuthClient as createBetterAuthClient } from 'better-auth/react';
@@ -13,6 +14,7 @@ export const createAuthClient = (platformUrl: string) => {
     plugins: [
       emailOTPClient(),
       organizationClient(),
+      phoneNumberClient(),
       jwt(),
       oidcClient(),
       inferAdditionalFields({

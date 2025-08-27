@@ -10,9 +10,13 @@
     "typescript": "^5"
   },
   "exports": {
-    ".": {
-      "import": "./src/index.ts",
-      "types": "./src/index.ts"
+    "./server": {
+      "types": "./src/env/app-env.ts",
+      "default": "./src/env/app-env.ts"
+    },
+    "./client": {
+      "types": "./src/client.ts",
+      "default": "./src/client.ts"
     }
   }
 }

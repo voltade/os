@@ -1,4 +1,4 @@
-import { createAuthClient } from '@voltade/sdk';
+import { createAuthClient } from '@voltade/sdk/client';
 
 import { runTimeEnv } from './runtime-env.ts';
 

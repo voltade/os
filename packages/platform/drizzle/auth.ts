@@ -1,15 +1,10 @@
 import {
   boolean,
   integer,
-  pgEnum,
   pgTable,
   text,
   timestamp,
 } from 'drizzle-orm/pg-core';
-
-import { MemberRole } from '#shared/schemas/auth.ts';
-
-export const memberRoleEnum = pgEnum('member_role', MemberRole);
 
 export const user = pgTable('user', {
   id: text('id').primaryKey(),
@@ -29,9 +24,9 @@ export const user = pgTable('user', {
   banned: boolean('banned'),
   banReason: text('ban_reason'),
   banExpires: timestamp('ban_expires'),
-  defaultOrganizationId: text('default_organization_id').references(
-    () => organization.id,
-  ),
+  phoneNumber: text('phone_number').unique(),
+  phoneNumberVerified: boolean('phone_number_verified'),
+  phone: text('phone'),
 });
 
 export const session = pgTable('session', {
@@ -150,7 +145,7 @@ export const jwks = pgTable('jwks', {
 export const organization = pgTable('organization', {
   id: text('id').primaryKey(),
   name: text('name').notNull(),
-  slug: text('slug').unique().notNull(),
+  slug: text('slug').unique(),
   logo: text('logo'),
   createdAt: timestamp('created_at').notNull(),
   metadata: text('metadata'),
@@ -164,7 +159,7 @@ export const member = pgTable('member', {
   userId: text('user_id')
     .notNull()
     .references(() => user.id, { onDelete: 'cascade' }),
-  role: memberRoleEnum('role').default('member').notNull(),
+  role: text('role').default('member').notNull(),
   createdAt: timestamp('created_at').notNull(),
 });
 

@@ -20,7 +20,7 @@
   },
   "scripts": {
     "build": "tsc",
-    "auth:generate": "bun --bun cli generate --output drizzle/auth.ts --config server/lib/auth/index.ts && bun biome check --write --no-errors-on-unmatched --files-ignore-unknown=true drizzle/auth.ts --unsafe",
+    "auth:generate": "bun --bun cli generate --output drizzle/auth.ts --config server/lib/auth.ts && bun biome check --write --no-errors-on-unmatched --files-ignore-unknown=true drizzle/auth.ts --unsafe",
     "db:pre-push": "bun scripts/db-pre-push.ts",
     "db:current": "bun scripts/db-current.ts",
     "db:push": "bun drizzle-kit push",

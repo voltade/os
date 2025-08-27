@@ -4,6 +4,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@voltade/ui/card.tsx';
 import { useState } from 'react';
 import { FormProvider, useForm } from 'react-hook-form';
 
+import { authClient } from '#src/lib/auth.ts';
 import { ClassesStep } from './ClassesStep.tsx';
 import { Navigation } from './Navigation.tsx';
 import * as otpUtils from './otp-utils.ts';
@@ -162,6 +163,22 @@ export default function RegistrationForm() {
 
       const isStepValid = await validateStep(currentStep);
       if (isStepValid) {
+        // When Parent Step (step 1) is completed, update the user profile
+        if (currentStep === 1) {
+          const { parentName, parentPhone } = methods.getValues();
+          const trimmedName = parentName?.trim();
+          const trimmedPhone = parentPhone?.trim();
+          if (trimmedName && trimmedPhone) {
+            try {
+              await authClient.updateUser({
+                name: trimmedName,
+                phoneNumber: trimmedPhone,
+              });
+            } catch (e) {
+              // Silently continue if update fails; not blocking navigation
+            }
+          }
+        }
         setCurrentStep((currentStep + 1) as Step);
       }
     }

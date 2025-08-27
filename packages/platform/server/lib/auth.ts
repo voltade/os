@@ -9,6 +9,7 @@ import {
   oidcProvider,
   openAPI,
   organization,
+  phoneNumber,
 } from 'better-auth/plugins';
 import { eq } from 'drizzle-orm';
 
@@ -48,6 +49,7 @@ export const auth = betterAuth({
       adminRoles: ['system_admin'],
       adminUserIds: ['admin'],
     }),
+    phoneNumber(),
     apiKey(),
     bearer(),
     emailOTP({
