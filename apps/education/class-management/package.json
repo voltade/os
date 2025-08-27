@@ -25,6 +25,7 @@
     "@tanstack/react-table": "^8.21.3",
     "@voltade/core-schema": "workspace:*",
     "hono": "^4.9.4",
+    "jose": "^6.0.13",
     "zod": "^4.1.1"
   },
   "devDependencies": {
@@ -33,8 +34,8 @@
     "@tailwindcss/vite": "^4.1.12",
     "@tanstack/react-query": "^5.85.5",
     "@tanstack/react-query-devtools": "^5.85.5",
-    "@tanstack/react-router": "1.131.27",
-    "@tanstack/react-router-devtools": "1.131.27",
+    "@tanstack/react-router": "1.131.26",
+    "@tanstack/react-router-devtools": "1.131.26",
     "@tanstack/router-plugin": "1.131.26",
     "@types/bun": "latest",
     "@types/react": "^19",

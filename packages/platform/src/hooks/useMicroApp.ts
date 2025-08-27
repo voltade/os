@@ -28,7 +28,14 @@ export function useMicroApp({ enabled, name, entry }: UseMicroAppOptions) {
       return;
     }
     const microApp = loadMicroApp(
-      { container: containerRef.current, name, entry },
+      {
+        container: containerRef.current,
+        name,
+        entry,
+        props: {
+          baseUrl: entry,
+        },
+      },
       { sandbox: true },
       {
         beforeLoad: async (app) => {

@@ -125,6 +125,7 @@ export const routes = factory
           unix: `${workerPath}/server.sock`,
           method: c.req.method,
           body: c.req.raw.body,
+          headers: c.req.raw.headers,
         });
 
         return response;
