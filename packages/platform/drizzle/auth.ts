@@ -15,6 +15,7 @@ export const user = pgTable('user', {
   id: text('id').primaryKey(),
   name: text('name').notNull(),
   email: text('email').notNull().unique(),
+  phone: text('phone'),
   emailVerified: boolean('email_verified')
     .$defaultFn(() => !1)
     .notNull(),
@@ -29,6 +30,9 @@ export const user = pgTable('user', {
   banned: boolean('banned'),
   banReason: text('ban_reason'),
   banExpires: timestamp('ban_expires'),
+  defaultOrganizationId: text('default_organization_id').references(
+    () => organization.id,
+  ),
 });
 
 export const session = pgTable('session', {
