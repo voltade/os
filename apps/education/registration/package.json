@@ -24,7 +24,7 @@
     "@tabler/icons-react": "^3.34.1",
     "@tanstack/react-table": "^8.21.3",
     "@voltade/core-schema": "workspace:*",
-    "@voltade/auth": "workspace:*",
+    "@voltade/sdk": "workspace:*",
     "hono": "^4.9.4",
     "zod": "^4.1.1"
   },

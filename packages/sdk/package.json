@@ -1,5 +1,5 @@
 {
-  "name": "@voltade/auth",
+  "name": "@voltade/sdk",
   "module": "index.ts",
   "type": "module",
   "private": true,
