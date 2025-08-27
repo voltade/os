@@ -39,20 +39,40 @@ runner:
         secretKeyRef:
           name: shared-secrets
           key: runnerSecretToken
-    PROXY_SECRET_TOKEN:
-      valueFrom:
-        secretKeyRef:
-          name: shared-secrets
-          key: proxySecretToken
     POSTGREST_URL: http://postgrest:3000
     SUPABASE_META_URL: http://supabase-meta:8080
     SUPABASE_STORAGE_URL: http://supabase-storage:8000
     SUPABASE_STUDIO_URL: http://supabase-studio:3000
     AWS_S3_ENDPOINT: http://minio.minio.svc.cluster.local:9000
     AWS_REGION: ap-southeast-1
-    AWS_S3_BUCKET: builds
-    AWS_ACCESS_KEY_ID: admin
+    AWS_S3_BUCKET: voltade-os
+    AWS_ACCESS_KEY_ID: username
     AWS_SECRET_ACCESS_KEY: password
+    DB_USER_AUTHENTICATOR:
+      valueFrom:
+        secretKeyRef:
+          name: cnpg-authenticator
+          key: username
+    DB_PASSWORD_AUTHENTICATOR:
+      valueFrom:
+        secretKeyRef:
+          name: cnpg-authenticator
+          key: password
+    DB_HOST:
+      valueFrom:
+        secretKeyRef:
+          name: cnpg-authenticator
+          key: host
+    DB_PORT:
+      valueFrom:
+        secretKeyRef:
+          name: cnpg-authenticator
+          key: port
+    DB_NAME:
+      valueFrom:
+        secretKeyRef:
+          name: cnpg-authenticator
+          key: dbname
 
 openfga:
   # https://github.com/openfga/helm-charts/blob/main/charts/openfga/values.yaml
