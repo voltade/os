@@ -1,6 +1,6 @@
 import { S3Client } from 'bun';
 
-import { appEnvVariables } from '#server/zod/env.ts';
+import { appEnvVariables } from '#server/env.ts';
 
 console.log('S3 Configuration:', {
   region: appEnvVariables.AWS_REGION,

@@ -1,5 +1,5 @@
 import { BASE_DOMAIN, PROTOCOL } from '#server/const.ts';
-import { appEnvVariables } from '#server/zod/env.ts';
+import { appEnvVariables } from '#server/env.ts';
 
 export async function getAppEnvs(
   ORGANIZATION_ID: string,

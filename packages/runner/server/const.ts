@@ -1,4 +1,4 @@
-import { appEnvVariables } from '#server/zod/env.ts';
+import { appEnvVariables } from '#server/env.ts';
 
 export const BASE_DOMAIN = new URL(appEnvVariables.VITE_PLATFORM_URL).hostname;
 

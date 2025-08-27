@@ -1,7 +1,7 @@
 import schema from '@voltade/core-schema/schemas';
 import { drizzle } from 'drizzle-orm/bun-sql';
 
-import { appEnvVariables } from '#server/zod/env.ts';
+import { appEnvVariables } from '#server/env.ts';
 
 const { DB_NAME, DB_USER, DB_HOST, DB_PORT, DB_PASSWORD } = appEnvVariables;
 
