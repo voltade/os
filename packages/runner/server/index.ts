@@ -1,8 +1,8 @@
-import { appEnvVariables } from '#server/env.ts';
 import { factory } from '#server/factory.ts';
 import { routes as appsRoutes } from '#server/routes/apps.ts';
 import { routes as drizzleRoutes } from '#server/routes/drizzle.ts';
 import { routes as supabaseRoutes } from '#server/routes/supabase.ts';
+import { appEnvVariables } from '#server/zod/env.ts';
 
 export const appInstallations = new Map<string, string>();
 

@@ -1,7 +1,7 @@
 import { proxy } from 'hono/proxy';
 
 import { factory } from '#server/factory.ts';
-import { canAccessDrizzle } from '#server/middleware/auth.ts';
+import { canAccessDrizzle } from '#server/middlewares/auth.ts';
 
 const DRIZZLE_GATEWAY_URL = 'http://drizzle-gateway:4983';
 

@@ -1,12 +1,11 @@
 import { existsSync, readdirSync } from 'node:fs';
 import { zValidator } from '@hono/zod-validator';
-import { bearerAuth } from 'hono/bearer-auth';
 import { cors } from 'hono/cors';
 import { z } from 'zod';
 
-import { appEnvVariables } from '#server/env.ts';
 import { factory } from '#server/factory.ts';
 import { appInstallations } from '#server/index.ts';
+import { auth } from '#server/middlewares/auth.ts';
 import { getAppEnvs, getPgrestUrl } from '#server/utils/env/index.ts';
 import { downloadPackage } from '#server/utils/package/index.ts';
 import {
@@ -19,9 +18,7 @@ export const routes = factory
   .createApp()
   .put(
     '/update/:appSlug',
-    bearerAuth({
-      token: [appEnvVariables.RUNNER_KEY],
-    }),
+    auth,
     zValidator(
       'json',
       z.object({
@@ -115,6 +112,7 @@ export const routes = factory
           ORGANIZATION_SLUG: c.env.ORGANIZATION_SLUG,
           ENVIRONMENT_ID: c.env.ENVIRONMENT_ID,
           ENVIRONMENT_SLUG: c.env.ENVIRONMENT_SLUG,
+          PUBLIC_KEY: c.env.PUBLIC_KEY,
         });
       }
 

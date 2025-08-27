@@ -1,7 +1,7 @@
 import { proxy } from 'hono/proxy';
 
-import { appEnvVariables } from '#server/env.ts';
 import { factory } from '#server/factory.ts';
+import { appEnvVariables } from '#server/zod/env.ts';
 
 export const routes = factory.createApp();
 

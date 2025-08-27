@@ -49,3 +49,22 @@ export const auth = createMiddleware<{ Variables: AuthVariables }>(
     }
   },
 );
+
+export const canAccessDrizzle = createMiddleware<{ Variables: AuthVariables }>(
+  async (c, next) => {
+    const user = c.get('user');
+    if (!user) {
+      return c.json({ error: 'Unauthorized' }, 401);
+    }
+
+    if (
+      !['admin', 'owner', 'developer'].includes(
+        user.roles[appEnvVariables.ORGANIZATION_SLUG] ?? '',
+      )
+    ) {
+      return c.json({ error: 'Unauthorized' }, 401);
+    }
+
+    await next();
+  },
+);

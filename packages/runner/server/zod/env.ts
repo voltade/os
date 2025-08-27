@@ -36,4 +36,6 @@ export const appEnvVariablesSchema = z.object({
   FORCE_PATH_STYLE: z.coerce.boolean().default(true),
 });
 
+export const appEnvVariables = appEnvVariablesSchema.parse(process.env);
+
 export type AppEnvVariables = z.infer<typeof appEnvVariablesSchema>;

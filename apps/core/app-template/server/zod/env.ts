@@ -19,6 +19,8 @@ export const appEnvVariablesSchema = z.object({
   DB_HOST: z.string(),
   DB_PORT: z.coerce.number(),
   DB_NAME: z.string(),
+
+  PUBLIC_KEY: z.string(),
 });
 
 // Validate and export the environment
