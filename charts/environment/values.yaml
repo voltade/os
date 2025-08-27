@@ -34,6 +34,8 @@ runner:
   environment:
     IS_PRODUCTION: "false"
     PLATFORM_URL: http://platform.platform.svc.cluster.local:5173
+    PUBLIC_KEY: ""
+    ANON_KEY: ""
     RUNNER_KEY: ""
     POSTGREST_URL: http://postgrest:3000
     SUPABASE_META_URL: http://supabase-meta:8080

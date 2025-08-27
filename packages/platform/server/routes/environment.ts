@@ -93,6 +93,8 @@ export const route = factory
               environment: {
                 IS_PRODUCTION: environment.is_production.toString(),
                 VITE_PLATFORM_URL: platformEnvVariables.VITE_APP_URL,
+                PUBLIC_KEY: publicKey,
+                ANON_KEY: anonKey,
                 RUNNER_KEY: runnerKey,
                 ORGANIZATION_ID: organization.id,
                 ORGANIZATION_SLUG: organization.slug,
