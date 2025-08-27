@@ -4,8 +4,5 @@ kind: Kustomization
 resources:
   - ./certificate.yaml
   - ./cluster-secret-store.yaml
-  - ./cnpg-platform-admin.yaml
-  - ./cnpg-platform-migrator.yaml
-  - ./cnpg-openfga-admin.yaml
   - ./cnpg-cluster.yaml
-  - ./cnpg-route.yaml
+  - ./cnpg-tls-route.yaml

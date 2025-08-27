@@ -1,7 +1,7 @@
 apiVersion: external-secrets.io/v1
 kind: ExternalSecret
 metadata:
-  name: cnpg-platform-admin
+  name: cnpg-openfga-admin
   annotations:
     argocd.argoproj.io/sync-wave: "-2"
 spec:
@@ -13,11 +13,18 @@ spec:
           name: password-64-length
   refreshPolicy: OnChange
   target:
-    name: cnpg-platform-admin
+    name: cnpg-openfga-admin
     template:
       # https://external-secrets.io/latest/guides/templating/#examples
       engineVersion: v2
       type: kubernetes.io/basic-auth
       data:
-        username: platform_admin
-        password: "{{ .password }}"
+        dbname: openfga
+        host: cnpg-cluster-rw
+        # password: "{{ .password }}"
+        password: password
+        port: "5432"
+        # uri: "postgresql://openfga_admin:{{ .password }}@cnpg-cluster-rw:5432/openfga"
+        uri: "postgresql://openfga_admin:password@cnpg-cluster-rw:5432/openfga"
+        user: openfga_admin
+        username: openfga_admin

@@ -20,4 +20,5 @@ spec:
       type: kubernetes.io/basic-auth
       data:
         username: platform_migrator
-        password: "{{ .password }}"
+        # password: "{{ .password }}"
+        password: password
