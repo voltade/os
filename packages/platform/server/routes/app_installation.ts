@@ -1,6 +1,5 @@
 import { zValidator } from '@hono/zod-validator';
 import { and, eq } from 'drizzle-orm';
-import { bearerAuth } from 'hono/bearer-auth';
 import { z } from 'zod';
 
 import { appTable } from '#drizzle/app.ts';
@@ -11,11 +10,12 @@ import {
 import { organization as organizationTable } from '#drizzle/auth.ts';
 import { environmentTable } from '#drizzle/environment.ts';
 import { BASE_DOMAIN } from '#server/const.ts';
-import { platformEnvVariables } from '#server/env.ts';
 import { factory } from '#server/factory.ts';
 import { db } from '#server/lib/db.ts';
+import { signJwt } from '#server/lib/jwt.ts';
 import { auth } from '#server/middlewares/auth.ts';
 import { drizzle } from '#server/middlewares/drizzle.ts';
+import { jwt } from '#server/middlewares/jwt.ts';
 
 export const route = factory
   .createApp()
@@ -80,10 +80,13 @@ export const route = factory
         return c.json({ error: 'App installation not found' }, 404);
       }
 
+      const { organization, environment, app } = existing;
       await updateAppInstallation({
-        orgSlug: existing.organization.slug,
-        envSlug: existing.environment.slug,
-        appSlug: existing.app.slug,
+        orgId: organization.id,
+        orgSlug: organization.slug,
+        envId: environment.id,
+        envSlug: environment.slug,
+        appSlug: app.slug,
         buildId: createObj.app_build_id,
       });
 
@@ -143,10 +146,13 @@ export const route = factory
         return c.json({ error: 'App installation not found' }, 404);
       }
 
+      const { organization, environment, app } = existing;
       await updateAppInstallation({
-        orgSlug: existing.organization.slug,
-        envSlug: existing.environment.slug,
-        appSlug: existing.app.slug,
+        orgId: organization.id,
+        orgSlug: organization.slug,
+        envId: environment.id,
+        envSlug: environment.slug,
+        appSlug: app.slug,
         buildId: updateObj.app_build_id,
       });
 
@@ -195,9 +201,6 @@ export const route = factory
   )
   .get(
     '/runner',
-    bearerAuth({
-      token: [platformEnvVariables.RUNNER_SECRET_TOKEN],
-    }),
     zValidator(
       'query',
       z.object({
@@ -205,8 +208,13 @@ export const route = factory
         environmentSlug: z.string(),
       }),
     ),
+    jwt(),
     async (c) => {
       const { organizationSlug, environmentSlug } = c.req.valid('query');
+      const { role, aud } = c.get('jwtPayload');
+      if (role !== 'runner' || !aud?.includes(organizationSlug)) {
+        return c.json({ error: 'Unauthorized' }, 401);
+      }
 
       //TODO: Optimise query to not over expose data
       const appInstallations = await db
@@ -292,22 +300,33 @@ export const route = factory
   );
 
 async function updateAppInstallation({
+  orgId,
   orgSlug,
+  envId,
   envSlug,
   appSlug,
   buildId,
 }: {
+  orgId: string;
   orgSlug: string;
+  envId: string;
   envSlug: string;
   appSlug: string;
   buildId: string;
 }) {
-  const runnerBaseUrl = `http://${orgSlug}-${envSlug}.${BASE_DOMAIN}`;
-
+  let runnerBaseUrl = `http://${orgSlug}-${envSlug}.${BASE_DOMAIN}`;
+  if (process.env.NODE_ENV === 'production') {
+    runnerBaseUrl = `http://runner.org-${orgId}-${envId}.svc.cluster.local`;
+  }
+  const runnerKey = await signJwt({
+    role: 'runner',
+    sub: `${orgId}:${envId}`,
+    aud: [orgSlug],
+  });
   const res = await fetch(`${runnerBaseUrl}/apps/update/${appSlug}`, {
     method: 'PUT',
     headers: {
-      Authorization: `Bearer ${platformEnvVariables.RUNNER_SECRET_TOKEN}`,
+      Authorization: `Bearer ${runnerKey}`,
       'Content-Type': 'application/json',
     },
     body: JSON.stringify({ buildId }),

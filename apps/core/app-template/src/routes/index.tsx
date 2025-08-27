@@ -16,10 +16,18 @@ function RouteComponent() {
     <div className="flex flex-1 flex-col">
       <div className="@container/main flex flex-1 flex-col gap-2">
         <div className="grid grid-cols-4 gap-3 md:gap-6">
-          <Button onClick={() => toast.success('Hello')}>Toast Success</Button>
-          <Button onClick={() => toast.error('Hello')}>Toast Error</Button>
-          <Button onClick={() => toast.warning('Hello')}>Toast Warning</Button>
-          <Button onClick={() => toast.info('Hello')}>Toast Info</Button>
+          <Button onClick={() => toast.success('Hello', { closeButton: true })}>
+            Toast Success
+          </Button>
+          <Button onClick={() => toast.error('Hello', { closeButton: true })}>
+            Toast Error
+          </Button>
+          <Button onClick={() => toast.warning('Hello', { closeButton: true })}>
+            Toast Warning
+          </Button>
+          <Button onClick={() => toast.info('Hello', { closeButton: true })}>
+            Toast Info
+          </Button>
         </div>
         <div className="flex flex-col gap-4 py-4 md:gap-6 md:py-6">
           <SectionCards />

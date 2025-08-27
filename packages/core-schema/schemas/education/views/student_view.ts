@@ -14,8 +14,6 @@ export const studentView = pgView('student_view')
       .select({
         id: educationStudentTable.id,
         name: educationStudentTable.name,
-        phone: educationStudentTable.phone,
-        school: educationStudentTable.school,
         email: educationStudentTable.email,
         is_active: educationStudentTable.is_active,
         class_ids:
@@ -31,8 +29,6 @@ export const studentView = pgView('student_view')
       .groupBy(
         educationStudentTable.id,
         educationStudentTable.name,
-        educationStudentTable.phone,
-        educationStudentTable.school,
         educationStudentTable.email,
         educationStudentTable.is_active,
       ),

@@ -6,6 +6,7 @@ import { member, user } from '#drizzle/auth.ts';
 import { factory } from '#server/factory.ts';
 import { db } from '#server/lib/db.ts';
 import { auth } from '#server/middlewares/auth.ts';
+import { jwt } from '#server/middlewares/jwt.ts';
 
 export const route = factory.createApp().get(
   '/user',
@@ -17,15 +18,13 @@ export const route = factory.createApp().get(
       userIds: z.array(z.string()).optional(),
     }),
   ),
+  jwt(),
   async (c) => {
-    if (
-      c.get('authType') !== 'static' ||
-      c.req.header('Authorization') !== `Bearer ${c.env.RUNNER_SECRET_TOKEN}`
-    ) {
+    const { organizationId, userIds } = c.req.valid('query');
+    const { role, sub } = c.get('jwtPayload');
+    if (role !== 'runner' || sub.split(':')[0] !== organizationId) {
       return c.json({ error: 'Unauthorized' }, 401);
     }
-
-    const { organizationId, userIds } = c.req.valid('query');
 
     const memberships = await db
       .select()

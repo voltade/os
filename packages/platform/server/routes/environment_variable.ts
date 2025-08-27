@@ -1,14 +1,13 @@
 import { zValidator } from '@hono/zod-validator';
 import { and, eq } from 'drizzle-orm';
-import { bearerAuth } from 'hono/bearer-auth';
 import { z } from 'zod';
 
 import { environmentVariableTable } from '#drizzle/environment_variable.ts';
-import { platformEnvVariables } from '#server/env.ts';
 import { factory } from '#server/factory.ts';
 import { db } from '#server/lib/db.ts';
 import { Vault } from '#server/lib/vault.ts';
 import { auth } from '#server/middlewares/auth.ts';
+import { jwt } from '#server/middlewares/jwt.ts';
 import {
   checkReservedEnvironmentVariableNames,
   reservedNames,
@@ -18,7 +17,6 @@ export const route = factory
   .createApp()
   .get(
     '/:organization_id/:environment_id',
-    bearerAuth({ token: platformEnvVariables.RUNNER_SECRET_TOKEN }),
     zValidator(
       'param',
       z.object({
@@ -26,8 +24,13 @@ export const route = factory
         environment_id: z.string(),
       }),
     ),
+    jwt(),
     async (c) => {
       const { organization_id, environment_id } = c.req.valid('param');
+      const { role, sub } = c.get('jwtPayload');
+      if (role !== 'runner' || sub !== `${organization_id}:${environment_id}`) {
+        return c.json({ error: 'Unauthorized' }, 401);
+      }
 
       const EnvVarIds = await db
         .select({

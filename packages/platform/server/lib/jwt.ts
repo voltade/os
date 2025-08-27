@@ -1,0 +1,71 @@
+import { symmetricDecrypt } from 'better-auth/crypto';
+import { desc } from 'drizzle-orm';
+import * as jose from 'jose';
+
+import { jwks as jwksTable } from '#drizzle/auth.ts';
+import { platformEnvVariables } from '#server/env.ts';
+import { db } from '#server/lib/db.ts';
+
+interface KeyPair {
+  publicKey: string;
+  privateKey: CryptoKey | Uint8Array<ArrayBufferLike>;
+  alg: string;
+}
+
+let keyPairCache: KeyPair | null = null;
+
+export async function getKeyPair() {
+  if (keyPairCache) {
+    return keyPairCache;
+  }
+
+  // Pass the latest two JWKs to the PostgREST to be used as the JWT_SECRET config: https://docs.postgrest.org/en/v13/references/auth.html#asym-keys
+  const jwks = await db
+    .select()
+    .from(jwksTable)
+    .orderBy(desc(jwksTable.createdAt))
+    .limit(2);
+  const publicWebKeySet: jose.JSONWebKeySet = {
+    keys: jwks.map((jwk) => {
+      const publicKey = JSON.parse(jwk.publicKey) as jose.JWK_RSA_Public;
+      return {
+        ...publicKey,
+        kid: jwk.id,
+      };
+    }),
+  };
+  const publicKey = JSON.stringify(publicWebKeySet);
+  const alg = publicWebKeySet.keys[0]?.alg as string;
+
+  // Decrypt the private key to be used for signing long-live anon and service_role tokens
+  const decryptedPrivateKey = await symmetricDecrypt({
+    key: platformEnvVariables.AUTH_SECRET,
+    data: JSON.parse(jwks[0]?.privateKey ?? ''),
+  });
+  const privateWebKey = JSON.parse(decryptedPrivateKey) as jose.JWK_RSA_Private;
+  const privateKey = await jose.importJWK(privateWebKey, alg);
+
+  keyPairCache = { publicKey, privateKey, alg };
+  return { publicKey, privateKey, alg };
+}
+
+export type JwtPayload =
+  | (jose.JWTPayload & {
+      role: 'anon' | 'service_role';
+      aud: string[]; // [organizationSlug]
+    })
+  | {
+      role: 'runner';
+      sub: string; // `${organizationId}:${environmentId}`
+      aud: string[]; // [organizationSlug]
+    };
+
+export async function signJwt({ role, aud }: JwtPayload) {
+  const { privateKey, alg } = await getKeyPair();
+  return new jose.SignJWT({ role })
+    .setProtectedHeader({ alg })
+    .setIssuedAt(new Date('2025-08-01'))
+    .setExpirationTime(new Date('2035-08-01'))
+    .setAudience(aud)
+    .sign(privateKey);
+}

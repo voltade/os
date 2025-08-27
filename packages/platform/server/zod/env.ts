@@ -45,9 +45,6 @@ export const appEnvVariablesSchema = z.object({
 
   // ArgoCD
   ARGOCD_ENVIRONMENT_GENERATOR_TOKEN: z.string(),
-
-  // Runner Communication
-  RUNNER_SECRET_TOKEN: z.string(),
 });
 
 export type AppEnvVariables = z.infer<typeof appEnvVariablesSchema>;

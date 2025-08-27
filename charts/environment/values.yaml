@@ -34,11 +34,7 @@ runner:
   environment:
     IS_PRODUCTION: "false"
     PLATFORM_URL: http://platform.platform.svc.cluster.local:5173
-    RUNNER_SECRET_TOKEN:
-      valueFrom:
-        secretKeyRef:
-          name: shared-secrets
-          key: runnerSecretToken
+    RUNNER_KEY: ""
     POSTGREST_URL: http://postgrest:3000
     SUPABASE_META_URL: http://supabase-meta:8080
     SUPABASE_STORAGE_URL: http://supabase-storage:8000

@@ -1,17 +1,16 @@
 import { zValidator } from '@hono/zod-validator';
 import { and, eq } from 'drizzle-orm';
-import { bearerAuth } from 'hono/bearer-auth';
 import { z } from 'zod';
 
 import {
   member as memberTable,
   organization as organizationTable,
 } from '#drizzle/auth.ts';
-import { platformEnvVariables } from '#server/env.ts';
 import { factory } from '#server/factory.ts';
 import { auth as authClient } from '#server/lib/auth.ts';
 import { db } from '#server/lib/db.ts';
 import { auth } from '#server/middlewares/auth.ts';
+import { jwt } from '#server/middlewares/jwt.ts';
 
 export const route = factory
   .createApp()
@@ -61,19 +60,22 @@ export const route = factory
         userId: z.string(),
       }),
     ),
-    bearerAuth({
-      token: [platformEnvVariables.RUNNER_SECRET_TOKEN],
-    }),
+    jwt(),
     async (c) => {
+      const { userId, organizationId } = c.req.valid('json');
+      const { role, sub } = c.get('jwtPayload');
+      if (role !== 'runner' || sub.split(':')[0] !== organizationId) {
+        return c.json({ error: 'Unauthorized' }, 401);
+      }
+
       await authClient.api.addMember({
         body: {
-          userId: c.req.valid('json').userId,
+          userId,
+          organizationId,
           //@ts-expect-error TODO: will be fixed with openFGA
           role: ['guest'] as const,
-          organizationId: c.req.valid('json').organizationId,
         },
       });
-
       return c.json({ success: true });
     },
   )

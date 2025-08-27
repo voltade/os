@@ -17,6 +17,7 @@ export const appEnvVariablesSchema = z.object({
   ORGANIZATION_SLUG: z.string(),
   ENVIRONMENT_ID: z.string(),
   ENVIRONMENT_SLUG: z.string(),
+  RUNNER_KEY: z.string(),
   RUNNER_SECRET_TOKEN: z.string(),
 
   // Supabase

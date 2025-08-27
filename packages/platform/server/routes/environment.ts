@@ -1,21 +1,16 @@
 import { zValidator } from '@hono/zod-validator';
-import { symmetricDecrypt } from 'better-auth/crypto';
-import { and, desc, eq } from 'drizzle-orm';
+import { and, eq } from 'drizzle-orm';
 import { bearerAuth } from 'hono/bearer-auth';
-import * as jose from 'jose';
 import z from 'zod';
 
-import {
-  jwks as jwksTable,
-  organization as organizationTable,
-} from '#drizzle/auth.ts';
+import { organization as organizationTable } from '#drizzle/auth.ts';
 import { environmentTable } from '#drizzle/environment.ts';
 import { BASE_DOMAIN } from '#server/const.ts';
 import { platformEnvVariables } from '#server/env.ts';
 import { factory } from '#server/factory.ts';
 import { getCnpgStatus } from '#server/lib/cnpg.ts';
 import { db } from '#server/lib/db.ts';
-import { signJwt } from '#server/lib/jwk.ts';
+import { getKeyPair, signJwt } from '#server/lib/jwt.ts';
 import { auth } from '#server/middlewares/auth.ts';
 import { createEnvironmentSchema } from '#shared/schemas/environment.ts';
 
@@ -50,7 +45,8 @@ export const route = factory
         return c.json({ error: 'Unauthorized' }, 401);
       }
 
-      const results = await db
+      const { publicKey } = await getKeyPair();
+      const environments = await db
         .select()
         .from(environmentTable)
         .innerJoin(
@@ -58,43 +54,22 @@ export const route = factory
           eq(environmentTable.organization_id, organizationTable.id),
         );
 
-      // Pass the latest two JWKs to the PostgREST to be used as the JWT_SECRET config: https://docs.postgrest.org/en/v13/references/auth.html#asym-keys
-      const jwks = await db
-        .select()
-        .from(jwksTable)
-        .orderBy(desc(jwksTable.createdAt))
-        .limit(2);
-      const publicWebKeySet: jose.JSONWebKeySet = {
-        keys: jwks.map((jwk) => {
-          const publicKey = JSON.parse(jwk.publicKey) as jose.JWK_RSA_Public;
-          return {
-            ...publicKey,
-            kid: jwk.id,
-          };
-        }),
-      };
-      const publicKey = JSON.stringify(publicWebKeySet);
-      const alg = publicWebKeySet.keys[0]?.alg as string;
-
-      // Decrypt the private key to be used for signing long-live anon and service_role tokens
-      const decryptedPrivateKey = await symmetricDecrypt({
-        key: platformEnvVariables.AUTH_SECRET,
-        data: JSON.parse(jwks[0]?.privateKey ?? ''),
-      });
-      const privateWebKey = JSON.parse(
-        decryptedPrivateKey,
-      ) as jose.JWK_RSA_Private;
-      const privateKey = await jose.importJWK(privateWebKey, alg);
-
       const parameters: Values[] = await Promise.all(
-        results.map(async ({ organization, environment }) => {
-          const anonKey = await signJwt(alg, privateKey, 'anon', [
-            organization.slug,
-          ]);
-          const serviceKey = await signJwt(alg, privateKey, 'service_role', [
-            organization.slug,
-          ]);
-          const baseHostname = `${organization.slug}-${environment.slug}.${BASE_DOMAIN}`;
+        environments.map(async ({ organization, environment }) => {
+          const anonKey = await signJwt({
+            role: 'anon',
+            aud: [organization.slug],
+          });
+          const runnerKey = await signJwt({
+            role: 'runner',
+            sub: `${organization.id}:${environment.id}`,
+            aud: [organization.slug],
+          });
+          const serviceKey = await signJwt({
+            role: 'service_role',
+            aud: [organization.slug],
+          });
+          const baseHostname = `${organization.slug}-${environment.slug}.${baseDomain}`;
           const values = {
             id: `${organization.id}-${environment.id}`,
             slug: `${organization.slug}-${environment.slug}`,
@@ -118,6 +93,7 @@ export const route = factory
               environment: {
                 IS_PRODUCTION: environment.is_production.toString(),
                 VITE_PLATFORM_URL: platformEnvVariables.VITE_APP_URL,
+                RUNNER_KEY: runnerKey,
                 ORGANIZATION_ID: organization.id,
                 ORGANIZATION_SLUG: organization.slug,
                 ENVIRONMENT_ID: environment.id,
