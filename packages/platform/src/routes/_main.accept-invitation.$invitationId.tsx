@@ -26,9 +26,7 @@ export default function RouteComponent() {
         });
 
         if (result?.data) {
-          const urlFromData =
-            (result.data as any)?.data?.redirectUrl ??
-            (result.data as any)?.metadata?.redirectUrl;
+          const urlFromData = (result.data as any)?.data?.redirectUrl;
 
           if (typeof urlFromData === 'string' && urlFromData.length > 0) {
             // Always prefix with the current origin

@@ -15,12 +15,12 @@ export const educationStudentTable = educationSchema.table(
     school: text('school'),
     phone: text('phone'),
   },
-  (table) => ({
-    platformEmailCheck: check(
-      'platform_email_check',
-      sql`((${table.platform_id} IS NULL AND ${table.email} IS NULL) OR (${table.platform_id} IS NOT NULL AND ${table.email} IS NOT NULL))`,
-    ),
-  }),
+  //(table) => ({
+  //platformEmailCheck: check(
+  //'platform_email_check',
+  //sql`((${table.platform_id} IS NULL AND ${table.email} IS NULL) OR (${table.platform_id} IS NOT NULL AND ${table.email} IS NOT NULL))`,
+  //),
+  //}),
 );
 
 export const educationStudentTableRelations = relations(
