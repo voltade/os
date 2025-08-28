@@ -4,6 +4,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@voltade/ui/card.tsx';
 import { useState } from 'react';
 import { FormProvider, useForm } from 'react-hook-form';
 
+import { api } from '#src/lib/api.ts';
 import { authClient } from '#src/lib/auth.ts';
 import { ClassesStep } from './ClassesStep.tsx';
 import { Navigation } from './Navigation.tsx';
@@ -20,9 +21,6 @@ export default function RegistrationForm() {
   const [otpStates, setOtpStates] = useState<OtpStates>({
     parentOtpSent: false,
     parentOtpVerified: false,
-    studentOtpSent: false,
-    studentOtpVerified: false,
-    studentOtpRequired: false,
   });
 
   // Initialize react-hook-form
@@ -36,7 +34,6 @@ export default function RegistrationForm() {
       parentPhone: '',
       studentName: '',
       studentEmail: '',
-      studentOtp: '',
     },
   });
 
@@ -52,27 +49,7 @@ export default function RegistrationForm() {
     setOtpStates((prev) => ({ ...prev, ...updates }));
   };
 
-  // Watch student email to determine if OTP is required
   const studentEmail = watch('studentEmail');
-
-  // Update student OTP requirement when email changes
-  const handleStudentEmailChange = (email: string) => {
-    const needsOtp = email && email.trim().length > 0;
-    if (needsOtp !== otpStates.studentOtpRequired) {
-      updateOtpStates({
-        studentOtpRequired: !!needsOtp,
-        ...(needsOtp
-          ? {}
-          : {
-              studentOtpSent: false,
-              studentOtpVerified: false,
-            }),
-      });
-      if (!needsOtp) {
-        methods.setValue('studentOtp', '');
-      }
-    }
-  };
 
   // OTP handlers
   const handleSendParentOtp = async (email: string) => {
@@ -91,21 +68,7 @@ export default function RegistrationForm() {
     }
   };
 
-  const handleSendStudentOtp = async (email: string) => {
-    // Validate email before sending OTP
-    const isEmailValid = await trigger('studentEmail');
-    if (!isEmailValid) return;
-
-    await otpUtils.sendOtp(email);
-    updateOtpStates({ studentOtpSent: true, studentOtpRequired: true });
-  };
-
-  const handleVerifyStudentOtp = async (email: string, otp: string) => {
-    const isValid = await otpUtils.verifyOtp(email, otp);
-    if (isValid) {
-      updateOtpStates({ studentOtpVerified: true });
-    }
-  };
+  // Student OTP removed
 
   // Step validation
   const validateStep = async (step: Step): Promise<boolean> => {
@@ -120,9 +83,6 @@ export default function RegistrationForm() {
       fieldsToValidate = ['studentName'];
       if (studentEmail && studentEmail.trim()) {
         fieldsToValidate.push('studentEmail');
-        if (otpStates.studentOtpSent) {
-          fieldsToValidate.push('studentOtp');
-        }
       }
     }
 
@@ -134,10 +94,6 @@ export default function RegistrationForm() {
         !otpStates.parentOtpSent || otpStates.parentOtpVerified;
       return isStepValid && hasRequiredOtpVerification;
     } else if (step === 2) {
-      if (otpStates.studentOtpRequired) {
-        const hasRequiredStudentOtpVerification = otpStates.studentOtpVerified;
-        return isStepValid && hasRequiredStudentOtpVerification;
-      }
       return isStepValid;
     }
 
@@ -146,20 +102,7 @@ export default function RegistrationForm() {
 
   const nextStep = async () => {
     if (currentStep < 3) {
-      // On step 2, if a student email is present and OTP hasn't been sent yet,
-      // send the OTP and stay on the same step to allow entering the OTP.
-      if (
-        currentStep === 2 &&
-        studentEmail &&
-        studentEmail.trim() &&
-        !otpStates.studentOtpSent
-      ) {
-        const isEmailValid = await trigger('studentEmail');
-        if (isEmailValid) {
-          await handleSendStudentOtp(studentEmail);
-        }
-        return;
-      }
+      // Student OTP flow removed
 
       const isStepValid = await validateStep(currentStep);
       if (isStepValid) {
@@ -190,18 +133,28 @@ export default function RegistrationForm() {
     }
   };
 
-  const onSubmit = (data: RegistrationFormData) => {
-    console.log('Submitting form data:', data);
+  const onSubmit = async (data: RegistrationFormData) => {
+    const selectedClassIds = [1]; // TODO: replace with real selected class IDs
 
-    // Reset form
+    try {
+      const res = await api.register.$post({
+        json: {
+          name: data.studentName,
+          email: data.studentEmail || '',
+          selected_class_ids: selectedClassIds,
+        },
+      });
+      if (!res.ok) throw new Error('Registration failed');
+      await res.json();
+    } catch (err) {
+      console.error(err);
+    }
+
+    // Reset fields but remain on current step (or navigate as desired)
     reset();
-    setCurrentStep(1);
     setOtpStates({
       parentOtpSent: false,
       parentOtpVerified: false,
-      studentOtpSent: false,
-      studentOtpVerified: false,
-      studentOtpRequired: false,
     });
   };
 
@@ -216,13 +169,7 @@ export default function RegistrationForm() {
           />
         );
       case 2:
-        return (
-          <StudentStep
-            otpStates={otpStates}
-            handleStudentEmailChange={handleStudentEmailChange}
-            verifyStudentOtp={handleVerifyStudentOtp}
-          />
-        );
+        return <StudentStep />;
       case 3:
         return <ClassesStep />;
       default:

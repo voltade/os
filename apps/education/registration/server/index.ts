@@ -1,4 +1,5 @@
 import { createCommonRouter } from '@voltade/core-schema/common-api';
+import { env } from '@voltade/sdk/server';
 import { Hono } from 'hono';
 import { serveStatic } from 'hono/bun';
 import { logger } from 'hono/logger';
@@ -19,7 +20,7 @@ app.get('/healthz', (c) => {
 export const apiRoutes = app
   .basePath(API_BASE_ROUTE)
   .route('/runtime.js', runtimeRoute)
-  .route('/register-student', registerStudentRoute);
+  .route('/register', registerStudentRoute);
 
 export type ApiRoutes = typeof apiRoutes;
 
@@ -38,3 +39,4 @@ if (Bun.isMainThread) {
     fetch: app.fetch,
   });
 }
+export type AppType = typeof apiRoutes;

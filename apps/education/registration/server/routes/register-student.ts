@@ -8,7 +8,7 @@ import { z } from 'zod';
 
 import { factory } from '#server/factory.ts';
 import { db } from '#server/lib/db.ts';
-import { inviteGuestToOrganisation } from '#server/utils/inviteGuestToOrganisation.ts';
+import { platformClient } from '#server/utils/platformClient.ts';
 
 const registrationSchema = z.object({
   name: z.string().min(1),
@@ -22,17 +22,28 @@ export const route = factory
     const { name, email, selected_class_ids } = c.req.valid('json');
     const user = c.get('user');
 
-    await inviteGuestToOrganisation(user?.id ?? '');
-
     const result = await db.transaction(async (tx) => {
+      await platformClient({
+        url: '/api/organization/guest/add',
+        body: {
+          userId: user?.id,
+        },
+      });
+
       const [student] = await tx
         .insert(educationStudentTable)
         .values({ name, email })
         .returning();
 
-      //TODO: upsert user if there is an email
-
       if (!student) throw new Error('Failed to create student');
+
+      await platformClient({
+        url: '/api/organization/guest/invite',
+        body: {
+          email,
+          redirectUrl: '/o/voltade/registration/invite',
+        },
+      });
 
       const joinRows = selected_class_ids.map((classId) => ({
         student_id: student.id,

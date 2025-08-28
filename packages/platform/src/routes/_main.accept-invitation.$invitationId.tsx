@@ -24,7 +24,19 @@ export default function RouteComponent() {
         const result = await authClient.organization.getInvitation({
           query: { id: invitationId },
         });
+
         if (result?.data) {
+          const urlFromData =
+            (result.data as any)?.data?.redirectUrl ??
+            (result.data as any)?.metadata?.redirectUrl;
+
+          if (typeof urlFromData === 'string' && urlFromData.length > 0) {
+            // Always prefix with the current origin
+            const target = `${window.location.origin}${urlFromData.startsWith('/') ? urlFromData : `/${urlFromData}`}`;
+            window.location.href = target;
+            return; // stop here — do not render anything else
+          }
+
           setInvitationValid(true);
           setError(null);
         } else {
@@ -42,6 +54,7 @@ export default function RouteComponent() {
         setValidating(false);
       }
     };
+
     validateInvitation();
   }, [invitationId]);
 

@@ -52,7 +52,38 @@ export const route = factory
     return c.json(memberships.map((m) => m.organization));
   })
   .post(
-    '/guest',
+    '/guest/invite',
+    zValidator(
+      'json',
+      z.object({
+        email: z.string(),
+        organizationId: z.string(),
+        redirectUrl: z.string().optional(),
+      }),
+    ),
+    jwt(),
+    async (c) => {
+      const { organizationId, email, redirectUrl } = c.req.valid('json');
+
+      const data = await authClient.api.createInvitation({
+        body: {
+          email,
+          organizationId,
+          //@ts-expect-error TODO: will be fixed with openFGA
+          role: 'guest',
+          data: {
+            redirectUrl,
+          },
+        },
+      });
+
+      return c.json({
+        inviteId: data.id,
+      });
+    },
+  )
+  .post(
+    '/guest/add',
     zValidator(
       'json',
       z.object({
@@ -68,14 +99,28 @@ export const route = factory
         return c.json({ error: 'Unauthorized' }, 401);
       }
 
-      await authClient.api.addMember({
-        body: {
-          userId,
-          organizationId,
-          //@ts-expect-error TODO: will be fixed with openFGA
-          role: ['guest'] as const,
-        },
-      });
+      const membershipData = await db
+        .select()
+        .from(memberTable)
+        .where(
+          and(
+            eq(memberTable.userId, userId),
+            eq(memberTable.organizationId, organizationId),
+          ),
+        )
+        .limit(1);
+      const isMember = !!membershipData[0];
+
+      if (!isMember) {
+        await authClient.api.addMember({
+          body: {
+            userId,
+            organizationId,
+            //@ts-expect-error TODO: will be fixed with openFGA
+            role: ['guest'] as const,
+          },
+        });
+      }
       return c.json({ success: true });
     },
   )

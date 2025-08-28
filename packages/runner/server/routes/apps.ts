@@ -108,6 +108,7 @@ export const routes = factory
           }),
           PLATFORM_URL: c.env.PLATFORM_URL,
           VITE_PLATFORM_URL: c.env.VITE_PLATFORM_URL,
+          RUNNER_KEY: c.env.RUNNER_KEY, //TODO: CHECK IF THIS IS NEEDED
           ORGANIZATION_ID: c.env.ORGANIZATION_ID,
           ORGANIZATION_SLUG: c.env.ORGANIZATION_SLUG,
           ENVIRONMENT_ID: c.env.ENVIRONMENT_ID,

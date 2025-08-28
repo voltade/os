@@ -1,5 +1,3 @@
-import { createAuthClient } from '@voltade/sdk/client';
+import { createAuthClient, getRunTimeEnv } from '@voltade/sdk/client';
 
-import { runTimeEnv } from './runtime-env.ts';
-
-export const authClient = createAuthClient(runTimeEnv.VITE_PLATFORM_URL);
+export const authClient = createAuthClient(getRunTimeEnv().VITE_PLATFORM_URL);
