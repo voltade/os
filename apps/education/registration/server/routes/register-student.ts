@@ -3,10 +3,12 @@ import {
   educationStudentJoinClassTable,
   educationStudentTable,
 } from '@voltade/core-schema/schemas';
+import { auth } from '@voltade/sdk/server';
 import { z } from 'zod';
 
 import { factory } from '#server/factory.ts';
 import { db } from '#server/lib/db.ts';
+import { inviteGuestToOrganisation } from '#server/utils/inviteGuestToOrganisation.ts';
 
 const registrationSchema = z.object({
   name: z.string().min(1),
@@ -16,14 +18,19 @@ const registrationSchema = z.object({
 
 export const route = factory
   .createApp()
-  .post('/', zValidator('json', registrationSchema), async (c) => {
+  .post('/', auth, zValidator('json', registrationSchema), async (c) => {
     const { name, email, selected_class_ids } = c.req.valid('json');
+    const user = c.get('user');
+
+    await inviteGuestToOrganisation(user?.id ?? '');
 
     const result = await db.transaction(async (tx) => {
       const [student] = await tx
         .insert(educationStudentTable)
         .values({ name, email })
         .returning();
+
+      //TODO: upsert user if there is an email
 
       if (!student) throw new Error('Failed to create student');
 

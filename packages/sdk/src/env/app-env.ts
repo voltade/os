@@ -10,6 +10,7 @@ export const appEnvVariablesSchema = z.object({
   // Platform
   PLATFORM_URL: z.url(),
   VITE_PLATFORM_URL: z.url(),
+  RUNNER_KEY: z.string().default(''),
 
   // Organization & Environment
   ORGANIZATION_ID: z.string(),

@@ -11,8 +11,8 @@
   },
   "exports": {
     "./server": {
-      "types": "./src/env/app-env.ts",
-      "default": "./src/env/app-env.ts"
+      "types": "./src/server.ts",
+      "default": "./src/server.ts"
     },
     "./client": {
       "types": "./src/client.ts",
