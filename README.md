@@ -19,7 +19,7 @@ bun tofu:apply
 
 Login to ArgoCD with username `admin` and password `admin`.
 
-(To destroy the cluster, run `bun tofu:destroy`.)
+(To destroy the cluster, run `bun tofu:nuke`.)
 
 ## Prepare the platform database
 
@@ -69,8 +69,23 @@ bun --cwd apps/core/app-template dev
 bun --cwd apps/education/registration dev
 ```
 
-If your development server is not starting, run `bun run clean && bun install` from the root of the repository before continuing to troubleshoot.
+If your development server is not starting, run `bun run clean:all && bun install` from the root of the repository before continuing to troubleshoot.
 
+## Install an app in the platform web app
+
+First, log in using the email `admin@voltade.com`. Hint: The six-digit verification code is printed in the terminal where the platform web app is running.
+```bash
+bun voltade login
+```
+
+Then, install the app by referencing the directory of the app, for example:
+```bash
+bun voltade app:install apps/education/registration
+```
+
+The app should appear in the platform web app.
+
+# Miscellaneous Notes
 ## Installation of PostgreSQL extensions
 
 - Add source compiling to `docker/postgres/Dockerfile`: For most extensions that is not shipped with Postgres.
