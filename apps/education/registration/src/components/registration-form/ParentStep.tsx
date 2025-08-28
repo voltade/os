@@ -36,12 +36,19 @@ export function ParentStep({
   const { data: sessionData } = authClient.useSession();
   const isUserLoggedIn = !!sessionData?.user;
   const isParentVerified = parentOtpVerified || isUserLoggedIn;
+  const user = sessionData?.user;
 
   useEffect(() => {
-    if (isUserLoggedIn && sessionData?.user?.email) {
-      setValue('parentEmail', sessionData.user.email);
+    if (isUserLoggedIn && user?.email) {
+      setValue('parentEmail', user.email);
     }
-  }, [isUserLoggedIn, sessionData?.user?.email, setValue]);
+    if (isUserLoggedIn && user?.name) {
+      setValue('parentName', user.name);
+    }
+    if (isUserLoggedIn && user?.phoneNumber) {
+      setValue('parentPhone', user.phoneNumber);
+    }
+  }, [isUserLoggedIn, user?.email, user?.name, user?.phoneNumber, setValue]);
 
   return (
     <div className="grid gap-4">
