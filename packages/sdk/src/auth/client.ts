@@ -1,6 +1,5 @@
 import {
   emailOTPClient,
-  inferAdditionalFields,
   oidcClient,
   organizationClient,
   phoneNumberClient,
@@ -17,11 +16,6 @@ export const createAuthClient = (platformUrl: string) => {
       phoneNumberClient(),
       jwt(),
       oidcClient(),
-      inferAdditionalFields({
-        user: {
-          phone: { type: 'string' },
-        },
-      }),
     ],
   });
 };
