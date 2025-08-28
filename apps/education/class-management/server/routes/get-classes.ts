@@ -1,5 +1,5 @@
 import { classView } from '@voltade/core-schema/schemas';
-import { auth, drizzle } from '@voltade/sdk';
+import { auth, drizzle } from '@voltade/sdk/server';
 
 import { factory } from '#server/factory.ts';
 

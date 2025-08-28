@@ -1,6 +1,6 @@
 import { zValidator } from '@hono/zod-validator';
 import { educationClassTable } from '@voltade/core-schema/schemas';
-import { auth, drizzle } from '@voltade/sdk';
+import { auth, drizzle } from '@voltade/sdk/server';
 import { z } from 'zod';
 
 import { factory } from '#server/factory.ts';
