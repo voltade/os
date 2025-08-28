@@ -37,7 +37,11 @@ interface ClassData {
   course_id: number | null;
 }
 
-export default function ClassesTable() {
+interface ClassesTableProps {
+  headerAction?: React.ReactNode;
+}
+
+export default function ClassesTable({ headerAction }: ClassesTableProps) {
   const {
     data: classesData,
     isLoading,
@@ -61,11 +65,12 @@ export default function ClassesTable() {
   if (error) {
     return (
       <Card>
-        <CardHeader>
+        <CardHeader className="flex items-center justify-between">
           <CardTitle>Classes</CardTitle>
+          {headerAction}
         </CardHeader>
         <CardContent>
-          <p className="text-red-500">
+          <p className="text-sm text-destructive">
             Error loading classes: {(error as Error).message}
           </p>
         </CardContent>
@@ -75,20 +80,24 @@ export default function ClassesTable() {
 
   return (
     <Card>
-      <CardHeader>
+      <CardHeader className="flex items-center justify-between">
         <CardTitle>Classes</CardTitle>
+        {headerAction}
       </CardHeader>
       <CardContent>
         {isLoading ? (
-          <p>Loading classes...</p>
+          <div className="flex items-center gap-2 text-sm text-muted-foreground">
+            <div className="size-4 animate-spin rounded-full border-2 border-muted border-t-foreground" />
+            Loading classes...
+          </div>
         ) : !classesData || classesData.length === 0 ? (
-          <p className="text-gray-500">No classes found.</p>
+          <p className="text-sm text-muted-foreground">No classes found.</p>
         ) : (
           <Table>
             <TableHeader>
               <TableRow>
                 <TableHead>ID</TableHead>
-                <TableHead>Level Group</TableHead>
+                <TableHead>Level</TableHead>
                 <TableHead>Subject</TableHead>
                 <TableHead>Day</TableHead>
                 <TableHead>Start Time (SGT)</TableHead>
