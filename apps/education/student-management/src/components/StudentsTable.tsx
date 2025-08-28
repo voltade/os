@@ -51,7 +51,6 @@ type StudentRow = {
   name: string | null;
   phone: string | null;
   school: string | null;
-  email: string | null;
   class_ids: number[] | null;
 };
 
@@ -62,7 +61,7 @@ export default function StudentsTable() {
     queryFn: async () => {
       const { data, error } = await pgRest
         .from('student_view')
-        .select('id, name, phone, school, email, class_ids, is_active')
+        .select('id, name, phone, school, class_ids, is_active')
         .is('is_active', true)
         .order('id', { ascending: true });
       if (error) throw new Error(error.message);
@@ -136,7 +135,6 @@ export default function StudentsTable() {
     name: '',
     school: '',
     phone: '',
-    email: '',
     classIds: [] as string[],
   });
   const [open, setOpen] = useState(false);
@@ -146,21 +144,18 @@ export default function StudentsTable() {
     name: string;
     school: string;
     phone: string;
-    email: string;
     classIds: string[];
   }>({
     id: null,
     name: '',
     school: '',
     phone: '',
-    email: '',
     classIds: [],
   });
   const formId = useId();
   const nameId = `${formId}-name`;
   const schoolId = `${formId}-school`;
   const phoneId = `${formId}-phone`;
-  const emailId = `${formId}-email`;
   const classesId = `${formId}-classes`;
 
   const createStudent = useMutation({
@@ -169,7 +164,6 @@ export default function StudentsTable() {
         name: createForm.name,
         school: createForm.school,
         phone: createForm.phone,
-        email: createForm.email,
         class_ids: createForm.classIds.map((x) => Number(x)),
       };
       const res = await api.students.$post({ json: payload });
@@ -181,7 +175,6 @@ export default function StudentsTable() {
         name: '',
         school: '',
         phone: '',
-        email: '',
         classIds: [],
       });
       toast.success('Student created');
@@ -198,7 +191,6 @@ export default function StudentsTable() {
         name: string;
         school: string;
         phone: string;
-        email: string;
         class_ids: number[];
       }>;
     }) => {
@@ -241,7 +233,6 @@ export default function StudentsTable() {
           <TableCell>{s.name ?? '-'}</TableCell>
           <TableCell>{s.school ?? '-'}</TableCell>
           <TableCell>{s.phone ?? '-'}</TableCell>
-          <TableCell>{s.email ?? '-'}</TableCell>
           <TableCell>
             {(() => {
               const ids = (
@@ -280,7 +271,6 @@ export default function StudentsTable() {
                       name: s.name ?? '',
                       school: s.school ?? '',
                       phone: s.phone ?? '',
-                      email: s.email ?? '',
                       classIds: Array.isArray(s.class_ids)
                         ? s.class_ids.map((n) => String(n))
                         : [],
@@ -366,7 +356,6 @@ export default function StudentsTable() {
                   onChange={(e) =>
                     setCreateForm((p) => ({ ...p, name: e.target.value }))
                   }
-                  placeholder="Jane Doe"
                 />
               </div>
               <div className="flex flex-col gap-1">
@@ -379,7 +368,6 @@ export default function StudentsTable() {
                   onChange={(e) =>
                     setCreateForm((p) => ({ ...p, school: e.target.value }))
                   }
-                  placeholder="Springfield High"
                 />
               </div>
               <div className="flex flex-col gap-1">
@@ -392,21 +380,6 @@ export default function StudentsTable() {
                   onChange={(e) =>
                     setCreateForm((p) => ({ ...p, phone: e.target.value }))
                   }
-                  placeholder="+65 8123 4567"
-                />
-              </div>
-              <div className="flex flex-col gap-1">
-                <label htmlFor={emailId} className="text-sm font-medium">
-                  Email
-                </label>
-                <Input
-                  type="email"
-                  id={emailId}
-                  value={createForm.email}
-                  onChange={(e) =>
-                    setCreateForm((p) => ({ ...p, email: e.target.value }))
-                  }
-                  placeholder="jane@example.com"
                 />
               </div>
               <div className="flex flex-col gap-1">
@@ -437,7 +410,6 @@ export default function StudentsTable() {
                     !createForm.name ||
                     !createForm.school ||
                     !createForm.phone ||
-                    !createForm.email ||
                     createStudent.isPending
                   }
                 >
@@ -455,7 +427,6 @@ export default function StudentsTable() {
             <TableHead>Name</TableHead>
             <TableHead>School</TableHead>
             <TableHead>Phone</TableHead>
-            <TableHead>Email</TableHead>
             <TableHead>Enrolled Classes</TableHead>
             <TableHead className="w-[160px]">Actions</TableHead>
           </TableRow>
@@ -473,13 +444,7 @@ export default function StudentsTable() {
             onSubmit={(e) => {
               e.preventDefault();
               if (!editForm.id) return;
-              if (
-                !editForm.name ||
-                !editForm.school ||
-                !editForm.phone ||
-                !editForm.email
-              )
-                return;
+              if (!editForm.name || !editForm.school || !editForm.phone) return;
               updateStudent.mutate(
                 {
                   id: editForm.id,
@@ -487,7 +452,6 @@ export default function StudentsTable() {
                     name: editForm.name,
                     school: editForm.school,
                     phone: editForm.phone,
-                    email: editForm.email,
                     class_ids: editForm.classIds.map((x) => Number(x)),
                   },
                 },
@@ -512,7 +476,6 @@ export default function StudentsTable() {
                 onChange={(e) =>
                   setEditForm((p) => ({ ...p, name: e.target.value }))
                 }
-                placeholder="Jane Doe"
               />
             </div>
             <div className="flex flex-col gap-1">
@@ -528,7 +491,6 @@ export default function StudentsTable() {
                 onChange={(e) =>
                   setEditForm((p) => ({ ...p, school: e.target.value }))
                 }
-                placeholder="Springfield High"
               />
             </div>
             <div className="flex flex-col gap-1">
@@ -544,26 +506,9 @@ export default function StudentsTable() {
                 onChange={(e) =>
                   setEditForm((p) => ({ ...p, phone: e.target.value }))
                 }
-                placeholder="+65 8123 4567"
               />
             </div>
-            <div className="flex flex-col gap-1">
-              <label
-                className="text-sm font-medium"
-                htmlFor={`${formId}-edit-email`}
-              >
-                Email
-              </label>
-              <Input
-                type="email"
-                id={`${formId}-edit-email`}
-                value={editForm.email}
-                onChange={(e) =>
-                  setEditForm((p) => ({ ...p, email: e.target.value }))
-                }
-                placeholder="jane@example.com"
-              />
-            </div>
+            <div className="flex flex-col gap-1"></div>
             <div className="flex flex-col gap-1">
               <div
                 id={`${formId}-edit-classes`}
@@ -595,7 +540,6 @@ export default function StudentsTable() {
                   !editForm.name ||
                   !editForm.school ||
                   !editForm.phone ||
-                  !editForm.email ||
                   updateStudent.isPending
                 }
               >

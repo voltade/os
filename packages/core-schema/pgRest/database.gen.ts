@@ -129,6 +129,8 @@ export type Database = {
           id: number | null
           is_active: boolean | null
           name: string | null
+          phone: string | null
+          school: string | null
         }
         Relationships: []
       }
