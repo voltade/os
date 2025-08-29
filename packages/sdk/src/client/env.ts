@@ -7,14 +7,6 @@ export const runTimeEnvSchema = z.object({
 
 export type RunTimeEnv = z.infer<typeof runTimeEnvSchema>;
 
-declare global {
-  interface Window {
-    __env: {
-      [appName: string]: RunTimeEnv & Record<string, string>;
-    };
-  }
-}
-
 export function getRunTimeEnv(appName: string): RunTimeEnv {
   return runTimeEnvSchema.parse({
     VITE_PGREST_URL:

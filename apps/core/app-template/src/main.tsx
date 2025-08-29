@@ -6,13 +6,11 @@ import {
   createRouter,
   RouterProvider,
 } from '@tanstack/react-router';
+import { reportWebVitals } from '@voltade/sdk/client';
 import { Toaster } from '@voltade/ui/sonner.tsx';
 import { StrictMode } from 'react';
 import ReactDOM from 'react-dom/client';
-import type { toast } from 'sonner';
 
-import type { RunTimeEnv } from './lib/runtime-env.ts';
-import reportWebVitals from './reportWebVitals.ts';
 // Import the generated route tree
 import { routeTree } from './routeTree.gen.ts';
 
@@ -35,17 +33,6 @@ const router = createRouter({
 declare module '@tanstack/react-router' {
   interface Register {
     router: typeof router;
-  }
-}
-
-declare global {
-  interface Window {
-    __POWERED_BY_QIANKUN__?: boolean;
-    __BASE_URL__?: string;
-    __env: {
-      [key: string]: RunTimeEnv;
-    };
-    toast?: typeof toast;
   }
 }
 

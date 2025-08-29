@@ -4,7 +4,12 @@
   "type": "module",
   "private": true,
   "devDependencies": {
-    "@types/bun": "latest"
+    "@types/bun": "latest",
+    "sonner": "^2.0.7",
+    "web-vitals": "^5.1.0"
+  },
+  "dependencies": {
+    "@voltade/core-schema": "workspace:*"
   },
   "peerDependencies": {
     "typescript": "^5"

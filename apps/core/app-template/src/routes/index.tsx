@@ -1,11 +1,11 @@
 import { createFileRoute } from '@tanstack/react-router';
+import { toast } from '@voltade/sdk/client';
 import { Button } from '@voltade/ui/button.tsx';
 
 import data from '#src/app/dashboard/data.json';
 import { ChartAreaInteractive } from '#src/components/chart-area-interactive';
 import { DataTable } from '#src/components/data-table';
 import { SectionCards } from '#src/components/section-cards';
-import { toast } from '#src/lib/toast.ts';
 
 export const Route = createFileRoute('/')({
   component: RouteComponent,
