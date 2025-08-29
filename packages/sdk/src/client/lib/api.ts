@@ -3,7 +3,8 @@ import { hc } from 'hono/client';
 
 import { getApiUrl } from './get-urls.ts';
 
-export const createApiClient = <T extends Hono>() => {
+// biome-ignore lint/suspicious/noExplicitAny: needed for the Hono type
+export const createApiClient = <T extends Hono<any, any, any>>() => {
   return hc<T>(getApiUrl('/'), {
     headers: async () => {
       const token = localStorage.getItem('voltade-jwt') || '';
