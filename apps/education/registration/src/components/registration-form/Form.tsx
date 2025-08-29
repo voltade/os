@@ -68,8 +68,6 @@ export default function RegistrationForm() {
     }
   };
 
-  // Student OTP removed
-
   // Step validation
   const validateStep = async (step: Step): Promise<boolean> => {
     let fieldsToValidate: (keyof RegistrationFormData)[] = [];

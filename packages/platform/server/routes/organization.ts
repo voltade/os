@@ -3,12 +3,13 @@ import { and, eq } from 'drizzle-orm';
 import { z } from 'zod';
 
 import {
+  invitation as invitationTable,
   member as memberTable,
   organization as organizationTable,
 } from '#drizzle/auth.ts';
 import { factory } from '#server/factory.ts';
-import { auth as authClient } from '#server/lib/auth.ts';
 import { db } from '#server/lib/db.ts';
+import { nanoid } from '#server/lib/nanoid.ts';
 import { auth } from '#server/middlewares/auth.ts';
 import { jwt } from '#server/middlewares/jwt.ts';
 
@@ -65,21 +66,19 @@ export const route = factory
     async (c) => {
       const { organizationId, email, redirectUrl } = c.req.valid('json');
 
-      const data = await authClient.api.createInvitation({
-        body: {
-          email,
-          organizationId,
-          //@ts-expect-error TODO: will be fixed with openFGA
-          role: 'guest',
-          data: {
-            redirectUrl,
-          },
-        },
+      const inviteId = nanoid(21);
+      await db.insert(invitationTable).values({
+        id: inviteId,
+        organizationId,
+        email,
+        role: 'guest',
+        status: 'pending',
+        expiresAt: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000),
+        inviterId: 'admin',
+        data: redirectUrl ? JSON.stringify({ redirectUrl }) : null,
       });
 
-      return c.json({
-        inviteId: data.id,
-      });
+      return c.json({ inviteId });
     },
   )
   .post(
@@ -112,13 +111,12 @@ export const route = factory
       const isMember = !!membershipData[0];
 
       if (!isMember) {
-        await authClient.api.addMember({
-          body: {
-            userId,
-            organizationId,
-            //@ts-expect-error TODO: will be fixed with openFGA
-            role: ['guest'] as const,
-          },
+        await db.insert(memberTable).values({
+          id: nanoid(21),
+          userId,
+          organizationId,
+          role: 'guest',
+          createdAt: new Date(),
         });
       }
       return c.json({ success: true });

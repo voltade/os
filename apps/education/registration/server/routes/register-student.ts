@@ -1,6 +1,8 @@
 import { zValidator } from '@hono/zod-validator';
 import {
+  educationParentTable,
   educationStudentJoinClassTable,
+  educationStudentJoinParentTable,
   educationStudentTable,
 } from '@voltade/core-schema/schemas';
 import { auth, drizzle } from '@voltade/sdk/server';
@@ -26,8 +28,26 @@ export const route = factory
     async (c) => {
       const { name, email, selected_class_ids } = c.req.valid('json');
       const user = c.get('user');
+      const userId = user?.id;
+
+      if (!userId) throw new Error('User not found');
 
       const result = await c.var.tx.transaction(async (tx) => {
+        const parentData = await tx
+          .insert(educationParentTable)
+          .values({
+            //id: userId,
+            name,
+            email,
+          })
+          .returning();
+
+        const parent = parentData[0];
+
+        if (!parent) {
+          throw new Error('Failed to create parent');
+        }
+
         await platformClient({
           url: '/api/organization/guest/add',
           body: {
@@ -48,6 +68,12 @@ export const route = factory
             email,
             redirectUrl: '/o/voltade/registration/invite',
           },
+        });
+
+        await tx.insert(educationStudentJoinParentTable).values({
+          student_id: student.id,
+          parent_id: parent.id,
+          relationship: 'father',
         });
 
         const joinRows = selected_class_ids.map((classId) => ({

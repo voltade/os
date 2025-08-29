@@ -22,6 +22,17 @@ export const verifyParentOtp = async (
 ): Promise<boolean> => {
   try {
     await authClient.signIn.emailOtp({ email, otp });
+    await authClient.getSession({
+      fetchOptions: {
+        onSuccess: (ctx) => {
+          const jwt = ctx.response.headers.get('set-auth-jwt');
+          if (jwt) {
+            localStorage.setItem('voltade-jwt', jwt);
+            console.log('JWT stored:', jwt);
+          }
+        },
+      },
+    });
     return true;
   } catch (e) {
     return false;
