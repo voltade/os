@@ -3,6 +3,7 @@ import { Button } from '@voltade/ui/button.tsx';
 import { Card, CardContent, CardHeader, CardTitle } from '@voltade/ui/card.tsx';
 import { useState } from 'react';
 import { FormProvider, useForm } from 'react-hook-form';
+import { toast } from 'sonner';
 
 import { api } from '#src/lib/api.ts';
 import { authClient } from '#src/lib/auth.ts';
@@ -34,6 +35,7 @@ export default function RegistrationForm() {
       parentPhone: '',
       studentName: '',
       studentEmail: '',
+      selectedClassIds: [],
     },
   });
 
@@ -132,7 +134,7 @@ export default function RegistrationForm() {
   };
 
   const onSubmit = async (data: RegistrationFormData) => {
-    const selectedClassIds = [1]; // TODO: replace with real selected class IDs
+    const { selectedClassIds } = methods.getValues();
 
     try {
       const res = await api.register.$post({
@@ -144,8 +146,10 @@ export default function RegistrationForm() {
       });
       if (!res.ok) throw new Error('Registration failed');
       await res.json();
+      toast.success('Registration submitted');
     } catch (err) {
       console.error(err);
+      toast.error('Failed to submit registration');
     }
 
     // Reset fields but remain on current step (or navigate as desired)

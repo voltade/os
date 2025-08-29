@@ -63,6 +63,8 @@ export const registrationSchema = z.object({
   studentName: nameSchema,
   studentEmail: z.string().optional(), // Optional field
   studentOtp: z.string().optional(), // Will be required conditionally
+  // Classes selection (ids)
+  selectedClassIds: z.array(z.number()),
 });
 
 // Schema for step 1 validation
