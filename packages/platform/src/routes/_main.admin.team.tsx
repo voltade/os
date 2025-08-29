@@ -245,7 +245,9 @@ function RouteComponent() {
   }, [activeTab, fetchInvites]);
 
   // Get members from organization data
-  const members = organisation?.members || [];
+  const members = (organisation?.members || []).filter(
+    (m) => m.role !== 'guest',
+  );
 
   // Filter and paginate members
   const { totalPages, paginatedMembers, totalFilteredMembers } = useMemo(() => {

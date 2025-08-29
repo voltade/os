@@ -63,9 +63,7 @@ export const createWorker = async (
 export const deleteWorker = (appId: string, truncatedReleaseId: string) => {
   const worker = workerMap.get(`${appId}-${truncatedReleaseId}`);
   if (worker) {
-    console.info(`${appId}-${truncatedReleaseId}`, 'info', 'Deleting worker');
     worker.terminate();
-
     workerMap.delete(`${appId}-${truncatedReleaseId}`);
   }
 };
