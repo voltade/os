@@ -1,10 +1,10 @@
 import { createCommonRouter } from '@voltade/core-schema/common-api';
-import { auth, db, drizzle } from '@voltade/sdk/server';
+import { auth, createRunTimeRoute, db, drizzle } from '@voltade/sdk/server';
 import { Hono } from 'hono';
 import { serveStatic } from 'hono/bun';
 import { logger } from 'hono/logger';
 
-import runtimeRoute from '#server/routes/runtime.ts';
+import { factory } from './factory.ts';
 
 const API_BASE_ROUTE = '/api';
 
@@ -17,7 +17,7 @@ app.get('/healthz', (c) => {
 
 export const apiRoutes = app
   .basePath(API_BASE_ROUTE)
-  .route('/runtime.js', runtimeRoute)
+  .route('/runtime.js', createRunTimeRoute('app-template', factory))
   .use(auth)
   .use(drizzle())
   .route('/common', createCommonRouter(db));
