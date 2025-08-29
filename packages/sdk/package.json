@@ -11,12 +11,16 @@
   },
   "exports": {
     "./server": {
-      "types": "./src/server.ts",
-      "default": "./src/server.ts"
+      "types": "./src/server/index.ts",
+      "default": "./src/server/index.ts"
     },
     "./client": {
-      "types": "./src/client.ts",
-      "default": "./src/client.ts"
+      "types": "./src/client/index.ts",
+      "default": "./src/client/index.ts"
+    },
+    "./scripts": {
+      "types": "./src/scripts/index.ts",
+      "default": "./src/scripts/index.ts"
     }
   }
 }

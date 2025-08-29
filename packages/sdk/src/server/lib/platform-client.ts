@@ -1,4 +1,4 @@
-import { baseEnv } from '@voltade/sdk/server';
+import { baseEnv } from '../env.ts';
 
 interface PlatformRequestOptions<T = unknown> {
   url: string; // endpoint path after /api
@@ -8,6 +8,7 @@ interface PlatformRequestOptions<T = unknown> {
 
 export const platformClient = async <
   TResponse = unknown,
+  // biome-ignore lint/complexity/noBannedTypes: Request body can be anything required by the api
   TBody extends object = {},
 >(
   options: PlatformRequestOptions<TBody>,

@@ -1,8 +1,7 @@
-import {
-  type AppEnvVariables,
-  appEnvVariablesSchema,
-} from '#server/zod/env.ts';
+import { z } from 'zod';
 
-export const appEnvVariables = appEnvVariablesSchema.parse(process.env);
+export const appEnvVariablesSchema = z.object({
+  TEST_ENV: z.string(),
+});
 
-export type Variables = Record<string, unknown> & AppEnvVariables;
+export const env = appEnvVariablesSchema.parse(process.env);

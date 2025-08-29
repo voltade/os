@@ -5,8 +5,6 @@ import { serveStatic } from 'hono/bun';
 import { logger } from 'hono/logger';
 
 import runtimeRoute from '#server/routes/runtime.ts';
-import { route as educationRoute } from './routes/education/index.ts';
-import { route as productRoute } from './routes/product/index.ts';
 
 const API_BASE_ROUTE = '/api';
 
@@ -17,16 +15,11 @@ app.get('/healthz', (c) => {
   return c.json({ message: 'Ok' });
 });
 
-// NOTE: Since most apps operate within a specialized domain, there is no need
-// for most apps to split the backend routes by schema as shown here.
-// e.g. /api/education/register-student vs. /api/register-student
 export const apiRoutes = app
   .basePath(API_BASE_ROUTE)
   .route('/runtime.js', runtimeRoute)
   .use(auth)
   .use(drizzle())
-  .route('/product', productRoute) //DEMO purposes, should be using common one
-  .route('/education', educationRoute)
   .route('/common', createCommonRouter(db));
 // TODO: Add more API routes here
 

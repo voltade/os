@@ -1,6 +1,6 @@
 import z from 'zod';
 
-const runTimeEnvSchema = z.object({
+export const runTimeEnvSchema = z.object({
   VITE_PGREST_URL: z.string(),
   VITE_PLATFORM_URL: z.string(),
 });

@@ -9,7 +9,6 @@ import { auth, drizzle } from '@voltade/sdk/server';
 import { z } from 'zod';
 
 import { factory } from '#server/factory.ts';
-import { db } from '#server/lib/db.ts';
 import { platformClient } from '#server/utils/platformClient.ts';
 
 const registrationSchema = z.object({

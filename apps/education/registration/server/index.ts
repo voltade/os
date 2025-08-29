@@ -1,5 +1,5 @@
 import { createCommonRouter } from '@voltade/core-schema/common-api';
-import { env } from '@voltade/sdk/server';
+import { baseEnv } from '@voltade/sdk/server';
 import { Hono } from 'hono';
 import { serveStatic } from 'hono/bun';
 import { logger } from 'hono/logger';
