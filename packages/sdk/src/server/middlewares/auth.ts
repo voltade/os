@@ -1,7 +1,7 @@
 import { createMiddleware } from 'hono/factory';
 import { createRemoteJWKSet, jwtVerify } from 'jose';
 
-import { env } from '../env/app-env.ts';
+import { baseEnv } from '../env.ts';
 
 export type AuthVariables = {
   user?: {
@@ -12,7 +12,9 @@ export type AuthVariables = {
 };
 
 // Create JWKS instance for JWT verification
-const JWKS = createRemoteJWKSet(new URL(`${env.PLATFORM_URL}/api/auth/jwks`));
+const JWKS = createRemoteJWKSet(
+  new URL(`${baseEnv.PLATFORM_URL}/api/auth/jwks`),
+);
 
 export const auth = createMiddleware<{ Variables: AuthVariables }>(
   async (c, next) => {

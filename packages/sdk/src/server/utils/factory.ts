@@ -19,3 +19,5 @@ export const getFactory = <T extends Record<string, string>>(env: T) =>
       });
     },
   });
+
+export type Factory = ReturnType<typeof getFactory>;

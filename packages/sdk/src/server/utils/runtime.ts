@@ -1,14 +1,11 @@
-import { factory } from './factory.ts';
+import type { Factory } from './factory.ts';
 
-const createRunTimeRoute = (appName: string) => {
+const createRunTimeRoute = (appName: string, factory: Factory) => {
   return factory.createApp().get('/', (c) => {
     return c.text(
       `
 window.__env = window.__env ?? {};
-window.__env["${appName}"] = {
-  VITE_PGREST_URL: '${c.env.VITE_PGREST_URL}',
-  VITE_PLATFORM_URL: '${c.env.VITE_PLATFORM_URL}',
-};
+window.__env["${appName}"] = ${JSON.stringify(Object.fromEntries(Object.entries(c.env).filter(([key]) => key.startsWith('VITE_'))), null, 2)};
 `.trim(),
       200,
       { 'Content-Type': 'application/javascript' },
