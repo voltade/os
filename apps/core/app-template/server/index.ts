@@ -4,6 +4,7 @@ import { Hono } from 'hono';
 import { serveStatic } from 'hono/bun';
 import { logger } from 'hono/logger';
 
+import packageJson from '../package.json';
 import { factory } from './factory.ts';
 
 const API_BASE_ROUTE = '/api';
@@ -17,7 +18,7 @@ app.get('/healthz', (c) => {
 
 export const apiRoutes = app
   .basePath(API_BASE_ROUTE)
-  .route('/runtime.js', createRunTimeRoute('app-template', factory))
+  .route('/runtime.js', createRunTimeRoute(packageJson.name, factory))
   .use(auth)
   .use(drizzle())
   .route('/common', createCommonRouter(db));
