@@ -102,9 +102,9 @@ for (const chartName of selectedCharts) {
   await $`helm package --dependency-update charts/${chartName}`;
 
   console.log(
-    `+ helm push --ca-file terraform/kind-local/certs/ca.crt ${filename} oci://registry.127.0.0.1.nip.io`,
+    `+ helm push --ca-file terraform/certs/ca.crt ${filename} oci://registry.127.0.0.1.nip.io`,
   );
-  await $`helm push --ca-file terraform/kind-local/certs/ca.crt ${filename} oci://registry.127.0.0.1.nip.io`;
+  await $`helm push --ca-file terraform/certs/ca.crt ${filename} oci://registry.127.0.0.1.nip.io`;
 
   console.log(`+ rm ${filename}`);
   await $`rm ${filename}`;

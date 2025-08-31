@@ -33,7 +33,7 @@ export const route = factory
   .post(
     '/api/v1/getparams.execute',
     bearerAuth({
-      // The token is configured in terraform/kind-local/argocd-environment-generator.yaml, the values is referring to the "environment-generator.token" key in the "argocd-extra-secret" secret.
+      // The token is configured in terraform/argocd-environment-generator.yaml, the values is referring to the "environment-generator.token" key in the "argocd-extra-secret" secret.
       token: platformEnvVariables.ARGOCD_ENVIRONMENT_GENERATOR_TOKEN,
     }),
     async (c) => {

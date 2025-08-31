@@ -1,5 +1,5 @@
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
-export KUBECONFIG="$SCRIPT_DIR/../../../terraform/kind-local/kubeconfig"
+export KUBECONFIG="$SCRIPT_DIR/../../../terraform/kubeconfig"
 
 ENV_FILE="$SCRIPT_DIR/../.env"
 ENV_EXAMPLE="$SCRIPT_DIR/../.env.example"
