@@ -20,8 +20,6 @@ spec:
       owner: core_migrator
     - name: storage
       owner: core_migrator
-    - name: openfga
-      owner: openfga_admin
   extensions:
     - name: pgcrypto
       schema: extensions

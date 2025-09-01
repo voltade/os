@@ -23,10 +23,10 @@ spec:
         labels:
           cnpg.io/reload: "true"
       data:
-        dbname: app
+        dbname: openfga
         host: cnpg-cluster-rw
         password: "{{ `{{ .password }}` }}"
         port: "5432"
-        uri: "postgresql://openfga_admin:{{ `{{ .password }}` }}@cnpg-cluster-rw:5432/app?search_path=openfga"
+        uri: "postgresql://openfga_admin:{{ `{{ .password }}` }}@cnpg-cluster-rw:5432/openfga"
         user: openfga_admin
         username: openfga_admin
