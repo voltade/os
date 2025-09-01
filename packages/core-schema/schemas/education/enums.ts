@@ -14,3 +14,8 @@ export const educationResourceType = educationSchema.enum('resource_type', [
   'file',
   'url',
 ]);
+
+export const educationAttendanceStatus = educationSchema.enum(
+  'attendance_status',
+  ['present', 'absent', 'online'],
+);

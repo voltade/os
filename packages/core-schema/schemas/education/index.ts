@@ -3,6 +3,7 @@
  */
 
 export * from './enums.ts';
+export * from './tables/attendance.ts';
 export * from './tables/class.ts';
 export * from './tables/lesson.ts';
 export * from './tables/level.ts';
