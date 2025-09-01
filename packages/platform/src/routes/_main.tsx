@@ -49,7 +49,7 @@ function RouteComponent() {
     <div className="min-h-screen w-full">
       <div className="flex min-h-screen flex-col">
         <Header className="h-12" />
-        <main className="min-w-0 min-h-[calc(100vh-48px)]">
+        <main className="min-w-0 min-h-[calc(100vh-48px)] pt-4">
           <div className="min-w-full min-h-full">
             <Outlet />
           </div>

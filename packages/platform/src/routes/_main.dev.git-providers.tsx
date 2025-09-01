@@ -21,7 +21,7 @@ function RouteComponent() {
 
   return (
     <div className="space-y-2">
-      <h2 className="text-2xl font-semibold tracking-tight">Git Providers</h2>
+      <h2 className="text-3xl font-bold text-foreground">Git Providers</h2>
       <p className="text-sm text-muted-foreground">
         Management UI coming soon.
       </p>

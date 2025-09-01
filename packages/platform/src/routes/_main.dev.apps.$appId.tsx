@@ -120,7 +120,7 @@ function RouteComponent() {
             </Button>
           </Link>
           <div>
-            <h1 className="text-2xl font-semibold tracking-tight text-foreground">
+            <h1 className="text-3xl font-bold text-foreground">
               {app.name || 'Unnamed App'}
             </h1>
             <p className="text-sm text-muted-foreground">{app.slug}</p>
@@ -293,6 +293,7 @@ type AppType = {
   slug: string;
   name: string | null;
   description: string | null;
+  is_public: boolean;
   build_command: string;
   output_path: string;
   entrypoint: string;

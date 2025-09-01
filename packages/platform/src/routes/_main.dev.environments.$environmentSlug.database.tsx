@@ -63,9 +63,7 @@ function RouteComponent() {
     <div className="flex flex-col gap-6">
       <div className="flex items-center justify-between">
         <div>
-          <h2 className="text-2xl font-semibold tracking-tight text-foreground">
-            Database
-          </h2>
+          <h2 className="text-3xl font-bold text-foreground">Database</h2>
           <p className="text-sm text-muted-foreground">
             {environment.name || environment.slug} •{' '}
             {environment.is_production ? 'Production' : 'Development'}

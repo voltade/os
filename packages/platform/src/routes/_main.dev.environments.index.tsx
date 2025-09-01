@@ -80,9 +80,8 @@ function RouteComponent() {
   return (
     <div className="flex flex-col gap-6">
       <div className="flex items-center justify-between">
-        <h2 className="text-2xl font-semibold tracking-tight text-foreground">
-          Environments
-        </h2>
+        inor{' '}
+        <h2 className="text-3xl font-bold text-foreground">Environments</h2>
         <CreateEnvironmentButton />
       </div>
 

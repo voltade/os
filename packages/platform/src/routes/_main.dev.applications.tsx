@@ -89,9 +89,7 @@ function RouteComponent() {
   return (
     <div>
       <div className="flex items-center justify-between mb-4">
-        <h2 className="text-2xl font-semibold tracking-tight text-foreground">
-          Applications
-        </h2>
+        <h2 className="text-3xl font-bold text-foreground">Applications</h2>
         <CreateAppButton />
       </div>
 
