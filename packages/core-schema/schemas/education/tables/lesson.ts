@@ -2,6 +2,7 @@ import { relations } from 'drizzle-orm';
 import { integer } from 'drizzle-orm/pg-core';
 
 import { tstzrange } from '../../customTypes.ts';
+import { productTable } from '../../product/tables/product.ts';
 import { DEFAULT_COLUMNS } from '../../utils.ts';
 import { educationSchema } from '../schema.ts';
 import { educationClassTable } from './class.ts';
@@ -26,6 +27,11 @@ export const educationLessonTable = educationSchema.table('lesson', {
   class_id: integer('class_id').references(() => educationClassTable.id, {
     onDelete: 'set null',
   }),
+
+  // Link to product schema.
+  product_id: integer()
+    // .notNull() TODO: Update the seed script and uncomment this.
+    .references(() => productTable.id),
 });
 
 export const educationLessonTableRelations = relations(
@@ -46,6 +52,10 @@ export const educationLessonTableRelations = relations(
     term: one(educationTermTable, {
       fields: [educationLessonTable.term_id],
       references: [educationTermTable.id],
+    }),
+    product: one(productTable, {
+      fields: [educationLessonTable.product_id],
+      references: [productTable.id],
     }),
   }),
 );

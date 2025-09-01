@@ -1,6 +1,7 @@
 import { relations, sql } from 'drizzle-orm';
-import { check, text } from 'drizzle-orm/pg-core';
+import { check, integer, text } from 'drizzle-orm/pg-core';
 
+import { partnerTable } from '../../resource/tables/partner.ts';
 import { DEFAULT_COLUMNS } from '../../utils.ts';
 import { educationSchema } from '../schema.ts';
 import { educationStudentJoinClassTable } from './student_join_class.ts';
@@ -14,6 +15,9 @@ export const educationStudentTable = educationSchema.table(
     email: text('email'),
     school: text('school'),
     phone: text('phone'),
+    partner_id: integer()
+      // .notNull() TODO: Update the seed script and uncomment this line.
+      .references(() => partnerTable.id),
   },
   //(table) => ({
   //platformEmailCheck: check(

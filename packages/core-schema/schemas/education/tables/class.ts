@@ -1,6 +1,7 @@
 import { relations } from 'drizzle-orm';
 import { integer, time } from 'drizzle-orm/pg-core';
 
+import { productTemplateTable } from '../../product/tables/product_template.ts';
 import { DEFAULT_COLUMNS } from '../../utils.ts';
 import { educationDayOfTheWeek } from '../enums.ts';
 import { educationSchema } from '../schema.ts';
@@ -28,6 +29,11 @@ export const educationClassTable = educationSchema.table('class', {
   course_id: integer('course_id').references(() => educationCourseTable.id, {
     onDelete: 'restrict',
   }),
+
+  // Link to product schema.
+  product_template_id: integer()
+    // .notNull() TODO: Update the seed script and uncomment this.
+    .references(() => productTemplateTable.id),
 });
 
 export const educationClassTableRelations = relations(
@@ -46,6 +52,10 @@ export const educationClassTableRelations = relations(
     course: one(educationCourseTable, {
       fields: [educationClassTable.course_id],
       references: [educationCourseTable.id],
+    }),
+    product_template: one(productTemplateTable, {
+      fields: [educationClassTable.product_template_id],
+      references: [productTemplateTable.id],
     }),
   }),
 );
