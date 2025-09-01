@@ -1,5 +1,6 @@
 import { zodResolver } from '@hookform/resolvers/zod';
 import { Button } from '@voltade/ui/button.tsx';
+import { Checkbox } from '@voltade/ui/checkbox.tsx';
 import {
   Dialog,
   DialogContent,
@@ -34,6 +35,7 @@ type AppItem = {
   slug: string;
   name: string | null;
   description: string | null;
+  is_public: boolean;
   build_command: string;
   output_path: string;
   entrypoint: string;
@@ -76,6 +78,7 @@ export function AppForm(props: AppFormProps) {
         slug: '',
         name: '',
         description: '',
+        is_public: false,
         build_command: 'bun run build',
         output_path: 'dist',
         entrypoint: 'dist/index.js',
@@ -92,6 +95,7 @@ export function AppForm(props: AppFormProps) {
       slug: app.slug,
       name: app.name ?? '',
       description: app.description ?? '',
+      is_public: app.is_public ?? false,
       build_command: app.build_command,
       output_path: app.output_path,
       entrypoint: app.entrypoint,
@@ -221,6 +225,27 @@ export function AppForm(props: AppFormProps) {
                       {...field}
                       value={field.value ?? ''}
                     />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+            <FormField
+              control={form.control}
+              name="is_public"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Public</FormLabel>
+                  <FormControl>
+                    <div className="flex items-center gap-2">
+                      <Checkbox
+                        checked={!!field.value}
+                        onCheckedChange={field.onChange}
+                      />
+                      <span className="text-sm text-muted-foreground">
+                        Visible publicly
+                      </span>
+                    </div>
                   </FormControl>
                   <FormMessage />
                 </FormItem>
