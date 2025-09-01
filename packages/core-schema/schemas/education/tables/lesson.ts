@@ -6,6 +6,7 @@ import { productTable } from '../../product/tables/product.ts';
 import { DEFAULT_COLUMNS } from '../../utils.ts';
 import { educationSchema } from '../schema.ts';
 import { educationClassTable } from './class.ts';
+import { educationClassroomTable } from './classroom.ts';
 import { educationLevelGroupTable } from './level_group.ts';
 import { educationSubjectTable } from './subject.ts';
 import { educationTermTable } from './term.ts';
@@ -27,6 +28,11 @@ export const educationLessonTable = educationSchema.table('lesson', {
   class_id: integer('class_id').references(() => educationClassTable.id, {
     onDelete: 'set null',
   }),
+  classroom_id: integer('classroom_id')
+    .notNull()
+    .references(() => educationClassroomTable.id, {
+      onDelete: 'set null',
+    }),
 
   // Link to product schema.
   product_id: integer()
@@ -56,6 +62,10 @@ export const educationLessonTableRelations = relations(
     product: one(productTable, {
       fields: [educationLessonTable.product_id],
       references: [productTable.id],
+    }),
+    classroom: one(educationClassroomTable, {
+      fields: [educationLessonTable.classroom_id],
+      references: [educationClassroomTable.id],
     }),
   }),
 );

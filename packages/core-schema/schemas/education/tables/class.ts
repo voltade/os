@@ -5,6 +5,7 @@ import { productTemplateTable } from '../../product/tables/product_template.ts';
 import { DEFAULT_COLUMNS } from '../../utils.ts';
 import { educationDayOfTheWeek } from '../enums.ts';
 import { educationSchema } from '../schema.ts';
+import { educationClassroomTable } from './classroom.ts';
 import { educationCourseTable } from './course.ts';
 import { educationLessonTable } from './lesson.ts';
 import { educationLevelGroupTable } from './level_group.ts';
@@ -24,10 +25,16 @@ export const educationClassTable = educationSchema.table('class', {
   usual_day_of_the_week: educationDayOfTheWeek('usual_day_of_the_week'),
   usual_start_time_utc: time({ withTimezone: false }),
   usual_end_time_utc: time({ withTimezone: false }),
+  usual_classroom_id: integer('usual_classroom_id').references(
+    () => educationClassroomTable.id,
+    {
+      onDelete: 'set null',
+    },
+  ),
 
   // E-Learning
   course_id: integer('course_id').references(() => educationCourseTable.id, {
-    onDelete: 'restrict',
+    onDelete: 'set null',
   }),
 
   // Link to product schema.
@@ -56,6 +63,10 @@ export const educationClassTableRelations = relations(
     product_template: one(productTemplateTable, {
       fields: [educationClassTable.product_template_id],
       references: [productTemplateTable.id],
+    }),
+    usual_classroom: one(educationClassroomTable, {
+      fields: [educationClassTable.usual_classroom_id],
+      references: [educationClassroomTable.id],
     }),
   }),
 );
