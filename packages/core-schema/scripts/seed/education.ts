@@ -2,7 +2,9 @@ import type { InferInsertModel } from 'drizzle-orm';
 
 import { db } from '../../lib/db.ts';
 import { educationAcademicYearTable } from '../../schemas/education/tables/academic_year.ts';
+import { educationBranchTable } from '../../schemas/education/tables/branch.ts';
 import { educationClassTable } from '../../schemas/education/tables/class.ts';
+import { educationClassroomTable } from '../../schemas/education/tables/classroom.ts';
 import { educationLessonTable } from '../../schemas/education/tables/lesson.ts';
 import { educationLevelTable } from '../../schemas/education/tables/level.ts';
 import { educationLevelGroupTable } from '../../schemas/education/tables/level_group.ts';
@@ -17,6 +19,9 @@ import { clearTables, type SeedContext } from './utils.ts';
 export type ClassIds = {
   [key: string]: number;
 };
+
+type BranchIds = { [name: string]: number };
+type ClassroomIds = { [name: string]: number };
 
 type TermInfo = {
   id: number;
@@ -137,6 +142,53 @@ function requireId(
   const v = map[key];
   if (v === undefined) throw new Error(`Missing ${label} id for '${key}'`);
   return v;
+}
+
+async function seedBranches(): Promise<BranchIds> {
+  console.log('Branches:');
+  const branches: InferInsertModel<typeof educationBranchTable>[] = [
+    { name: 'Tampines' },
+    { name: 'Jurong' },
+  ];
+  const created = await db
+    .insert(educationBranchTable)
+    .values(branches)
+    .returning();
+  console.log(`   Created ${created.length} branches`);
+  const ids: BranchIds = {};
+  for (const b of created) {
+    if (!b.name) continue;
+    ids[b.name] = b.id;
+  }
+  return ids;
+}
+
+async function seedClassrooms(branchIds: BranchIds): Promise<ClassroomIds> {
+  console.log('Classrooms:');
+  const tampinesId = requireId(branchIds, 'Tampines', 'branch');
+  const jurongId = requireId(branchIds, 'Jurong', 'branch');
+
+  const classrooms: InferInsertModel<typeof educationClassroomTable>[] = [
+    // Tampines
+    { name: 'Tampines Classroom 1', capacity: 10, branch_id: tampinesId },
+    { name: 'Tampines Classroom 2', capacity: 15, branch_id: tampinesId },
+    { name: 'Tampines Classroom 3', capacity: 20, branch_id: tampinesId },
+    // Jurong
+    { name: 'Jurong Classroom 1', capacity: 10, branch_id: jurongId },
+    { name: 'Jurong Classroom 2', capacity: 15, branch_id: jurongId },
+    { name: 'Jurong Classroom 3', capacity: 20, branch_id: jurongId },
+  ];
+  const created = await db
+    .insert(educationClassroomTable)
+    .values(classrooms)
+    .returning();
+  console.log(`   Created ${created.length} classrooms`);
+  const ids: ClassroomIds = {};
+  for (const c of created) {
+    if (!c.name) continue;
+    ids[c.name] = c.id;
+  }
+  return ids;
 }
 
 async function seedAcademicYear2025() {
@@ -302,6 +354,7 @@ async function seedSubjects(): Promise<SubjectIds> {
 async function seedClasses(
   levelGroupIds: LevelGroupIds,
   subjectIds: SubjectIds,
+  classroomIds: ClassroomIds,
 ): Promise<{
   classIds: ClassIds;
   classSpecs: Array<{
@@ -311,6 +364,7 @@ async function seedClasses(
     endSgt: number;
     levelGroupId: number;
     subjectId: number;
+    classroomId: number;
   }>;
 }> {
   console.log('Classes:');
@@ -323,6 +377,7 @@ async function seedClasses(
     endSgt: number;
     levelGroupId: number;
     subjectId: number;
+    classroomId: number;
   }[] = [
     {
       key: 'PRI_5_ENGLISH',
@@ -332,6 +387,7 @@ async function seedClasses(
       endSgt: 19,
       levelGroupId: requireId(levelGroupIds, 'Primary 5', 'level group'),
       subjectId: requireId(subjectIds, 'English', 'subject'),
+      classroomId: requireId(classroomIds, 'Tampines Classroom 1', 'classroom'),
     },
     {
       key: 'SEC_3_MATH',
@@ -341,6 +397,7 @@ async function seedClasses(
       endSgt: 17,
       levelGroupId: requireId(levelGroupIds, 'Secondary 3', 'level group'),
       subjectId: requireId(subjectIds, 'Math', 'subject'),
+      classroomId: requireId(classroomIds, 'Tampines Classroom 2', 'classroom'),
     },
     {
       key: 'UPPER_SEC_ENGLISH',
@@ -350,6 +407,7 @@ async function seedClasses(
       endSgt: 9,
       levelGroupId: requireId(levelGroupIds, 'Upper Secondary', 'level group'),
       subjectId: requireId(subjectIds, 'English', 'subject'),
+      classroomId: requireId(classroomIds, 'Jurong Classroom 1', 'classroom'),
     },
   ] as const;
 
@@ -363,6 +421,7 @@ async function seedClasses(
         usual_day_of_the_week: dayLit,
         usual_start_time_utc: `${String((s.startSgt - SGT_UTC_OFFSET_HOURS + 24) % 24).padStart(2, '0')}:00:00`,
         usual_end_time_utc: `${String((s.endSgt - SGT_UTC_OFFSET_HOURS + 24) % 24).padStart(2, '0')}:00:00`,
+        usual_classroom_id: s.classroomId,
       };
     },
   );
@@ -388,6 +447,7 @@ async function seedClasses(
       endSgt: s.endSgt,
       levelGroupId: s.levelGroupId,
       subjectId: s.subjectId,
+      classroomId: s.classroomId,
     })),
   };
 }
@@ -402,6 +462,7 @@ async function seedWeeklyLessons(
     endSgt: number;
     levelGroupId: number;
     subjectId: number;
+    classroomId: number;
   }[],
 ): Promise<number> {
   console.log('Lessons:');
@@ -425,6 +486,7 @@ async function seedWeeklyLessons(
           subject_id: cls.subjectId,
           term_id: term.id,
           class_id: cls.id,
+          classroom_id: cls.classroomId,
         });
         cursor = addDays(cursor, 7);
       }
@@ -507,25 +569,35 @@ export async function seedEducationData(
 ): Promise<SeedContext> {
   console.log('=== EDUCATION DATA ===');
 
-  // 1) Academic Year
+  // 1) Branches
+  const branchIds = await seedBranches();
+
+  // 2) Classrooms
+  const classroomIds = await seedClassrooms(branchIds);
+
+  // 3) Academic Year
   const ayId = await seedAcademicYear2025();
 
-  // 2) Terms
+  // 4) Terms
   const terms = await seedTerms(ayId);
 
-  // 3) Levels
+  // 5) Levels
   const levelIds = await seedLevels();
 
-  // 4) Level Groups (singleton + Upper Secondary)
+  // 6) Level Groups (singleton + Upper Secondary)
   const levelGroupIds = await seedLevelGroups(levelIds);
 
-  // 5) Subjects
+  // 7) Subjects
   const subjectIds = await seedSubjects();
 
-  // 6) Classes with usual SGT timings stored as UTC times
-  const { classIds, classSpecs } = await seedClasses(levelGroupIds, subjectIds);
+  // 8) Classes with usual SGT timings stored as UTC times
+  const { classIds, classSpecs } = await seedClasses(
+    levelGroupIds,
+    subjectIds,
+    classroomIds,
+  );
 
-  // 7) Weekly Lessons for each term and class
+  // 9) Weekly Lessons for each term and class
   const classesForLessons = classSpecs.map((spec) => {
     const id = classIds[spec.key];
     if (!id) throw new Error(`Missing class id for ${spec.key}`);
@@ -537,11 +609,12 @@ export async function seedEducationData(
       endSgt: spec.endSgt,
       levelGroupId: spec.levelGroupId,
       subjectId: spec.subjectId,
+      classroomId: spec.classroomId,
     };
   });
   await seedWeeklyLessons(terms, classesForLessons);
 
-  // 8) Students and enrollments
+  // 10) Students and enrollments
   await seedStudents(classIds);
 
   context = {
@@ -556,8 +629,11 @@ export async function seedEducationData(
 export async function clearEducationData(): Promise<void> {
   console.log('Clearing education data...');
   await clearTables(
+    educationStudentJoinClassTable,
     educationLessonTable,
     educationClassTable,
+    educationClassroomTable,
+    educationBranchTable,
     educationLevelGroupJoinLevelTable,
     educationLevelGroupTable,
     educationLevelTable,
