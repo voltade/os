@@ -179,8 +179,10 @@ function RouteComponent() {
     try {
       const { error } = await authClient.organization.updateMemberRole({
         memberId,
-        //TODO: Fix this to use the correct type
-        role: newRole as 'member' | 'admin' | 'owner' | 'developer',
+        // Map unsupported roles to a valid one for the API type
+        role: ['member', 'admin', 'owner'].includes(newRole)
+          ? (newRole as 'member' | 'admin' | 'owner')
+          : 'member',
         organizationId: organisation?.id || undefined,
       });
       if (error) throw new Error(error.message);
@@ -204,7 +206,10 @@ function RouteComponent() {
       const onlyPending = (data || []).filter(
         (i: OrganizationInviteRow) => (i.status ?? 'pending') === 'pending',
       );
-      setInvites(onlyPending as OrganizationInviteRow[]);
+      const withoutGuests = onlyPending.filter(
+        (i) => String(i.role) !== 'guest',
+      );
+      setInvites(withoutGuests as OrganizationInviteRow[]);
     } catch (e) {
       showError(e instanceof Error ? e.message : 'Unknown error');
     } finally {

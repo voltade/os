@@ -26,6 +26,7 @@ import { Route as MainSettingsOrganizationsRouteImport } from './routes/_main.se
 import { Route as MainDevGitProvidersRouteImport } from './routes/_main.dev.git-providers'
 import { Route as MainDevApplicationsRouteImport } from './routes/_main.dev.applications'
 import { Route as MainAdminTeamRouteImport } from './routes/_main.admin.team'
+import { Route as MainAdminGuestsRouteImport } from './routes/_main.admin.guests'
 import { Route as MainAcceptInvitationInvitationIdRouteImport } from './routes/_main.accept-invitation.$invitationId'
 import { Route as AuthOauthConsentRouteImport } from './routes/_auth.oauth.consent'
 import { Route as MainDevEnvironmentsIndexRouteImport } from './routes/_main.dev.environments.index'
@@ -123,6 +124,11 @@ const MainAdminTeamRoute = MainAdminTeamRouteImport.update({
   path: '/team',
   getParentRoute: () => MainAdminRoute,
 } as any)
+const MainAdminGuestsRoute = MainAdminGuestsRouteImport.update({
+  id: '/guests',
+  path: '/guests',
+  getParentRoute: () => MainAdminRoute,
+} as any)
 const MainAcceptInvitationInvitationIdRoute =
   MainAcceptInvitationInvitationIdRouteImport.update({
     id: '/accept-invitation/$invitationId',
@@ -202,6 +208,7 @@ export interface FileRoutesByFullPath {
   '/': typeof MainIndexRoute
   '/oauth/consent': typeof AuthOauthConsentRoute
   '/accept-invitation/$invitationId': typeof MainAcceptInvitationInvitationIdRoute
+  '/admin/guests': typeof MainAdminGuestsRoute
   '/admin/team': typeof MainAdminTeamRoute
   '/dev/applications': typeof MainDevApplicationsRoute
   '/dev/git-providers': typeof MainDevGitProvidersRoute
@@ -228,6 +235,7 @@ export interface FileRoutesByTo {
   '/': typeof MainIndexRoute
   '/oauth/consent': typeof AuthOauthConsentRoute
   '/accept-invitation/$invitationId': typeof MainAcceptInvitationInvitationIdRoute
+  '/admin/guests': typeof MainAdminGuestsRoute
   '/admin/team': typeof MainAdminTeamRoute
   '/dev/applications': typeof MainDevApplicationsRoute
   '/dev/git-providers': typeof MainDevGitProvidersRoute
@@ -259,6 +267,7 @@ export interface FileRoutesById {
   '/_main/': typeof MainIndexRoute
   '/_auth/oauth/consent': typeof AuthOauthConsentRoute
   '/_main/accept-invitation/$invitationId': typeof MainAcceptInvitationInvitationIdRoute
+  '/_main/admin/guests': typeof MainAdminGuestsRoute
   '/_main/admin/team': typeof MainAdminTeamRoute
   '/_main/dev/applications': typeof MainDevApplicationsRoute
   '/_main/dev/git-providers': typeof MainDevGitProvidersRoute
@@ -290,6 +299,7 @@ export interface FileRouteTypes {
     | '/'
     | '/oauth/consent'
     | '/accept-invitation/$invitationId'
+    | '/admin/guests'
     | '/admin/team'
     | '/dev/applications'
     | '/dev/git-providers'
@@ -316,6 +326,7 @@ export interface FileRouteTypes {
     | '/'
     | '/oauth/consent'
     | '/accept-invitation/$invitationId'
+    | '/admin/guests'
     | '/admin/team'
     | '/dev/applications'
     | '/dev/git-providers'
@@ -346,6 +357,7 @@ export interface FileRouteTypes {
     | '/_main/'
     | '/_auth/oauth/consent'
     | '/_main/accept-invitation/$invitationId'
+    | '/_main/admin/guests'
     | '/_main/admin/team'
     | '/_main/dev/applications'
     | '/_main/dev/git-providers'
@@ -492,6 +504,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof MainAdminTeamRouteImport
       parentRoute: typeof MainAdminRoute
     }
+    '/_main/admin/guests': {
+      id: '/_main/admin/guests'
+      path: '/guests'
+      fullPath: '/admin/guests'
+      preLoaderRoute: typeof MainAdminGuestsRouteImport
+      parentRoute: typeof MainAdminRoute
+    }
     '/_main/accept-invitation/$invitationId': {
       id: '/_main/accept-invitation/$invitationId'
       path: '/accept-invitation/$invitationId'
@@ -598,11 +617,13 @@ const AuthRouteChildren: AuthRouteChildren = {
 const AuthRouteWithChildren = AuthRoute._addFileChildren(AuthRouteChildren)
 
 interface MainAdminRouteChildren {
+  MainAdminGuestsRoute: typeof MainAdminGuestsRoute
   MainAdminTeamRoute: typeof MainAdminTeamRoute
   MainAdminIndexRoute: typeof MainAdminIndexRoute
 }
 
 const MainAdminRouteChildren: MainAdminRouteChildren = {
+  MainAdminGuestsRoute: MainAdminGuestsRoute,
   MainAdminTeamRoute: MainAdminTeamRoute,
   MainAdminIndexRoute: MainAdminIndexRoute,
 }

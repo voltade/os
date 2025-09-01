@@ -9,6 +9,10 @@ const adminNavItems = [
     label: 'Team',
     path: '/admin/team',
   },
+  {
+    label: 'Guests',
+    path: '/admin/guests',
+  },
 ];
 
 export function AdminSidebar() {

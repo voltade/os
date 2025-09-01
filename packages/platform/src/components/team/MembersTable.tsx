@@ -45,6 +45,7 @@ export interface MembersTableProps {
   currentUserId?: string;
   canEditRoles: boolean;
   roleLoadingMemberId?: string | null;
+  showRole?: boolean;
   onChangeRole: (
     memberId: string,
     role: 'owner' | 'admin' | 'developer' | 'member',
@@ -57,6 +58,7 @@ export function MembersTable({
   currentUserId,
   canEditRoles,
   roleLoadingMemberId,
+  showRole = true,
   onChangeRole,
   onRemove,
 }: MembersTableProps) {
@@ -66,7 +68,7 @@ export function MembersTable({
         <TableRow>
           <TableHead>Member</TableHead>
           <TableHead>Joined</TableHead>
-          <TableHead className="w-[220px]">Role</TableHead>
+          {showRole ? <TableHead className="w-[220px]">Role</TableHead> : null}
           <TableHead className="w-[60px]" />
         </TableRow>
       </TableHeader>
@@ -113,33 +115,35 @@ export function MembersTable({
                   })}
                 </span>
               </TableCell>
-              <TableCell>
-                <div className="flex items-center">
-                  <ShadcnSelect
-                    value={member.role}
-                    onValueChange={(val) =>
-                      onChangeRole(
-                        member.id,
-                        val as 'owner' | 'admin' | 'developer' | 'member',
-                      )
-                    }
-                    disabled={!canEditThis}
-                  >
-                    <SelectTrigger>
-                      <SelectValue />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="owner">Owner</SelectItem>
-                      <SelectItem value="admin">Admin</SelectItem>
-                      <SelectItem value="developer">Developer</SelectItem>
-                      <SelectItem value="member">Member</SelectItem>
-                    </SelectContent>
-                  </ShadcnSelect>
-                  {roleLoadingMemberId === member.id && (
-                    <span className="ml-2 inline-block size-4 animate-spin rounded-full border-2 border-muted border-t-foreground" />
-                  )}
-                </div>
-              </TableCell>
+              {showRole ? (
+                <TableCell>
+                  <div className="flex items-center">
+                    <ShadcnSelect
+                      value={member.role}
+                      onValueChange={(val) =>
+                        onChangeRole(
+                          member.id,
+                          val as 'owner' | 'admin' | 'developer' | 'member',
+                        )
+                      }
+                      disabled={!canEditThis}
+                    >
+                      <SelectTrigger>
+                        <SelectValue />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="owner">Owner</SelectItem>
+                        <SelectItem value="admin">Admin</SelectItem>
+                        <SelectItem value="developer">Developer</SelectItem>
+                        <SelectItem value="member">Member</SelectItem>
+                      </SelectContent>
+                    </ShadcnSelect>
+                    {roleLoadingMemberId === member.id && (
+                      <span className="ml-2 inline-block size-4 animate-spin rounded-full border-2 border-muted border-t-foreground" />
+                    )}
+                  </div>
+                </TableCell>
+              ) : null}
               <TableCell>
                 <DropdownMenu>
                   <DropdownMenuTrigger asChild>

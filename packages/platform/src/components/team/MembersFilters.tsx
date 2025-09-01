@@ -13,6 +13,7 @@ interface MembersFiltersProps {
   onSearchChange: (q: string) => void;
   roleFilter: string | null;
   onRoleFilterChange: (role: string | null) => void;
+  showRoleFilter?: boolean;
 }
 
 export function MembersFilters({
@@ -20,6 +21,7 @@ export function MembersFilters({
   onSearchChange,
   roleFilter,
   onRoleFilterChange,
+  showRoleFilter = true,
 }: MembersFiltersProps) {
   return (
     <div className="flex flex-wrap items-center gap-4 p-4">
@@ -44,21 +46,25 @@ export function MembersFilters({
         </div>
       </div>
 
-      <Select
-        value={roleFilter ?? 'all'}
-        onValueChange={(val) => onRoleFilterChange(val === 'all' ? null : val)}
-      >
-        <SelectTrigger>
-          <SelectValue placeholder="All roles" />
-        </SelectTrigger>
-        <SelectContent>
-          <SelectItem value="all">All</SelectItem>
-          <SelectItem value="owner">Owner</SelectItem>
-          <SelectItem value="admin">Admin</SelectItem>
-          <SelectItem value="developer">Developer</SelectItem>
-          <SelectItem value="member">Member</SelectItem>
-        </SelectContent>
-      </Select>
+      {showRoleFilter ? (
+        <Select
+          value={roleFilter ?? 'all'}
+          onValueChange={(val) =>
+            onRoleFilterChange(val === 'all' ? null : val)
+          }
+        >
+          <SelectTrigger>
+            <SelectValue placeholder="All roles" />
+          </SelectTrigger>
+          <SelectContent>
+            <SelectItem value="all">All</SelectItem>
+            <SelectItem value="owner">Owner</SelectItem>
+            <SelectItem value="admin">Admin</SelectItem>
+            <SelectItem value="developer">Developer</SelectItem>
+            <SelectItem value="member">Member</SelectItem>
+          </SelectContent>
+        </Select>
+      ) : null}
     </div>
   );
 }
