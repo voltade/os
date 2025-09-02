@@ -1,11 +1,7 @@
 import { createFileRoute } from '@tanstack/react-router';
-import { toast } from '@voltade/sdk/client';
-import { Button } from '@voltade/ui/button.tsx';
 
-import data from '#src/app/dashboard/data.json';
-import { ChartAreaInteractive } from '#src/components/chart-area-interactive';
-import { DataTable } from '#src/components/data-table';
-import { SectionCards } from '#src/components/section-cards';
+import CreateInvoiceButton from '#src/components/create-invoice-button.tsx';
+import InvoicesTable from '#src/components/invoices-table.tsx';
 
 export const Route = createFileRoute('/')({
   component: RouteComponent,
@@ -13,28 +9,9 @@ export const Route = createFileRoute('/')({
 
 function RouteComponent() {
   return (
-    <div className="flex flex-1 flex-col">
-      <div className="@container/main flex flex-1 flex-col gap-2">
-        <div className="grid grid-cols-4 gap-3 md:gap-6">
-          <Button onClick={() => toast.success('Hello', { closeButton: true })}>
-            Toast Success
-          </Button>
-          <Button onClick={() => toast.error('Hello', { closeButton: true })}>
-            Toast Error
-          </Button>
-          <Button onClick={() => toast.warning('Hello', { closeButton: true })}>
-            Toast Warning
-          </Button>
-          <Button onClick={() => toast.info('Hello', { closeButton: true })}>
-            Toast Info
-          </Button>
-        </div>
-        <div className="flex flex-col gap-4 py-4 md:gap-6 md:py-6">
-          <SectionCards />
-          <ChartAreaInteractive />
-          <DataTable data={data} />
-        </div>
-      </div>
+    <div className="flex flex-col gap-4">
+      <CreateInvoiceButton />
+      <InvoicesTable />
     </div>
   );
 }
