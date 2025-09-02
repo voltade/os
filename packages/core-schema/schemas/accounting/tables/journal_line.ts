@@ -1,7 +1,15 @@
 import { relations, type SQL, sql } from 'drizzle-orm';
-import { date, foreignKey, integer, pgPolicy } from 'drizzle-orm/pg-core';
+import {
+  date,
+  foreignKey,
+  integer,
+  numeric,
+  pgPolicy,
+  text,
+} from 'drizzle-orm/pg-core';
 
 import { DEFAULT_COLUMNS } from '../../utils.ts';
+import { journalLineReferenceTypeEnum } from '../enums.ts';
 import { accountingSchema } from '../schema.ts';
 import { accountTable } from './account.ts';
 import { journalEntryTable } from './journal_entry.ts';
@@ -18,11 +26,24 @@ export const journalLineTable = accountingSchema.table(
   {
     ...DEFAULT_COLUMNS,
     journal_entry_id: integer().notNull(),
-    account_id: integer().notNull(),
     own_entity_id: integer().notNull(),
     partner_id: integer(),
     contact_id: integer(),
     date: date().notNull(),
+
+    reference_id: integer().notNull(),
+    reference_type: journalLineReferenceTypeEnum().notNull(),
+    quantity: integer().notNull().default(0),
+    unit_price: numeric().notNull().default('0'),
+    subtotal_price: numeric().notNull().default('0'), // Excluding tax.
+    total_price: numeric().notNull().default('0'), // Including tax.
+    sequence_number: integer().notNull(),
+    name: text(),
+    description: text(),
+
+    credit: numeric().notNull().default('0'),
+    debit: numeric().notNull().default('0'),
+    account_id: integer().notNull(),
   },
   (table) => [
     foreignKey({

@@ -293,3 +293,8 @@ export const taxDistributionLineDocumentTypeEnum = accountingSchema.enum(
   'account_tax_distribution_document_type_enum',
   enumToPgEnum(TaxDistributionLineDocumentType),
 );
+
+export const journalLineReferenceTypeEnum = accountingSchema.enum(
+  'account_journal_line_reference_type_enum',
+  ['education.class', 'product.product'],
+);
