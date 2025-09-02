@@ -2,6 +2,7 @@ import type { InferInsertModel } from 'drizzle-orm';
 
 import { db } from '../../lib/db.ts';
 import { educationAcademicYearTable } from '../../schemas/education/tables/academic_year.ts';
+import { educationAttendanceTable } from '../../schemas/education/tables/attendance.ts';
 import { educationBranchTable } from '../../schemas/education/tables/branch.ts';
 import { educationClassTable } from '../../schemas/education/tables/class.ts';
 import { educationClassroomTable } from '../../schemas/education/tables/classroom.ts';
@@ -560,8 +561,55 @@ async function seedStudents(classIds: ClassIds) {
     .values(joinRows)
     .returning();
   console.log(`   Enrolled ${enrollments.length} student-class relations`);
+
+  return { students: created };
 }
 // endregion
+
+async function seedAttendance() {
+  console.log('Attendance:');
+  // Fetch all lessons (with class_id) and all enrollments.
+  const lessons = await db.select().from(educationLessonTable);
+  const enrollments = await db.select().from(educationStudentJoinClassTable);
+
+  // Group lessons by class_id for quick lookup.
+  const lessonsByClass = new Map<number, number[]>();
+  for (const l of lessons) {
+    if (l.class_id) {
+      const arr = lessonsByClass.get(l.class_id) ?? [];
+      arr.push(l.id);
+      lessonsByClass.set(l.class_id, arr);
+    }
+  }
+
+  const attendanceRows: InferInsertModel<typeof educationAttendanceTable>[] =
+    [];
+  for (const e of enrollments) {
+    const lessonIds = lessonsByClass.get(e.class_id);
+    if (!lessonIds) continue; // No lessons associated (should not happen in this seed scenario)
+    for (const lessonId of lessonIds) {
+      attendanceRows.push({
+        student_id: e.student_id,
+        lesson_id: lessonId,
+        // Defaults: is_paid_for defaults false, mark all as non-trial and present.
+        is_trial: false,
+        status: 'present',
+      });
+    }
+  }
+
+  if (attendanceRows.length === 0) {
+    console.log('   No attendance rows to insert');
+    return 0;
+  }
+
+  const inserted = await db
+    .insert(educationAttendanceTable)
+    .values(attendanceRows)
+    .returning();
+  console.log(`   Created ${inserted.length} attendance records`);
+  return inserted.length;
+}
 
 // region Drivers
 export async function seedEducationData(
@@ -617,6 +665,9 @@ export async function seedEducationData(
   // 10) Students and enrollments
   await seedStudents(classIds);
 
+  // 11) Attendance records for every (student, lesson) pair based on enrollments
+  await seedAttendance();
+
   context = {
     ...context,
     classIds,
@@ -629,6 +680,7 @@ export async function seedEducationData(
 export async function clearEducationData(): Promise<void> {
   console.log('Clearing education data...');
   await clearTables(
+    educationAttendanceTable,
     educationStudentJoinClassTable,
     educationLessonTable,
     educationClassTable,
