@@ -1,4 +1,3 @@
-import { createCommonRouter } from '@voltade/core-schema/common-api';
 import { auth, createRunTimeRoute, db, drizzle } from '@voltade/sdk/server';
 import { Hono } from 'hono';
 import { serveStatic } from 'hono/bun';
@@ -6,6 +5,7 @@ import { logger } from 'hono/logger';
 
 import packageJson from '../package.json';
 import { factory } from './factory.ts';
+import { route as invoicesRoute } from './invoices.ts';
 
 const API_BASE_ROUTE = '/api';
 
@@ -21,7 +21,8 @@ export const apiRoutes = app
   .route('/runtime.js', createRunTimeRoute(packageJson.name, factory))
   .use(auth)
   .use(drizzle())
-  .route('/common', createCommonRouter(db));
+  .route('/invoices', invoicesRoute);
+
 // TODO: Add more API routes here
 
 export type ApiRoutes = typeof apiRoutes;
