@@ -619,12 +619,6 @@ export async function seedEducationData(
 ): Promise<SeedContext> {
   console.log('=== EDUCATION DATA ===');
 
-  // If migrate is true, use JSON migration instead of seeded data
-  if (migrate) {
-    await migrateFromJson();
-    return context;
-  }
-
   // 1) Branches
   const branchIds = await seedBranches();
 
@@ -675,6 +669,10 @@ export async function seedEducationData(
 
   // 11) Attendance records for every (student, lesson) pair based on enrollments
   await seedAttendance();
+
+  if (migrate) {
+    await migrateFromJson();
+  }
 
   context = {
     ...context,
