@@ -1,4 +1,5 @@
 import { auth, createRunTimeRoute, db, drizzle } from '@voltade/sdk/server';
+import { eq } from 'drizzle-orm';
 import { Hono } from 'hono';
 import { serveStatic } from 'hono/bun';
 import { logger } from 'hono/logger';

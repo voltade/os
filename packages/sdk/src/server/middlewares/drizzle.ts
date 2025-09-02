@@ -60,7 +60,7 @@ export function drizzle(
           const withTx: WithTx = async (callback) => {
             return await db.transaction(async (tx) => {
               await tx.execute(
-                sql`select set_config('request.auth.uid', ${user.id}, TRUE)`,
+                sql`select set_config('request.jwt.claims', ${JSON.stringify(user)}, TRUE)`,
               );
               await tx.execute(sql`set local role authenticated`);
               return await callback(tx);
@@ -71,7 +71,7 @@ export function drizzle(
         } else {
           await db.transaction(async (tx) => {
             await tx.execute(
-              sql`select set_config('request.auth.uid', ${user.id}, TRUE)`,
+              sql`select set_config('request.jwt.claims', ${JSON.stringify(user)}, TRUE)`,
             );
             await tx.execute(sql`set local role authenticated`);
             c.set('tx', tx);
