@@ -90,4 +90,4 @@ spec:
         - grant execute on all functions in schema vault to core_migrator;
         - grant select on all tables in schema vault to core_migrator;
         - grant references on all tables in schema vault to core_migrator;
-        - alter role app set search_path = extensions, app, public;
+        - alter database app set search_path = extensions, public;
