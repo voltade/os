@@ -129,6 +129,7 @@ export type Database = {
           id: number | null
           is_active: boolean | null
           name: string | null
+          partner_id: number | null
           phone: string | null
           school: string | null
         }
@@ -145,6 +146,30 @@ export type Database = {
         }
         Update: {
           id?: number | null
+          name?: string | null
+        }
+        Relationships: []
+      }
+      term_view: {
+        Row: {
+          academic_year_id: number | null
+          date_range: unknown | null
+          id: number | null
+          is_active: boolean | null
+          name: string | null
+        }
+        Insert: {
+          academic_year_id?: number | null
+          date_range?: unknown | null
+          id?: number | null
+          is_active?: boolean | null
+          name?: string | null
+        }
+        Update: {
+          academic_year_id?: number | null
+          date_range?: unknown | null
+          id?: number | null
+          is_active?: boolean | null
           name?: string | null
         }
         Relationships: []

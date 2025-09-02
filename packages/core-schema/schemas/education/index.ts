@@ -15,4 +15,7 @@ export * from './tables/student_join_class.ts';
 export * from './tables/student_join_parent.ts';
 export * from './tables/subject.ts';
 export * from './views/class_view.ts';
+export * from './views/level_group_view.ts';
 export * from './views/student_view.ts';
+export * from './views/subject_view.ts';
+export * from './views/term_view.ts';
