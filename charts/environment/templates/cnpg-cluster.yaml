@@ -35,7 +35,7 @@ spec:
 
       - name: core_migrator
         login: true
-        connectionLimit: 1
+        connectionLimit: 5
         passwordSecret:
           name: cnpg-core-migrator
 
