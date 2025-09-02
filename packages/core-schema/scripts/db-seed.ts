@@ -57,7 +57,7 @@ async function seedAllData(): Promise<void> {
     context = await seedPurchaseData(context);
     context = await seedSalesData(context);
     context = await seedRepairData(context);
-    context = await seedEducationData(context);
+    context = await seedEducationData(context, true);
   } catch (error) {
     console.error('❌ SEEDING FAILED:', error);
     process.exit(1);

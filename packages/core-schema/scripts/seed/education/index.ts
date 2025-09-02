@@ -1,20 +1,21 @@
 import type { InferInsertModel } from 'drizzle-orm';
 
-import { db } from '../../lib/db.ts';
-import { educationAcademicYearTable } from '../../schemas/education/tables/academic_year.ts';
-import { educationAttendanceTable } from '../../schemas/education/tables/attendance.ts';
-import { educationBranchTable } from '../../schemas/education/tables/branch.ts';
-import { educationClassTable } from '../../schemas/education/tables/class.ts';
-import { educationClassroomTable } from '../../schemas/education/tables/classroom.ts';
-import { educationLessonTable } from '../../schemas/education/tables/lesson.ts';
-import { educationLevelTable } from '../../schemas/education/tables/level.ts';
-import { educationLevelGroupTable } from '../../schemas/education/tables/level_group.ts';
-import { educationLevelGroupJoinLevelTable } from '../../schemas/education/tables/level_group_join_level.ts';
-import { educationStudentTable } from '../../schemas/education/tables/student.ts';
-import { educationStudentJoinClassTable } from '../../schemas/education/tables/student_join_class.ts';
-import { educationSubjectTable } from '../../schemas/education/tables/subject.ts';
-import { educationTermTable } from '../../schemas/education/tables/term.ts';
-import { clearTables, type SeedContext } from './utils.ts';
+import { db } from '../../../lib/db.ts';
+import { educationAcademicYearTable } from '../../../schemas/education/tables/academic_year.ts';
+import { educationAttendanceTable } from '../../../schemas/education/tables/attendance.ts';
+import { educationBranchTable } from '../../../schemas/education/tables/branch.ts';
+import { educationClassTable } from '../../../schemas/education/tables/class.ts';
+import { educationClassroomTable } from '../../../schemas/education/tables/classroom.ts';
+import { educationLessonTable } from '../../../schemas/education/tables/lesson.ts';
+import { educationLevelTable } from '../../../schemas/education/tables/level.ts';
+import { educationLevelGroupTable } from '../../../schemas/education/tables/level_group.ts';
+import { educationLevelGroupJoinLevelTable } from '../../../schemas/education/tables/level_group_join_level.ts';
+import { educationStudentTable } from '../../../schemas/education/tables/student.ts';
+import { educationStudentJoinClassTable } from '../../../schemas/education/tables/student_join_class.ts';
+import { educationSubjectTable } from '../../../schemas/education/tables/subject.ts';
+import { educationTermTable } from '../../../schemas/education/tables/term.ts';
+import { clearTables, type SeedContext } from '../utils.ts';
+import { migrateFromJson } from './migrate.ts';
 
 // region Types
 export type ClassIds = {
@@ -614,8 +615,15 @@ async function seedAttendance() {
 // region Drivers
 export async function seedEducationData(
   context: SeedContext,
+  migrate: boolean = false,
 ): Promise<SeedContext> {
   console.log('=== EDUCATION DATA ===');
+
+  // If migrate is true, use JSON migration instead of seeded data
+  if (migrate) {
+    await migrateFromJson();
+    return context;
+  }
 
   // 1) Branches
   const branchIds = await seedBranches();

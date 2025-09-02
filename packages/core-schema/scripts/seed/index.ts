@@ -1,5 +1,5 @@
 export * from './accounting.ts';
-export * from './education.ts';
+export * from './education/index.ts';
 export * from './product.ts';
 export * from './purchase.ts';
 export * from './repair.ts';
