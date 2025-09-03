@@ -13,7 +13,6 @@ begin
 
   v_user_id := nullif(current_setting('request.jwt.claims', true)::json->>'sub','')::text;
 
-  raise log 'allow123(): v_user_id=% relation=% object=%', coalesce(v_user_id, '<null>'), p_relation, p_object;
 
   if v_user_id is null then
     return false;

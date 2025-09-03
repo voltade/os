@@ -51,27 +51,27 @@ async function seedInventoryFolder(): Promise<void> {
     return tuple;
   });
 
-  // const result = await fgaClient?.writeTuples(inventoryFolderTuples, {
-  //   authorizationModelId: FGA_AUTHORIZATION_MODEL_ID,
-  // });
+  const result = await fgaClient?.writeTuples(inventoryFolderTuples, {
+    authorizationModelId: FGA_AUTHORIZATION_MODEL_ID,
+  });
 
-  // let failedCount = 0;
-  // result?.writes.forEach((write) => {
-  //   if (write.status === ClientWriteStatus.SUCCESS) return;
-  //   failedCount++;
-  //   console.error(
-  //     `Failed write for tuple ${JSON.stringify(write.tuple_key)}: ${write.err?.message || 'Unknown error'}`,
-  //   );
-  // });
+  let failedCount = 0;
+  result?.writes.forEach((write) => {
+    if (write.status === ClientWriteStatus.SUCCESS) return;
+    failedCount++;
+    console.error(
+      `Failed write for tuple ${JSON.stringify(write.tuple_key)}: ${write.err?.message || 'Unknown error'}`,
+    );
+  });
 
-  // if (failedCount > 0)
-  //   console.warn(
-  //     `   Failed to write ${failedCount}/${inventoryFolderTuples.length} folder-inventory tuples to OpenFGA`,
-  //   );
-  // else
-  //   console.log(
-  //     `   Successfully wrote ${inventoryFolderTuples.length} folder-inventory tuples to OpenFGA`,
-  //   );
+  if (failedCount > 0)
+    console.warn(
+      `   Failed to write ${failedCount}/${inventoryFolderTuples.length} folder-inventory tuples to OpenFGA`,
+    );
+  else
+    console.log(
+      `   Successfully wrote ${inventoryFolderTuples.length} folder-inventory tuples to OpenFGA`,
+    );
 }
 
 /**
@@ -93,27 +93,27 @@ async function seedProductTemplateTuples(
     },
   );
 
-  // const result = await fgaClient?.writeTuples(productTemplateTuples, {
-  //   authorizationModelId: FGA_AUTHORIZATION_MODEL_ID,
-  // });
+  const result = await fgaClient?.writeTuples(productTemplateTuples, {
+    authorizationModelId: FGA_AUTHORIZATION_MODEL_ID,
+  });
 
-  // let failedCount = 0;
-  // result?.writes.forEach((write) => {
-  //   if (write.status === ClientWriteStatus.SUCCESS) return;
-  //   failedCount++;
-  //   console.error(
-  //     `Failed write for tuple ${JSON.stringify(write.tuple_key)}: ${write.err?.message || 'Unknown error'}`,
-  //   );
-  // });
+  let failedCount = 0;
+  result?.writes.forEach((write) => {
+    if (write.status === ClientWriteStatus.SUCCESS) return;
+    failedCount++;
+    console.error(
+      `Failed write for tuple ${JSON.stringify(write.tuple_key)}: ${write.err?.message || 'Unknown error'}`,
+    );
+  });
 
-  // if (failedCount > 0)
-  //   console.warn(
-  //     `   Failed to write ${failedCount}/${productTemplateTuples.length} product-template tuples to OpenFGA`,
-  //   );
-  // else
-  //   console.log(
-  //     `   Successfully wrote ${productTemplateTuples.length} product-template tuples to OpenFGA`,
-  //   );
+  if (failedCount > 0)
+    console.warn(
+      `   Failed to write ${failedCount}/${productTemplateTuples.length} product-template tuples to OpenFGA`,
+    );
+  else
+    console.log(
+      `   Successfully wrote ${productTemplateTuples.length} product-template tuples to OpenFGA`,
+    );
 }
 // endregion
 
