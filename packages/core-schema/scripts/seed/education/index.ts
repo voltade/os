@@ -367,6 +367,7 @@ async function seedClasses(
     levelGroupId: number;
     subjectId: number;
     classroomId: number;
+    usualLessonPriceSgd: number;
   }>;
 }> {
   console.log('Classes:');
@@ -380,6 +381,7 @@ async function seedClasses(
     levelGroupId: number;
     subjectId: number;
     classroomId: number;
+    usualLessonPriceSgd: number;
   }[] = [
     {
       key: 'PRI_5_ENGLISH',
@@ -390,6 +392,7 @@ async function seedClasses(
       levelGroupId: requireId(levelGroupIds, 'Primary 5', 'level group'),
       subjectId: requireId(subjectIds, 'English', 'subject'),
       classroomId: requireId(classroomIds, 'Tampines Classroom 1', 'classroom'),
+      usualLessonPriceSgd: 50,
     },
     {
       key: 'SEC_3_MATH',
@@ -400,6 +403,7 @@ async function seedClasses(
       levelGroupId: requireId(levelGroupIds, 'Secondary 3', 'level group'),
       subjectId: requireId(subjectIds, 'Math', 'subject'),
       classroomId: requireId(classroomIds, 'Tampines Classroom 2', 'classroom'),
+      usualLessonPriceSgd: 60,
     },
     {
       key: 'UPPER_SEC_ENGLISH',
@@ -410,6 +414,7 @@ async function seedClasses(
       levelGroupId: requireId(levelGroupIds, 'Upper Secondary', 'level group'),
       subjectId: requireId(subjectIds, 'English', 'subject'),
       classroomId: requireId(classroomIds, 'Jurong Classroom 1', 'classroom'),
+      usualLessonPriceSgd: 70,
     },
   ] as const;
 
@@ -424,6 +429,7 @@ async function seedClasses(
         usual_start_time_utc: `${String((s.startSgt - SGT_UTC_OFFSET_HOURS + 24) % 24).padStart(2, '0')}:00:00`,
         usual_end_time_utc: `${String((s.endSgt - SGT_UTC_OFFSET_HOURS + 24) % 24).padStart(2, '0')}:00:00`,
         usual_classroom_id: s.classroomId,
+        usual_lesson_price_sgd: String(s.usualLessonPriceSgd),
       };
     },
   );
@@ -450,6 +456,7 @@ async function seedClasses(
       levelGroupId: s.levelGroupId,
       subjectId: s.subjectId,
       classroomId: s.classroomId,
+      usualLessonPriceSgd: s.usualLessonPriceSgd,
     })),
   };
 }
@@ -465,6 +472,7 @@ async function seedWeeklyLessons(
     levelGroupId: number;
     subjectId: number;
     classroomId: number;
+    usualLessonPriceSgd: number;
   }[],
 ): Promise<number> {
   console.log('Lessons:');
@@ -489,6 +497,7 @@ async function seedWeeklyLessons(
           term_id: term.id,
           class_id: cls.id,
           classroom_id: cls.classroomId,
+          price_sgd: String(cls.usualLessonPriceSgd),
         });
         cursor = addDays(cursor, 7);
       }
@@ -660,6 +669,7 @@ export async function seedEducationData(
       levelGroupId: spec.levelGroupId,
       subjectId: spec.subjectId,
       classroomId: spec.classroomId,
+      usualLessonPriceSgd: spec.usualLessonPriceSgd,
     };
   });
   await seedWeeklyLessons(terms, classesForLessons);

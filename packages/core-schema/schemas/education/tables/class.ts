@@ -1,5 +1,5 @@
 import { relations } from 'drizzle-orm';
-import { integer, time } from 'drizzle-orm/pg-core';
+import { integer, numeric, time } from 'drizzle-orm/pg-core';
 
 import { productTemplateTable } from '../../product/tables/product_template.ts';
 import { DEFAULT_COLUMNS } from '../../utils.ts';
@@ -31,6 +31,7 @@ export const educationClassTable = educationSchema.table('class', {
       onDelete: 'set null',
     },
   ),
+  usual_lesson_price_sgd: numeric().notNull().default('0'),
 
   // E-Learning
   course_id: integer('course_id').references(() => educationCourseTable.id, {

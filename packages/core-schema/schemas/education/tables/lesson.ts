@@ -1,5 +1,5 @@
 import { relations } from 'drizzle-orm';
-import { integer } from 'drizzle-orm/pg-core';
+import { integer, numeric } from 'drizzle-orm/pg-core';
 
 import { tstzrange } from '../../customTypes.ts';
 import { productTable } from '../../product/tables/product.ts';
@@ -33,6 +33,7 @@ export const educationLessonTable = educationSchema.table('lesson', {
     .references(() => educationClassroomTable.id, {
       onDelete: 'set null',
     }),
+  price_sgd: numeric().notNull().default('0'),
 
   // Link to product schema.
   product_id: integer()
