@@ -31,8 +31,8 @@ export const journalLineTable = accountingSchema.table(
     contact_id: integer(),
     date: date().notNull(),
 
-    reference_id: integer().notNull(),
-    reference_type: journalLineReferenceTypeEnum().notNull(),
+    reference_id: integer(),
+    reference_type: journalLineReferenceTypeEnum(),
     quantity: integer().notNull().default(0),
     unit_price: numeric().notNull().default('0'),
     subtotal_price: numeric().notNull().default('0'), // Excluding tax.
