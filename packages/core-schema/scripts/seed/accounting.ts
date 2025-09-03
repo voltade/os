@@ -31,8 +31,12 @@ import {
 
 const { FGA_AUTHORIZATION_MODEL_ID } = appEnvVariables;
 
-type AccountIds = { PAYABLE: number; RECEIVABLE: number } & {
-  [name: string]: number;
+type AccountIds = {
+  PAYABLE: number;
+  RECEIVABLE: number;
+  TAX_DUE: number;
+  ACCOUNTS_RECEIVABLE: number;
+  REVENUE: number;
 };
 type TaxIds = { SG: number } & {
   [name: string]: number;
@@ -142,10 +146,25 @@ async function seedAccounts(currencyIds: CurrencyIds): Promise<AccountIds> {
     name: 'Output Tax Due',
     currency_id: currencyIds.SG,
   };
+  const accountsReceivableAccount: InferInsertModel<typeof accountTable> = {
+    category: AccountCategory.CURRENT_ASSET,
+    code: '110000',
+    name: 'Accounts Receivable',
+    currency_id: currencyIds.SG,
+  };
+  const revenueAccount: InferInsertModel<typeof accountTable> = {
+    category: AccountCategory.INCOME,
+    code: '400000',
+    name: 'Revenue',
+    currency_id: currencyIds.SG,
+  };
+
   const accountData = [
     gstRefundAccount,
     gstPayableAccount,
     outputTaxDueAccount,
+    accountsReceivableAccount,
+    revenueAccount,
   ];
 
   const accounts = await db
@@ -166,6 +185,12 @@ async function seedAccounts(currencyIds: CurrencyIds): Promise<AccountIds> {
     RECEIVABLE: accounts.find((a) => a.name === gstRefundAccount.name)!.id,
     // biome-ignore lint/style/noNonNullAssertion: account is guaranteed to exist
     TAX_DUE: accounts.find((a) => a.name === outputTaxDueAccount.name)!.id,
+    // biome-ignore lint/style/noNonNullAssertion: account is guaranteed to exist
+    ACCOUNTS_RECEIVABLE: accounts.find(
+      (a) => a.name === accountsReceivableAccount.name,
+    )!.id,
+    // biome-ignore lint/style/noNonNullAssertion: account is guaranteed to exist
+    REVENUE: accounts.find((a) => a.name === revenueAccount.name)!.id,
   };
   return accountIds;
 }
