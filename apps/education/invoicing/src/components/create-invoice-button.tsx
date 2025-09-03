@@ -1,6 +1,14 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { Button } from '@voltade/ui/button.tsx';
 import {
+  Command,
+  CommandEmpty,
+  CommandGroup,
+  CommandInput,
+  CommandItem,
+  CommandList,
+} from '@voltade/ui/command.tsx';
+import {
   Dialog,
   DialogContent,
   DialogDescription,
@@ -11,12 +19,18 @@ import {
 } from '@voltade/ui/dialog.tsx';
 import { Label } from '@voltade/ui/label.tsx';
 import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from '@voltade/ui/popover.tsx';
+import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
 } from '@voltade/ui/select.tsx';
+import { CheckIcon } from 'lucide-react';
 import { useCallback, useState } from 'react';
 import { Controller, useForm } from 'react-hook-form';
 import { toast } from 'sonner';
@@ -32,6 +46,7 @@ interface CreateInvoiceFormValues {
 export default function CreateInvoiceButton() {
   const queryClient = useQueryClient();
   const [open, setOpen] = useState(false);
+  const [studentPopoverOpen, setStudentPopoverOpen] = useState(false);
 
   const form = useForm<CreateInvoiceFormValues>({
     mode: 'onChange',
@@ -48,7 +63,8 @@ export default function CreateInvoiceButton() {
     queryFn: async () => {
       const { data, error } = await pgRest
         .from('student_view')
-        .select('id, name');
+        .select('id, name')
+        .order('name', { ascending: true });
       if (error) {
         throw new Error(error.message);
       }
@@ -151,23 +167,60 @@ export default function CreateInvoiceButton() {
               name="student_id"
               control={form.control}
               rules={{ required: true }}
-              render={({ field }) => (
-                <Select
-                  value={field.value != null ? String(field.value) : undefined}
-                  onValueChange={(val) => field.onChange(Number(val))}
-                >
-                  <SelectTrigger id="student" className="col-span-3">
-                    <SelectValue placeholder="Select a student" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    {studentsData?.map((student) => (
-                      <SelectItem key={student.id} value={String(student.id)}>
-                        {student.name}
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
-              )}
+              render={({ field }) => {
+                const selected = studentsData?.find(
+                  (s) => s.id === field.value,
+                );
+                return (
+                  <Popover
+                    open={studentPopoverOpen}
+                    onOpenChange={setStudentPopoverOpen}
+                  >
+                    <PopoverTrigger asChild>
+                      <Button
+                        id="student"
+                        variant="outline"
+                        type="button"
+                        role="combobox"
+                        aria-expanded={studentPopoverOpen}
+                        className="col-span-3 justify-between"
+                        disabled={!studentsData?.length}
+                      >
+                        {selected ? selected.name : 'Select a student'}
+                      </Button>
+                    </PopoverTrigger>
+                    <PopoverContent className="w-[300px] p-0">
+                      <Command>
+                        <CommandInput placeholder="Search students..." />
+                        {/* TODO: Fix bug preventing the user from scrolling through the students. */}
+                        <CommandList>
+                          <CommandEmpty>No student found.</CommandEmpty>
+                          <CommandGroup>
+                            {studentsData?.map((student) => {
+                              const isSelected = field.value === student.id;
+                              return (
+                                <CommandItem
+                                  key={student.id}
+                                  value={`${student.name}`}
+                                  onSelect={() => {
+                                    field.onChange(student.id);
+                                    setStudentPopoverOpen(false);
+                                  }}
+                                >
+                                  {student.name} (#{student.id})
+                                  {isSelected && (
+                                    <CheckIcon className="ml-auto size-4 opacity-60" />
+                                  )}
+                                </CommandItem>
+                              );
+                            })}
+                          </CommandGroup>
+                        </CommandList>
+                      </Command>
+                    </PopoverContent>
+                  </Popover>
+                );
+              }}
             />
           </div>
           <DialogFooter>
