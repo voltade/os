@@ -1,6 +1,11 @@
 import type { InferInsertModel } from 'drizzle-orm';
+import { and, eq, inArray } from 'drizzle-orm';
 
 import { db } from '../../../lib/db.ts';
+import { accountTable } from '../../../schemas/accounting/tables/account.ts';
+import { journalTable } from '../../../schemas/accounting/tables/journal.ts';
+import { journalEntryTable } from '../../../schemas/accounting/tables/journal_entry.ts';
+import { journalLineTable } from '../../../schemas/accounting/tables/journal_line.ts';
 import { educationAcademicYearTable } from '../../../schemas/education/tables/academic_year.ts';
 import { educationAttendanceTable } from '../../../schemas/education/tables/attendance.ts';
 import { educationBranchTable } from '../../../schemas/education/tables/branch.ts';
@@ -14,6 +19,7 @@ import { educationStudentTable } from '../../../schemas/education/tables/student
 import { educationStudentJoinClassTable } from '../../../schemas/education/tables/student_join_class.ts';
 import { educationSubjectTable } from '../../../schemas/education/tables/subject.ts';
 import { educationTermTable } from '../../../schemas/education/tables/term.ts';
+import { currencyTable } from '../../../schemas/resource/tables/currency.ts';
 import { clearTables, type SeedContext } from '../utils.ts';
 import { migrateFromJson } from './migrate.ts';
 
@@ -621,6 +627,231 @@ async function seedAttendance() {
   return inserted.length;
 }
 
+// Seed a sample invoice (journal entry + lines) for Bob Lim's classes.
+async function seedEducationInvoice(classIds: ClassIds) {
+  console.log('Invoice:');
+  // Look up Sales Invoice journal
+  const [salesJournal] = await db
+    .select()
+    .from(journalTable)
+    .where(eq(journalTable.name, 'Sales Invoice'))
+    .limit(1);
+  if (!salesJournal) {
+    console.warn(
+      '   Sales Invoice journal not found; skipping invoice seeding',
+    );
+    return;
+  }
+
+  // Look up SGD currency (assumes code column present)
+  const [sgdCurrency] = await db
+    .select()
+    .from(currencyTable)
+    .where(eq(currencyTable.name, 'SGD'))
+    .limit(1);
+  if (!sgdCurrency) {
+    console.warn('   SGD currency not found; skipping invoice seeding');
+    return;
+  }
+
+  // Look up accounts
+  const accounts = await db.select().from(accountTable);
+  const revenueAccount = accounts.find((a) => a.name === 'Revenue');
+  const arAccount = accounts.find((a) => a.name === 'Accounts Receivable');
+  if (!revenueAccount || !arAccount) {
+    console.warn(
+      '   Revenue or Accounts Receivable account missing; skipping invoice seeding',
+    );
+    return;
+  }
+
+  // Required class references
+  const pri5ClassId = classIds['PRI_5_ENGLISH'];
+  const sec3ClassId = classIds['SEC_3_MATH'];
+  if (!pri5ClassId || !sec3ClassId) {
+    console.warn('   Required class IDs missing; skipping invoice seeding');
+    return;
+  }
+
+  // Create journal entry
+  const entryRows: InferInsertModel<typeof journalEntryTable>[] = [
+    {
+      journal_id: salesJournal.id,
+      currency_id: sgdCurrency.id,
+      partner_id: null, // TODO: Link Student #2 (Bob Lim) to a resource.partner
+      contact_id: null,
+      name: 'INV2025/0001',
+      type: 'Customer Invoice',
+      date: '2025-09-01',
+      description: '', // Empty per requirement
+      status: 'Posted',
+      origin: '', // Empty string per clarification
+    },
+  ];
+
+  const [invoice] = await db
+    .insert(journalEntryTable)
+    .values(entryRows)
+    .returning();
+  if (!invoice) {
+    console.warn('   Failed to create invoice journal entry');
+    return;
+  }
+
+  // Prepare line data
+  const line1Total = 13 * 50; // 650
+  const line2Total = 13 * 60; // 780
+  const total = line1Total + line2Total; // 1430
+
+  const lineRows: InferInsertModel<typeof journalLineTable>[] = [
+    {
+      journal_entry_id: invoice.id,
+      own_entity_id: -1, // TODO: Determine correct own_entity_id
+      partner_id: null,
+      contact_id: null,
+      date: '2025-09-01',
+      reference_id: pri5ClassId,
+      reference_type: 'education.class',
+      quantity: 13,
+      unit_price: String(50),
+      subtotal_price: String(line1Total),
+      total_price: String(line1Total),
+      sequence_number: 1,
+      name: 'Primary 5 English (Thursdays, 5 PM–7 PM @ Tampines)',
+      description: 'TODO: Get lesson dates.',
+      credit: String(line1Total),
+      debit: '0',
+      account_id: revenueAccount.id,
+    },
+    {
+      journal_entry_id: invoice.id,
+      own_entity_id: -1,
+      partner_id: null,
+      contact_id: null,
+      date: '2025-09-01',
+      reference_id: sec3ClassId,
+      reference_type: 'education.class',
+      quantity: 13,
+      unit_price: String(60),
+      subtotal_price: String(line2Total),
+      total_price: String(line2Total),
+      sequence_number: 2,
+      name: 'Secondary 3 Math (Mondays, 3 PM–5 PM @ Tampines)',
+      description: 'TODO: Get lesson dates.',
+      credit: String(line2Total),
+      debit: '0',
+      account_id: revenueAccount.id,
+    },
+    {
+      journal_entry_id: invoice.id,
+      own_entity_id: -1,
+      partner_id: null,
+      contact_id: null,
+      date: '2025-09-01',
+      quantity: 0,
+      unit_price: '0',
+      subtotal_price: '0',
+      total_price: '0',
+      sequence_number: 3,
+      name: 'Accounts Receivable',
+      description: '',
+      credit: '0',
+      debit: String(total),
+      account_id: arAccount.id,
+    },
+  ];
+
+  const insertedLines = await db
+    .insert(journalLineTable)
+    .values(lineRows)
+    .returning();
+  console.log(
+    `   Created invoice ${invoice.name} with ${insertedLines.length} lines`,
+  );
+
+  // Link Bob Lim's Term 1 attendance for the two classes to the respective journal lines.
+  try {
+    // Fetch Bob Lim
+    const [bob] = await db
+      .select()
+      .from(educationStudentTable)
+      .where(eq(educationStudentTable.name, 'Bob Lim'))
+      .limit(1);
+    if (!bob) {
+      console.warn('   Bob Lim not found; skipping attendance linkage');
+      return;
+    }
+
+    // Identify Term 1 id (earliest term by id for the 2025 academic year)
+    const [term1] = await db
+      .select()
+      .from(educationTermTable)
+      .where(eq(educationTermTable.name, '2025 Term 1'))
+      .limit(1);
+    if (!term1) {
+      console.warn('   Term 1 not found; skipping attendance linkage');
+      return;
+    }
+
+    // Get Term 1 lesson ids for each class only
+    const pri5Term1Lessons = await db
+      .select({ id: educationLessonTable.id })
+      .from(educationLessonTable)
+      .where(
+        and(
+          eq(educationLessonTable.class_id, pri5ClassId),
+          eq(educationLessonTable.term_id, term1.id),
+        ),
+      );
+    const sec3Term1Lessons = await db
+      .select({ id: educationLessonTable.id })
+      .from(educationLessonTable)
+      .where(
+        and(
+          eq(educationLessonTable.class_id, sec3ClassId),
+          eq(educationLessonTable.term_id, term1.id),
+        ),
+      );
+
+    const pri5LessonIds = pri5Term1Lessons.map((l) => l.id);
+    const sec3LessonIds = sec3Term1Lessons.map((l) => l.id);
+
+    const line1 = insertedLines.find((l) => l.sequence_number === 1);
+    const line2 = insertedLines.find((l) => l.sequence_number === 2);
+    if (!line1 || !line2) {
+      console.warn('   Missing revenue lines; cannot link attendance');
+      return;
+    }
+
+    // Update attendance rows for Bob where lesson belongs to each class; restrict to Term 1 by checking lesson_id set (Term 1 lesson ids start first chronologically already but we use all lessons for simplicity)
+    if (pri5LessonIds.length > 0) {
+      await db
+        .update(educationAttendanceTable)
+        .set({ journal_line_id: line1.id })
+        .where(
+          and(
+            eq(educationAttendanceTable.student_id, bob.id),
+            inArray(educationAttendanceTable.lesson_id, pri5LessonIds),
+          ),
+        );
+    }
+    if (sec3LessonIds.length > 0) {
+      await db
+        .update(educationAttendanceTable)
+        .set({ journal_line_id: line2.id })
+        .where(
+          and(
+            eq(educationAttendanceTable.student_id, bob.id),
+            inArray(educationAttendanceTable.lesson_id, sec3LessonIds),
+          ),
+        );
+    }
+    console.log("   Linked Bob's Term 1 attendances to journal lines");
+  } catch (err) {
+    console.warn('   Failed to link attendance to invoice lines:', err);
+  }
+}
+
 // region Drivers
 export async function seedEducationData(
   context: SeedContext,
@@ -679,6 +910,9 @@ export async function seedEducationData(
 
   // 11) Attendance records for every (student, lesson) pair based on enrollments
   await seedAttendance();
+
+  // 12) Invoice (after classes, students, and attendances exist)
+  await seedEducationInvoice(classIds);
 
   if (migrate) {
     await migrateFromJson();
