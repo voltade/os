@@ -66,6 +66,7 @@ export const canAccessDrizzle = createMiddleware<{ Variables: AuthVariables }>(
         user.roles[appEnvVariables.ORGANIZATION_SLUG] ?? '',
       )
     ) {
+      console.log(user.roles);
       return c.json({ error: 'Unauthorized' }, 401);
     }
 

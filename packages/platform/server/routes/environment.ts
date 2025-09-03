@@ -1,3 +1,4 @@
+/** biome-ignore-all lint/style/noNonNullAssertion: organization.slug is guaranteed to be set by the query */
 import { zValidator } from '@hono/zod-validator';
 import { and, eq } from 'drizzle-orm';
 import { bearerAuth } from 'hono/bearer-auth';
@@ -56,29 +57,33 @@ export const route = factory
           eq(environmentTable.organization_id, organizationTable.id),
         );
 
+      if (!environments.every(({ organization }) => organization.slug)) {
+        throw new Error('Organization slug is required');
+      }
+
       const parameters: Values[] = await Promise.all(
         environments.map(async ({ organization, environment }) => {
           const anonKey = await signJwt({
             role: 'anon',
-            aud: [organization.slug],
+            aud: [organization.slug!],
           });
           const runnerKey = await signJwt({
             role: 'runner',
             orgId: organization.id,
-            orgSlug: organization.slug,
+            orgSlug: organization.slug!,
             envId: environment.id,
             envSlug: environment.slug,
           });
           const serviceKey = await signJwt({
             role: 'service_role',
-            aud: [organization.slug],
+            aud: [organization.slug!],
           });
           const baseHostname = `${organization.slug}-${environment.slug}.${BASE_DOMAIN}`;
           const values = {
             id: `${organization.id}-${environment.id}`,
             slug: `${organization.slug}-${environment.slug}`,
             organizationId: organization.id,
-            organizationSlug: organization.slug,
+            organizationSlug: organization.slug!,
             organizationName: organization.name,
             environmentId: environment.id,
             environmentSlug: environment.slug,

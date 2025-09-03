@@ -22,7 +22,10 @@ export function MicroApp({ slug }: Props) {
   const { containerRef, isLoading } = useMicroApp({
     enabled: !!activeOrganization && !!environment.slug && !!appInstallation,
     name: slug,
-    entry: `//${activeOrganization?.slug}-${environment.slug}.127.0.0.1.nip.io/apps/${app?.slug}/`,
+    entry:
+      slug === 'dev-app-template'
+        ? '//app-template.127.0.0.1.nip.io/'
+        : `//${activeOrganization?.slug}-${environment.slug}.127.0.0.1.nip.io/apps/${app?.slug}/`,
   });
 
   return (

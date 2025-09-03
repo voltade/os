@@ -168,6 +168,58 @@
         "web-vitals": "^5.1.0",
       },
     },
+    "apps/education/invoicing": {
+      "name": "invoicing",
+      "version": "0.1.0",
+      "dependencies": {
+        "@dnd-kit/core": "^6.3.1",
+        "@dnd-kit/modifiers": "^9.0.0",
+        "@dnd-kit/sortable": "^10.0.0",
+        "@dnd-kit/utilities": "^3.2.2",
+        "@hono/zod-validator": "^0.7.2",
+        "@mantine/form": "^8.2.7",
+        "@tabler/icons-react": "^3.34.1",
+        "@tanstack/react-table": "^8.21.3",
+        "@voltade/core-schema": "workspace:*",
+        "hono": "^4.9.4",
+        "jose": "^6.0.13",
+        "zod": "^4.1.1",
+      },
+      "devDependencies": {
+        "@biomejs/biome": "^2.2.2",
+        "@mantine/notifications": "^8.2.7",
+        "@tailwindcss/postcss": "^4.1.12",
+        "@tailwindcss/vite": "^4.1.12",
+        "@tanstack/react-query": "^5.85.5",
+        "@tanstack/react-query-devtools": "^5.85.5",
+        "@tanstack/react-router": "1.131.26",
+        "@tanstack/react-router-devtools": "1.131.26",
+        "@tanstack/router-plugin": "1.131.26",
+        "@types/bun": "latest",
+        "@types/react": "^19",
+        "@types/react-dom": "^19",
+        "@vitejs/plugin-react-swc": "^4.0.1",
+        "@voltade/sdk": "workspace:*",
+        "@voltade/ui": "workspace:*",
+        "concurrently": "^9.2.0",
+        "drizzle-kit": "^0.31.4",
+        "drizzle-orm": "^0.44.4",
+        "mantine-react-table": "^2.0.0-beta.9",
+        "postcss-preset-mantine": "^1.18.0",
+        "postcss-simple-vars": "^7.0.1",
+        "react": "^19.1.1",
+        "react-dom": "^19.1.1",
+        "shadcn": "^2.10.0",
+        "sonner": "^2.0.7",
+        "tailwindcss": "^4.1.12",
+        "tar": "^7.4.3",
+        "vite": "^7.1.3",
+        "vite-plugin-qiankun-lite": "^1.3.0",
+        "vite-tsconfig-paths": "^5.1.4",
+        "wait-on": "^8.0.4",
+        "web-vitals": "^5.1.0",
+      },
+    },
     "apps/education/registration": {
       "name": "registration",
       "version": "0.1.0",
@@ -428,6 +480,7 @@
         "@radix-ui/react-toggle": "^1.1.10",
         "@radix-ui/react-toggle-group": "^1.1.11",
         "@radix-ui/react-tooltip": "^1.2.8",
+        "@tanstack/react-table": "^8.21.3",
         "class-variance-authority": "^0.7.1",
         "cmdk": "^1.1.1",
         "date-fns": "^4.1.0",
@@ -1872,6 +1925,8 @@
 
     "interpret": ["interpret@1.4.0", "", {}, "sha512-agE4QfB2Lkp9uICn7BAqoscw4SZP9kTE2hxiFI3jBPmXJfdqiahTbUuKGsMoN2GtqL9AxhYioAcVvgsb1HvRbA=="],
 
+    "invoicing": ["invoicing@workspace:apps/education/invoicing"],
+
     "ip-address": ["ip-address@10.0.1", "", {}, "sha512-NWv9YLW4PoW2B7xtzaS3NCot75m6nK7Icdv0o3lfMceJVRfSoQwqD4wEH5rLwoKJwUiZ/rfpiVBhnaF0FK4HoA=="],
 
     "ipaddr.js": ["ipaddr.js@1.9.1", "", {}, "sha512-0KI/607xoxSToH7GjN1FfSbLoU0+btTicjsQSWQlh/hZykN8KpmMf7uYwPW3R+akZ6R/w18ZlXSHBYXiYUPO3g=="],
@@ -2762,6 +2817,8 @@
 
     "http-errors/statuses": ["statuses@2.0.1", "", {}, "sha512-RwNA9Z/7PrK06rYLIzFMlaF+l73iwpzsqRIFgbMLbTcLD6cOao82TaWefPXQvB2fOC4AjuYSEndS7N/mTCbkdQ=="],
 
+    "invoicing/@types/bun": ["@types/bun@1.2.21", "", { "dependencies": { "bun-types": "1.2.21" } }, "sha512-NiDnvEqmbfQ6dmZ3EeUO577s4P5bf4HCTXtI6trMc6f6RzirY5IrF3aIookuSpyslFzrnvv2lmEWv5HyC1X79A=="],
+
     "log-symbols/chalk": ["chalk@5.6.0", "", {}, "sha512-46QrSQFyVSEyYAgQ22hQ+zDa60YHA4fBstHmtSApj1Y5vKtG27fWowW03jCk5KcbXEWPZUIR894aARCA/G1kfQ=="],
 
     "log-symbols/is-unicode-supported": ["is-unicode-supported@1.3.0", "", {}, "sha512-43r2mRvz+8JRIKnWJ+3j8JtjRKZ6GmjzfaE/qiBJnikNnYv/6bagRJ1kUhNk8R5EX/GkobD+r+sfxCPJsiKBLQ=="],
@@ -3307,6 +3364,8 @@
     "express/mime-types/mime-db": ["mime-db@1.54.0", "", {}, "sha512-aU5EJuIN2WDemCcAp2vFBfp/m4EAhWJnUNSSw0ixs7/kXbd6Pg64EmwJkNdFhB8aWt1sH2CTXrLxo/iAGV3oPQ=="],
 
     "fs-minipass/minipass/yallist": ["yallist@4.0.0", "", {}, "sha512-3wdGidZyq5PB084XLES5TpOSRA3wjXAlIWMhum2kRcv/41Sn2emQ0dycQW4uZXLejwKvg6EsvbdlVL+FYEct7A=="],
+
+    "invoicing/@types/bun/bun-types": ["bun-types@1.2.21", "", { "dependencies": { "@types/node": "*" }, "peerDependencies": { "@types/react": "^19" } }, "sha512-sa2Tj77Ijc/NTLS0/Odjq/qngmEPZfbfnOERi0KRUYhT9R8M4VBioWVmMWE5GrYbKMc+5lVybXygLdibHaqVqw=="],
 
     "mantine-react-table/@tanstack/react-table/@tanstack/table-core": ["@tanstack/table-core@8.20.5", "", {}, "sha512-P9dF7XbibHph2PFRz8gfBKEXEY/HJPOhym8CHmjF8y3q5mWpKx9xtZapXQUWCgkqvsK0R46Azuz+VaxD4Xl+Tg=="],
 

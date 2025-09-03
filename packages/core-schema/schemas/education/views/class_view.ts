@@ -21,8 +21,14 @@ export const classView = pgView('class_view')
         subject_id: educationClassTable.subject_id,
         subject_name: sql`${educationSubjectTable.name}`.as('subject_name'),
         usual_day_of_the_week: educationClassTable.usual_day_of_the_week,
-        usual_start_time_utc: educationClassTable.usual_start_time_utc,
-        usual_end_time_utc: educationClassTable.usual_end_time_utc,
+        usual_start_time_utc:
+          sql<string>`${educationClassTable.usual_start_time_utc}::text`.as(
+            'usual_start_time_utc',
+          ),
+        usual_end_time_utc:
+          sql<string>`${educationClassTable.usual_end_time_utc}::text`.as(
+            'usual_end_time_utc',
+          ),
         course_id: educationClassTable.course_id,
       })
       .from(educationClassTable)

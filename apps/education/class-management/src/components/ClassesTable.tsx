@@ -1,16 +1,10 @@
 import { useQuery } from '@tanstack/react-query';
 import { Card, CardContent, CardHeader, CardTitle } from '@voltade/ui/card.tsx';
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from '@voltade/ui/table.tsx';
+import { type ColumnDef, DataTable } from '@voltade/ui/data-table.tsx';
 import dayjs from 'dayjs';
 import timezone from 'dayjs/plugin/timezone';
 import utc from 'dayjs/plugin/utc';
+import { useState } from 'react';
 
 import { api } from '#src/lib/api.ts';
 
@@ -41,25 +35,98 @@ interface ClassesTableProps {
   headerAction?: React.ReactNode;
 }
 
+const formatTimeForDisplay = (utcTime: string | null) => {
+  if (!utcTime) return 'N/A';
+  // Convert UTC time to Singapore time for display
+  return dayjs.utc(utcTime, 'HH:mm:ss').tz('Asia/Singapore').format('h:mm A');
+};
+
 export default function ClassesTable({ headerAction }: ClassesTableProps) {
+  const [page, setPage] = useState(0);
+  const [pageSize] = useState(10);
+  const [sortBy, setSortBy] = useState<string | null>(null);
+  const [sortOrder, setSortOrder] = useState<'asc' | 'desc' | null>(null);
+
   const {
-    data: classesData,
+    data: response,
     isLoading,
     error,
   } = useQuery({
-    queryKey: ['classes'],
+    queryKey: ['classes', page, pageSize, sortBy, sortOrder],
     queryFn: async () => {
-      const res = await api['get-classes'].$get();
+      const queryParams: Record<string, string> = {
+        page: page.toString(),
+        limit: pageSize.toString(),
+      };
+
+      if (sortBy && sortOrder) {
+        queryParams.sortBy = sortBy;
+        queryParams.sortOrder = sortOrder;
+      }
+
+      const res = await api['get-classes'].$get({
+        query: queryParams,
+      });
       if (!res.ok) throw new Error('Failed to fetch classes');
-      const result = await res.json();
-      return result.data as ClassData[];
+      return await res.json();
     },
   });
 
-  const formatTimeForDisplay = (utcTime: string | null) => {
-    if (!utcTime) return 'N/A';
-    // Convert UTC time to Singapore time for display
-    return dayjs.utc(utcTime, 'HH:mm:ss').tz('Asia/Singapore').format('h:mm A');
+  const classesData = response?.data || [];
+  const pagination = response?.pagination;
+
+  const columns: ColumnDef<ClassData>[] = [
+    {
+      accessorKey: 'id',
+      header: 'ID',
+      cell: ({ row }) => (
+        <div className="font-medium">{row.getValue('id')}</div>
+      ),
+    },
+    {
+      accessorKey: 'level_group_name',
+      header: 'Level',
+      cell: ({ row }) => <div>{row.getValue('level_group_name') || 'N/A'}</div>,
+    },
+    {
+      accessorKey: 'subject_name',
+      header: 'Subject',
+      cell: ({ row }) => <div>{row.getValue('subject_name') || 'N/A'}</div>,
+    },
+    {
+      accessorKey: 'usual_day_of_the_week',
+      header: 'Day',
+      cell: ({ row }) => (
+        <div>{row.getValue('usual_day_of_the_week') || 'N/A'}</div>
+      ),
+    },
+    {
+      accessorKey: 'usual_start_time_utc',
+      header: 'Start Time (SGT)',
+      cell: ({ row }) => (
+        <div>{formatTimeForDisplay(row.getValue('usual_start_time_utc'))}</div>
+      ),
+    },
+    {
+      accessorKey: 'usual_end_time_utc',
+      header: 'End Time (SGT)',
+      cell: ({ row }) => (
+        <div>{formatTimeForDisplay(row.getValue('usual_end_time_utc'))}</div>
+      ),
+    },
+  ];
+
+  const handlePageChange = async (newPage: number) => {
+    setPage(newPage);
+  };
+
+  const handleSortingChange = async (
+    newSortBy: string | null,
+    newSortOrder: 'asc' | 'desc' | null,
+  ) => {
+    setSortBy(newSortBy);
+    setSortOrder(newSortOrder);
+    // Note: Page reset is handled in DataTable
   };
 
   if (error) {
@@ -93,36 +160,19 @@ export default function ClassesTable({ headerAction }: ClassesTableProps) {
         ) : !classesData || classesData.length === 0 ? (
           <p className="text-sm text-muted-foreground">No classes found.</p>
         ) : (
-          <Table>
-            <TableHeader>
-              <TableRow>
-                <TableHead>ID</TableHead>
-                <TableHead>Level</TableHead>
-                <TableHead>Subject</TableHead>
-                <TableHead>Day</TableHead>
-                <TableHead>Start Time (SGT)</TableHead>
-                <TableHead>End Time (SGT)</TableHead>
-              </TableRow>
-            </TableHeader>
-            <TableBody>
-              {classesData.map((classItem) => (
-                <TableRow key={classItem.id}>
-                  <TableCell className="font-medium">{classItem.id}</TableCell>
-                  <TableCell>{classItem.level_group_name || 'N/A'}</TableCell>
-                  <TableCell>{classItem.subject_name || 'N/A'}</TableCell>
-                  <TableCell>
-                    {classItem.usual_day_of_the_week || 'N/A'}
-                  </TableCell>
-                  <TableCell>
-                    {formatTimeForDisplay(classItem.usual_start_time_utc)}
-                  </TableCell>
-                  <TableCell>
-                    {formatTimeForDisplay(classItem.usual_end_time_utc)}
-                  </TableCell>
-                </TableRow>
-              ))}
-            </TableBody>
-          </Table>
+          <DataTable
+            columns={columns}
+            data={classesData}
+            enableSorting={true}
+            enableColumnVisibility={true}
+            enablePagination={true}
+            pageSize={pageSize}
+            totalCount={pagination?.total}
+            currentPage={page}
+            onPageChange={handlePageChange}
+            onSortingChange={handleSortingChange}
+            isLoading={isLoading}
+          />
         )}
       </CardContent>
     </Card>
