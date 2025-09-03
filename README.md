@@ -41,10 +41,25 @@ Sign in using `admin@voltade.com`. Hint: the six-digit verification code is prin
 
 This also serves an `/environment` endpoint which tells ArgoCD to create a CNPG cluster corresponding to the row inserted, which has one database (the "environment database").
 
-## Apply the core schema to the environment database and seed it
+### Resetting the environment database and OpenFGA
 
+The core-schema reset does two things:
+- Resets/recreates the environment database and applies the schema, then seeds it.
+- Resets the OpenFGA store and writes the authorization model, updating `packages/core-schema/.env`.
+
+1) Ensure the OpenFGA API is reachable on localhost:8080. Use k9s to port-forward the `openfga` service in the `environment` namespace
+
+2) Run the reset:
 ```bash
 bun --cwd packages/core-schema db:reset
+ 
+
+Troubleshooting:
+- If you see “Cannot reach FGA server” from `scripts/fga-reset.sh`, make sure the port-forward is active.
+- Validate connectivity:
+```bash
+fga store list
+```
 ```
 
 ## Connect the app template or an app to the environment database
@@ -87,7 +102,7 @@ The app should appear in the platform web app.
 
 # Miscellaneous Notes
 ## Installation of PostgreSQL extensions
-
+read
 - Add source compiling to `docker/postgres/Dockerfile`: For most extensions that is not shipped with Postgres.
 
 - Add to `shared_preload_libraries` in the [cnpg-cluster.yaml](argocd/platform/common/base/cnpg-cluster.yaml): If it requires being loaded at startup, such as _pg_stat_statements_, _supabase_vault_.
