@@ -9,7 +9,7 @@ helmCharts:
   - repo: https://dl.gitea.com/charts
     name: gitea
     # https://artifacthub.io/packages/helm/gitea/gitea
-    version: 12.1.2
+    version: 12.2.0
     releaseName: gitea
     namespace: gitea
     # https://gitea.com/gitea/helm-gitea#parameters
@@ -67,6 +67,9 @@ helmCharts:
             ALLOWED_USER_VISIBILITY_MODES: limited,private
             DEFAULT_ORG_VISIBILITY: private
             EMAIL_DOMAIN_ALLOWLIST: voltade.com
+          # https://docs.gitea.com/administration/config-cheat-sheet#admin-admin
+          admin:
+            DISABLE_REGULAR_ORG_CREATION: true
           repository:
             FORCE_PRIVATE: true
           cache:
