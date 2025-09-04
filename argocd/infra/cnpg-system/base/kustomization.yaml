@@ -3,7 +3,7 @@ kind: Kustomization
 
 resources:
   # https://github.com/cloudnative-pg/plugin-barman-cloud/releases
-  - https://github.com/cloudnative-pg/plugin-barman-cloud/releases/download/v0.5.0/manifest.yaml
+  - https://github.com/cloudnative-pg/plugin-barman-cloud/releases/download/v0.6.0/manifest.yaml
 
 helmCharts:
   - repo: https://cloudnative-pg.github.io/charts
