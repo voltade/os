@@ -30,10 +30,6 @@ variable "argocd_configs" {
   default = {}
 }
 
-variable "gateway_name" {
-  type = string
-}
-
 variable "git_repo_url" {
   type = string
 }

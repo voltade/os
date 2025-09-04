@@ -17,8 +17,6 @@ module "argocd" {
     }
   }
 
-  gateway_name = kubectl_manifest.cilium_gateway.name
-
   git_repo_url    = "file:///mnt/voltade-os.git"
   appsets_include = "dev/*"
   helm_repo_url   = "registry.127.0.0.1.nip.io"
