@@ -11,3 +11,12 @@ helmCharts:
     version: 0.19.2
     releaseName: external-secrets
     namespace: external-secrets
+
+patches:
+  - target:
+      kind: CustomResourceDefinition
+      name: ".*"
+    patch: |-
+      - op: add
+        path: /metadata/annotations/argocd.argoproj.io~1sync-options
+        value: ServerSideApply=true
