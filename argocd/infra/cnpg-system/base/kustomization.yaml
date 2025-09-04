@@ -9,7 +9,7 @@ helmCharts:
   - repo: https://cloudnative-pg.github.io/charts
     name: cloudnative-pg
     # https://artifacthub.io/packages/helm/cloudnative-pg/cloudnative-pg
-    version: 0.25.0
+    version: 0.26.0
     releaseName: cloudnative-pg
     namespace: cnpg-system
     # https://github.com/cloudnative-pg/charts/blob/main/charts/cloudnative-pg/values.yaml

@@ -8,6 +8,6 @@ helmCharts:
   - repo: https://charts.external-secrets.io
     name: external-secrets
     # https://artifacthub.io/packages/helm/external-secrets-operator/external-secrets
-    version: 0.18.2
+    version: 0.19.2
     releaseName: external-secrets
     namespace: external-secrets
