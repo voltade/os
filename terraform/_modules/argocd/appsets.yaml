@@ -16,9 +16,9 @@ spec:
     syncOptions:
       - CreateNamespace=true
   source:
-    repoURL: file:///mnt/voltade-os.git
+    repoURL: "${repo_url}"
     targetRevision: HEAD
     path: argocd/appsets
     directory:
       recurse: true
-      include: "${appsets_include}"
+      include: "${include}"
