@@ -7,7 +7,7 @@ spec:
     - name: cilium-gateway
       namespace: gateway
   hostnames:
-    - gitea.127.0.0.1.nip.io
+    - git.127.0.0.1.nip.io
   rules:
     - backendRefs:
         - name: gitea-http

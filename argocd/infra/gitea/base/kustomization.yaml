@@ -38,8 +38,8 @@ helmCharts:
           APP_NAME: Gitea
           # https://docs.gitea.com/administration/config-cheat-sheet#server-server
           server:
-            DOMAIN: gitea.127.0.0.1.nip.io
-            ROOT_URL: http://gitea.127.0.0.1.nip.io
+            DOMAIN: git.127.0.0.1.nip.io
+            ROOT_URL: http://git.127.0.0.1.nip.io
             DISABLE_SSH: true
           # https://docs.gitea.com/administration/config-cheat-sheet#security-security
           security:
