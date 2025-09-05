@@ -11,13 +11,12 @@ patches:
       version: v1beta1
       kind: Kustomization
     patch: |-
-      - op: add
-        path: /helmCharts/0/valuesInline
-        value:
-          gitea:
-            config:
-              server:
-                DOMAIN: git.voltade.app
-                ROOT_URL: https://git.voltade.app
-              service:
-                DISABLE_REGISTRATION: true
+      helmCharts:
+        - valuesInline:
+            gitea:
+              config:
+                server:
+                  DOMAIN: git.voltade.app
+                  ROOT_URL: https://git.voltade.app
+                service:
+                  DISABLE_REGISTRATION: true

@@ -11,11 +11,10 @@ patches:
       version: v1beta1
       kind: Kustomization
     patch: |-
-      - op: add
-        path: /helmCharts/0/valuesInline
-        value:
-          gitea:
-            config:
-              server:
-                DOMAIN: git.127.0.0.1.nip.io
-                ROOT_URL: http://git.127.0.0.1.nip.io
+      helmCharts:
+        - valuesInline:
+            gitea:
+              config:
+                server:
+                  DOMAIN: git.127.0.0.1.nip.io
+                  ROOT_URL: http://git.127.0.0.1.nip.io
