@@ -1,0 +1,12 @@
+apiVersion: builtin
+kind: HelmChartInflationGenerator
+metadata:
+  name: gitea
+valuesInline:
+  gitea:
+    config:
+      server:
+        DOMAIN: git.voltade.app
+        ROOT_URL: https://git.voltade.app
+      service:
+        DISABLE_REGISTRATION: true

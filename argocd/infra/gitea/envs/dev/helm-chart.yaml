@@ -1,0 +1,10 @@
+apiVersion: builtin
+kind: HelmChartInflationGenerator
+metadata:
+  name: gitea
+valuesInline:
+  gitea:
+    config:
+      server:
+        DOMAIN: git.127.0.0.1.nip.io
+        ROOT_URL: http://git.127.0.0.1.nip.io
