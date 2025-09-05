@@ -19,9 +19,7 @@ module "argocd" {
         }
       }
       secret = {
-        admin = {
-          password = "$2a$10$ekZY6VP1UuhNlhQ8.kCNqe5rn94jO4ivz2vzO1slot1X3sNmZmObe" # admin
-        }
+        argocdServerAdminPassword = "$2a$10$ekZY6VP1UuhNlhQ8.kCNqe5rn94jO4ivz2vzO1slot1X3sNmZmObe" # admin
       }
     }
     repoServer = {
