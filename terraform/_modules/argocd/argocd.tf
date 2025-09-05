@@ -9,10 +9,9 @@ resource "helm_release" "argocd" {
     file("${path.module}/argocd.values.yaml"),
     yamlencode({
       global = {
-        domain      = local.domain
-        hostAliases = var.argocd_host_aliases
-      },
-      configs = var.argocd_configs
-    })
+        domain = local.domain
+      }
+    }),
+    yamlencode(var.argocd_helm_values)
   ]
 }

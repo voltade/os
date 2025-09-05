@@ -14,28 +14,6 @@ configs:
         - CiliumIdentity
         clusters:
         - "*"
-  secret:
-    argocdServerAdminPassword: $2a$10$ekZY6VP1UuhNlhQ8.kCNqe5rn94jO4ivz2vzO1slot1X3sNmZmObe # admin
-
 server:
   ingress:
     enabled: false
-
-repoServer:
-  env:
-    # https://github.com/argoproj/argo-cd/issues/13726#issuecomment-2733477259
-    - name: SSL_CERT_DIR
-      value: /mnt/ca-certificates
-  volumeMounts:
-    - name: voltade-os
-      mountPath: /mnt/voltade-os.git
-    - name: extra-ca
-      mountPath: /mnt/ca-certificates
-  volumes:
-    - name: voltade-os
-      hostPath:
-        path: /mnt/voltade-os.git
-        type: Directory
-    - name: extra-ca
-      configMap:
-        name: argocd-tls-certs-cm

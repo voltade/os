@@ -17,16 +17,8 @@ variable "argocd_helm_version" {
   type = string
 }
 
-variable "argocd_host_aliases" {
-  type = list(object({
-    ip        = string
-    hostnames = list(string)
-  }))
-  default = []
-}
-
-variable "argocd_configs" {
-  type    = map(any)
+variable "argocd_helm_values" {
+  type    = any
   default = {}
 }
 
