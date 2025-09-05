@@ -11,8 +11,12 @@ patches:
       version: v1beta1
       kind: Kustomization
     patch: |-
+      apiVersion: kustomize.config.k8s.io/v1beta1
+      kind: Kustomization
       helmCharts:
-        - valuesInline:
+        - name: gitea
+          releaseName: gitea
+          valuesInline:
             gitea:
               config:
                 server:
