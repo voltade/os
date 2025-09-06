@@ -34,5 +34,6 @@ spec:
             type: DirectoryOrCreate
   storagePools:
     - name: worker-pool
-      fileThinPool:
-        directory: /var/lib/piraeus-datastore/worker-pool
+      lvmThinPool:
+        volumeGroup: vg-worker
+        thinPool: worker-thin-pool

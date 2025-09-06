@@ -38,5 +38,6 @@ spec:
             type: DirectoryOrCreate
   storagePools:
     - name: postgres-pool
-      fileThinPool:
-        directory: /var/lib/piraeus-datastore/postgres-pool
+      lvmThinPool:
+        volumeGroup: vg-postgres
+        thinPool: postgres-thin-pool
