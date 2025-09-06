@@ -1,14 +1,12 @@
 apiVersion: piraeus.io/v1
 kind: LinstorSatelliteConfiguration
 metadata:
-  name: storage-pool
+  name: worker
 spec:
+  nodeSelector:
+    node-role.kubernetes.io/worker: ""
   podTemplate:
     spec:
-      tolerations:
-        - key: node-role.kubernetes.io/postgres
-          operator: Exists
-          effect: NoSchedule
       # https://piraeus.io/docs/v2.9.0/how-to/talos/#configure-the-drbd-module-loader
       initContainers:
         - name: drbd-shutdown-guard
@@ -35,6 +33,6 @@ spec:
             path: /var/etc/lvm/archive
             type: DirectoryOrCreate
   storagePools:
-    - name: storage-pool
+    - name: worker-pool
       fileThinPool:
-        directory: /var/lib/piraeus-datastore/storage-pool
+        directory: /var/lib/piraeus-datastore/worker-pool
