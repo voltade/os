@@ -5,5 +5,5 @@ resources:
   - ../../base
 
 patches:
-  - path: helm-chart.yaml
+  - path: cnpg-cluster.yaml
   - path: http-route.yaml

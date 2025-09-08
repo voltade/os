@@ -15,7 +15,7 @@ spec:
         repoURL: file:///mnt/voltade-os.git
         revision: HEAD
         directories:
-          - path: argocd/infra/*/envs/dev
+          - path: argocd/infra/*/overlays/dev
   template:
     metadata:
       name: "{{ index .path.segments 2 }}"
