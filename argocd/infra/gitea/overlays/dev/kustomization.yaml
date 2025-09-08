@@ -14,13 +14,89 @@ helmCharts:
     version: 12.2.0
     releaseName: gitea
     namespace: gitea
-    additionalValuesFiles:
-      - ../../base/helm-values.yaml
     valuesInline:
+      # https://gitea.com/gitea/helm-gitea#parameters
+      # https://gitea.com/gitea/helm-gitea/src/branch/main/values.yaml
+
+      # https://gitea.com/gitea/helm-gitea#strategy
+      strategy:
+        rollingUpdate:
+          maxSurge: 0
+          maxUnavailable: 1
+      postgresql-ha:
+        enabled: false
+      valkey-cluster:
+        enabled: false
       gitea:
+        # https://gitea.com/gitea/helm-gitea#admin-user
         admin:
+          email: admin@voltade.com
+          username: admin
+          password: admin
           passwordMode: initialOnlyNoReset
         config:
+          APP_NAME: Voltade OS
+          # https://docs.gitea.com/administration/config-cheat-sheet#server-server
           server:
             DOMAIN: git.127.0.0.1.nip.io
             ROOT_URL: http://git.127.0.0.1.nip.io
+            DISABLE_SSH: true
+          # https://docs.gitea.com/administration/config-cheat-sheet#security-security
+          security:
+            INSTALL_LOCK: true
+          openid:
+            ENABLE_OPENID_SIGNIN: false
+            ENABLE_OPENID_SIGNUP: false
+          oauth2_client:
+            REGISTER_EMAIL_CONFIRM: false
+            ENABLE_AUTO_REGISTRATION: true
+            OPENID_CONNECT_SCOPES: openid profile email groups
+            USERNAME: email
+            ACCOUNT_LINKING: auto
+            UPDATE_AVATAR: true
+          # https://docs.gitea.com/administration/config-cheat-sheet#service-service
+          service:
+            DISABLE_REGISTRATION: false
+            SHOW_REGISTRATION_BUTTON: false
+            ALLOW_ONLY_EXTERNAL_REGISTRATION: true
+            REGISTER_EMAIL_CONFIRM: false
+            REQUIRE_SIGNIN_VIEW: true
+            ENABLE_BASIC_AUTHENTICATION: false
+            ENABLE_INTERNAL_SIGNIN: true
+            DEFAULT_USER_VISIBILITY: private
+            ALLOWED_USER_VISIBILITY_MODES: limited,private
+            DEFAULT_ORG_VISIBILITY: private
+            EMAIL_DOMAIN_ALLOWLIST: voltade.com
+          # https://docs.gitea.com/administration/config-cheat-sheet#admin-admin
+          admin:
+            DISABLE_REGULAR_ORG_CREATION: true
+          repository:
+            FORCE_PRIVATE: true
+          cache:
+            # https://docs.gitea.com/administration/config-cheat-sheet#cache-cache
+            ADAPTER: twoqueue
+          # https://docs.gitea.com/administration/config-cheat-sheet#database-database
+          database:
+            DB_TYPE: postgres
+            HOST: cnpg-cluster-rw
+            NAME: app
+            USER: app
+            SCHEMA: public
+          # https://docs.gitea.com/administration/config-cheat-sheet#mailer-mailer
+          mailer:
+            ENABLED: true
+            PROTOCOL: smtp
+            SMTP_ADDR: maildev-smtp.maildev.svc.cluster.local
+            SMTP_PORT: 1025
+            FROM: git@voltade.com
+        # https://gitea.com/gitea/helm-gitea#additional-_appini_-settings
+        additionalConfigFromEnvs:
+          - name: GITEA__DATABASE__PASSWD
+            valueFrom:
+              secretKeyRef:
+                name: cnpg-cluster-app
+                key: password
+          - name: GITEA__MAILER__USER
+            value: username
+          - name: GITEA__MAILER__PASSWD
+            value: password

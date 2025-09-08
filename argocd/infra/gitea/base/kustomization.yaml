@@ -4,4 +4,3 @@ kind: Kustomization
 resources:
   - cnpg-cluster.yaml
   - httproute.yaml
-  - helm-values.yaml
