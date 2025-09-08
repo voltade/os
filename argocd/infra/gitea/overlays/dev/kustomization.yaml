@@ -6,3 +6,21 @@ resources:
 
 patches:
   - path: http-route.yaml
+
+helmCharts:
+  - repo: https://dl.gitea.com/charts
+    name: gitea
+    # https://artifacthub.io/packages/helm/gitea/gitea
+    version: 12.2.0
+    releaseName: gitea
+    namespace: gitea
+    additionalValuesFiles:
+      - ../../base/helm-values.yaml
+    valuesInline:
+      gitea:
+        admin:
+          passwordMode: initialOnlyNoReset
+        config:
+          server:
+            DOMAIN: git.127.0.0.1.nip.io
+            ROOT_URL: http://git.127.0.0.1.nip.io

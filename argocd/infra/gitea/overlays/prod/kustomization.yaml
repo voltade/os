@@ -5,5 +5,22 @@ resources:
   - ../../base
 
 patches:
-  - path: cnpg-cluster.yaml
   - path: http-route.yaml
+
+helmCharts:
+  - repo: https://dl.gitea.com/charts
+    name: gitea
+    # https://artifacthub.io/packages/helm/gitea/gitea
+    version: 12.2.0
+    releaseName: gitea
+    namespace: gitea
+    additionalValuesFiles:
+      - ../../base/helm-values.yaml
+    valuesInline:
+      gitea:
+        admin:
+          passwordMode: initialOnlyRequireReset
+        config:
+          server:
+            DOMAIN: git.voltade.app
+            ROOT_URL: https://git.voltade.app
