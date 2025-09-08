@@ -1,0 +1,21 @@
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+
+resources:
+  - ../../base
+
+patches:
+  - path: http-route.yaml
+
+helmCharts:
+  - repo: https://openbao.github.io/openbao-helm
+    name: openbao
+    # https://openbao.github.io/openbao-helm/index.yaml
+    version: 0.18.0
+    releaseName: openbao
+    namespace: openbao
+    # https://github.com/openbao/openbao-helm/blob/main/charts/openbao/values.yaml
+    valuesInline:
+      server:
+        dev:
+          enabled: true

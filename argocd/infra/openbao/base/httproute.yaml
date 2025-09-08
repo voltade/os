@@ -1,0 +1,18 @@
+apiVersion: gateway.networking.k8s.io/v1
+kind: HTTPRoute
+metadata:
+  name: openbao
+spec:
+  parentRefs:
+    - name: cilium-gateway
+      namespace: gateway
+  hostnames:
+    - openbao.127.0.0.1.nip.io
+  rules:
+    - backendRefs:
+        - name: openbao
+          port: 8200
+      matches:
+        - path:
+            type: PathPrefix
+            value: /

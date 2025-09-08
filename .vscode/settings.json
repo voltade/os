@@ -43,6 +43,7 @@
     "lefthook",
     "maildev",
     "nindent",
+    "openbao",
     "pgsodium",
     "pgxs",
     "plpgsql",
