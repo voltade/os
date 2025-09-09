@@ -49,3 +49,5 @@ spec:
           value: "true"
         - name: PrefNic
           value: "eth1"
+        - name: StorDriver/LvcreateOptions
+          value: "--yes" # Force LVM operations
