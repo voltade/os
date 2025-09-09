@@ -35,7 +35,7 @@ spec:
   storagePools:
     - name: worker-thin-pool
       lvmThinPool:
-        volumeGroup: worker_vg
+        volumeGroup: linstor_vg
         thinPool: thin_pool
       source:
         hostDevices:
