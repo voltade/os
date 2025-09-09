@@ -15,7 +15,6 @@ helmCharts:
           - key: node-role.kubernetes.io/postgres
             operator: Exists
             effect: NoSchedule
-        dataDirPath: /var/mnt/rawfile-localpv
       storageClass:
         name: rawfile-localpv
         defaultClass: false
