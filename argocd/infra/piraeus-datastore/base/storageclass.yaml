@@ -6,4 +6,4 @@ provisioner: linstor.csi.linbit.com
 allowVolumeExpansion: true
 volumeBindingMode: WaitForFirstConsumer
 parameters:
-  linstor.csi.linbit.com/storagePool: postgres-thin-pool,worker-thin-pool
+  linstor.csi.linbit.com/storagePool: vg1-thin
