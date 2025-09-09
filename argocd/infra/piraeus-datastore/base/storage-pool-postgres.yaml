@@ -39,15 +39,7 @@ spec:
   storagePools:
     - name: postgres-thin-pool
       lvmThinPool:
-        volumeGroup: linstor_vg
-        thinPool: thin_pool
+        volumeGroup: vg1
       source:
         hostDevices:
-          - /dev/mapper/sda5-encrypted
-      properties:
-        - name: StorDriver/ThinPool
-          value: "true"
-        - name: PrefNic
-          value: "eth1"
-        - name: StorDriver/LvcreateOptions
-          value: "--yes" # Force LVM operations
+          - /dev/sda
