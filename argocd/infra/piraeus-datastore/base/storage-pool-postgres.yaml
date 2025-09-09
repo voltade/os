@@ -37,7 +37,15 @@ spec:
             path: /var/etc/lvm/archive
             type: DirectoryOrCreate
   storagePools:
-    - name: postgres-pool
+    - name: postgres-thin-pool
       lvmThinPool:
-        volumeGroup: vg-postgres
-        thinPool: postgres-thin-pool
+        volumeGroup: postgres_vg
+        thinPool: thin_pool
+      source:
+        hostDevices:
+          - /dev/mapper/sda5-encrypted
+      properties:
+        - name: StorDriver/ThinPool
+          value: "true"
+        - name: PrefNic
+          value: "eth1"
