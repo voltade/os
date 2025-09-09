@@ -16,8 +16,3 @@ spec:
       - key: node-role.kubernetes.io/postgres
         operator: Exists
         effect: NoSchedule
-
-  # https://cloudnative-pg.io/documentation/current/storage/
-  storage:
-    storageClass: local-storage
-    size: 4Gi

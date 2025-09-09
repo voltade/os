@@ -17,4 +17,6 @@ helmCharts:
             effect: NoSchedule
         dataDirPath: /var/mnt/rawfile-localpv
       storageClass:
+        name: rawfile-localpv
+        defaultClass: false
         fsType: xfs

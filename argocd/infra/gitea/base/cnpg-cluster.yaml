@@ -10,5 +10,7 @@ spec:
 
   instances: 1
 
+  # https://cloudnative-pg.io/documentation/current/storage/
   storage:
+    storageClass: rawfile-localpv
     size: 4Gi
