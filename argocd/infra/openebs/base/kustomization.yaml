@@ -1,0 +1,20 @@
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+
+helmCharts:
+  - repo: https://openebs.github.io/rawfile-localpv
+    name: rawfile-localpv
+    # https://artifacthub.io/packages/helm/rawfile/rawfile-localpv
+    version: 0.11.0
+    releaseName: rawfile-localpv
+    namespace: openebs
+    # https://github.com/openebs/rawfile-localpv/blob/develop/deploy/helm/rawfile-localpv/values.yaml
+    valuesInline:
+      node:
+        tolerations:
+          - key: node-role.kubernetes.io/postgres
+            operator: Exists
+            effect: NoSchedule
+        dataDirPath: /var/mnt/rawfile-localpv
+      storageClass:
+        fsType: xfs
