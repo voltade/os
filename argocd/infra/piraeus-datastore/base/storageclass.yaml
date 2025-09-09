@@ -4,6 +4,6 @@ metadata:
   name: local-storage
 provisioner: linstor.csi.linbit.com
 allowVolumeExpansion: true
-volumeBindingMode: WaitForFirstConsumer
+# volumeBindingMode: WaitForFirstConsumer
 parameters:
-  linstor.csi.linbit.com/storagePool: vg1-thin
+  linstor.csi.linbit.com/storagePool: local-storage

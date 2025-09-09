@@ -5,6 +5,5 @@ resources:
   # https://github.com/piraeusdatastore/piraeus-operator/releases
   - https://github.com/piraeusdatastore/piraeus-operator/releases/download/v2.9.0/manifest.yaml
   - linstorcluster.yaml
-  - storage-pool-postgres.yaml
-  - storage-pool-worker.yaml
+  - storage-pool.yaml
   - storageclass.yaml

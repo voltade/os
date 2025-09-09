@@ -35,15 +35,9 @@ spec:
             path: /var/etc/lvm/archive
             type: DirectoryOrCreate
   storagePools:
-    - name: vg1-from-raw-devices
+    - name: local-storage
       lvmPool:
         volumeGroup: vg1
       source:
         hostDevices:
-          - /dev/sda
-      properties:
-        - name: StorDriver/LvcreateOptions
-          value: "-i 2"
-    - name: vg1-thin
-      volumeGroup: vg1
-      thinPool: thin
+          - /dev/dm-1
