@@ -31,6 +31,13 @@ helmCharts:
         enabled: false
       valkey-cluster:
         enabled: false
+      resources:
+        requests:
+          memory: 256Mi
+          cpu: 100m
+        limits:
+          memory: 512Mi
+          cpu: 500m
       gitea:
         # https://gitea.com/gitea/helm-gitea#admin-user
         admin:
