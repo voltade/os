@@ -15,6 +15,13 @@ helmCharts:
           - key: node-role.kubernetes.io/postgres
             operator: Exists
             effect: NoSchedule
+        resources:
+          limits:
+            cpu: 300m
+            memory: 300Mi
+          requests:
+            cpu: 100m
+            memory: 150Mi
       storageClass:
         name: rawfile-localpv
         defaultClass: false
