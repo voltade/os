@@ -10,9 +10,11 @@ helmCharts:
     namespace: openebs
     # https://github.com/openebs/rawfile-localpv/blob/develop/deploy/helm/rawfile-localpv/values.yaml
     valuesInline:
-      node:
+      controller:
+        # From the helm chart default values, the controller StatefulSet's tolerations are using the deprecated key "node-role.kubernetes.io/master":
+        # https://github.com/openebs/rawfile-localpv/blob/v0.11.0/deploy/helm/rawfile-localpv/values.yaml#L68
         tolerations:
-          - key: node-role.kubernetes.io/postgres
+          - key: node-role.kubernetes.io/control-plane
             operator: Exists
             effect: NoSchedule
         resources:
@@ -22,7 +24,25 @@ helmCharts:
           requests:
             cpu: 100m
             memory: 150Mi
+
+      node:
+        tolerations:
+          - key: node-role.kubernetes.io/postgres
+            operator: Exists
+            effect: NoSchedule
       storageClass:
         name: rawfile-localpv
         defaultClass: false
         fsType: xfs
+
+patches:
+  # From the helm chart template, the controller StatefulSet doesn't support nodeSelector:
+  # https://github.com/openebs/rawfile-localpv/blob/v0.11.0/deploy/helm/rawfile-localpv/templates/controller/statefulset.yaml
+  - target:
+      kind: StatefulSet
+      name: rawfile-localpv-controller
+    patch: |-
+      - op: add
+        path: /spec/template/spec/nodeSelector
+        value:
+          node-role.kubernetes.io/control-plane: ""
