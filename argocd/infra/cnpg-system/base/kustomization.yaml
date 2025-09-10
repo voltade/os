@@ -13,7 +13,18 @@ helmCharts:
     releaseName: cloudnative-pg
     namespace: cnpg-system
     # https://github.com/cloudnative-pg/charts/blob/main/charts/cloudnative-pg/values.yaml
-    valuesInline: {}
+    valuesInline:
+      replicaCount: 3
+      nodeSelector:
+        node-role.kubernetes.io/control-plane: ""
+      tolerations:
+        - key: node-role.kubernetes.io/control-plane
+          operator: Exists
+          effect: NoSchedule
+      affinity:
+        podAntiAffinity:
+          requiredDuringSchedulingIgnoredDuringExecution:
+            - topologyKey: kubernetes.io/hostname
 
 patches:
   - target:
@@ -23,3 +34,25 @@ patches:
       - op: add
         path: /metadata/annotations/argocd.argoproj.io~1sync-options
         value: ServerSideApply=true
+
+  # https://github.com/cloudnative-pg/plugin-barman-cloud/blob/v0.6.0/kubernetes/deployment.yaml
+  - target:
+      kind: Deployment
+      name: barman-cloud
+    patch: |-
+      - op: add
+        path: /spec/template/spec/nodeSelector
+        value:
+          node-role.kubernetes.io/control-plane: ""
+      - op: add
+        path: /spec/template/spec/tolerations
+        value:
+          - key: node-role.kubernetes.io/control-plane
+            operator: Exists
+            effect: NoSchedule
+      - op: add
+        path: /spec/template/spec/affinity
+        value:
+          podAntiAffinity:
+            requiredDuringSchedulingIgnoredDuringExecution:
+              - topologyKey: kubernetes.io/hostname
