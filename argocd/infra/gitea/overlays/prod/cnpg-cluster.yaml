@@ -17,6 +17,19 @@ spec:
         operator: Exists
         effect: NoSchedule
 
+  # https://cloudnative-pg.io/documentation/current/resource_management/
+  resources:
+    requests:
+      memory: 1Gi
+      cpu: "1"
+    limits:
+      memory: 1Gi
+      cpu: "1"
+
+  postgresql:
+    parameters:
+      shared_buffers: "256MB"
+
   # https://cloudnative-pg.io/documentation/current/storage/
   storage:
     storageClass: rawfile-retain
