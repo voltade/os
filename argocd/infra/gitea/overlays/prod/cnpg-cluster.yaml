@@ -56,7 +56,7 @@ spec:
         name: barman-cloud.cloudnative-pg.io
         parameters:
           barmanObjectName: cnpg-object-store
-          serverName: gitea-a
+          serverName: gitea-202509111622
 
   # https://cloudnative-pg.io/plugin-barman-cloud/docs/usage/#configuring-wal-archiving
   plugins:
@@ -64,4 +64,4 @@ spec:
       isWALArchiver: true
       parameters:
         barmanObjectName: cnpg-object-store
-        serverName: gitea-a
+        serverName: gitea-202509111622
