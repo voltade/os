@@ -2,7 +2,12 @@ apiVersion: postgresql.cnpg.io/v1
 kind: Cluster
 metadata:
   name: cnpg-cluster
+  annotations:
+    argocd.argoproj.io/sync-options: SkipDryRunOnMissingResource=true
 spec:
+  # https://github.com/cloudnative-pg/postgres-containers/pkgs/container/postgresql
+  imageName: ghcr.io/cloudnative-pg/postgresql:17.6-202509091311-minimal-trixie
+
   instances: 3
 
   # https://cloudnative-pg.io/documentation/current/scheduling/#isolating-postgresql-workloads

@@ -3,12 +3,12 @@ kind: Kustomization
 
 resources:
   - ../../base
+  - cnpg-cluster.yaml
   - cnpg-object-store.yaml
   - cnpg-scheduled-backup.yaml
   - s3-secret.yaml
 
 patches:
-  - path: cnpg-cluster.yaml
   - path: http-route.yaml
 
 helmCharts:

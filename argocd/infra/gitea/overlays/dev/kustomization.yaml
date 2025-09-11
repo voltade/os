@@ -3,6 +3,7 @@ kind: Kustomization
 
 resources:
   - ../../base
+  - cnpg-cluster.yaml
 
 patches:
   - path: http-route.yaml
