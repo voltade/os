@@ -6,7 +6,7 @@ resources:
   - cnpg-cluster.yaml
 
 patches:
-  - path: http-route.yaml
+  - path: httproute.yaml
 
 helmCharts:
   - repo: https://dl.gitea.com/charts

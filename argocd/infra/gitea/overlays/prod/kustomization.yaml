@@ -6,10 +6,10 @@ resources:
   - cnpg-cluster.yaml
   - cnpg-object-store.yaml
   - cnpg-scheduled-backup.yaml
-  - s3-secret.yaml
+  - secret-s3.yaml
 
 patches:
-  - path: http-route.yaml
+  - path: httproute.yaml
 
 helmCharts:
   - repo: https://dl.gitea.com/charts
