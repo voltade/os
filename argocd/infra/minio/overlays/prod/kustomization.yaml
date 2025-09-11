@@ -3,5 +3,3 @@ kind: Kustomization
 
 resources:
   - ../../base
-  - httproute-console.yaml
-  - httproute-api.yaml
