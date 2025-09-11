@@ -25,7 +25,7 @@ helmCharts:
           maxSurge: 0
           maxUnavailable: 1
       persistence:
-        # storageClass: # default storage class
+        storageClass: hcloud-volumes-retain
         size: 30Gi
       postgresql-ha:
         enabled: false

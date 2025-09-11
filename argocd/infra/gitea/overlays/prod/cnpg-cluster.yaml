@@ -16,3 +16,12 @@ spec:
       - key: node-role.kubernetes.io/postgres
         operator: Exists
         effect: NoSchedule
+
+  # https://cloudnative-pg.io/documentation/current/storage/
+  storage:
+    storageClass: rawfile-retain
+    size: 4Gi
+  # https://cloudnative-pg.io/documentation/current/storage/#volume-for-wal
+  walStorage:
+    storageClass: rawfile-retain
+    size: 1Gi
