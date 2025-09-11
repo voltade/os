@@ -1,0 +1,123 @@
+apiVersion: batch/v1
+kind: CronJob
+metadata:
+  name: gitea-backup
+spec:
+  schedule: "0 2 * * 0"
+  suspend: true
+  jobTemplate:
+    spec:
+      template:
+        spec:
+          restartPolicy: OnFailure
+          initContainers:
+            - name: backup-creator
+              image: alpine:latest
+              command:
+                - /bin/sh
+                - -c
+                - |
+                  set -e
+
+                  # Install required tools
+                  apk add --no-cache zip
+
+                  # Create backup directory
+                  BACKUP_DIR="/backup/gitea-backup-$(date +%Y%m%d-%H%M%S)"
+                  mkdir -p $BACKUP_DIR
+
+                  echo "Creating Gitea backup (excluding database and logs)..."
+
+                  # Copy configuration files
+                  if [ -d "/data/gitea/conf" ]; then
+                    echo "Backing up configuration..."
+                    cp -r /data/gitea/conf $BACKUP_DIR/
+                  fi
+
+                  # Copy custom directory
+                  if [ -d "/data/gitea/custom" ]; then
+                    echo "Backing up custom files..."
+                    cp -r /data/gitea/custom $BACKUP_DIR/
+                  fi
+
+                  # Copy data directory (excluding logs and sessions)
+                  if [ -d "/data/gitea" ]; then
+                    echo "Backing up data directory..."
+                    mkdir -p $BACKUP_DIR/data
+                    find /data/gitea -type f \
+                      ! -path "*/log/*" \
+                      ! -path "*/logs/*" \
+                      ! -path "*/sessions/*" \
+                      -exec cp --parents {} $BACKUP_DIR/data/ \;
+                  fi
+
+                  # Copy repositories
+                  if [ -d "/data/git/gitea-repositories" ]; then
+                    echo "Backing up repositories..."
+                    cp -r /data/git/gitea-repositories $BACKUP_DIR/repos
+                  fi
+
+                  # Create ZIP file
+                  BACKUP_FILE="/backup/gitea-backup-$(date +%Y%m%d-%H%M%S).zip"
+                  cd /backup
+                  zip -r $BACKUP_FILE $(basename $BACKUP_DIR)
+
+                  echo "Backup created: $BACKUP_FILE"
+
+                  # Cleanup temp directory
+                  rm -rf $BACKUP_DIR
+
+                  echo "Backup file ready for upload"
+              volumeMounts:
+                - name: data
+                  mountPath: /data
+                  readOnly: true
+                - name: backup-storage
+                  mountPath: /backup
+          containers:
+            - name: s3-uploader
+              image: amazon/aws-cli:latest
+              command:
+                - /bin/sh
+                - -c
+                - |
+                  set -e
+
+                  # Find the backup file
+                  BACKUP_FILE=$(ls /backup/gitea-backup-*.zip | head -1)
+
+                  if [ -z "$BACKUP_FILE" ]; then
+                    echo "No backup file found!"
+                    exit 1
+                  fi
+
+                  echo "Uploading backup to S3: $BACKUP_FILE"
+
+                  # Upload to S3
+                  aws s3 cp $BACKUP_FILE s3://voltade-os/gitea-backups/ \
+                    --endpoint-url=http://minio.minio.svc.cluster.local:9000
+
+                  echo "Backup completed successfully and uploaded to S3"
+
+                  # Cleanup
+                  rm -f $BACKUP_FILE
+              env:
+                - name: AWS_ACCESS_KEY_ID
+                  valueFrom:
+                    secretKeyRef:
+                      name: s3-voltade-os-cnpg-admin
+                      key: ACCESS_KEY_ID
+                - name: AWS_SECRET_ACCESS_KEY
+                  valueFrom:
+                    secretKeyRef:
+                      name: s3-voltade-os-cnpg-admin
+                      key: SECRET_ACCESS_KEY
+              volumeMounts:
+                - name: backup-storage
+                  mountPath: /backup
+          volumes:
+            - name: data
+              persistentVolumeClaim:
+                claimName: gitea-shared-storage
+            - name: backup-storage
+              emptyDir: {}

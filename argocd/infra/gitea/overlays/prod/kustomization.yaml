@@ -6,6 +6,7 @@ resources:
   - cnpg-cluster.yaml
   - cnpg-object-store.yaml
   - cnpg-scheduled-backup.yaml
+  - cronjob-backup.yaml
   - secret-s3.yaml
 
 patches:
