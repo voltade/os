@@ -1,9 +1,6 @@
 apiVersion: kustomize.config.k8s.io/v1beta1
 kind: Kustomization
 
-resources:
-  - storageclass.yaml
-
 helmCharts:
   - repo: https://openebs.github.io/rawfile-localpv
     name: rawfile-localpv
@@ -33,10 +30,22 @@ helmCharts:
           - key: node-role.kubernetes.io/postgres
             operator: Exists
             effect: NoSchedule
-      storageClass:
-        name: rawfile-localpv
-        defaultClass: false
-        fsType: xfs
+
+      storageClasses:
+        - name: rawfile
+          enabled: true
+          volumeBindingMode: WaitForFirstConsumer
+          allowVolumeExpansion: true
+          reclaimPolicy: Delete
+          fsType: xfs
+          thinProvision: false
+        - name: rawfile-retain
+          enabled: true
+          volumeBindingMode: WaitForFirstConsumer
+          allowVolumeExpansion: true
+          reclaimPolicy: Retain
+          fsType: xfs
+          thinProvision: false
 
 patches:
   # From the helm chart template, the controller StatefulSet doesn't support nodeSelector:
