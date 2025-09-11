@@ -25,3 +25,25 @@ spec:
   walStorage:
     storageClass: rawfile-retain
     size: 1Gi
+
+  # https://cloudnative-pg.io/documentation/current/recovery/#pitr-from-an-object-store
+  # bootstrap:
+  #   recovery:
+  #     source: clusterBackup
+
+  # https://cloudnative-pg.io/plugin-barman-cloud/docs/usage/#restoring-a-cluster
+  externalClusters:
+    - name: clusterBackup
+      plugin:
+        name: barman-cloud.cloudnative-pg.io
+        parameters:
+          barmanObjectName: cnpg-object-store
+          serverName: gitea-a
+
+  # https://cloudnative-pg.io/plugin-barman-cloud/docs/usage/#configuring-wal-archiving
+  plugins:
+    - name: barman-cloud.cloudnative-pg.io
+      isWALArchiver: true
+      parameters:
+        barmanObjectName: cnpg-object-store
+        serverName: gitea-a

@@ -1,0 +1,21 @@
+apiVersion: barmancloud.cnpg.io/v1
+kind: ObjectStore
+metadata:
+  name: cnpg-object-store
+  annotations:
+    argocd.argoproj.io/sync-wave: "1"
+spec:
+  retentionPolicy: 15d
+  configuration:
+    endpointURL: http://minio.minio.svc.cluster.local:9000
+    destinationPath: s3://voltade-os/cnpg-backups
+    s3Credentials:
+      accessKeyId:
+        name: s3-voltade-os-cnpg-admin
+        key: ACCESS_KEY_ID
+      secretAccessKey:
+        name: s3-voltade-os-cnpg-admin
+        key: SECRET_ACCESS_KEY
+    wal:
+      maxParallel: 8
+      compression: gzip

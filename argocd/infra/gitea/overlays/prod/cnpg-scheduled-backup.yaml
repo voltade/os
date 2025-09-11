@@ -1,0 +1,15 @@
+apiVersion: postgresql.cnpg.io/v1
+kind: ScheduledBackup
+metadata:
+  name: cnpg-scheduled-backup
+  annotations:
+    argocd.argoproj.io/sync-wave: "3"
+spec:
+  # https://elmah.io/tools/cron-parser/#0_20_19_*/2_*_*
+  schedule: "0 20 19 */2 * *"
+  backupOwnerReference: self
+  method: plugin
+  pluginConfiguration:
+    name: barman-cloud.cloudnative-pg.io
+  cluster:
+    name: cnpg-cluster
